@@ -1,0 +1,175 @@
+/* hero.module.css */
+
+.dark {
+  background-color: #0d0d0d;
+  color: #ffffff;
+  transition: background 0.3s, color 0.3s;
+}
+
+.light {
+  background-color: #ffffff;
+  color: #1a1a1a;
+  transition: background 0.3s, color 0.3s;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.themeToggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.heroContainer {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: inherit;
+}
+/* actual */
+.heroBackground {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.heroBackground::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  z-index: 1;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.goldenOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(12, 12, 12, 0.3);
+  z-index: 1;
+}
+
+.heroContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+}
+
+.btn {
+  width: 1.8vw;
+  height: 7vh;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  outline: 1px solid #c49b66;
+  box-shadow: 0px 0px 20px #c49b66;
+  position: relative;
+  margin-top: 80vh;
+  cursor: pointer;
+}
+
+.scroll {
+  width: 0.3vw;
+  height: 1.7vh;
+  border-radius: 10px;
+  background-color: #c49b66;
+  box-shadow: 0px 0px 10px #c49b66;
+  animation: scroll_4013 2s linear infinite;
+  transform: translateY(40%);
+}
+
+.btn:after {
+  content: "";
+  position: absolute;
+  top: 140%;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  /* font-size: 2vh; */
+}
+
+/* about us */
+.aboutUs {
+  background-image: url("/images/poppers2.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* 2nd page  */
+
+.projects,
+.gallery,
+.videos,
+.contactUs,
+.aboutUs {
+  height: fit-content;
+  color: rgb(175, 174, 174);
+  /* background: linear-gradient(to bottom, #34210f, #000000); */
+  /* background-color: rgb(15, 15, 15, 0.1); */
+}
+
+.projects,
+.videos,
+.gallery,
+.aboutUs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: auto;
+  padding-top: 10vh;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1vh;
+  color: #0d0d0d;
+}
+
+.subtext {
+  font-size: 1rem;
+  color: #696767;
+  width: 60vw;
+}
