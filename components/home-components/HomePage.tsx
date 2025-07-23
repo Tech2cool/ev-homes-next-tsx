@@ -5,6 +5,8 @@ import HomeNavbar from "./HomeNavbar";
 import RecentProjects from "./RecentProjects";
 import Gallary from "./Gallary";
 import styles from "./home.module.css";
+import Videos from "./Videos";
+import Contact from "./Contact";
 
 const HomePage = () => {
   return (
@@ -20,6 +22,10 @@ const HomePage = () => {
         <RecentProjects />
         {/* Gallary */}
         <Gallary />
+        {/* Videos */}
+        <Videos />
+        {/* Contact */}
+        <Contact />
       </div>
     </>
   );

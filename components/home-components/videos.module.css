@@ -1,0 +1,125 @@
+.videos {
+  position: relative;
+  /* background-image: url("/images/dark-abstract-background.jpg"); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.videos::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+  z-index: 1;
+}
+
+.videos::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  z-index: 1;
+}
+
+/* 2nd page  */
+
+.videos {
+  height: fit-content;
+  color: rgb(175, 174, 174);
+  /* background: linear-gradient(to bottom, #34210f, #000000); */
+  background-color: rgb(15, 15, 15, 0.1);
+}
+
+.videos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: auto;
+  padding-top: 10vh;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1vh;
+  /* color: #161616; */
+}
+
+.subtext {
+  font-size: 1rem;
+  color: #696767;
+  width: 60vw;
+}
+
+.videoScrollWrapper {
+  position: relative;
+  width: 95%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.videoGallery {
+  display: flex;
+  gap: 2vw;
+  margin: 2vh 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 1vh;
+  padding-left: 2vw;
+  scrollbar-width: none;
+}
+
+.videoGallery::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollButton {
+  /* background: rgba(0, 0, 0, 0.4); */
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.videoBox {
+  width: 25vw;
+  height: 31vh;
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
+  border: 1px solid #bea98d;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  /* background-color: rgba(255, 255, 255, 0.1); */
+  background-color: rgb(29, 29, 29);
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  border-radius: 8px;
+  padding: 1vh;
+}
+.testimonialVideo {
+  width: 100%;
+  height: 80%;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.caption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}

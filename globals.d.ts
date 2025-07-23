@@ -33,3 +33,17 @@ interface Configuration {
   price?: string | null;
   reraId?: string | null;
 }
+
+interface Testimonial {
+  _id?: string | null;
+  title?: string | null;
+  description?: string | null;
+  like?: Number | null;
+  dislike?: Number | null;
+  videoUrl?: string | null;
+  thumbnail?: string | null;
+  shareLink?: string | null;
+  project?: string | OurProject | null;
+  date?: string | null;
+  views?: Number | null;
+}

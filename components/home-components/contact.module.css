@@ -1,0 +1,91 @@
+.contactUs {
+  height: fit-content;
+  color: rgb(175, 174, 174);
+  /* background: linear-gradient(to bottom, #34210f, #000000); */
+  background-color: rgb(15, 15, 15, 0.1);
+}
+
+.contactUsSection,
+.footerSection,
+.projectSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
+}
+
+.mainFooter,
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  position: relative;
+  gap: 2rem;
+}
+
+.lineWithLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1rem;
+}
+.leftLine {
+  flex: 1;
+  height: 0.15vh;
+  background-image: linear-gradient(to left, #ccc, #0d0d0d);
+  max-width: 20vw;
+}
+
+.rightLine {
+  flex: 1;
+  height: 0.15vh;
+  background-image: linear-gradient(to right, #ccc, #0d0d0d);
+  max-width: 20vw;
+}
+
+.designWrapper {
+  position: relative;
+  height: 5vh;
+  width: 30vw;
+}
+
+.mainFooter {
+  flex-direction: row;
+}
+
+.quicklinks,
+.addressSection2,
+.addressSection,
+.projectsName {
+  font-size: 1rem;
+  color: #acabab;
+  font-family: "Funnel Display", sans-serif;
+  line-height: 4.5vh;
+  padding-right: 5vw;
+  border-right: 1px solid rgb(47, 46, 46);
+  padding-left: 5vw;
+  cursor: pointer;
+}
+
+.head2,
+.head {
+  font-size: 1.5rem;
+  color: #4a4a4a;
+  padding-bottom: 2vh;
+}
+
+.head2 {
+  color: #6e6e6e;
+}
+
+.logoWrapper {
+  position: relative;
+  width: 20vw;
+  height: 10vh;
+}
