@@ -2,6 +2,7 @@ import React from "react";
 import About from "./About";
 import Hero from "./Hero";
 import HomeNavbar from "./HomeNavbar";
+import RecentProjects from "./RecentProjects";
 
 const HomePage = () => {
   return (
@@ -13,6 +14,8 @@ const HomePage = () => {
       {/* about */}
       <About />
       {/* Projects */}
+      <RecentProjects />
+      {/* Gallary */}
     </div>
   );
 };

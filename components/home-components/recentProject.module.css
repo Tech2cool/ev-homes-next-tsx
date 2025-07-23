@@ -1,0 +1,307 @@
+/* project section  */
+
+.projects {
+  color: rgb(175, 174, 174);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 5vh;
+  padding-top: 15vh;
+}
+
+.projectsHeading {
+  font-size: 1.5rem;
+}
+
+.projectCircles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  /* width: 90%; */
+  gap: 8vw;
+}
+
+.circleWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.circle {
+  width: 9vw;
+  height: 9vw;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.initial {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #c49b66;
+  text-align: center;
+}
+
+.circle img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+}
+
+.circleTopImage {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14vw;
+  height: auto;
+  z-index: 3;
+}
+
+.circleTopImage img {
+  width: 100%;
+  height: auto;
+}
+
+.projectName {
+  color: transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 7vh;
+}
+
+.location {
+  font-size: 0.8rem;
+}
+
+.circleWrapper .initial,
+.circleWrapper img,
+.circleWrapper .projectName,
+.circleWrapper .location,
+.circleWrapper .locationIcon {
+  transition: all 0.4s ease-out;
+}
+.circle,
+.initial,
+.projectName,
+.location {
+  will-change: transform, opacity, color;
+}
+
+.circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.circleWrapper:hover .circle {
+  transform: scale(1.05);
+  background-color: transparent;
+}
+
+.circleWrapper:hover .initial {
+  opacity: 0;
+}
+
+.circleWrapper:hover img {
+  opacity: 1;
+}
+
+.circleWrapper:hover .location,
+.circleWrapper:hover .projectName {
+  color: white;
+  transform: translateY(0);
+}
+
+.circleWrapper:hover .locationIcon {
+  color: red;
+}
+
+/* ss */
+
+.projectDetailWrapper {
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5vh;
+  border: 2px solid #c49b66;
+}
+
+.projectDetailSection {
+  width: 75vw;
+  padding: 5vh;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  gap: 4vw;
+  padding-left: 2vw;
+}
+.rightSection {
+  /* box-shadow: inset 0 -10px 10px -10px rgb(45, 45, 45); */
+  border-radius: 8px;
+}
+
+.posterImage {
+  width: 30vw;
+  height: 73vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.imagePoster {
+  object-fit: cover;
+}
+
+.selectedProjName {
+  /* font-family: "Great Vibes", cursive; */
+  font-family: "Oleo Script", system-ui;
+  font-size: 2.2rem;
+  font-weight: 500;
+}
+
+.selectedProjIcon {
+  margin-top: 3vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2vw;
+}
+
+.logoImage {
+  border: 1px solid #c49b66;
+  padding: 0 1vw;
+}
+
+.brochure,
+.enquire {
+  width: 6vw;
+  height: 6vw;
+  border-radius: 50%;
+  border: 1px solid #c49b66;
+  color: rgb(107, 107, 107);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  text-align: center;
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.brochure {
+  flex-direction: column;
+  gap: 1vh;
+  margin-left: 8vw;
+}
+
+.selectedProjLocation,
+.text1 {
+  font-size: 1rem;
+  margin-top: 2vh;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  color: grey;
+}
+
+.text2 {
+  font-size: 0.8rem;
+  margin-top: 2vh;
+  background: linear-gradient(to bottom, #767575, #161616);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.imagesSection {
+  width: 40vw;
+  height: 25vh;
+  display: flex;
+  gap: 1.5vw;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  cursor: pointer;
+}
+
+.imageBox {
+  width: 10vw;
+  height: 19vh;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.boxImage {
+  /* width: 100%;
+  height: 100%; */
+  object-fit: cover;
+  /* display: block; */
+}
+
+.brochureButton,
+.enquireButton {
+  background-color: #f0a500;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.brochureButton:hover,
+.enquireButton:hover {
+  background-color: #c07a00;
+}
+
+.linkWrapper {
+  display: inline-block;
+  margin-top: 2vh;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #585a75;
+  border: 2px solid #52546e;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.linkWrapper:hover {
+  background-color: #282936;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.linkWrapper:active {
+  transform: scale(0.98);
+}
