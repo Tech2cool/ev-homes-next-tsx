@@ -74,7 +74,7 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li className={activeSection === "projects" ? styles.active : ""}>
-            <Link href="#projects" className={styles.navLink}>
+            <Link href="/projects" className={styles.navLink}>
               <span>Projects</span>
             </Link>
           </li>
