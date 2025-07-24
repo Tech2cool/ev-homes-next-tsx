@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import About from "./About";
 import Hero from "./Hero";
 import HomeNavbar from "./HomeNavbar";
@@ -7,8 +7,16 @@ import Gallary from "./Gallary";
 import styles from "./home.module.css";
 import Videos from "./Videos";
 import Contact from "./Contact";
+import { useData } from "@/providers/dataContext";
 
 const HomePage = () => {
+  const { getProjects } = useData();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    getProjects();
+  }, []);
+
   return (
     <>
       <HomeNavbar />
