@@ -206,7 +206,7 @@ const Gallary = () => {
 
       <div className={styles.galleryGrid}>
         {projects.length > 0 ? (
-          projects.map((project, i) => (
+          projects.slice(0,4).map((project, i) => (
             <div
               key={project._id || i}
               className={`${styles.galleryCard} ${
