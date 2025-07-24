@@ -1,86 +1,87 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./videos.module.css";
 import Image from "next/image";
-const testimonials: Testimonial[] = [
-  {
-    _id: "684bf08fc826636ba0ba092e",
-    title: "Ahire EV Homes 9 Square Vashi Testimonial ",
-    description: null,
-    like: 3,
-    dislike: 0,
-    videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
-    thumbnail:
-      "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
-    shareLink: null,
-    project: "project-ev-9-square-vashi-sector-9",
-    date: "2025-06-13T09:34:07.286Z",
-    // comments: [],
-    views: 34,
-  },
-  {
-    _id: "684bf08fc82663342346ba0ba092e",
-    title: "Ahire EV Homes 9 Square Vashi Testimonial ",
-    description: null,
-    like: 3,
-    dislike: 0,
-    videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
-    thumbnail:
-      "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
-    shareLink: null,
-    project: "project-ev-9-square-vashi-sector-9",
-    date: "2025-06-13T09:34:07.286Z",
-    // comments: [],
-    views: 34,
-  },
-  {
-    _id: "684bf08fc8afaf2663342346ba0ba092e",
-    title: "Ahire EV Homes 9 Square Vashi Testimonial ",
-    description: null,
-    like: 3,
-    dislike: 0,
-    videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
-    thumbnail:
-      "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
-    shareLink: null,
-    project: "project-ev-9-square-vashi-sector-9",
-    date: "2025-06-13T09:34:07.286Z",
-    // comments: [],
-    views: 34,
-  },
-  {
-    _id: "684bf08fc8afaf2663342346ba0ba092e",
-    title: "Ahire EV Homes 9 Square Vashi Testimonial ",
-    description: null,
-    like: 3,
-    dislike: 0,
-    videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
-    thumbnail:
-      "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
-    shareLink: null,
-    project: "project-ev-9-square-vashi-sector-9",
-    date: "2025-06-13T09:34:07.286Z",
-    // comments: [],
-    views: 34,
-  },
-  {
-    _id: "684bf08fc8afaf2663342346ba0ba092e",
-    title: "Ahire EV Homes 9 Square Vashi Testimonial ",
-    description: null,
-    like: 3,
-    dislike: 0,
-    videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
-    thumbnail:
-      "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
-    shareLink: null,
-    project: "project-ev-9-square-vashi-sector-9",
-    date: "2025-06-13T09:34:07.286Z",
-    // comments: [],
-    views: 34,
-  },
-];
+import { useData } from "@/providers/dataContext";
+// const testimonials: Testimonial[] = [
+//   {
+//     _id: "684bf08fc826636ba0ba092e",
+//     title: "Ahire EV Homes 9 Square Vashi Testimonial ",
+//     description: null,
+//     like: 3,
+//     dislike: 0,
+//     videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
+//     thumbnail:
+//       "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
+//     shareLink: null,
+//     project: "project-ev-9-square-vashi-sector-9",
+//     date: "2025-06-13T09:34:07.286Z",
+//     // comments: [],
+//     views: 34,
+//   },
+//   {
+//     _id: "684bf08fc82663342346ba0ba092e",
+//     title: "Ahire EV Homes 9 Square Vashi Testimonial ",
+//     description: null,
+//     like: 3,
+//     dislike: 0,
+//     videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
+//     thumbnail:
+//       "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
+//     shareLink: null,
+//     project: "project-ev-9-square-vashi-sector-9",
+//     date: "2025-06-13T09:34:07.286Z",
+//     // comments: [],
+//     views: 34,
+//   },
+//   {
+//     _id: "684bf08fc8afaf2663342346ba0ba092e",
+//     title: "Ahire EV Homes 9 Square Vashi Testimonial ",
+//     description: null,
+//     like: 3,
+//     dislike: 0,
+//     videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
+//     thumbnail:
+//       "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
+//     shareLink: null,
+//     project: "project-ev-9-square-vashi-sector-9",
+//     date: "2025-06-13T09:34:07.286Z",
+//     // comments: [],
+//     views: 34,
+//   },
+//   {
+//     _id: "684bf08fc8afaf2663342346ba0ba092e",
+//     title: "Ahire EV Homes 9 Square Vashi Testimonial ",
+//     description: null,
+//     like: 3,
+//     dislike: 0,
+//     videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
+//     thumbnail:
+//       "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
+//     shareLink: null,
+//     project: "project-ev-9-square-vashi-sector-9",
+//     date: "2025-06-13T09:34:07.286Z",
+//     // comments: [],
+//     views: 34,
+//   },
+//   {
+//     _id: "684bf08fc8afaf2663342346ba0ba092e",
+//     title: "Ahire EV Homes 9 Square Vashi Testimonial ",
+//     description: null,
+//     like: 3,
+//     dislike: 0,
+//     videoUrl: "https://cdn.evhomes.tech/hls/vijay_ahire/vijay_ahire_1.m3u8",
+//     thumbnail:
+//       "https://cdn.evhomes.tech/811f5f2f-bebb-4f03-964f-62f5440190b3-Ahire.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjgxMWY1ZjJmLWJlYmItNGYwMy05NjRmLTYyZjU0NDAxOTBiMy1BaGlyZS5wbmciLCJpYXQiOjE3MzczODAwNDF9.4OdG05_IpehTlI9FT8H_H8dNErAt5sPdP1dicH-tbR8",
+//     shareLink: null,
+//     project: "project-ev-9-square-vashi-sector-9",
+//     date: "2025-06-13T09:34:07.286Z",
+//     // comments: [],
+//     views: 34,
+//   },
+// ];
 
 const Videos = () => {
-  const loadingTestimonial = false;
+  // const loadingTestimonial = false;
   const [isLeftHovered, setIsLeftHovered] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLeftClicked, setIsLeftClicked] = useState(false);
@@ -98,6 +99,16 @@ const Videos = () => {
       });
     }
   };
+  const {
+    getTestimonals,
+    testimonials,
+ loadingTestimonial,
+  } = useData();
+
+
+    useEffect(() => {
+    getTestimonals();
+  }, []);
 
   return (
     <div id="videos" className={styles.videos}>
