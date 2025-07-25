@@ -14,6 +14,7 @@ const ContactPage = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,21 +29,26 @@ const ContactPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmissionStatus(null); // Clear previous status
 
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     console.log("Form submitted:", formData);
+    setSubmissionStatus("Message sent successfully!"); // Set success message
     setIsSubmitting(false);
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
+    // Reset form after a short delay to show success message
+    setTimeout(() => {
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+      setSubmissionStatus(null); // Clear status after reset
+    }, 3000);
   };
 
   return (
@@ -66,15 +72,30 @@ const ContactPage = () => {
             </p>
           </div>
           <div className={styles.heroGraphic}>
-            <div className={styles.floatingCard}>
+            <div
+              className={styles.floatingCard}
+              onClick={() =>
+                (window.location.href =
+                  "mailto:evhomes.operations@evgroup.co.in?subject=General Inquiry")
+              }
+            >
               <div className={styles.cardIcon}>💬</div>
               <div className={styles.cardText}>Chat with us</div>
             </div>
-            <div className={styles.floatingCard}>
+            <div
+              className={styles.floatingCard}
+              onClick={() =>
+                (window.location.href =
+                  "mailto:deepak@evgroup.co.in?subject=Support Request")
+              }
+            >
               <div className={styles.cardIcon}>📧</div>
               <div className={styles.cardText}>Send an email</div>
             </div>
-            <div className={styles.floatingCard}>
+            <div
+              className={styles.floatingCard}
+              onClick={() => (window.location.href = "tel:+918291668777")}
+            >
               <div className={styles.cardIcon}>📞</div>
               <div className={styles.cardText}>Give us a call</div>
             </div>
@@ -166,20 +187,25 @@ const ContactPage = () => {
                 ></textarea>
               </div>
 
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <span className={styles.loadingText}>
-                    <span className={styles.spinner}></span>
-                    Sending...
-                  </span>
-                ) : (
-                  "Send Message"
+              <div className={styles.formActions}>
+                {submissionStatus && (
+                  <p className={styles.submissionStatus}>{submissionStatus}</p>
                 )}
-              </button>
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <span className={styles.loadingText}>
+                      <span className={styles.spinner}></span>
+                      Sending...
+                    </span>
+                  ) : (
+                    "Send Message"
+                  )}
+                </button>
+              </div>
             </form>
           </div>
 
@@ -226,9 +252,9 @@ const ContactPage = () => {
                   <div className={styles.methodContent}>
                     <h4 className={styles.methodTitle}>Email Us</h4>
                     <p className={styles.methodText}>
-                      info@evhomes.com
+                      evhomes.operations@evgroup.co.in
                       <br />
-                      support@evhomes.com
+                      deepak@evgroup.co.in
                     </p>
                   </div>
                 </div>
@@ -238,11 +264,11 @@ const ContactPage = () => {
                   <div className={styles.methodContent}>
                     <h4 className={styles.methodTitle}>Business Hours</h4>
                     <p className={styles.methodText}>
-                      Monday - Friday: 9:00 AM - 6:00 PM
+                      Monday - Friday: 10:00 AM - 10:00 PM
                       <br />
-                      Saturday: 10:00 AM - 4:00 PM
+                      Saturday: 10:00 AM - 10:00 PM
                       <br />
-                      Sunday: Closed
+                      Sunday: 10:00 AM - 10:00 PM
                     </p>
                   </div>
                 </div>
@@ -258,11 +284,11 @@ const ContactPage = () => {
                   <div className={styles.statLabel}>Happy Clients</div>
                 </div>
                 <div className={styles.statItem}>
-                  <div className={styles.statNumber}>50+</div>
+                  <div className={styles.statNumber}>27+</div>
                   <div className={styles.statLabel}>Projects</div>
                 </div>
                 <div className={styles.statItem}>
-                  <div className={styles.statNumber}>15+</div>
+                  <div className={styles.statNumber}>30+</div>
                   <div className={styles.statLabel}>Years</div>
                 </div>
                 <div className={styles.statItem}>

@@ -246,6 +246,14 @@
   font-family: inherit;
 }
 
+.formActions {
+  display: flex;
+  justify-content: flex-end; /* Align button to the right */
+  align-items: center;
+  gap: 1.5rem; /* Space between button and status */
+  margin-top: 1rem; /* Add some top margin */
+}
+
 .submitButton {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -258,6 +266,8 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  width: auto; /* Allow button to size to its content */
+  min-width: 150px; /* Ensure a minimum width */
 }
 
 .submitButton:hover:not(:disabled) {
@@ -284,6 +294,14 @@
   border-top: 2px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.submissionStatus {
+  color: var(--primary); /* Use primary color for success message */
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex-grow: 1; /* Allow status message to take available space */
+  text-align: right; /* Align text to the right */
 }
 
 /* Info Section */
@@ -578,6 +596,16 @@
     top: 1rem;
     right: 1rem;
   }
+
+  .formActions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .submissionStatus {
+    text-align: right;
+  }
 }
 
 @media (max-width: 768px) {
@@ -641,5 +669,18 @@
   .themeToggleWrapper {
     top: 0.5rem;
     right: 0.5rem;
+  }
+
+  .submitButton {
+    width: 100%; /* Full width on very small screens */
+    min-width: unset;
+  }
+
+  .formActions {
+    align-items: center; /* Center items on very small screens */
+  }
+
+  .submissionStatus {
+    text-align: center; /* Center text on very small screens */
   }
 }
