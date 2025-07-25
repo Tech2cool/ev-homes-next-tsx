@@ -63,12 +63,12 @@ const ContactPage = () => {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.heroTitle}>
-              Let's Start a{" "}
+              Let&apos;s Start a{" "}
               <span className={styles.highlight}>Conversation</span>
             </h1>
             <p className={styles.heroSubtitle}>
-              We're here to help bring your vision to life. Reach out and let's
-              discuss your next project.
+              We&apos;re here to help bring your vision to life. Reach out and
+              let&apos;s discuss your next project.
             </p>
           </div>
           <div className={styles.heroGraphic}>
@@ -115,7 +115,7 @@ const ContactPage = () => {
             <div className={styles.formHeader}>
               <h2 className={styles.formTitle}>Send us a Message</h2>
               <p className={styles.formSubtitle}>
-                Fill out the form below and we'll get back to you within 24
+                Fill out the form below and we&apos;ll get back to you within 24
                 hours.
               </p>
             </div>
@@ -214,8 +214,8 @@ const ContactPage = () => {
             <div className={styles.infoCard}>
               <h3 className={styles.infoTitle}>Get in Touch</h3>
               <p className={styles.infoDescription}>
-                Ready to start your next project? We're here to help you every
-                step of the way.
+                Ready to start your next project? We&apos;re here to help you
+                every step of the way.
               </p>
 
               <div className={styles.contactMethods}>
