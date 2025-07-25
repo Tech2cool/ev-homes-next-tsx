@@ -16,6 +16,7 @@ import {
   Home,
 } from "lucide-react"; // Using Lucide React icons
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { redirect } from "next/navigation";
 
 const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
@@ -62,6 +63,7 @@ const LoginPage = () => {
       emailFormData.password === "password"
     ) {
       setLoginMessage("Login successful! Redirecting...");
+      redirect("/dashboard");
       // In a real app, you'd redirect here, e.g., router.push('/dashboard')
     } else {
       setLoginMessage("Invalid email or password.");
