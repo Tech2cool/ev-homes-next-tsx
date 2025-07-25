@@ -135,7 +135,7 @@ const ProjectShowCase = () => {
                   alt="Logo"
                   fill
                   priority
-                  quality={75}
+                  quality={90}
                 />
               </div>
               <div className={styles.rightLine}></div>
@@ -151,10 +151,10 @@ const ProjectShowCase = () => {
                     <div className={styles.footerLink} onClick={() => router.push("/")}>
                       HOME
                     </div>
-                    <div className={styles.footerLink} onClick={() => router.push("/project-showcase")}>
+                    <div className={styles.footerLink} onClick={() => router.push("/projects")}>
                       PROJECTS
                     </div>
-                    <div className={styles.footerLink} onClick={() => router.push("/project-contact-us")}>
+                    <div className={styles.footerLink} onClick={() => router.push("/contact")}>
                       CONTACT US
                     </div>
                     <div className={styles.footerLink} onClick={() => router.push("/watch")}>
@@ -185,7 +185,7 @@ const ProjectShowCase = () => {
                   <div className={styles.projectsList}>
                     {projects.slice(0, 6).map((project) => (
                       <div key={project._id} className={styles.projectLink}>
-                        <a href={`/project/${project._id}`}>{project.name}</a>
+                        <a href={`/projects`}>{project.name}</a>
                       </div>
                     ))}
                   </div>
@@ -193,15 +193,7 @@ const ProjectShowCase = () => {
               </div>
             </div>
 
-            <div className={styles.footerBottom}>
-              <div className={styles.copyright}>
-                © 2024 EV Homes. All rights reserved.
-              </div>
-              <div className={styles.socialLinks}>
-                <div className={styles.socialLink}>Privacy Policy</div>
-                <div className={styles.socialLink}>Terms of Service</div>
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>
