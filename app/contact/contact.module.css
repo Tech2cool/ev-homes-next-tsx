@@ -1,0 +1,686 @@
+.contactContainer {
+  min-height: 100vh;
+  background: var(--background); /* Base background for the whole page */
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* Theme Toggle */
+.themeToggleWrapper {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background: var(--card);
+  border-radius: 50px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 20px var(--shadow-medium); /* Using a custom shadow variable */
+  border: 1px solid var(--border);
+}
+
+/* Hero Section */
+.heroSection {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  /* Fixed dark gradient background for the hero section */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; /* Text color for hero section */
+}
+
+.heroContent {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  z-index: 2;
+}
+
+.heroText {
+  animation: slideInLeft 1s ease-out;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.highlight {
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 500px;
+}
+
+.heroGraphic {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: slideInRight 1s ease-out;
+}
+
+.floatingCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.floatingCard:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cardIcon {
+  font-size: 2rem;
+}
+
+.cardText {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.gradientOrb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  animation: float 6s ease-in-out infinite;
+}
+
+.gradientOrb:first-child {
+  width: 400px;
+  height: 400px;
+  top: 10%;
+  right: 10%;
+  animation-delay: 0s;
+}
+
+.gradientOrb:last-child {
+  width: 300px;
+  height: 300px;
+  bottom: 20%;
+  left: 10%;
+  animation-delay: 3s;
+}
+
+/* Main Content */
+.mainContent {
+  background: var(--background);
+  position: relative;
+  z-index: 3;
+  margin-top: -100px;
+  border-radius: 50px 50px 0 0;
+  padding: 6rem 2rem 4rem;
+  transition: background-color 0.3s ease;
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 6rem;
+}
+
+/* Form Section */
+.formSection {
+  background: var(--card);
+  border-radius: 30px;
+  padding: 3rem;
+  box-shadow: 0 20px 60px var(--shadow-medium);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.formHeader {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.formTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.formSubtitle {
+  font-size: 1.1rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--foreground);
+  font-size: 0.95rem;
+}
+
+.input,
+.textarea {
+  padding: 1rem 1.5rem;
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--input);
+  color: var(--foreground);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary); /* Using shadcn primary color for focus */
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Custom shadow for focus */
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end; /* Align button to the right */
+  align-items: center;
+  gap: 1.5rem; /* Space between button and status */
+  margin-top: 1rem; /* Add some top margin */
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1.25rem 2rem;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: auto; /* Allow button to size to its content */
+  min-width: 150px; /* Ensure a minimum width */
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loadingText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.submissionStatus {
+  color: var(--primary); /* Use primary color for success message */
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex-grow: 1; /* Allow status message to take available space */
+  text-align: right; /* Align text to the right */
+}
+
+/* Info Section */
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.infoCard {
+  background: var(--card);
+  border-radius: 30px;
+  padding: 3rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px var(--shadow-light);
+  transition: all 0.3s ease;
+}
+
+.infoTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+.infoDescription {
+  font-size: 1.1rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin-bottom: 3rem;
+}
+
+.contactMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.contactMethod {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.methodIcon {
+  font-size: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.methodContent {
+  flex: 1;
+}
+
+.methodTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.methodText {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+/* Stats Card */
+.statsCard {
+  background: var(--card);
+  border-radius: 30px;
+  padding: 2.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px var(--shadow-light);
+  transition: all 0.3s ease;
+}
+
+.statsTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.statItem {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(
+    --secondary
+  ); /* Using shadcn secondary for stat item background */
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.statItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px var(--shadow-light);
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+/* Map Section */
+.mapSection {
+  background: var(--background);
+  padding: 6rem 2rem;
+  transition: background-color 0.3s ease;
+}
+
+.mapHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.mapTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mapSubtitle {
+  font-size: 1.1rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.mapContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 500px; /* Fixed height for the map */
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px var(--shadow-medium);
+  border: 1px solid var(--border);
+}
+
+.mapIframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* FAQ Section */
+.faqSection {
+  background: var(
+    --secondary
+  ); /* Using shadcn secondary for FAQ section background */
+  padding: 6rem 2rem;
+  transition: background-color 0.3s ease;
+}
+
+.faqContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.faqTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--foreground);
+  margin-bottom: 4rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.faqGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.faqItem {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px var(--shadow-light);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px var(--shadow-medium);
+}
+
+.faqQuestion {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+.faqAnswer {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .contentWrapper {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .heroTitle {
+    font-size: 3rem;
+  }
+
+  .themeToggleWrapper {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .formActions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .submissionStatus {
+    text-align: right;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 1rem;
+    min-height: 80vh;
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .formSection,
+  .infoCard,
+  .statsCard {
+    padding: 2rem;
+  }
+
+  .mainContent {
+    padding: 4rem 1rem 2rem;
+    margin-top: -50px;
+  }
+
+  .faqGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mapContainer {
+    height: 350px; /* Adjust map height for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .formSection,
+  .infoCard,
+  .statsCard {
+    padding: 1.5rem;
+  }
+
+  .floatingCard {
+    padding: 1.5rem;
+  }
+
+  .themeToggleWrapper {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .submitButton {
+    width: 100%; /* Full width on very small screens */
+    min-width: unset;
+  }
+
+  .formActions {
+    align-items: center; /* Center items on very small screens */
+  }
+
+  .submissionStatus {
+    text-align: center; /* Center text on very small screens */
+  }
+}

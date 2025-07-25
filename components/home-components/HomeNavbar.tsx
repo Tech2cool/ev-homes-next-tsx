@@ -74,7 +74,7 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li className={activeSection === "projects" ? styles.active : ""}>
-            <Link href="#projects" className={styles.navLink}>
+            <Link href="/projects" className={styles.navLink}>
               <span>Projects</span>
             </Link>
           </li>
@@ -89,7 +89,7 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li className={activeSection === "about" ? styles.active : ""}>
-            <Link href="#about" className={styles.navLink}>
+            <Link href="/contact" className={styles.navLink}>
               <span>About Us</span>
             </Link>
           </li>

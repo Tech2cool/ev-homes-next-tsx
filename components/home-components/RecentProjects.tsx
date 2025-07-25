@@ -124,12 +124,12 @@ const RecentProjects = () => {
         block: "start",
       });
     }
-  }, [currentIndex, projects]);
+  }, [currentIndex, projects]); 
 
 
     return (
-      <div id="projects" className={styles.projects}>
-        <h1 className={styles.projectsHeading}>Recent Projects</h1>
+      <div id="recentProjects" className={styles.projects}>
+        <h2 className={styles.projectsHeading}>Recent Projects</h2>
         <div className={styles.projectCircles}>
           {/* projects */}
 

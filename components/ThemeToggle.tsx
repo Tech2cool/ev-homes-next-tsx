@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Assuming this path is correct for your shadcn Button
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -10,6 +10,7 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
   if (!mounted) return null;
 
   return (
