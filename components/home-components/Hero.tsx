@@ -1,29 +1,40 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import styles from "./home.module.css";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// const imageSrc = "/images/hero_bg_image_transparent.png";
 
 const Hero = () => {
   const { theme } = useTheme();
-   const imageSrc =
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent hydration mismatch by skipping image rendering until mounted
+  const imageSrc =
     theme === "dark"
       ? "/images/hero_bg_image_transparent.png"
       : "/images/Homewhitetheme.png";
+
   return (
     <div id="home" className={styles.heroBackground}>
       <div className={styles.goldenOverlay}></div>
-      {/* Sparkles behind the image */}
       <div className={styles.sparkles}></div>
 
-      <Image
+      {/* Render image only after mount to avoid hydration mismatch */}
+      {mounted && (
+        <Image
           src={imageSrc}
-        alt="Hero Background"
-        fill
-        priority
-        quality={75}
-        className={styles.image}
-      />
+          alt="Hero Background"
+          fill
+          priority
+          quality={75}
+          className={styles.image}
+        />
+      )}
+
       <div className={styles.heroContent}>
         <button
           className={styles.btn}

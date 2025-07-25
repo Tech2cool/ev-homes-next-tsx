@@ -109,6 +109,8 @@ const RecentProjects = () => {
     const {projects  } = useData();
   
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasUserSelected, setHasUserSelected] = useState(false);
+
 
   const currentProject = projects[currentIndex];
   
@@ -118,14 +120,24 @@ const RecentProjects = () => {
 
   useEffect(() => {
     if (projects.length === 0) return;
-    if ( projectDetailRef.current) {
+    if (hasUserSelected &&  projectDetailRef.current) {
       projectDetailRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-  }, [currentIndex, projects]); 
+  }, [currentIndex, hasUserSelected,projects]); 
 
+
+//  const handleNext = () => {
+//     setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
+//     setHasUserSelected(true);
+//   };
+
+//   const handlePrev = () => {
+//     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
+//     setHasUserSelected(true);
+//   };
 
     return (
       <div id="recentProjects" className={styles.projects}>
@@ -142,7 +154,7 @@ const RecentProjects = () => {
                 }`}
               onClick={() => {
                       setCurrentIndex(i);
-                      // setHasUserSelected(true);
+                      setHasUserSelected(true);
                     }}
               >
                 <div className={styles.circleTopImage}>
