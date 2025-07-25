@@ -1,4 +1,4 @@
-/* project section  */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oleo+Script:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 .projects {
   color: rgb(175, 174, 174);
@@ -8,11 +8,15 @@
   align-items: center;
   text-align: center;
   gap: 5vh;
-  padding-top: 15vh;
+  padding-top: 8vh;
 }
 
 .projectsHeading {
-  font-size: 1.5rem;
+     font-size: 1.5rem;
+     font-weight: bold;
+     font-family: Poppins, sans-serif;
+
+
 }
 
 .projectCircles {
@@ -45,10 +49,12 @@
 }
 
 .initial {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #c49b66;
   text-align: center;
+       font-family: Poppins, sans-serif;
+
 }
 
 .circle img {
@@ -76,7 +82,12 @@
 
 .projectName {
   color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   font-size: 1rem;
+  cursor: pointer;
   font-weight: 500;
   margin-top: 7vh;
 }
@@ -125,6 +136,7 @@
 
 .circleWrapper:hover .locationIcon {
   color: red;
+  padding-right: 0.2rem;
 }
 
 /* ss */
@@ -165,10 +177,10 @@
 }
 
 .selectedProjName {
-  /* font-family: "Great Vibes", cursive; */
-  font-family: "Oleo Script", system-ui;
   font-size: 2.2rem;
   font-weight: 500;
+  font-family: "Oleo Script", system-ui;
+   
 }
 
 .selectedProjIcon {
@@ -199,6 +211,10 @@
   background-color: transparent;
   cursor: pointer;
   text-decoration: none;
+    font-family: Poppins, sans-serif;
+        letter-spacing: 0.5px;  
+        font-weight: 500;
+
 }
 
 .brochure {
@@ -209,7 +225,7 @@
 
 .selectedProjLocation,
 .text1 {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin-top: 2vh;
   display: flex;
   align-items: center;
@@ -218,13 +234,15 @@
 }
 
 .text2 {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   margin-top: 2vh;
   background: linear-gradient(to bottom, #767575, #161616);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+    font-family: Poppins, sans-serif;
+
 }
 
 .imagesSection {
@@ -285,7 +303,7 @@
   margin-top: 2vh;
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #585a75;
   border: 2px solid #52546e;
   border-radius: 30px;

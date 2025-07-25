@@ -1,9 +1,15 @@
 import React from "react";
 import styles from "./home.module.css";
 import Image from "next/image";
-const imageSrc = "/images/hero_bg_image_transparent.png";
+import { useTheme } from "next-themes";
+// const imageSrc = "/images/hero_bg_image_transparent.png";
 
 const Hero = () => {
+  const { theme } = useTheme();
+   const imageSrc =
+    theme === "dark"
+      ? "/images/hero_bg_image_transparent.png"
+      : "/images/Homewhitetheme.png";
   return (
     <div id="home" className={styles.heroBackground}>
       <div className={styles.goldenOverlay}></div>
@@ -11,7 +17,7 @@ const Hero = () => {
       <div className={styles.sparkles}></div>
 
       <Image
-        src={imageSrc}
+          src={imageSrc}
         alt="Hero Background"
         fill
         priority

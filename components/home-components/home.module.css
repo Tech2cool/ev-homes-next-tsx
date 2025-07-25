@@ -5,6 +5,7 @@
   overflow-y: auto;
   scrollbar-width: none;
 }
+
 .dark {
   background-color: #0d0d0d;
   color: #ffffff;
@@ -52,6 +53,7 @@
   font-size: 1.25rem;
   color: inherit;
 }
+
 /* actual */
 .heroBackground {
   position: relative;
@@ -59,6 +61,7 @@
   height: 100vh;
   overflow: hidden;
 }
+
 .heroBackground::after {
   content: "";
   position: absolute;
@@ -120,8 +123,22 @@
   border-radius: 10px;
   background-color: #c49b66;
   box-shadow: 0px 0px 10px #c49b66;
-  animation: scroll_4013 2s linear infinite;
+  animation: bounce 1s ease-in-out infinite;
   transform: translateY(40%);
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(40%);
+  }
+
+  50% {
+    transform: translateY(0%);
+  }
+
+  100% {
+    transform: translateY(40%);
+  }
 }
 
 .btn:after {
@@ -176,16 +193,24 @@
   font-weight: 600;
   margin-bottom: 1vh;
   color: #0d0d0d;
+  font-family: Poppins, sans-serif;
 }
+
 /* Dark mode override */
 :global(html.dark) .heading {
-  color: #ffffff;
+  color: rgb(175, 174, 174);
 }
+
 
 .subtext {
   font-size: 1rem;
   color: #696767;
   width: 60vw;
+  font-family: Poppins, sans-serif;
+  text-align: center;
+  line-height: 1.5;      
+  letter-spacing: 0.5px;  
+  padding: 10px;         
 }
 
 /* .sparkles {
@@ -205,7 +230,8 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #c49b66; /* rich gold */
+  background: #c49b66;
+  /* rich gold */
   filter: drop-shadow(0 0 4px #c49b66);
   animation: twinkle 3s ease-in-out infinite;
   opacity: 0.9;
@@ -229,6 +255,7 @@
     transform: scale(1);
     opacity: 0.4;
   }
+
   100% {
     transform: scale(1.5);
     opacity: 1;
