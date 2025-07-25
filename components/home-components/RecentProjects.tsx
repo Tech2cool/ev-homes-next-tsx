@@ -3,6 +3,13 @@ import styles from "./recentProject.module.css";
 import Image from "next/image";
 import { Building2, Download, MapPin } from "lucide-react";
 import { useData } from "@/providers/dataContext";
+import { Oleo_Script } from 'next/font/google';
+
+const oleo = Oleo_Script({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
+
 // const projects: OurProject[] = [
 //   {
 //     _id: "project-ev23-malibu-west-koparkhairne-2024",
@@ -122,7 +129,7 @@ const RecentProjects = () => {
 
     return (
       <div id="projects" className={styles.projects}>
-        <h2 className={styles.projectsHeading}>Recent Projects</h2>
+        <h1 className={styles.projectsHeading}>Recent Projects</h1>
         <div className={styles.projectCircles}>
           {/* projects */}
 
@@ -160,7 +167,7 @@ const RecentProjects = () => {
                   {proj.name}
                   <br />
                   <span className={styles.location} style={{ display: "flex" }}>
-                    <MapPin className={styles.locationIcon} />
+                    <MapPin className={styles.locationIcon} size={19}/>
                     {proj.locationName || "Location Unknown"}
                   </span>
                 </span>
@@ -186,7 +193,7 @@ const RecentProjects = () => {
                 />
               </div>
               <div className={styles.rightSection}>
-                <div className={styles.selectedProjName}>
+<div className={`${oleo.className} ${styles.selectedProjName}`}>
                   {currentProject.name}
                 </div>
 

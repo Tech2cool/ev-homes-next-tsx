@@ -52,8 +52,10 @@
 }
 
 .galleryCardInfo h3 {
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #d6d2d2;
+  
 }
 
 .selectedCard {
@@ -62,6 +64,7 @@
 
 .selectedCard h3 {
   color: black;
+  
 }
 
 .mainGallery {
@@ -92,7 +95,9 @@
 }
 
 .imageText {
-  margin-top: 0.5vw;
+  margin-top: 0.5rem;
   font-size: 0.8rem;
   text-align: center;
+font-family: Poppins, sans-serif;    color: rgb(175, 174, 174);
+letter-spacing: 1px;
 }
