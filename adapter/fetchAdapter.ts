@@ -6,6 +6,8 @@ type FetchAdapterOptions = RequestInit & {
 
 type FetchAdapterResponse<T = any> = {
   data: T;
+    code?: number;
+      message?: string; 
   accessToken?: string;
   refreshToken?: string;
 };
