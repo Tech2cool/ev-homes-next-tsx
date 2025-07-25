@@ -3,7 +3,23 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import styles from "./dashboard.module.css";
-import { Home, User, Settings, Bell, Search, Calendar, MapPin, Heart, Eye, TrendingUp, LogOut, Phone, Mail, Filter } from 'lucide-react';
+import {
+  Home,
+  User,
+  Settings,
+  Bell,
+  Search,
+  Calendar,
+  MapPin,
+  Heart,
+  Eye,
+  TrendingUp,
+  LogOut,
+  Phone,
+  Mail,
+  Filter,
+} from "lucide-react";
+import DashboardSalesPage from "@/components/dashboard-components/sales/dashboard";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -67,6 +83,7 @@ const DashboardPage = () => {
       type: "Consultation",
     },
   ];
+  // return <DashboardSalesPage />;
 
   return (
     <div className={styles.dashboardContainer}>
@@ -255,7 +272,9 @@ const DashboardPage = () => {
                           <div className={styles.propertyPricing}>
                             <span
                               className={`${styles.propertyStatus} ${
-                                styles[property.status.toLowerCase().replace(" ", "")]
+                                styles[
+                                  property.status.toLowerCase().replace(" ", "")
+                                ]
                               }`}
                             >
                               {property.status}
@@ -286,7 +305,10 @@ const DashboardPage = () => {
               <div className={styles.cardContent}>
                 <div className={styles.appointmentsList}>
                   {upcomingAppointments.map((appointment) => (
-                    <div key={appointment.id} className={styles.appointmentItem}>
+                    <div
+                      key={appointment.id}
+                      className={styles.appointmentItem}
+                    >
                       <h4 className={styles.appointmentProperty}>
                         {appointment.property}
                       </h4>
