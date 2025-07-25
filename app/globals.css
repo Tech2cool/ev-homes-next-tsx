@@ -59,6 +59,23 @@ body {
     --input: 214.3 31.8% 91.4%;
     --ring: 35 91% 51%;
     --radius: 0.5rem;
+
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Chart colors - more distinct */
+    --chart-1: 12 76% 61%; /* Orange */
+    --chart-2: 173 58% 39%; /* Teal */
+    --chart-3: 220 91% 59%; /* Blue */
+    --chart-4: 291 64% 42%; /* Purple */
+    --chart-5: 47 88% 65%; /* Yellow */
   }
 
   .dark {
@@ -81,6 +98,23 @@ body {
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 35 91% 51%;
+
+    /* Sidebar colors */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Chart colors - more distinct */
+    --chart-1: 12 76% 61%; /* Orange */
+    --chart-2: 173 58% 39%; /* Teal */
+    --chart-3: 220 91% 59%; /* Blue */
+    --chart-4: 291 64% 42%; /* Purple */
+    --chart-5: 47 88% 65%; /* Yellow */
   }
 }
 
@@ -291,4 +325,9 @@ html {
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
+}
+
+.sidebar-collapsed {
+  min-width: 80px !important;
+  width: 80px !important;
 }

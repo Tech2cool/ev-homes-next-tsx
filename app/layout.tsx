@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { DataProvider } from "@/providers/dataContext";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { cookies } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,11 +22,14 @@ export const metadata: Metadata = {
   description: "Your smart real estate platform",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies(); // ✅ await here
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -35,7 +40,11 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem={true}
         >
-          <DataProvider>{children}</DataProvider>
+          <DataProvider>
+            <SidebarProvider defaultOpen={defaultOpen}>
+              {children}
+            </SidebarProvider>
+          </DataProvider>
         </ThemeProvider>
       </body>
     </html>
