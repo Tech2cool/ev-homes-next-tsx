@@ -39,7 +39,6 @@ const dataProviderContext =
 
 export function DataProvider({ children, ...props }: DataProviderProps) {
   const [projects, setProjects] = useState<OurProject[]>([]);
-
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loadingTestimonial, setLoadingTestimonial] = useState<boolean>(false);
   const [loadingProject, setLoadingProject] = useState<boolean>(false);
