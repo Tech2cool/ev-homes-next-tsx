@@ -230,7 +230,6 @@ const RecentProjects = () => {
                     <div className={styles.enquire}>Enquire Now!</div>
                   </div>
                 </div>
-
                 <div className={styles.text1}>
                   <Building2 size={25} />
                   Spacious Apartments

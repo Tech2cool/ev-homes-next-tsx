@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./contact.module.css";
 import stylesPro from "./contact.module.css";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 // import { useRouter } from "next/router";
 const projectInfo: OurProject[] = [
   {
@@ -97,16 +98,21 @@ const projectInfo: OurProject[] = [
       "https://cdn.evhomes.tech/05e35771-5741-4918-ad11-86b4a731a466-malibu_west.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjA1ZTM1NzcxLTU3NDEtNDkxOC1hZDExLTg2YjRhNzMxYTQ2Ni1tYWxpYnVfd2VzdC5qcGciLCJpYXQiOjE3NDQyNjk1MjB9.zuWDVMMWvoGdmtIOkoe-UyTFivbFAA7p7t-lygizA0g",
   },
 ];
+ 
 
 const Contact = () => {
   //   const router = useRouter();
-
+const{ theme} = useTheme();
+const bottomline=
+theme==="dark"
+?"/images/design1.png"
+:"/images/designlight.png"
   return (
     <div id="contact" className={styles.contactUs}>
       <div className={stylesPro.footerSection}>
         <div className={stylesPro.designWrapper}>
           <Image
-            src={"/images/design1.png"}
+            src={bottomline}
             alt="Design"
             fill
             priority

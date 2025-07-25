@@ -6,6 +6,10 @@
   background-repeat: no-repeat;
   z-index: 0;
   overflow: hidden;
+  
+}
+:global(html.light) .videos{
+  background: #FFFBDA;
 }
 
 .videos::before {
@@ -17,6 +21,12 @@
   height: 100px;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
   z-index: 1;
+}
+:global(html.light) .videos::before{
+  background: linear-gradient(to bottom, transparent, transparent);
+}
+:global(html.light) .videos::after{
+  background: linear-gradient(to bottom, transparent, transparent);
 }
 
 .videos::after {
@@ -30,6 +40,7 @@
   z-index: 1;
 }
 
+
 /* 2nd page  */
 
 .videos {
@@ -37,6 +48,11 @@
   color: rgb(175, 174, 174);
   /* background: linear-gradient(to bottom, #34210f, #000000); */
   background-color: rgb(15, 15, 15, 0.1);
+}
+:global(html.light) .videos{
+  color: #575757;
+  padding-top: 2vh;
+
 }
 
 .videos {
@@ -89,7 +105,7 @@
   /* background: rgba(0, 0, 0, 0.4); */
   border: none;
   color: white;
-  font-size: 2rem;
+  font-size: 20rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
   z-index: 2;
@@ -111,6 +127,11 @@
   scroll-snap-align: start;
   border-radius: 8px;
   padding: 1vh;
+}
+:global(html.light) .videoBox{
+  background-color: #c49b66;
+  
+
 }
 .testimonialVideo {
   width: 100%;

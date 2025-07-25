@@ -131,8 +131,8 @@ const Videos = () => {
                   : "/images/leftBtn.png"
               }
               alt="left"
-              width={50}
-              height={50}
+              width={500}
+              height={500}
             />
           </button>
           <div className={styles.videoGallery} ref={videoGalleryRef}>
@@ -166,8 +166,8 @@ const Videos = () => {
                   : "/images/rightBtn.png"
               }
               alt="right"
-              width={50}
-              height={50}
+              width={500}
+              height={500}
             />
           </button>
         </div>

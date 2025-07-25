@@ -91,6 +91,15 @@
 :global(html.dark) .goldenOverlay {
   background-color: rgba(12, 12, 12, 0.3);
 }
+/* Add this inside hero.module.css */
+
+:global(html.light) .container {
+  background-color: #FFFBDA;
+}
+:global(html.light) .heroBackground{
+    background-color: #fdfecd;
+
+}
 
 .heroContent {
   position: absolute;
