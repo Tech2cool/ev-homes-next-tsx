@@ -4,8 +4,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { DataProvider } from "@/providers/dataContext";
+import { UserProvider } from "@/providers/userContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cookies } from "next/headers";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,11 +42,15 @@ export default async function RootLayout({
           defaultTheme="system"
           enableSystem={true}
         >
+          <UserProvider>
+            <DataProvider>{children}</DataProvider>
+          </UserProvider>
           <DataProvider>
             <SidebarProvider defaultOpen={defaultOpen}>
               {children}
             </SidebarProvider>
           </DataProvider>
+
         </ThemeProvider>
       </body>
     </html>

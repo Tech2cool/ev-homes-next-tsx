@@ -47,3 +47,51 @@ interface Testimonial {
   date?: string | null;
   views?: Number | null;
 }
+
+//employee
+interface Employee {
+  _id?: string | null;
+  prefix?: string | null;
+  email?: string | null;
+  profilePic?: string | null;
+  employeeId?: string | null;
+  password?: string | null;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  gender?: string | null;
+  joiningDate?: Date | null;
+  dateOfBirth?: Date | null;
+  leavedDate?: Date | null;
+  address?: string | null;
+  bloodGroup?: string | null;
+  maritalStatus?: string | null;
+  department?: string | Department;
+  designation?: string | Designation;
+  division?: string | Division;
+  reportingTo?: string | Employee;
+  phoneNumber?: Number | null;
+  status?: string | null;
+  remark?: string | null;
+  refreshToken: string | null;
+}
+
+interface Department {
+  _id?: string | null;
+  department: string | null;
+}
+
+interface Designation {
+  _id?: string | null;
+  designation: string | null;
+}
+
+interface Division {
+  _id?: string | null;
+  division: string | null;
+  location: string | null;
+  name: string | null;
+  latitude: Number  | null;
+  longitude: Number  | null;
+  radius: Number  | null;
+}

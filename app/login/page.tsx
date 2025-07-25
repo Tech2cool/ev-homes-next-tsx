@@ -1,5 +1,4 @@
 "use client";
-
 import type React from "react";
 import { useState } from "react";
 import styles from "./login.module.css";
@@ -17,11 +16,15 @@ import {
 } from "lucide-react"; // Using Lucide React icons
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { redirect } from "next/navigation";
+import { useUser } from "@/providers/userContext";
+import router from "next/router";
 
 const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
     "email"
   );
+  const { login, loading, error, user } = useUser();
+
   const [emailFormData, setEmailFormData] = useState({
     email: "",
     password: "",
@@ -55,19 +58,17 @@ const LoginPage = () => {
     setIsSubmitting(true);
     setLoginMessage(null);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // console.log("Attempting login with:", emailFormData);
 
-    if (
-      emailFormData.email === "user@example.com" &&
-      emailFormData.password === "password"
-    ) {
-      setLoginMessage("Login successful! Redirecting...");
+    const result = await login(emailFormData.email, emailFormData.password);
+    // console.log("Login result:", result);
+
+    if (result.success) {
       redirect("/dashboard");
-      // In a real app, you'd redirect here, e.g., router.push('/dashboard')
     } else {
-      setLoginMessage("Invalid email or password.");
+      setLoginMessage(result.message || "Login failed.");
     }
+
     setIsSubmitting(false);
   };
 
