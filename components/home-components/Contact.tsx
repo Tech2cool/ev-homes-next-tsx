@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./contact.module.css";
 import stylesPro from "./contact.module.css";
 import Image from "next/image";
@@ -98,26 +98,32 @@ const projectInfo: OurProject[] = [
       "https://cdn.evhomes.tech/05e35771-5741-4918-ad11-86b4a731a466-malibu_west.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6IjA1ZTM1NzcxLTU3NDEtNDkxOC1hZDExLTg2YjRhNzMxYTQ2Ni1tYWxpYnVfd2VzdC5qcGciLCJpYXQiOjE3NDQyNjk1MjB9.zuWDVMMWvoGdmtIOkoe-UyTFivbFAA7p7t-lygizA0g",
   },
 ];
- 
 
 const Contact = () => {
   //   const router = useRouter();
-const{ theme} = useTheme();
-const bottomline=
-theme==="dark"
-?"/images/design1.png"
-:"/images/designlight.png"
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const bottomline =
+    theme === "dark" ? "/images/design1.png" : "/images/designlight.png";
   return (
     <div id="contact" className={styles.contactUs}>
       <div className={stylesPro.footerSection}>
         <div className={stylesPro.designWrapper}>
-          <Image
-            src={bottomline}
-            alt="Design"
-            fill
-            priority
-            quality={75}
-          />
+          {mounted && (
+            <Image
+              src={bottomline}
+              alt="Contact page"
+              fill
+              priority
+              quality={75}
+              className={styles.image}
+            />
+          )}
         </div>
         <div className={stylesPro.lineWithLogo}>
           <div className={stylesPro.leftLine}></div>
