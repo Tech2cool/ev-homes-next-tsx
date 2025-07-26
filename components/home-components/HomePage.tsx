@@ -23,7 +23,7 @@ const HomePage = () => {
       <div className={styles.container}>
         {/* navbar only for home page */}
         {/* hero */}
-        <Hero />
+        <Hero /> 
         {/* about */}
         <About />
         {/* Projects */}

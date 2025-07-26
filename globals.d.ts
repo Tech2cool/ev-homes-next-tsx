@@ -91,7 +91,147 @@ interface Division {
   division: string | null;
   location: string | null;
   name: string | null;
-  latitude: Number  | null;
-  longitude: Number  | null;
-  radius: Number  | null;
+  latitude: Number | null;
+  longitude: Number | null;
+  radius: Number | null;
 }
+
+//lead model
+interface CallNote {
+  _id?: string;
+  note: string | null;
+  date: string; // ISO date string
+  channelPartner: string | null;
+}
+
+interface CallHistory {
+  _id?: string;
+  caller: string | null;
+  callDate: string;
+  document: string | null;
+  recording: string | null;
+  remark: string | null;
+  feedback: string | null;
+  stage: string | null;
+  interestedStatus: string | null;
+  tag: string | null;
+  interestedVisit: boolean | null;
+  reminderType: string | null;
+  notes: CallNote[];
+  edited: boolean | null;
+}
+
+interface Cycle {
+  _id?: string;
+  stage: string | null;
+  currentOrder: number;
+  currentDays: number;
+  teamLeader: string | null;
+  startDate: string | null;
+  validTill: string | null;
+  internalDeadline: string | null;
+  internalDate: string | null;
+  internalCallDone: boolean | null;
+  nextTeamLeader: string | null;
+}
+
+interface Approval {
+  _id?: string;
+  employee: string;
+  approvedAt: string;
+  remark: string | null;
+}
+
+interface Update {
+  _id?: string;
+  employee: string;
+  updatedAt: string;
+  changes: string;
+  remark: string | null;
+}
+
+interface Lost {
+  _id?: string;
+  employee: string;
+  date: string;
+  remark: string | null;
+}
+
+interface ChannelPartnerHistory {
+  _id?: string;
+  channelPartner: string;
+  status: string | null;
+  stage: string | null;
+  date: string | null;
+  startDate: string | null;
+  validTill: string | null;
+  approval: Approval;
+}
+
+interface Lead {
+  _id?: string; // optional if client-side
+  email: string | null;
+  project: string[];
+  requirement: string[];
+  prefix: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  address: string | null;
+  leadType: string;
+  reference: string | null;
+  channelPartner: string | null;
+  dataAnalyzer: string | null;
+  teamLeader: string | null;
+  countryCode: string;
+  phoneNumber: number;
+  altPhoneNumber: number | null;
+  remark: string | null;
+  stage: string;
+  startDate: string;
+  validTill: string;
+  approvalStatus: string;
+  approvalRemark: string;
+  approvalDate: string | null;
+  visitStatus: string;
+  disabled: boolean;
+  firstVisit: boolean;
+  visitDate: string | null;
+  revisitDate: string | null;
+  visitRef: string | null;
+  taskRef: string | null;
+  revisitStatus: string;
+  revisitRef: string | null;
+  bookingStatus: string;
+  bookingRef: string | null;
+  followupStatus: string;
+  contactedStatus: string;
+  interestedStatus: string;
+  clientInterestedStatus: string | null;
+  clientStatus: string;
+  clientRef: string | null;
+  status: string;
+  siteVisitInterested: boolean;
+  siteVisitInterestedDate: string | null;
+  cycle: Cycle;
+  approvalHistory: Approval[];
+  updateHistory: Update[];
+  cycleHistory: Cycle[];
+  cycleHistoryNew: Cycle[];
+  callHistory: CallHistory[];
+  followupHistory: CallHistory[];
+  channelPartnerHistory: ChannelPartnerHistory[];
+  lostHistory: Lost[];
+  virtualMeetingDoc: string | null;
+  leadAssignedEmailSent: boolean;
+  feedbackPendingEmailSent: boolean;
+  createdThrough: string | null;
+}
+
+
+
+
+
+
+
+
+

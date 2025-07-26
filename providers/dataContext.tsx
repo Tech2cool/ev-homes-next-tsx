@@ -6,28 +6,104 @@ type DataProviderProps = {
   children: React.ReactNode;
 };
 
+interface PaginationProps {
+  message?: string;
+  code?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+  totalItems?: number;
+  pendingCount?: number;
+  contactedCount?: number;
+  followUpCount?: number;
+  assignedCount?: number;
+  registrationDone?: number;
+  registrationPending?: number;
+  eoiRecieved?: number;
+  cancelled?: number;
+  revenue?: number;
+  approvedCount?: number;
+  rejectedCount?: number;
+  visitCount?: number;
+  visit2Count?: number;
+  revisitCount?: number;
+  bookingCount?: number;
+  booking1Count?: number;
+  booking2Count?: number;
+  lineUpCount?: number;
+  notAssignedCount?: number;
+  notFollowUpCount?: number;
+  bulkCount?: number;
+  internalLeadCount?: number;
+
+  totalSiteVisits?: number;
+  totalVisits?: number;
+  walkInVisit?: number;
+  cpvisit?: number;
+  internalLeadsVisit?: number;
+  cpRevisit?: number;
+  walkInRevisit?: number;
+  internalLeadsRevisit?: number;
+  virtualMeeting?: number;
+  data?: any,
+}
+
+
+type FetchLeadsParams = {
+  id?: string | null | undefined;
+  query?: string;
+  page?: number;
+  limit?: number;
+  status?: string | null;
+  callData?: string | null;
+  cycle?: string | null;
+  order?: string | null;
+  clientstatus?: string | null;
+  leadstatus?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  date?: string | null;
+  member?: string | null;
+};
+
 //model
 type DataProviderState = {
   projects: OurProject[];
-  getProjects: () => void;
+  getProjects: () => Promise<{ success: boolean; message?: string }>;
 
   testimonials: Testimonial[];
-  getTestimonals: () => void;
+  getTestimonals: () => Promise<{ success: boolean; message?: string }>;
 
   loadingTestimonial: boolean;
+
+  employees: Employee[];
+  
+  leadInfo:PaginationProps| null;
+  fetchReportingToEmployees: (
+    id: string,
+    dept: string
+  ) => Promise<{ success: boolean; message?: string }>;
+  fetchSaleExecutiveLeads: (
+    params: FetchLeadsParams
+  ) => Promise<{ success: boolean; message?: string }>;
+
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 };
 
 //initial values should define here
 const initialState: DataProviderState = {
-  projects: [],
-  getProjects: () => {},
+   projects: [],
+  getProjects: async () => ({ success: false, message: "Not initialized" }),
 
   testimonials: [],
-  getTestimonals: () => {},
-
+  getTestimonals: async () => ({ success: false, message: "Not initialized" }),
   loadingTestimonial: false,
+
+  employees: [],
+  fetchReportingToEmployees: async () => ({ success: false }),
+  fetchSaleExecutiveLeads: async () => ({ success: false }),
+  leadInfo: null,
   // setLoadingTestimonial: () => {},
 
   //   setTheme: () => null,
@@ -43,6 +119,12 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [loadingTestimonial, setLoadingTestimonial] = useState<boolean>(false);
   const [loadingProject, setLoadingProject] = useState<boolean>(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
+  const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
+  const [leadInfo, setleadInfo] = useState<PaginationProps| null>(null);
+  const [leads, setleads] = useState<Lead[]>([]);
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -96,13 +178,130 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  // fetch leads for salesM/ salesEx
+  const fetchReportingToEmployees = async (id: string, dept: string) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      let url = `/api/employee-reporting/${id}`;
+      if (dept) {
+        url += `?dept=${dept}`;
+      }
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      console.log(url);
+      console.log(res);
+      setEmployees(res?.data);
+      setLoading(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // fetch leads for salesM/ salesEx
+  const fetchSaleExecutiveLeads = async ({
+    id = null,
+    query = "",
+    page = 1,
+    limit = 10,
+    status = null,
+    callData = null,
+    cycle = null,
+    order = null,
+    clientstatus = null,
+    leadstatus = null,
+    startDate = null,
+    endDate = null,
+    date = null,
+    member = null,
+  }:FetchLeadsParams): Promise<{ success: boolean; message?: string }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
+
+    try {
+      let url = `/api/leads-team-leader-reporting/${id}?query=${query}&page=${page}&limit=${limit}`;
+      if (status) {
+        url += `&status=${status}`;
+      }
+      if (callData) {
+        url += `&callData=${callData}`;
+      }
+      if (cycle) {
+        url += `&cycle=${cycle}`;
+      }
+      if (order) {
+        url += `&order=${order}`;
+      }
+      if (clientstatus) {
+        url += `&clientstatus=${clientstatus}`;
+      }
+      if (leadstatus) {
+        url += `&leadstatus=${leadstatus}`;
+      }
+      if (startDate) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate) {
+        url += `&endDate=${endDate}`;
+      }
+      if (date) {
+        url += `&date=${date}`;
+      }
+      if (member) {
+        url += `&member=${member}`;
+      }
+      console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res as PaginationProps;
+
+      setleadInfo(withoutData);
+      if (page > 1) {
+        // setleads((prev) => [...prev, ...res?.data]);
+      } else {
+        setleads(res?.data ?? []);
+      }
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
+    employees: employees,
+    leadInfo:leadInfo,
     getProjects: getProjects,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
+    fetchReportingToEmployees: fetchReportingToEmployees,
+    fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
   };
 
   return (
