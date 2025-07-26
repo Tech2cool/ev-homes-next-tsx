@@ -43,13 +43,17 @@ export default async function RootLayout({
           enableSystem={true}
         >
           <UserProvider>
-            <DataProvider>{children}</DataProvider>
+            <DataProvider> <SidebarProvider defaultOpen={defaultOpen}>
+              {children}
+                </SidebarProvider>
+              </DataProvider>
           </UserProvider>
-          <DataProvider>
+          {/* <DataProvider>
             <SidebarProvider defaultOpen={defaultOpen}>
               {children}
+
             </SidebarProvider>
-          </DataProvider>
+          </DataProvider> */}
 
         </ThemeProvider>
       </body>
