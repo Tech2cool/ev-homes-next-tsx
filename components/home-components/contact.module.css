@@ -1,12 +1,82 @@
 .contactUs {
+      position: relative;
+    overflow: hidden;
+
   height: fit-content;
   color: rgb(175, 174, 174);
-  /* background: linear-gradient(to bottom, #34210f, #000000); */
   background-color: rgb(15, 15, 15, 0.1);
 }
+ .contactUs::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    z-index: 1;
+  }
 :global(html.light) .contactUs{
-  background: #FFFBDA;
+    background-color: #fffdf8;
 }
+
+ :global(html.dark) .goldenOverlay {
+    background-color: rgba(12, 12, 12, 0.3);
+  }
+  .goldenOverlay,
+.sparkles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* <-- Prevent blocking interactions */
+  z-index: 0; /* Keep them behind content */
+}
+
+.mainFooter,
+.socialSection,
+.copyRightSection {
+  position: relative;
+  z-index: 2; /* Bring clickable items above overlays */
+}
+.sparkles::before,
+  .sparkles::after {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #c49b66;
+    /* rich gold */
+    filter: drop-shadow(0 0 4px #c49b66);
+    animation: twinkle 3s ease-in-out infinite;
+    opacity: 0.9;
+  }
+.sparkles::before, .sparkles::after { position: absolute; }
+
+  .sparkles::before {
+    box-shadow: 5vw 10vh #c49b66, 10vw 30vh #c49b66, 15vw 50vh #c49b66,
+      20vw 70vh #c49b66, 25vw 20vh #c49b66, 30vw 60vh #c49b66, 35vw 15vh #c49b66,
+      40vw 80vh #c49b66, 45vw 25vh #c49b66, 50vw 50vh #c49b66;
+  }
+
+  .sparkles::after {
+    animation-delay: 1.5s;
+    box-shadow: 55vw 10vh #c49b66, 60vw 75vh #c49b66, 65vw 35vh #c49b66,
+      70vw 20vh #c49b66, 75vw 60vh #c49b66, 80vw 30vh #c49b66, 85vw 90vh #c49b66,
+      90vw 40vh #c49b66, 95vw 70vh #c49b66, 100vw 50vh #c49b66;
+  }
+   @keyframes twinkle {
+    0% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+
+    100% {
+      transform: scale(1.5);
+      opacity: 1;
+    }
+  }
 
 .contactUsSection,
 .footerSection,
@@ -26,69 +96,229 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 0;
   position: relative;
   gap: 2rem;
 }
+.footerSection {
+    padding: 2rem 0;
 
+}
 .lineWithLogo {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   gap: 1rem;
-}
-.leftLine {
-  flex: 1;
-  height: 0.15vh;
-  background-image: linear-gradient(to left, #ccc, #0d0d0d);
-  max-width: 20vw;
-}
 
+}
+.leftLine,
 .rightLine {
   flex: 1;
-  height: 0.15vh;
-  background-image: linear-gradient(to right, #ccc, #0d0d0d);
+  height: 1px;
+  background: linear-gradient(to left, #aaa, transparent);
   max-width: 20vw;
+}
+:global(html.light) .leftLine{
+    height: 2px;
+    background: linear-gradient(to left, #c49b66, transparent);
+}
+.rightLine {
+    height: 2px;  
+  background: linear-gradient(to right, #aaa, transparent);
+}
+:global(html.light) .rightLine{
+    background: linear-gradient(to right, #c49b66, transparent);
+
 }
 
 .designWrapper {
   position: relative;
-  height: 5vh;
+  height: 6vh;
   width: 30vw;
 }
 
 .mainFooter {
+  display: flex;
   flex-direction: row;
+  justify-content: center;  
+  align-items: start;     
+  flex-wrap: wrap;
+  max-width: 1250px;
+  margin: 0 auto;
+  text-align: start; 
 }
+
 
 .quicklinks,
 .addressSection2,
 .addressSection,
 .projectsName {
+   flex: 1; 
+  min-width: 300px; 
+  max-width: 500px;
   font-size: 1rem;
-  color: #acabab;
+  line-height: 2.2rem;
   font-family: "Funnel Display", sans-serif;
-  line-height: 4.5vh;
-  padding-right: 5vw;
-  border-right: 1px solid rgb(47, 46, 46);
-  padding-left: 5vw;
   cursor: pointer;
+  color: #d1d1d1;
+  padding-left: 5rem;
+}
+.addressSection{
+     flex: 2; 
+
+}
+.quicklinks:not(:last-child),
+.addressSection:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  height: 25vh;
+}
+:global(html.light) .quicklinks:not(:last-child){
+  border-right: 2px solid #c49b66;
+}
+:global(html.light) .addressSection:not(:last-child){
+  border-right: 2px solid #c49b66;
+}
+:global(html.light) .quicklinks,
+:global(html.light) .addressSection,
+:global(html.light) .projectsName {
+  color: #4a4a4a;
 }
 
 .head2,
 .head {
   font-size: 1.5rem;
-  color: #4a4a4a;
+  color: #c49b66;
   padding-bottom: 2vh;
 }
-
+:global(html.light) .head {
+  color: #222;
+}
 .head2 {
   color: #6e6e6e;
 }
+.linkItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  justify-content: start; 
+  cursor: pointer;
+  transition: color 0.3s;
+}
 
+.linkItem:hover {
+  color: #c49b66;
+}
+.icon{
+  color: #c49b66;
+}
 .logoWrapper {
   position: relative;
-  width: 20vw;
-  height: 10vh;
+  width: 12vw;
+  height: 5vh;
 }
+.projectname {
+  display: flex;
+  flex-direction: column;
+ align-items: start;
+  
+}
+
+.projectname a {
+ 
+  font-size: 1.1rem;
+  text-decoration: none;
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  text-align: center; 
+}
+
+
+.projectname a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: #c49b66;
+  color: #c49b66;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.projectname a:hover {
+  color: #c49b66; 
+}
+
+.projectname a:hover::after {
+  width: 90%; 
+}
+.socialSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  padding-top: 1rem;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 1rem;
+}
+
+.iconCircle {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #c49b66;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+:global(html.light) .iconCircle{
+    border: 2px solid #c49b66;
+
+}
+
+.iconCircle:hover {
+  transform: scale(1.3); 
+}
+
+.iconCircle:hover img {
+   transform: scale(1); 
+}
+.copyRightSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 0 2rem 0;
+}
+
+.copyRightText {
+  font-size: 0.9rem;
+  color: #aaa;
+  text-align: center;
+}
+:global(html.light) .copyRightText{
+ color: #4a4a4a;}
+.copyRightText a {
+  color: #c49b66;
+  text-decoration: none;
+  margin-left: 4px;
+}
+:global(html.light) .copyRightText a{
+  color: #cc954d;
+}
+
+.copyRightText a:hover {
+  text-decoration: underline;
+}
+
+
+
+
