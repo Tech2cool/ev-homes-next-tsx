@@ -1,0 +1,108 @@
+.userglobal{
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px;
+    padding-left: 10px;
+    background-color:  #000000;
+    border-bottom: 1px solid grey;
+    border-radius: 15px ;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;   
+
+
+    
+}
+.userpro{
+    display: flex;
+    align-items: center;
+    gap:0.5 px;
+    margin: 1vh 0 .5vh 0vw;
+    padding-left: 1px;
+    color: #ffffffc9;
+
+}
+.usericon{
+    color: grey;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1vw;
+}
+
+.userinfo{
+    display: flex;
+    flex-direction: column;
+    
+}
+.des{
+    display: flex;
+    flex-direction: row;
+    gap:2rem ;
+}
+.role{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #d3af1f;
+    font-size:10.92px ;
+    white-space:nowrap;
+}
+
+/*togged button and content*/
+
+.toggedinfo{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+
+
+
+}
+.userbutton{
+    font-size: 2.3 vh;
+    font: 12.558px;
+    width: fit-content;
+    background-color: rgba(193, 193, 193, 0.16);
+        color: rgb(193, 193, 193);
+        border-radius: 8px;
+        border: none;
+        padding: 2vh 1vw;
+        cursor: pointer;
+        height: 3rem;
+        
+
+}
+.usertog{
+    color: #A1A1AA;
+    font-size: 2vh;
+    gap: 2vw;
+    border-radius: 8px;
+    border:none;
+    background-color:rgba(193, 193, 193, 0.16); 
+    padding: .5vh 1vw;
+    height: 3rem;
+    margin-right: 1vw;
+
+}
+.toggedinfo{
+    display: flex;
+    flex-direction: row;
+    gap: 1.5vw;
+}
+.number{
+    font-weight: 700;
+    color: white;
+    font-size: 1.5vw;
+    padding-left: 0.5px;    
+}
+#user{
+    font-weight: 700;
+}
+.arrow{
+    color: #22c55e;
+    padding-left: 2px;
+    font-weight: 700;
+    font: bold;
+
+}

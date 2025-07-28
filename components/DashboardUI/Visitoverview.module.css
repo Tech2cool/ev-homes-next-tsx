@@ -1,0 +1,99 @@
+.VisitWrapper {
+  padding: 0;
+  align-items: center;
+  width: 17vw;
+padding: 2vh 2vw;
+}
+.sectionHeader {
+  color: white;
+  font-weight: 600;
+  margin-top: 2vh;
+}
+.VisitContainer {
+  border-radius: 8px;
+  background-color: #141414;
+  align-items: center;
+  justify-content: center;
+  width: 17vw;
+  color: white;
+  height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.VisitInfo {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  justify-content: center;
+  text-align: center;
+}
+.Approved {
+  display: flex;
+  flex-direction: row;
+  gap: 3vw;
+  border-bottom: 1px solid white;
+  border-radius: 8px;
+  margin-bottom: 2vh;
+  font-size: 1.5vh;
+  padding : 1vh .1rem;
+}
+.Rejected {
+  display: flex;
+  flex-direction: row;
+  gap: 3.3vw;
+ margin-bottom: 2vh;
+  font-size: 1.5vh;
+  padding :  .1rem;
+  border-bottom: 1px solid white;
+  border-radius: 8px;
+}
+.Pending {
+  display: flex;
+  flex-direction: row;
+  gap: 3.6vw;
+  border-bottom: 1px solid white;
+  border-radius: 8px;
+    margin-bottom: 2vh;
+  font-size: 1.5vh;
+  padding : 0.5vh .1rem;
+  padding-left: 13px;
+}
+.Status{
+    padding-left: 10px;
+}
+.GreenDot{
+    background-color: green;
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    color: green;
+    font-size: 1px;
+}
+.YellowDot{
+    background-color: yellow;
+    color: yellow;
+     border-radius: 50%;
+    font-size: 1px;
+      height: 10px;
+    width: 10px;
+}
+.RedDot{
+    background-color: red;
+    color: red;
+     border-radius: 50%;
+    font-size: 1px;
+      height: 10px;
+    width: 10px;
+}
+.graphsection {
+  background-color: #0f0f0f;
+  padding: 16px;
+  border-radius: 12px;
+  width: 220px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
+
