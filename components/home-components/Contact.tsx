@@ -117,7 +117,7 @@ const Contact = () => {
           {mounted && (
             <Image
               src={bottomline}
-              alt="Contact page"
+              alt="Contact pagew"
               fill
               priority
               quality={75}

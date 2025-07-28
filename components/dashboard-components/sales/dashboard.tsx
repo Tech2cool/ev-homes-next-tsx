@@ -30,6 +30,9 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { useData } from "@/providers/dataContext";
+import { useEffect } from "react";
+import { useUser } from "@/providers/userContext";
 
 // Dummy data for charts
 const overallLeadsData = [
@@ -77,6 +80,20 @@ const walkinToBookingData = [
 export default function DashboardPage() {
   // Dummy value for admin check. In a real application, this would come from user authentication.
   const isAdmin = true;
+  const { user, loading } = useUser();
+
+  const { leadInfo, fetchSaleExecutiveLeads } = useData();
+
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("use effect dashboard");
+      fetchSaleExecutiveLeads({ id: user?._id, query: "", page: 1, limit: 10 });
+    }
+  }, [user, loading]);
+
+  if (loading || !user) {
+    return <div>Loading...</div>; // You can customize the loading state
+  }
 
   return (
     <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-6">
@@ -92,7 +109,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <OverviewCard
             title="Total Leads"
-            value="1,250"
+            value={leadInfo?.totalItems ?? 0}
             description="+20.1% from last month"
             linkHref="/dashboard/leads?status=total"
             linkText="View all leads"
@@ -101,7 +118,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="CP Visits"
-            value="450"
+            value={leadInfo?.visitCount ?? 0}
             description="+15% from last month"
             linkHref="/dashboard/leads?status=cp-visits"
             linkText="View CP visits"
@@ -110,7 +127,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Walk-in Leads"
-            value="120"
+            value={leadInfo?.visit2Count ?? 0}
             description="+5% from last month"
             linkHref="/dashboard/leads?status=walk-in"
             linkText="View walk-ins"
@@ -119,7 +136,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Internal Leads"
-            value="300"
+            value={leadInfo?.internalLeadCount ?? 0}
             description="+10% from last month"
             linkHref="/dashboard/leads?status=internal"
             linkText="View internal leads"
@@ -128,7 +145,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Bookings"
-            value="80"
+            value={leadInfo?.bookingCount ?? 0}
             description="+25% from last month"
             linkHref="/dashboard/leads?status=bookings"
             linkText="View bookings"
@@ -137,7 +154,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Bulk Leads"
-            value="15"
+            value={leadInfo?.bulkCount ?? 0}
             description="New bulk leads this week"
             linkHref="/dashboard/leads?status=bulk"
             linkText="View bulk leads"

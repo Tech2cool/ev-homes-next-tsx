@@ -75,7 +75,7 @@ const LoginPage = () => {
   const handleSendOtp = async () => {
     setIsSubmitting(true);
     setLoginMessage(null);
-    setOtpSent(false);
+    setOtpSent(false); 
 
     // Simulate OTP sending
     await new Promise((resolve) => setTimeout(resolve, 2000));
