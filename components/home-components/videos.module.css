@@ -9,7 +9,7 @@
   
 }
 :global(html.light) .videos{
-  background: #FFFBDA;
+    background-color: #fffdf8;
 }
 
 .videos::before {

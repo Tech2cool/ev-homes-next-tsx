@@ -4,7 +4,7 @@ import styles from "./projectShowcase.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useData } from "@/providers/dataContext";
-
+import Footer from "../../components/home-components/Contact";
 const ProjectShowCase = () => {
   const imageSrc = "/images/HomePageImage.png";
   const { projects } = useData();
@@ -149,8 +149,8 @@ const ProjectShowCase = () => {
             </div>
           ))}
         </div>
-
-        <div className={styles.footerSection}>
+<Footer/>
+        {/* <div className={styles.footerSection}>
           <div className={styles.footerDivider}>
             <div className={styles.designWrapper}>
               <Image
@@ -241,7 +241,7 @@ const ProjectShowCase = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
