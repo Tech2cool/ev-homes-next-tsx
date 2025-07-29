@@ -1,85 +1,4 @@
-/* Leads overview  */
-/* .mainleads {
-  display: flex;
-  flex-direction: column;
-  padding: 1vw 2vw;
-}
-.leadsoverview {
-  display:flex;
-  flex-wrap: wrap;
-  gap: 0.7vw;
 
-
-}
-.text {
-  color: #f5f5f5;
-  font-size: 2vh;
-  font-weight: 600;
-  margin-bottom: 2vh;
-}
-.cardone {
-  border: 1px solid #0264cc;
-  color: #d1d5db;
-  height: 14vh;
-  background-color: rgba(0, 123, 255, 0.1);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  padding: 2vh 2vw;
-  width: 8.2vw;
-  margin-bottom: 0.5vh;
-}
-
-
-
-.cardtwo {
-  border: 1px solid #218839;
-  background-color: rgba(40, 167, 69, 0.1);
-  height: 14vh;
-  color: #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  padding: 2vh 2vw;
-  width: 8.2vw;
-  align-items: start;
-  margin-bottom: 0.5vh;
-}
-.cardthree {
-  height: 14vh;
-  border: 1px solid #b02a37;
-  background-color: rgba(220, 53, 69, 0.1);
-  color: #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  padding: 2vh 2vw;
-  width: 8.2vw;
-  align-items: start;
-  margin-bottom: 0.5vh;
-}
-.cardfour {
-  height: 14vh;
-  border: 1px solid #c69502;
-  background-color: rgba(255, 193, 7, .1);
-  color: #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  padding: 2vh 2vw;
-  width: 8.2vw;
-  align-items: start;
-  margin-bottom: 0.5vh;
-}
-.check{
-    height: 40px;
-    width: 40px;
-    font-size: 50px;
-    
-} */
 .mainleads {
   padding-left: 2vw;
   padding-top: 1vh;
@@ -106,7 +25,7 @@
   padding: 2vh 2vw;
   color: white;
   font-weight: 600;
-  width: 12vw;
+  width: 100%;
   gap: 1vh;
   transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
@@ -146,8 +65,7 @@
   border-radius: 8px;
   border: none;
   background-color: #141414;
-  /* display: flex; */
-  /* flex-direction: column; */
+ 
 }
 .leadername {
   font-size: 15px;

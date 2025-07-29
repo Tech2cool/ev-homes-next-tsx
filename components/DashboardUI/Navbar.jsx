@@ -1,11 +1,15 @@
+"use client";
 import styles from "./navbar.module.css";
 import { MdNotifications, MdAccountCircle } from "react-icons/md";
 import Image from "next/image";
+import { useState } from "react";
+import { FaHome } from "react-icons/fa";
 
 // import evhomeslogo from "../../../../public/images/evhomeslogo_1.webp";
 const imageSrc = "/images/evhomeslogo_1.webp";
 
 function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <nav className={styles.Navbar}>
@@ -17,10 +21,19 @@ function Navbar() {
             height={45}
             priority
             quality={90}
-            className={styles.logoImage}
+            className={`${styles.logoImage} ${styles.MobileNavbarLogo}`}
           />
         </div>
-        <ul className={styles.navlinks}>
+        <div className={styles.HomeMenu} onClick={() => setIsOpen(!isOpen)}>
+          <FaHome />
+        </div>
+        <ul className={`${styles.navlinks} ${styles.InsideNav}  ${isOpen ? styles.show : ""}`}>
+          <div
+            className={styles.MobileHomeIcon}
+            onClick={() => setIsOpen(false)}
+          >
+            <FaHome />
+          </div>
           <li>
             <a href="#">Home</a>
           </li>
@@ -38,8 +51,8 @@ function Navbar() {
           </li>
         </ul>
         <div className={styles.icons}>
-          <MdNotifications size={24}  className={styles.iconone} />
-          <MdAccountCircle size={24}   className={styles.icontwo}/>
+          <MdNotifications size={24} className={styles.iconone} />
+          <MdAccountCircle size={24} className={styles.icontwo} />
         </div>
       </nav>
     </>

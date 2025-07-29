@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "./DashboardNavbar/Navbar";
+import Navbar from "../../DashboardUI/Navbar";
 import Userprofile from "../../DashboardUI/Userprofile";
 import "../../DashboardUI/Main.module.css";
 import styles from "../../DashboardUI/Dashboardtwo.module.css";
@@ -15,7 +15,7 @@ function DashboardTwo() {
       <div className={styles.container}>
         <Selectsection />
         <Leadsoverview />
-        <VisitOverview />
+        <VisitOverview />=
       </div>
     </div>
   );
