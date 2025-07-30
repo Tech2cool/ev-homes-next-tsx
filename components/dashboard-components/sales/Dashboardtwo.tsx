@@ -15,7 +15,7 @@ function DashboardTwo() {
       <div className={styles.container}>
         <Selectsection />
         <Leadsoverview />
-        <VisitOverview />=
+        <VisitOverview />
       </div>
     </div>
   );

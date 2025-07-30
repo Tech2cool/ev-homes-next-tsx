@@ -1,108 +1,247 @@
-.userglobal{
-    display: flex;
-    flex-direction: column;
-    padding-top: 70px;
-    padding-left: 10px;
-    background-color:  #000000;
-    border-bottom: 1px solid grey;
-    border-radius: 15px ;
-    justify-content: space-between;
-    padding-bottom: 0.5rem;   
-
-
-    
+.userglobal {
+  display: flex;
+  flex-direction: column;
+  padding-top: 50px;
+  padding-left: 10px;
+  background-color: #000000;
+  border-bottom: 1px solid grey;
+  border-radius: 15px;
+  justify-content: space-between;
 }
-.userpro{
-    display: flex;
-    align-items: center;
-    gap:0.5 px;
-    margin: 1vh 0 .5vh 0vw;
-    padding-left: 1px;
-    color: #ffffffc9;
-
+.userpro {
+  display: flex;
+  align-items: center;
+  gap: 0.5 px;
+  padding-left: 1px;
+  color: white;
+  font-weight: 700;
 }
-.usericon{
-    color: grey;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 1vw;
+.usericon {
+  color: grey;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 2px;
 }
 
-.userinfo{
-    display: flex;
-    flex-direction: column;
-    
+.userinfo {
+  display: flex;
+  flex-direction: column;
 }
-.des{
-    display: flex;
-    flex-direction: row;
-    gap:2rem ;
+.des {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
 }
-.role{
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: #d3af1f;
-    font-size:10.92px ;
-    white-space:nowrap;
+.role {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #d3af1f;
+  font-size: 10.92px;
+  white-space: nowrap;
 }
 
 /*togged button and content*/
 
-.toggedinfo{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
+.toggedinfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+.userbutton {
+  font-size: 2.3 vh;
+  font: 12.558px;
+  width: fit-content;
+  background-color: rgba(193, 193, 193, 0.16);
+  color: rgb(193, 193, 193);
+  border-radius: 8px;
+  border: none;
+  padding: 2vh 1vw;
+  cursor: pointer;
+  height: 3rem;
+}
+.usertog {
+  color: #a1a1aa;
+  font-size: 2vh;
+  gap: 2vw;
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(193, 193, 193, 0.16);
+  padding: 0.5vh 1vw;
+  height: 4rem;
+  margin-right: 1vw;
+}
+.toggedinfo {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5vw;
+}
+.number {
+  font-weight: 700;
+  color: white;
+  font-size: 1.5vw;
+  padding-left: 0.5px;
+}
+#user {
+  font-weight: 700;
+}
+.arrow {
+  color: #22c55e;
+  padding-left: 2px;
+  font-weight: 700;
+  font: bold;
+}
+
+.usericon {
+  font-size: 90px;
+}
+/* small laptop responsive */
+@media screen and (max-width: 1024px) {
+    .userglobal{
+        padding-top: 20px;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+  .userpro {
+    padding-top: 0%;
+    margin-bottom: 0%;
+  }
+  .userinfo {
     width: 100%;
-
-
-
-}
-.userbutton{
-    font-size: 2.3 vh;
-    font: 12.558px;
-    width: fit-content;
-    background-color: rgba(193, 193, 193, 0.16);
-        color: rgb(193, 193, 193);
-        border-radius: 8px;
-        border: none;
-        padding: 2vh 1vw;
-        cursor: pointer;
-        height: 3rem;
-        
-
-}
-.usertog{
-    color: #A1A1AA;
-    font-size: 2vh;
-    gap: 2vw;
-    border-radius: 8px;
-    border:none;
-    background-color:rgba(193, 193, 193, 0.16); 
-    padding: .5vh 1vw;
-    height: 3rem;
-    margin-right: 1vw;
-
-}
-.toggedinfo{
-    display: flex;
-    flex-direction: row;
-    gap: 1.5vw;
-}
-.number{
+  }
+  .usericon {
+    font-size: 150px;
+  }
+  .user {
+    font-size: 2.5vw;
     font-weight: 700;
     color: white;
+  }
+  .role {
     font-size: 1.5vw;
-    padding-left: 0.5px;    
+    padding-left: 5px;
+  }
+  .userbutton {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7vh;
+  }
+  .toggedinfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    font-weight: 100;
+  }
+  .usertog {
+    display: block;
+    align-items: center;
+    justify-content: center;
+    height: 8vh;
+  }
 }
-#user{
+
+/* tablet responsive */
+
+@media screen and (max-width: 768px) {
+    .userglobal{
+        padding-top:0;
+        padding-bottom: 0;
+    }
+  .userpro {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1vh 0;
+    width: 100%;
+    align-items: center;
+    margin-top: 0;
+    height: auto;
+    max-height: fit-content;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .userinfo {
     font-weight: 700;
+    color: white;
+    margin: 1vh 0 0.5vh 1vw;
+  }
+  .userbutton {
+    font-size: 2.3vh;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    white-space: nowrap;
+    margin-left: 10px;
+  }
+  .usertog {
+    font-size: 2vh;
+    gap: 2vw;
+    height: 5rem;
+    white-space: nowrap;
+  }
+  .number {
+    font-size: 32px;
+    padding-left: 1px;
+    margin-left: 1px;
+  }
+  .usericon {
+    font-size: 200px;
+    margin-bottom: 1px;
+  }
+  .user {
+    font-size: 3vh;
+  } 
+  .role {
+    font-size: 2vh;
+  }
 }
-.arrow{
-    color: #22c55e;
-    padding-left: 2px;
-    font-weight: 700;
-    font: bold;
+
+/* mobile responsive */
+@media screen and (max-width: 425px) {
+  .userglobal {
+    margin-top: 0%;
+    margin-bottom: 0% !important;
+    padding-left: 0;
+    border: none ;
+  }
+  .userpro {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    padding: 0 !important;
+    margin: 0 !important  ;
+    padding-left: 0;
+    padding-right:0;
+
+  }
+  .user {
+    font-size: 2vh;
+    font-weight: 600;
+  }
+  .userbutton{
+    display: none !important;
+  }
+  .role{
+    font-size: 1.2vh;
+  }
+  .userinfo{
+    padding-left: 1px;
+    margin-left: 1px;
+  }
+  .usericon{
+    margin-left: 1px;
+  }
+  .usertog{
+    font-size: .8rem;
+    
+  }
+  
 
 }

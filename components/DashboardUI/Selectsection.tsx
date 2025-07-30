@@ -3,7 +3,7 @@ function Selectsection(){
     return(
         <>
         <div className={styles.mainselect }>
-            <p>Select Section</p>
+            <p className={styles.SelectHeader}>Select Section</p>
             <div className={styles.selectlinks}>
 
             <div><a href="#">Overview</a></div>

@@ -21,19 +21,35 @@ function Navbar() {
             height={45}
             priority
             quality={90}
-            className={`${styles.logoImage} ${styles.MobileNavbarLogo}`}
+            className={styles.logoImage}
           />
         </div>
         <div className={styles.HomeMenu} onClick={() => setIsOpen(!isOpen)}>
-          <FaHome />
+          <FaHome size={20} />        
         </div>
-        <ul className={`${styles.navlinks} ${styles.InsideNav}  ${isOpen ? styles.show : ""}`}>
+        <ul
+          className={`${styles.navlinks} ${styles.InsideNav} ${
+            isOpen ? styles.show : ""
+          }`}
+        >
           <div
-            className={styles.MobileHomeIcon}
+            className={styles.HomeNavbarLogo}
             onClick={() => setIsOpen(false)}
           >
-            <FaHome />
+            <FaHome size={30} color="white" />
           </div>
+          <div className={styles.MobileNavbarLogo}>
+            <Image
+              src={imageSrc || "/placeholder.svg"}
+              alt="EV Homes Logo"
+              width={150}
+              height={80}
+              priority
+              quality={90}
+              className={styles.MobileNavbarLogoImage}
+            />
+          </div>
+
           <li>
             <a href="#">Home</a>
           </li>
