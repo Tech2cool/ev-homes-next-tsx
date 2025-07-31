@@ -82,12 +82,19 @@ export default function DashboardPage() {
   const isAdmin = true;
   const { user, loading } = useUser();
 
-  const { leadInfo, fetchSaleExecutiveLeads } = useData();
+  const {
+    leadInfo,
+    fetchSaleExecutiveLeads,
+    siteInfo,
+    fetchDataAnalyzerVisits,
+  } = useData();
 
   useEffect(() => {
     if (user && !loading) {
       console.log("use effect dashboard");
       fetchSaleExecutiveLeads({ id: user?._id, query: "", page: 1, limit: 10 });
+      fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
+
     }
   }, [user, loading]);
 
@@ -111,7 +118,7 @@ export default function DashboardPage() {
             title="Total Leads"
             value={leadInfo?.totalItems ?? 0}
             description="+20.1% from last month"
-            linkHref="/dashboard/leads?status=total"
+            linkHref="/visit-details"
             linkText="View all leads"
             icon={Users}
             iconColorClass="text-blue-500"
@@ -170,7 +177,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <OverviewCard
             title="Total Visits"
-            value="600"
+            value= {siteInfo?.totalItems?? 0}
             description="+10% from last month"
             linkHref="/dashboard/visits?status=total"
             linkText="View all visits"
@@ -179,7 +186,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Virtual Meetings"
-            value="250"
+            value="0"
             description="+8% from last month"
             linkHref="/dashboard/visits?status=virtual"
             linkText="View virtual meetings"
@@ -188,17 +195,17 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Physical Visits"
-            value="350"
+            value={siteInfo?.visitCount?? 0}
             description="+12% from last month"
             linkHref="/dashboard/visits?status=physical"
             linkText="View physical visits"
             icon={Home}
             iconColorClass="text-cyan-500"
           />
-          <OverviewCard
+          <OverviewCard 
             title="Revisits"
-            value="90"
-            description="+7% from last month"
+            value={siteInfo?.revisitCount?? 0}
+             description="+7% from last month"
             linkHref="/dashboard/visits?status=revisits"
             linkText="View revisits"
             icon={ArrowRight}

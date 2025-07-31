@@ -227,11 +227,39 @@ interface Lead {
   createdThrough: string | null;
 }
 
-
-
-
-
-
-
-
-
+interface SiteVisit {
+  _id?: string | null;
+  date?: Date | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  phoneNumber?: numbe | null;
+  altPhoneNumber?: number | null;
+  countryCode?: string | null;
+  email?: string | null;
+  residence?: string | null;
+  visitType?: string | null;
+  projects: OurProject[] | null;
+  location?: OurProject | null;
+  choiceApt: string[] | null;
+  closingManager?: Employee | null;
+  callBy?: Employee | null;
+  entryBy?: Employee | null;
+  // channelPartner?: ChannelPartner | null;
+  closingTeam: Employee[] | null;
+  attendedBy?: Employee | null;
+  dataEntryBy?: Employee | null;
+  gender?: string | null;
+  feedback?: string | null;
+  cpfeedback?: string | null;
+  namePrefix?: string | null;
+  source?: string | null;
+  verified: boolean | null;
+  virtualMeetingDoc?: string | null;
+  approvalStatus?: string | null;
+  createdThrough?: string | null;
+  approvalRemark?: string | null;
+  approveBy?: Employee | null;
+  approvalDate?: Date | null;
+  dataAnalyzer?: Employee | null;
+  lead?: Lead | null;
+}

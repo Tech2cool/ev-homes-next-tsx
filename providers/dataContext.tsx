@@ -35,7 +35,6 @@ interface PaginationProps {
   notFollowUpCount?: number;
   bulkCount?: number;
   internalLeadCount?: number;
-
   totalSiteVisits?: number;
   totalVisits?: number;
   walkInVisit?: number;
@@ -66,6 +65,18 @@ type FetchLeadsParams = {
   member?: string | null;
 };
 
+//site visit
+type SiteVisitParams = {
+  query?: string;
+  page?: number;
+  limit?: number;
+  status?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  date?: string | null;
+};
+
+
 //model
 type DataProviderState = {
   projects: OurProject[];
@@ -87,6 +98,15 @@ type DataProviderState = {
     params: FetchLeadsParams
   ) => Promise<{ success: boolean; message?: string }>;
 
+
+
+  siteInfo : PaginationProps| null; 
+  visits : SiteVisit[]| null; 
+
+ fetchDataAnalyzerVisits: (
+   params:SiteVisitParams
+  ) => Promise<{ success: boolean; message?: string }>;
+
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 };
@@ -104,6 +124,11 @@ const initialState: DataProviderState = {
   fetchReportingToEmployees: async () => ({ success: false }),
   fetchSaleExecutiveLeads: async () => ({ success: false }),
   leadInfo: null,
+
+
+  fetchDataAnalyzerVisits: async()=>({success:false}),
+  siteInfo:null,
+  visits:null,
   // setLoadingTestimonial: () => {},
 
   //   setTheme: () => null,
@@ -125,6 +150,16 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
   const [leadInfo, setleadInfo] = useState<PaginationProps| null>(null);
   const [leads, setleads] = useState<Lead[]>([]);
+
+  
+  const [loadingVisits, setLoadingVisits] = useState<boolean>(false);
+  const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
+  const [siteInfo, setVisitInfo] = useState<PaginationProps| null>(null);
+  const [visits, setVisits] = useState<SiteVisit[]>([]);
+  
+
+
+
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -291,17 +326,81 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+
+  //fetch data analyzer visits data
+    const fetchDataAnalyzerVisits = async ({
+    query = "",
+    page = 1,
+    limit = 10,
+    status = null,
+    startDate = null,
+    endDate = null,
+    date = null,
+  }:SiteVisitParams): Promise<{ success: boolean; message?: string }> => {
+    if (page === 1) {
+      setLoadingVisits(true);
+    } else {
+      setFetchingMoreVisits(true);
+    }
+    setError("");
+
+    try {
+      let url = `/api/site-visit-search-dta?query=${query}&page=${page}&limit=${limit}`;
+      if (status) {
+        url += `&status=${status}`;
+      }
+      if (date) {
+        url += `&date=${date}`;
+      }
+      if (startDate) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate) {
+        url += `&endDate=${endDate}`;
+      }
+
+      console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res;
+
+      setVisitInfo(withoutData);
+      if (page > 1) {
+        setVisits((prev) => [...prev, ...res?.data]);
+      } else {
+        setVisits(res?.data ?? []);
+      }
+      setFetchingMoreVisits(false);
+      setLoadingVisits(false);
+
+      return { success: true };
+    } catch (err:any) {
+      setError(err.message);
+      setFetchingMoreVisits(false);
+      setLoadingVisits(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreVisits(false);
+      setLoadingVisits(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
     employees: employees,
     leadInfo:leadInfo,
+    siteInfo:siteInfo,
+    visits:visits, 
     getProjects: getProjects,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
+    fetchDataAnalyzerVisits:fetchDataAnalyzerVisits
   };
 
   return (
