@@ -13,11 +13,9 @@
   padding-bottom: 21vh;
   font-weight: 700;
 }
-.SelectHeader{
+.SelectHeader {
   font-weight: 700;
   font-size: 3vh;
-  
-
 }
 .selectlinks {
   display: flex;
@@ -31,7 +29,7 @@
   padding: 12px 16px;
   border: none;
   border-radius: 8px;
-  text-align:start;
+  text-align: start;
   cursor: pointer;
   font-size: 2.5vh;
   margin: 2vh 0 0;
@@ -39,26 +37,88 @@
   width: 18vw;
   transition: background-color 0.3 ease;
 }
-.selectlinks a:hover{
-    background-color:#2e2e2e;
- 
+.selectlinks a:hover {
+  background-color: #2e2e2e;
 }
 /* laptop 1024 responsive */
-@media screen  and (max-width:1024px){
-  .SelectHeader{
+@media screen and (max-width: 1024px) {
+  .SelectHeader {
     font-size: 2.5vh;
   }
-  .selectlinks a{
+  .selectlinks a {
     font-size: 2.5vh;
-
     gap: 1px;
   }
-  .selectlinks{
+  .selectlinks {
     gap: 1px;
     width: 20vw;
   }
+}
+/* tablet responsive*/
+@media screen and (max-width: 768px) {
+  .selectlinks {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1vh;
+  }
+}
+/* mobile responsive */
+@media screen and (max-width: 425px) {
+  .mainselect {
+    display: flex;
+    flex-direction: row;
+    border-right: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 5vh;
+    padding: 0.5vh 0;
+    margin: 0;
+    border-radius: 0;
+    border-right: 0;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
 
- 
+  .selectlinks {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0vh;
+    padding: 0 1rem;
+  }
+  .selectlinks a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.7vh;
+    font-weight: 300;
+    border: none;
+    color: #898a8a;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: none;
+    border: none;
+  }
+  .SelectHeader {
+    display: none;
+  }
+}
+/* responsive for mobile medium */
+@media screen and (max-width:375px){
+  .mainselect{
+    margin-top: 3vh;
+  }
 
-
+}
+/* responsive for small mobile */
+@media  screen and (max-width:320px) {
+  .mainselect{
+    display: flex;
+    flex-direction: row;
+  }
+  
 }

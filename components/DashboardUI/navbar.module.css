@@ -123,6 +123,8 @@ body {
 @media screen and (max-width: 425px) {
   .HomeMenu {
     display: block;
+    margin-top: 0;
+    padding-top: 0;
   }
   .navlinks {
     display: none !important;
@@ -175,6 +177,10 @@ body {
 .icons{
   margin-right: 2px;
   gap: 3vw;
+}
+/* mobile responsive 425 */
+@media screen and (max-width:425px){
+  
 }
 
 /* Tablet responsive */

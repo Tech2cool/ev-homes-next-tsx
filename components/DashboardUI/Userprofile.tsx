@@ -12,8 +12,8 @@ function Userprofile() {
         <div className={styles.userinfo}>
           <p className={styles.user}>testing user 2</p>
           <div className={styles.role}>
-            <FaIdCard color="#f1c40f" size={20} />
-            <span>Sourcing Manager</span>
+            <FaIdCard color="#f1c40f" size={20}  className={styles.MobileRoleIcon}/>
+            <span>Sourcing <br className={styles.MobileBreakOne}/> Manager</span>
           </div>
         </div>
 
@@ -21,8 +21,8 @@ function Userprofile() {
           <button className={styles.userbutton}>Add Client Tagging</button>
 
           <div className={styles.usertog}>
-            <p>
-              Leads Togged Today <span className={styles.arrow}>↑22</span>
+            <p className={styles.FirstUserTog}>
+              Leads Tagged <br className={styles.MobileBreakTwo}/> Today  <span className={styles.arrow}>↑ <br  className={styles.MobileBreakThree}/> 22</span>
             </p>
             <h3 className={styles.number}>142</h3>
           </div>

@@ -51,6 +51,9 @@
   width: 100%;
 }
 .userbutton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 2.3 vh;
   font: 12.558px;
   width: fit-content;
@@ -72,6 +75,10 @@
   padding: 0.5vh 1vw;
   height: 4rem;
   margin-right: 1vw;
+}
+.FirstUserTog {
+  display: flex;
+  justify-content: space-between;
 }
 .toggedinfo {
   display: flex;
@@ -97,13 +104,23 @@
 .usericon {
   font-size: 90px;
 }
+.MobileBreakOne {
+  display: none;
+}
+.MobileBreakTwo {
+  display: none;
+}
+.MobileBreakThree {
+  display: none;
+}
 /* small laptop responsive */
 @media screen and (max-width: 1024px) {
-    .userglobal{
-        padding-top: 20px;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
+  .userglobal {
+    padding-top: 20px;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    height: 16vh;
+  }
   .userpro {
     padding-top: 0%;
     margin-bottom: 0%;
@@ -133,25 +150,27 @@
   .toggedinfo {
     display: flex;
     align-items: center;
-    justify-content: center;
     font-size: 50px;
     font-weight: 100;
+    margin-right: 1vw;
   }
   .usertog {
     display: block;
     align-items: center;
     justify-content: center;
     height: 8vh;
+    margin-right: 2px;
   }
 }
 
 /* tablet responsive */
 
-@media screen and (max-width: 768px) {
-    .userglobal{
-        padding-top:0;
-        padding-bottom: 0;
-    }
+@media screen and (min-width: 768px) and (max-width: 1023) {
+  .userglobal {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 20vh;
+  }
   .userpro {
     display: flex;
     flex-direction: row;
@@ -159,10 +178,10 @@
     padding: 1vh 0;
     width: 100%;
     align-items: center;
-    margin-top: 0;
+    margin-top: 0%;
     height: auto;
     max-height: fit-content;
-    padding-top: 0;
+    padding-top: 3vh;
     padding-bottom: 0;
   }
   .userinfo {
@@ -174,40 +193,55 @@
     font-size: 2.3vh;
     display: flex;
     align-items: center;
-    width: 100%;
+    max-width: fit-content;
     white-space: nowrap;
-    margin-left: 10px;
   }
   .usertog {
-    font-size: 2vh;
+    font-size: 19px;
     gap: 2vw;
-    height: 5rem;
+    height: 4.3rem;
     white-space: nowrap;
+    width: fit-content;
   }
+  .FirstUserTog {
+    display: flex;
+    gap: 1vw;
+  }
+
   .number {
-    font-size: 32px;
+    font-size: 20px;
     padding-left: 1px;
     margin-left: 1px;
   }
   .usericon {
-    font-size: 200px;
+    font-size: 150px;
+    width: 150px;
     margin-bottom: 1px;
+    margin-right: 1px;
   }
+
   .user {
-    font-size: 3vh;
-  } 
+    font-size: 2vh;
+    margin-left: 1px;
+  }
   .role {
     font-size: 2vh;
+    font-weight: 200;
   }
 }
 
-/* mobile responsive */
-@media screen and (max-width: 425px) {
+/* mobile responsive  large*/
+@media screen and (min-width: 425px) and (max-width: 767px) {
+  .usericon {
+    font-size: 100px;
+  }
   .userglobal {
     margin-top: 0%;
     margin-bottom: 0% !important;
     padding-left: 0;
-    border: none ;
+    border: none;
+    padding-bottom: 0;
+    height: 15vh;
   }
   .userpro {
     width: 100%;
@@ -216,32 +250,143 @@
     align-items: center;
     border-radius: 20px;
     padding: 0 !important;
-    margin: 0 !important  ;
+    margin: 0 !important;
     padding-left: 0;
-    padding-right:0;
-
+    padding-right: 0;
   }
   .user {
     font-size: 2vh;
     font-weight: 600;
+    padding-left: 1px;
   }
-  .userbutton{
+  .userbutton {
     display: none !important;
   }
-  .role{
+  .role {
     font-size: 1.2vh;
   }
-  .userinfo{
+  .userinfo {
     padding-left: 1px;
     margin-left: 1px;
+    padding-top: 5vh;
   }
-  .usericon{
-    margin-left: 1px;
+  .usericon {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 5vh;
   }
-  .usertog{
-    font-size: .8rem;
-    
+  .usertog {
+    font-size: 15px;
+    margin-top: 5vh;
+    padding-bottom: 2vh !important;
+    height: 6vh;
+    margin-right: 0;
+    max-width: fit-content;
   }
-  
+  .FirstUserTog {
+    display: flex;
+    justify-content: space-between;
+  }
 
+  .arrow {
+    margin-left: auto;
+  }
+  .MobileRoleIcon {
+    height: 20px;
+    width: 15px;
+  }
+  .number {
+    font-size: 20px;
+  }
+}
+/* mobile responsive  medium*/
+@media screen and (max-width: 375px) {
+  .userglobal {
+    margin-top: 0%;
+    margin-bottom: 0% !important;
+    padding-left: 0;
+    border: none;
+    padding-bottom: 0;
+  }
+  .userpro {
+    display: flex;
+    width: 100%;
+  }
+  .role {
+    font-size: 12px;
+  }
+  .usertog {
+    height: 9vh;
+  }
+  .MobileBreakOne {
+    display: block;
+  }
+  .MobileBreakTwo {
+    display: block;
+  }
+  .MobileBreakThree {
+    display: block;
+  }
+  .userbutton {
+    display: none;
+  }
+}
+
+/* 4k responsive  */
+@media screen and (min-width: 2560px) {
+  .userglobal {
+    display: flex;
+    flex-direction: column;
+    padding-top: 40px;
+    padding-left: 10px;
+    background-color: #000000;
+    border-bottom: 1px solid grey;
+    border-radius: 30px;
+    justify-content: space-between;
+    height: 17vh;
+  }
+  .userpro {
+    padding-top: 0%;
+    margin-bottom: 0%;
+    margin-top: 3vh;
+  }
+  .userinfo {
+    width: 100%;
+  }
+  .usericon {
+    font-size: 150px;
+    height: 7vh;
+    width: 10vw;
+  }
+  .user {
+    font-size: 2.5vw;
+    font-weight: 500;
+    color: white;
+  }
+  .role {
+    font-size: 1.5vw;
+    padding-left: 5px;
+    font-weight: 300;
+  }
+  .userbutton {
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7vh;
+  }
+  .toggedinfo {
+    display: flex;
+    align-items: center;
+    font-size: 50px;
+    font-weight: 100;
+    margin-right: 1vw;
+  }
+  .usertog {
+    display: block;
+    align-items: center;
+    justify-content: center;
+    height: 8vh;
+    margin-right: 2px;
+  }
 }
