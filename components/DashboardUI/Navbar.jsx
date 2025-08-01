@@ -4,12 +4,13 @@ import { MdNotifications, MdAccountCircle } from "react-icons/md";
 import Image from "next/image";
 import { useState } from "react";
 import { FaHome } from "react-icons/fa";
+import { Map } from "lucide-react"; 
 
-// import evhomeslogo from "../../../../public/images/evhomeslogo_1.webp";
 const imageSrc = "/images/evhomeslogo_1.webp";
 
-function Navbar() {
+function Navbar() {  
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <nav className={styles.Navbar}>
@@ -24,8 +25,9 @@ function Navbar() {
             className={styles.logoImage}
           />
         </div>
+
         <div className={styles.HomeMenu} onClick={() => setIsOpen(!isOpen)}>
-          <FaHome size={20} />        
+          <FaHome size={28} />        
         </div>
         <ul
           className={`${styles.navlinks} ${styles.InsideNav} ${
@@ -49,7 +51,6 @@ function Navbar() {
               className={styles.MobileNavbarLogoImage}
             />
           </div>
-
           <li>
             <a href="#">Home</a>
           </li>
@@ -66,12 +67,14 @@ function Navbar() {
             <a href="#">Attendance</a>
           </li>
         </ul>
+
         <div className={styles.icons}>
-          <MdNotifications size={24} className={styles.iconone} />
-          <MdAccountCircle size={24} className={styles.icontwo} />
+          <MdNotifications  className={styles.iconone} />
+          <MdAccountCircle  className={styles.icontwo} />
         </div>
       </nav>
     </>
   );
 }
+
 export default Navbar;

@@ -36,7 +36,7 @@ body {
   display: flex;
   flex-direction: row;
   gap: 1vw;
-  font-size: 3vh;
+  font-size: 25px;
   margin: 0px 32px 0px 0px;
   cursor: pointer;
   transition: background-color 0.3 ease;
@@ -118,16 +118,19 @@ body {
 .MobileNavbarLogo {
   display: none;
 }
-/* mobile responsive */
+/* mobile responsive  320*/
 
-@media screen and (max-width: 425px) {
+@media screen and (min-width: 50px) and (max-width: 600px) {
+  .Navbar{
+    height: 4vh;
+  }
   .HomeMenu {
     display: block;
     margin-top: 0;
     padding-top: 0;
   }
   .navlinks {
-    display: none !important;
+    display: none;
     justify-content: flex-start;
     align-items: start;
     position: fixed;
@@ -139,7 +142,7 @@ body {
     border-radius: 0 30px 30px 0;
     border-right: 5px solid #141414;
     color: #bebdbd;
-    width: 220px;
+    width: 15rem;
     height: 100vh;
     padding: 10px;
     z-index: 1000;
@@ -155,7 +158,7 @@ body {
   }
 
   .show {
-    display: flex !important; 
+    display: flex !important;
   }
   .logo {
     display: none;
@@ -174,53 +177,107 @@ body {
     padding-left: 1.5rem;
   }
 }
-.icons{
+.icons {
   margin-right: 2px;
   gap: 3vw;
 }
-/* mobile responsive 425 */
-@media screen and (max-width:425px){
-  
-}
-
-/* Tablet responsive */
-
-@media screen and (max-width: 768px) {
+/* responsive for tablet and  laptop  */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
   .Navbar {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: space-between !important;
-    padding: 0.6rem 0.7rem;
-    color: white;
-    position: fixed;
+    background-color: #000000;
+    font-size: 12px;
+    justify-content: space-between;
     height: 60px;
-    top: 0;
-    left: 0;
+    padding: 0.6rem 0.7rem;
+    color: #ffffffc9;
+    position: fixed;
     width: 100%;
     z-index: 1000;
-    background-color: transparent;
-    font-size: 13px;
   }
   .navlinks {
     display: flex;
-    align-items: center;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    gap: 1px;
+    flex-direction: row;
+    gap: 0vh;
+  }
+  .navlogo {
+    height: 50px;
+  }
+  .icons {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    font-size: 3vh;
+    margin: 0px 32px 0px 0px;
+    cursor: pointer;
+    transition: background-color 0.3 ease;
+  }
+  /*navbar logo *
+  /*navbar element style*/
+  .navlinks li a {
+    position: relative;
+    text-decoration: none;
+    color: white;
+    font-weight: 200;
+    display: inline-block;
+    transition: font-weight 0.2s ease;
   }
 
-}
-/* small laptop responsive */
-@media screen and (max-width: 1020px){
-.navlinks {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    gap:1vw;
+  /*icons style*/
+  .icons {
+    margin-right: 2px;
   }
+}
+
+/* responsive for 1025 to 1440 */
+@media  screen and (min-width:1025px) and (max-width:1636px) {
+  .Navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #000000;
+  font-size: 2.5vh;
+  font-weight: 200;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0.6rem 0.7rem;
+  color: #ffffffc9;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+.icons{
+  gap: 1vw;
+} 
+}
+/* responsive for 1636 to 2560*/
+@media screen and (min-width:1636) and (max-width:2560){
+  .Navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #000000;
+  font-size: 2.5vh;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0.6rem 0.7rem;
+  color: #ffffffc9;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+.logo img{
+  width: 13vw;
+
+}
+.icons{
+  gap: 1vw;
+font-size: 4vh;
+
   
 }
+}
+
 

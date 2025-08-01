@@ -6,8 +6,9 @@ import styles from "../../DashboardUI/Dashboardtwo.module.css";
 import Selectsection from "../../DashboardUI/Selectsection";
 import Leadsoverview from "../../DashboardUI/Leadsoverview";
 import VisitOverview from "@/components/DashboardUI/VisitOverview";
+import { Map } from "lucide-react";
 
-function DashboardTwo() {
+function DashboardTwo() {   
   return (
     <div className={styles.Maincontainer}>
       <Navbar />

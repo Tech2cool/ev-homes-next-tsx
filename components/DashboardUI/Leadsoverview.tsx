@@ -37,22 +37,22 @@ function Leadsoverview() {
         <div className={styles.leadsoverview}>
           <div className={`${styles.cardone} ${styles.card}`}>
             {" "}
-            <Users color="blue" />
+            <Users color="blue" className={styles.Icons} /> 
             Total Leads <div>{leadsOverview.TotalLeads} </div>
           </div>
           <div className={`${styles.cardtwo} ${styles.card}`}>
             {" "}
-            <CircleCheck color="green" />
+            <CircleCheck color="green"  className={styles.Icons}  />
             Approved <div>{leadsOverview.Approved}</div>
           </div>
           <div className={`${styles.cardthree} ${styles.card}`}>
             {" "}
-            <CircleX color="red" />
+            <CircleX color="red"  className={styles.Icons}  />
             Rejected <div>{leadsOverview.Rejected}</div>
           </div>
           <div className={`${styles.cardfour} ${styles.card}`}>
             {" "}
-            <Hourglass color="yellow" />
+            <Hourglass color="yellow"  className={styles.Icons} />
             Pending <div> {leadsOverview.Pending} </div>
           </div>
         </div>

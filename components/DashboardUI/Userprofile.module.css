@@ -21,6 +21,7 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 2px;
+  font-size: 70px;
 }
 
 .userinfo {
@@ -101,9 +102,6 @@
   font: bold;
 }
 
-.usericon {
-  font-size: 90px;
-}
 .MobileBreakOne {
   display: none;
 }
@@ -113,280 +111,292 @@
 .MobileBreakThree {
   display: none;
 }
-/* small laptop responsive */
-@media screen and (max-width: 1024px) {
+/* resoponsive for mobile 100px to 425px*/
+
+@media screen and (min-width: 50px) and (max-width: 375px) {
   .userglobal {
-    padding-top: 20px;
-    padding-bottom: 0;
-    margin-bottom: 0;
-    height: 16vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 25px;
+    padding-left: 10px;
+    background-color: #000000;
+    border-bottom: 1px solid grey;
+    border-radius: 15px;
+    justify-content: space-between;
+    font-size: 12px;
+    height: 60px;
+    flex-wrap: wrap;
+    border: none;
   }
   .userpro {
-    padding-top: 0%;
-    margin-bottom: 0%;
+    display: flex;
+    align-items: center;
+    gap: 0.5 px;
+    padding-left: 0;
+    color: white;
+    font-weight: 700;
   }
   .userinfo {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
     width: 100%;
+    height: auto;
   }
-  .usericon {
-    font-size: 150px;
-  }
-  .user {
-    font-size: 2.5vw;
-    font-weight: 700;
-    color: white;
-  }
-  .role {
-    font-size: 1.5vw;
-    padding-left: 5px;
-  }
-  .userbutton {
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 7vh;
-  }
-  .toggedinfo {
-    display: flex;
-    align-items: center;
-    font-size: 50px;
-    font-weight: 100;
-    margin-right: 1vw;
-  }
-  .usertog {
-    display: block;
-    align-items: center;
-    justify-content: center;
-    height: 8vh;
-    margin-right: 2px;
-  }
-}
-
-/* tablet responsive */
-
-@media screen and (min-width: 768px) and (max-width: 1023) {
-  .userglobal {
-    padding-top: 0;
-    padding-bottom: 0;
-    height: 20vh;
-  }
-  .userpro {
+  .des {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    padding: 1vh 0;
-    width: 100%;
-    align-items: center;
-    margin-top: 0%;
-    height: auto;
-    max-height: fit-content;
-    padding-top: 3vh;
-    padding-bottom: 0;
+    gap: 2rem;
   }
-  .userinfo {
-    font-weight: 700;
-    color: white;
-    margin: 1vh 0 0.5vh 1vw;
-  }
-  .userbutton {
-    font-size: 2.3vh;
+  .role {
     display: flex;
     align-items: center;
-    max-width: fit-content;
-    white-space: nowrap;
+    gap: 5px;
+    color: #d3af1f;
+    font-size: 10.92px;
   }
   .usertog {
-    font-size: 19px;
+    color: #a1a1aa;
+    font-size: 11px;
     gap: 2vw;
-    height: 4.3rem;
-    white-space: nowrap;
-    width: fit-content;
-  }
-  .FirstUserTog {
-    display: flex;
-    gap: 1vw;
-  }
-
-  .number {
-    font-size: 20px;
-    padding-left: 1px;
-    margin-left: 1px;
-  }
-  .usericon {
-    font-size: 150px;
-    width: 150px;
-    margin-bottom: 1px;
-    margin-right: 1px;
-  }
-
-  .user {
-    font-size: 2vh;
-    margin-left: 1px;
-  }
-  .role {
-    font-size: 2vh;
-    font-weight: 200;
-  }
-}
-
-/* mobile responsive  large*/
-@media screen and (min-width: 425px) and (max-width: 767px) {
-  .usericon {
-    font-size: 100px;
-  }
-  .userglobal {
-    margin-top: 0%;
-    margin-bottom: 0% !important;
-    padding-left: 0;
+    border-radius: 8px;
     border: none;
-    padding-bottom: 0;
-    height: 15vh;
-  }
-  .userpro {
-    width: 100%;
-    justify-content: space-between;
-    display: flex;
-    align-items: center;
-    border-radius: 20px;
-    padding: 0 !important;
-    margin: 0 !important;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  .user {
-    font-size: 2vh;
-    font-weight: 600;
-    padding-left: 1px;
-  }
-  .userbutton {
-    display: none !important;
-  }
-  .role {
-    font-size: 1.2vh;
-  }
-  .userinfo {
-    padding-left: 1px;
-    margin-left: 1px;
-    padding-top: 5vh;
-  }
-  .usericon {
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 5vh;
-  }
-  .usertog {
-    font-size: 15px;
-    margin-top: 5vh;
-    padding-bottom: 2vh !important;
-    height: 6vh;
-    margin-right: 0;
-    max-width: fit-content;
-  }
-  .FirstUserTog {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .arrow {
-    margin-left: auto;
-  }
-  .MobileRoleIcon {
-    height: 20px;
-    width: 15px;
-  }
-  .number {
-    font-size: 20px;
-  }
-}
-/* mobile responsive  medium*/
-@media screen and (max-width: 375px) {
-  .userglobal {
-    margin-top: 0%;
-    margin-bottom: 0% !important;
-    padding-left: 0;
-    border: none;
-    padding-bottom: 0;
-  }
-  .userpro {
-    display: flex;
-    width: 100%;
-  }
-  .role {
-    font-size: 12px;
-  }
-  .usertog {
-    height: 9vh;
-  }
-  .MobileBreakOne {
-    display: block;
-  }
-  .MobileBreakTwo {
-    display: block;
-  }
-  .MobileBreakThree {
-    display: block;
+    background-color: rgba(193, 193, 193, 0.16);
+    padding: 0.5vh 1vw;
+    height: 52px;
+    margin-right: 1vw;
+    flex-wrap: wrap;
   }
   .userbutton {
     display: none;
   }
+  .number {
+    font-size: 12px;
+    font-weight: 700;
+  }
 }
-
-/* 4k responsive  */
-@media screen and (min-width: 2560px) {
+/* responsive for 376px to 615px*/
+@media screen and (min-width: 376px) and (max-width: 615px) {
   .userglobal {
     display: flex;
     flex-direction: column;
-    padding-top: 40px;
+    padding-top: 25px;
     padding-left: 10px;
     background-color: #000000;
     border-bottom: 1px solid grey;
-    border-radius: 30px;
+    border-radius: 15px;
     justify-content: space-between;
-    height: 17vh;
+    font-size: 12px;
+    height: 90px;
+    flex-wrap: wrap;
+    border: none;
   }
   .userpro {
-    padding-top: 0%;
-    margin-bottom: 0%;
-    margin-top: 3vh;
-  }
-  .userinfo {
-    width: 100%;
-  }
-  .usericon {
-    font-size: 150px;
-    height: 7vh;
-    width: 10vw;
-  }
-  .user {
-    font-size: 2.5vw;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5 px;
+    padding-left: 0;
     color: white;
-  }
-  .role {
-    font-size: 1.5vw;
-    padding-left: 5px;
-    font-weight: 300;
+    font-weight: 700;
   }
   .userbutton {
-    font-size: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 7vh;
-  }
-  .toggedinfo {
-    display: flex;
-    align-items: center;
-    font-size: 50px;
-    font-weight: 100;
-    margin-right: 1vw;
+    display: none;
   }
   .usertog {
-    display: block;
-    align-items: center;
+    color: #a1a1aa;
+    gap: 2vw;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(193, 193, 193, 0.16);
+    padding: 0.5vh 1vw;
+    height: 50px;
+    margin-right: 1vw;
+    font-size: 12px;
+  }
+  .number {
+    font-size: 15px;
+  }
+}
+
+/* responsive 620px to 1440px */
+
+@media screen and (min-width: 620px) and (max-width: 1440px) {
+  .userglobal {
+    display: flex;
+    flex-direction: column;
+    padding-top: 55px;
+    padding-left: 10px;
+    background-color: #000000;
+    border-bottom: 1px solid grey;
+    border-radius: 15px;
+    justify-content: space-between;
+    font-size: 12px;
+    height: 130px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid grey;
+  }
+  .userbutton {
+    display: flex;
     justify-content: center;
-    height: 8vh;
+    align-items: center;
+    font-size: 2.3 vh;
+    font: 12.558px;
+    width: fit-content;
+    background-color: rgba(193, 193, 193, 0.16);
+    color: rgb(193, 193, 193);
+    border-radius: 8px;
+    border: none;
+    padding: 2vh 1vw;
+    cursor: pointer;
+    height: 3rem;
+  }
+  .usertog {
+    color: #a1a1aa;
+    font-size: 12px;
+    gap: 2vw;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(193, 193, 193, 0.16);
+    padding: 0.5vh 1vw;
+    height: 60px;
+    margin-right: 1vw;
+  }
+  .number {
+    font-size: 17px;
+  }
+}
+
+/* responsive for big screen 1441 to 1638 */
+
+@media screen and (min-width: 1441px) and (max-width: 1638px) {
+  .userglobal {
+    display: flex;
+    flex-direction: column;
+    padding-top: 60px;
+    padding-left: 10px;
+    background-color: #000000;
+    border-bottom: 1px solid grey;
+    border-radius: 15px;
+    justify-content: space-between;
+  }
+  .userbutton {
+    align-items: center;
+    font-size: 2.3 vh;
+    font: 12.558px;
+    width: fit-content;
+    background-color: rgba(193, 193, 193, 0.16);
+    color: rgb(193, 193, 193);
+    border-radius: 8px;
+    border: none;
+    padding: 2vh 1vw;
+    cursor: pointer;
+    height: 3rem;
+    font-weight: 100;
+  }
+  .usertog {
+    color: #a1a1aa;
+    font-size: 2vh;
+    gap: 2vw;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(193, 193, 193, 0.16);
+    padding: 0.5vh 1vw;
+    height: 55px;
+    margin-right: 1vw;
+  }
+  .FirstUserTog {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .number {
+    font-size: 17px;
+  }
+}
+
+/* responsive for 4k 1639 to 2560px */
+@media screen and (min-width: 1639px) and (max-width: 2560) {
+  .userglobal {
+    display: flex;
+    flex-direction: column;
+    padding-top: 50px;
+    padding-left: 10px;
+    background-color: #000000;
+    border-bottom: 1px solid grey;
+    border-radius: 15px;
+    justify-content: space-between;
+  }
+  .userpro {
+    display: flex;
+    align-items: center;
+    gap: 0.5 px;
+    padding-left: 1px;
+    color: white;
+    font-weight: 700;
+  }
+  .usericon {
+    color: grey;
+    border-radius: 50%;
+    object-fit: cover;
     margin-right: 2px;
+    font-size: 150px;
+  }
+
+  .role {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #d3af1f;
+    font-size: 28px;
+    white-space: nowrap;
+  }
+  .userinfo {
+    display: flex;
+    font-size: 30px;
+    width: 100%;
+  }
+  .userbutton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    width: fit-content;
+    background-color: rgba(193, 193, 193, 0.16);
+    color: rgb(193, 193, 193);
+    border-radius: 8px;
+    border: none;
+    padding: 2vh 1vw;
+    cursor: pointer;
+    height: 30px;
+    font-weight: 200;
+  }
+  .usertog {
+    color: #a1a1aa;
+    font-size: 25px;
+    gap: 2vw;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(193, 193, 193, 0.16);
+    padding: 0.5vh 1vw;
+    height: 95px;
+    margin-right: 1vw;
+    width: auto;
+  }
+  .FirstUserTog {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+@media screen and (min-width: 600px) and (max-width: 615px) {
+  .userglobal {
+    display: flex;
+    flex-direction: column;
+    padding-top: 50px;
+    padding-left: 10px;
+    background-color: #000000;
+    justify-content: space-between;
   }
 }

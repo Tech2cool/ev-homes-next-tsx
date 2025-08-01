@@ -109,5 +109,44 @@
     display: flex;
     gap: 10px 10px;
     width: 50vw;
-
 }
+
+/*  responsive for small mobile size 50px to 320px */
+
+@media  screen and (min-width:50px) and (max-width:425px) {
+  .leadsoverview{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1vw;
+    padding-left: 5px;
+    padding-right: 7px;
+  }
+  .heading{
+  color: white;
+  font-weight: 600;
+  margin-top: 1px;
+  margin-bottom: 2vh;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  color: white;
+  border-radius: 8px;
+  padding: 2vh 2vw;
+  font-weight: 300;
+  font-size: 9px;
+  width: 100%;
+  gap: 1vh;
+  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+  margin-right: 2px;
+}
+.Icons{
+  width:10px ;
+  height: 10px;
+  
+}
+  }
+  
