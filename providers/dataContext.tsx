@@ -44,9 +44,8 @@ interface PaginationProps {
   walkInRevisit?: number;
   internalLeadsRevisit?: number;
   virtualMeeting?: number;
-  data?: any,
+  data?: any;
 }
-
 
 type FetchLeadsParams = {
   id?: string | null | undefined;
@@ -76,6 +75,32 @@ type SiteVisitParams = {
   date?: string | null;
 };
 
+type DashboardCount = {
+  _id: string | null;
+  name: string | null;
+  designation: string | null;
+  date: Date | null;
+  lead: LeadCount | null ;
+  // task: TaskCount | null;
+};
+
+type LeadCount = {
+  total: number | null;
+  visit1: number | null;
+  visit2: number | null;
+  revisit: number | null;
+  booking: number | null;
+  bookingCp: number | null;
+  bookingWalkIn: number | null;
+  pending: number | null;
+  assigned: number | null;
+  notAssigned: number | null;
+  lineup: number | null;
+  cpNotePendingCount: number | null;
+  bulkCount: number | null;
+  interestedCount: number | null;
+  internalLeadCount: number | null;
+};
 
 //model
 type DataProviderState = {
@@ -88,8 +113,8 @@ type DataProviderState = {
   loadingTestimonial: boolean;
 
   employees: Employee[];
-  
-  leadInfo:PaginationProps| null;
+
+  leadInfo: PaginationProps | null;
   fetchReportingToEmployees: (
     id: string,
     dept: string
@@ -98,22 +123,25 @@ type DataProviderState = {
     params: FetchLeadsParams
   ) => Promise<{ success: boolean; message?: string }>;
 
+  siteInfo: PaginationProps | null;
+  visits: SiteVisit[] | null;
 
-
-  siteInfo : PaginationProps| null; 
-  visits : SiteVisit[]| null; 
-
- fetchDataAnalyzerVisits: (
-   params:SiteVisitParams
+  fetchDataAnalyzerVisits: (
+    params: SiteVisitParams
   ) => Promise<{ success: boolean; message?: string }>;
 
+
+dashCount: DashboardCount | null;
+ getSalesManagerDashBoardCount: (
+  params: { id: string | null }
+) => Promise<{ success: boolean; message?: string }>;
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 };
 
 //initial values should define here
 const initialState: DataProviderState = {
-   projects: [],
+  projects: [],
   getProjects: async () => ({ success: false, message: "Not initialized" }),
 
   testimonials: [],
@@ -125,10 +153,12 @@ const initialState: DataProviderState = {
   fetchSaleExecutiveLeads: async () => ({ success: false }),
   leadInfo: null,
 
+  fetchDataAnalyzerVisits: async () => ({ success: false }),
+  siteInfo: null,
+  visits: null,
 
-  fetchDataAnalyzerVisits: async()=>({success:false}),
-  siteInfo:null,
-  visits:null,
+dashCount:null,
+getSalesManagerDashBoardCount: async () => ({ success: false }),
   // setLoadingTestimonial: () => {},
 
   //   setTheme: () => null,
@@ -148,18 +178,15 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
-  const [leadInfo, setleadInfo] = useState<PaginationProps| null>(null);
+  const [leadInfo, setleadInfo] = useState<PaginationProps | null>(null);
+const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
+
   const [leads, setleads] = useState<Lead[]>([]);
 
-  
   const [loadingVisits, setLoadingVisits] = useState<boolean>(false);
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
-  const [siteInfo, setVisitInfo] = useState<PaginationProps| null>(null);
+  const [siteInfo, setVisitInfo] = useState<PaginationProps | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
-  
-
-
-
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -258,7 +285,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     endDate = null,
     date = null,
     member = null,
-  }:FetchLeadsParams): Promise<{ success: boolean; message?: string }> => {
+  }: FetchLeadsParams): Promise<{ success: boolean; message?: string }> => {
     if (page === 1) {
       setLoadingLeads(true);
     } else {
@@ -303,7 +330,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         method: "GET",
       });
       const { data, ...withoutData } = res as PaginationProps;
-
+ 
       setleadInfo(withoutData);
       if (page > 1) {
         // setleads((prev) => [...prev, ...res?.data]);
@@ -327,8 +354,43 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   };
 
 
+// Function to get dashboard count for a Sales Manager
+const getSalesManagerDashBoardCount = async ({
+  id = null,
+}: {
+  id: string | null;
+}): Promise<{ success: boolean; message?: string }> => {
+  setError("");
+
+  if (!id) {
+    setError("ID is required");
+    return { success: false, message: "ID is required" };
+  }
+
+  try {
+    const url = `/api/v2/sales-dashboard-count/${id}`;
+    console.log("Fetching dashboard count from:", url);
+
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    // Assuming your fetchAdapter returns { data, status, message }
+    const dashboardData = res.data as DashboardCount;
+
+    console.log("Lead info:", dashboardData.lead);
+    setDashboardCount(dashboardData);
+
+    return { success: true };
+  } catch (err: any) {
+    setError(err.message || "Something went wrong");
+    return { success: false, message: err.message };
+  }
+};
+
+
   //fetch data analyzer visits data
-    const fetchDataAnalyzerVisits = async ({
+  const fetchDataAnalyzerVisits = async ({
     query = "",
     page = 1,
     limit = 10,
@@ -336,7 +398,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     startDate = null,
     endDate = null,
     date = null,
-  }:SiteVisitParams): Promise<{ success: boolean; message?: string }> => {
+  }: SiteVisitParams): Promise<{ success: boolean; message?: string }> => {
     if (page === 1) {
       setLoadingVisits(true);
     } else {
@@ -375,7 +437,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       setLoadingVisits(false);
 
       return { success: true };
-    } catch (err:any) {
+    } catch (err: any) {
       setError(err.message);
       setFetchingMoreVisits(false);
       setLoadingVisits(false);
@@ -392,15 +454,17 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
     employees: employees,
-    leadInfo:leadInfo,
-    siteInfo:siteInfo,
-    visits:visits, 
+    leadInfo: leadInfo,
+    dashCount:dashCount,
+    siteInfo: siteInfo,
+    visits: visits,
     getProjects: getProjects,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
-    fetchDataAnalyzerVisits:fetchDataAnalyzerVisits
+    fetchDataAnalyzerVisits: fetchDataAnalyzerVisits,
+    getSalesManagerDashBoardCount:getSalesManagerDashBoardCount,
   };
 
   return (

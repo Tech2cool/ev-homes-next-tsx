@@ -40,7 +40,8 @@ const VisitDetailWrapper = () => {
 
 export default VisitDetailWrapper;
 
-const VisitDetailsPage = () => {
+const  
+ VisitDetailsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const visitId = searchParams.get("id");

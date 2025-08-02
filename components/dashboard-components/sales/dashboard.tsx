@@ -87,6 +87,8 @@ export default function DashboardPage() {
     fetchSaleExecutiveLeads,
     siteInfo,
     fetchDataAnalyzerVisits,
+    dashCount,
+    getSalesManagerDashBoardCount,
   } = useData();
 
   useEffect(() => {
@@ -94,6 +96,8 @@ export default function DashboardPage() {
       console.log("use effect dashboard");
       fetchSaleExecutiveLeads({ id: user?._id, query: "", page: 1, limit: 10 });
       fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
+      getSalesManagerDashBoardCount({  id: user?._id ?? null});
+
 
     }
   }, [user, loading]);
@@ -116,7 +120,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <OverviewCard
             title="Total Leads"
-            value={leadInfo?.totalItems ?? 0}
+            value={dashCount?.lead?.total ?? 0}
             description="+20.1% from last month"
             linkHref="/visit-details"
             linkText="View all leads"
@@ -125,7 +129,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="CP Visits"
-            value={leadInfo?.visitCount ?? 0}
+            value={dashCount?.lead?.visit1 ?? 0}
             description="+15% from last month"
             linkHref="/dashboard/leads?status=cp-visits"
             linkText="View CP visits"
@@ -134,7 +138,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Walk-in Leads"
-            value={leadInfo?.visit2Count ?? 0}
+            value={dashCount?.lead?.visit2 ?? 0}
             description="+5% from last month"
             linkHref="/dashboard/leads?status=walk-in"
             linkText="View walk-ins"
@@ -143,7 +147,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Internal Leads"
-            value={leadInfo?.internalLeadCount ?? 0}
+            value={dashCount?.lead?.internalLeadCount ?? 0}
             description="+10% from last month"
             linkHref="/dashboard/leads?status=internal"
             linkText="View internal leads"
@@ -152,7 +156,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Bookings"
-            value={leadInfo?.bookingCount ?? 0}
+            value={dashCount?.lead?.booking ?? 0}
             description="+25% from last month"
             linkHref="/dashboard/leads?status=bookings"
             linkText="View bookings"
@@ -161,7 +165,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Bulk Leads"
-            value={leadInfo?.bulkCount ?? 0}
+            value={dashCount?.lead?.bulkCount ?? 0}
             description="New bulk leads this week"
             linkHref="/dashboard/leads?status=bulk"
             linkText="View bulk leads"
