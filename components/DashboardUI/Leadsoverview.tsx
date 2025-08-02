@@ -34,27 +34,30 @@ function Leadsoverview() {
     <>
       <div className={styles.mainleads}>
         <h2 className={styles.heading}>Leads overview </h2>
-        <div className={styles.leadsoverview}>
+        <div className={styles.ContainerWrapper}>
+        < div className={styles.leadsoverview}>
           <div className={`${styles.cardone} ${styles.card}`}>
             {" "}
             <Users color="blue" className={styles.Icons} /> 
-            Total Leads <div>{leadsOverview.TotalLeads} </div>
+            <p>Total Leads</p>   <p>{leadsOverview.TotalLeads} </p>
           </div>
           <div className={`${styles.cardtwo} ${styles.card}`}>
             {" "}
             <CircleCheck color="green"  className={styles.Icons}  />
-            Approved <div>{leadsOverview.Approved}</div>
+            <p>Approved </p><p>{leadsOverview.Approved}</p>
           </div>
           <div className={`${styles.cardthree} ${styles.card}`}>
             {" "}
             <CircleX color="red"  className={styles.Icons}  />
-            Rejected <div>{leadsOverview.Rejected}</div>
+           <p> Rejected </p> <p>{leadsOverview.Rejected}</p>
           </div>
           <div className={`${styles.cardfour} ${styles.card}`}>
             {" "}
             <Hourglass color="yellow"  className={styles.Icons} />
-            Pending <div> {leadsOverview.Pending} </div>
+           <p> Pending </p> <p> {leadsOverview.Pending} </p>
           </div>
+          
+        </div>
         </div>
         <div>
           <div className={styles.assign}>Assign / Feedback Pending</div>

@@ -111,7 +111,7 @@
 .MobileBreakThree {
   display: none;
 }
-/* resoponsive for mobile 100px to 425px*/
+/* resoponsive for mobile 100px to 375px*/
 
 @media screen and (min-width: 50px) and (max-width: 375px) {
   .userglobal {
@@ -158,13 +158,13 @@
   }
   .usertog {
     color: #a1a1aa;
-    font-size: 11px;
+    font-size: 10px;
     gap: 2vw;
     border-radius: 8px;
     border: none;
     background-color: rgba(193, 193, 193, 0.16);
     padding: 0.5vh 1vw;
-    height: 52px;
+    height: fit-content;
     margin-right: 1vw;
     flex-wrap: wrap;
   }
@@ -172,7 +172,7 @@
     display: none;
   }
   .number {
-    font-size: 12px;
+    font-size: 20px;
     font-weight: 700;
   }
 }
@@ -390,7 +390,8 @@
     justify-content: space-between;
   }
 }
-@media screen and (min-width: 600px) and (max-width: 615px) {
+/* responsive for  */
+@media screen and (min-width: 600px) and (max-width: 620px) {
   .userglobal {
     display: flex;
     flex-direction: column;
@@ -399,4 +400,23 @@
     background-color: #000000;
     justify-content: space-between;
   }
+    .usertog {
+    color: #a1a1aa;
+    font-size: 10px;
+    gap: 2vw;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(193, 193, 193, 0.16);
+    padding: 0.5vh 1vw;
+    height: 55px;
+    margin-right: 1vw;
+    width: 40%;
+  }
+  .userbutton{
+    display: none;
+  }
+  .number{
+    font-size: 20px;
+  }
 }
+

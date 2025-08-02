@@ -1,8 +1,6 @@
-
 .mainleads {
   padding-left: 2vw;
-  padding-top: 1vh;
-  padding-bottom: 2vh;
+  padding-bottom: 0vh;
 }
 .heading {
   color: white;
@@ -11,9 +9,19 @@
   margin-bottom: 2vh;
 }
 .leadsoverview {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  padding-left: 1vw;
+  padding-right: 1vw;
+  box-sizing: border-box;
   flex-direction: row;
   gap: 1vh;
+}
+.ContainerWrapper {
+  .grid-wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 .card {
   display: flex;
@@ -23,12 +31,24 @@
   color: white;
   border-radius: 8px;
   padding: 2vh 2vw;
+  min-width: 0;
   color: white;
   font-weight: 600;
   width: 100%;
   gap: 1vh;
   transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.card * {
+  min-width: 0;
+  word-break: break-word;
+  white-space: normal;
 }
 .card:hover {
   transform: translateY(-6px);
@@ -65,7 +85,6 @@
   border-radius: 8px;
   border: none;
   background-color: #141414;
- 
 }
 .leadername {
   font-size: 15px;
@@ -77,7 +96,6 @@
   padding-bottom: 5px;
 
   text-align: start;
-  
 }
 .feedback {
   display: flex;
@@ -91,7 +109,6 @@
   padding-left: 3vw;
   padding-right: 3vw;
   margin: 1vh;
-
 }
 .feedback:hover {
   background-color: rgba(255, 0, 0, 0.167);
@@ -105,48 +122,113 @@
   background-color: rgba(0, 255, 13, 0.167);
   cursor: pointer;
 }
-.assignWrapper{
-    display: flex;
-    gap: 10px 10px;
-    width: 50vw;
+.assignWrapper {
+  display: flex;
+  gap: 10px 10px;
+  width: 50vw;
 }
 
-/*  responsive for small mobile size 50px to 320px */
+/*  responsive for small mobile size 78px to 425px */
 
-@media  screen and (min-width:50px) and (max-width:425px) {
-  .leadsoverview{
-    display: flex;
+@media screen and (min-width: 78px) and (max-width: 425px) {
+  .leadsoverview {
+    display: grid;
     flex-direction: row;
     justify-content: center;
     gap: 1vw;
-    padding-left: 5px;
-    padding-right: 7px;
+    grid-template-columns: repeat(4, 1fr);
+    padding-right: 1vw;
+    padding-left: 1vw;
   }
-  .heading{
-  color: white;
-  font-weight: 600;
-  margin-top: 1px;
-  margin-bottom: 2vh;
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  color: white;
-  border-radius: 8px;
-  padding: 2vh 2vw;
-  font-weight: 300;
-  font-size: 9px;
-  width: 100%;
-  gap: 1vh;
-  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-  cursor: pointer;
-  margin-right: 2px;
-}
-.Icons{
-  width:10px ;
-  height: 10px;
-  
-}
+  .heading {
+    color: white;
+    font-weight: 600;
+    margin-top: 1px;
+    margin-bottom: 2vh;
+    font-size: 5vw;
   }
-  
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    color: white;
+    border-radius: 8px;
+    padding: 2vh 2vw;
+    font-weight: 300;
+    font-size: 3.6vw;
+    width: 100%;
+    gap: 1vh;
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+    margin-right: 2px;
+  }
+  .Icons {
+    width: 10px;
+    height: 10px;
+  }
+  .cardfour {
+    order: 1;
+  }
+}
+
+/* responsive for 1 to 77 */
+@media screen and (max-width: 77px) {
+  .leadsoverview {
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    grid-template-rows: auto auto;
+    font-size: 1px;
+    font-weight: 200;
+    gap: 0;
+    justify-content: center;
+  }
+  .Icons {
+    height: 5px;
+    width: 15px;
+  }
+}
+
+/* responsive (assign and feedback pending) mobile view 320px to 425 */
+
+@media screen and (min-width: 320px) and (max-width: 425px) {
+  .leadercontainer {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    padding-left: 1vw;
+  }
+  .container {
+    border-radius: 8px;
+    border: none;
+    background-color: #141414;
+  }
+  .leadername {
+    font-size: 3vw;
+    border-bottom: 1px solid rgb(148, 147, 147);
+    border-radius: 8px;
+    padding-left: 4px;
+    margin-bottom: 2vh;
+    display: flex;
+    align-items: center;
+    text-align: start;
+  }
+  .feedback {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid green;
+    border-radius: 4px;
+    margin: 10px;
+    padding: 10px;
+    border-width: 1.5px;
+    text-align: center;
+    padding-left: 3vw;
+    padding-right: 3vw;
+    margin: 1vh;
+    font-size: 4vw;
+  }
+  .heading {
+    color: white;
+    font-weight: 600;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+  }
+}

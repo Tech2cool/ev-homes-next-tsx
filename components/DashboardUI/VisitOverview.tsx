@@ -28,7 +28,8 @@ function VisitOverview() {
       <h2 className={styles.sectionHeader}>Visit Overview</h2>
 
       <div className={styles.VisitContainer}>
-        <ResponsiveContainer width="100%" height={80} aspect={1}>
+        <div className={styles.GraphWithInfo}>
+        <ResponsiveContainer className={styles.Graphsection}  >
           <PieChart>
             <Pie
               data={dynamicVisitData}
@@ -46,33 +47,33 @@ function VisitOverview() {
               ))}
             </Pie>
           </PieChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer>  
         <div className={styles.VisitInfo}>
-          <p style={{fontWeight:"700", fontSize:"3vh", color:"white"}}>1844</p>
-          <p>Total Visits</p>
+          <p className={styles.VisitNumber}>1844</p>
+          <p className={styles.TotalVisits}>Total Visits</p>
           <a
             href="#"
+            className={styles.ViewVisit}
             style={{
-              fontSize: "1.7vh",
-              margin: "0.5vh",
               color: "rgb(27,158,201)",
-              marginTop:"1vh",
-              textDecoration:"none",
-              cursor:"Pointer"
+              marginTop: "1vh",
+              textDecoration: "none",
+              cursor: "Pointer",
             }}
           >
             View Total Visits
           </a>
         </div>
-          <div>
-          <div className={styles.OverviewStatus}>
+        </div>
+        <div>
+
+          <div className={`${styles.OverviewStatus} ${styles.Approved}`} >
             {" "}
             <div className={styles.GreenDot}>
               <p>g</p>
             </div>{" "}
             Approved <div>685</div> <div className={styles.percentage}>35%</div>
           </div>
-
 
           <div className={styles.OverviewStatus}>
             {" "}
@@ -82,10 +83,9 @@ function VisitOverview() {
             Rejected <div>17 </div>
             <div className={styles.percentage}>1%</div>
           </div>
-        </div>
 
 
-        <div className={styles.OverviewStatus}>
+          <div className={styles.OverviewStatus}>
           {" "}
           <div className={styles.YellowDot}>
             <p>y</p>
@@ -93,9 +93,12 @@ function VisitOverview() {
           Pending <div>1</div>
           <div className={styles.percentage}>0%</div>
         </div>{" "}
+
+
+        </div>
+        
       </div>
-      </div> 
-    
+    </div>
   );
 }
 export default VisitOverview;

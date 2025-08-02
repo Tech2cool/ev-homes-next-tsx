@@ -57,8 +57,10 @@
     border-right: 0;
     flex-wrap: wrap;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 40px;
+    margin-top: 35px;
     background-color: rgba(45, 44, 44, 0.185);
+    
+   
   }
   .selectlinks {
     display: flex;
@@ -67,12 +69,15 @@
     width: 100%;
     align-items: center;
     justify-content: center;
-    gap: 1vw;
+    flex-wrap: wrap;
+    gap: 2vw;
+    white-space: nowrap;
+
   }
   .selectlinks a {
-    display: flex;
-    gap: 1vw;
-
+    display: inline-flex;
+     min-width: 10px;
+     flex-wrap: wrap;
     font-size: 1.7vh;
     font-weight: 300;
     border: none;
@@ -82,6 +87,7 @@
     background-color: transparent;
     border-radius: none;
     border: none;
+    white-space: nowrap;
   }
   .SelectHeader {
     display: none;
@@ -138,7 +144,7 @@
 
 /* medium size and large size mobile responsive 321 to 375  */
 
-@media screen and (min-width: 321px) and (max-width: 425px) {
+@media screen and (min-width: 321px) and (max-width: 375px) {
   .mainselect {
     display: flex;
     flex-direction: row;
@@ -153,7 +159,7 @@
     border-right: 0;
     flex-wrap: wrap;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 40px;
+    margin-top: 25px;
     background-color: rgba(45, 44, 44, 0.185);
   }
   .selectlinks {
@@ -183,9 +189,8 @@
     display: none;
   }
 }
-/*  large size mobile responsive 371 to 613  */
-
-@media screen and (min-width: 371px) and (max-width: 613px) {
+/*  large size mobile responsive 376 to 422  */
+@media screen and (min-width: 376px) and (max-width: 425px) {
   .mainselect {
     display: flex;
     flex-direction: row;
@@ -193,14 +198,62 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 6vh;
+    height: 5%;
     padding: 0.5vh 0;
     margin: 0;
     border-radius: 0;
     border-right: 0;
     flex-wrap: wrap;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 7px;
+    margin-top: 8px;
+    background-color: rgba(45, 44, 44, 0.185);
+  }
+  .selectlinks {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+  }
+  .selectlinks a {
+    display: flex;
+    gap: 1vw;
+
+    font-size: 1.7vh;
+    font-weight: 300;
+    border: none;
+    color: #898a8a;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: none;
+    border: none;
+  }
+  .SelectHeader {
+    display: none;
+  }
+}
+
+
+/* responsive 426 to 598 */
+@media screen and (min-width: 426px) and (max-width: 598px) {
+  .mainselect {
+    display: flex;
+    flex-direction: row;
+    border-right: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height:4vh;
+    padding: 0.5vh 0;
+    margin: 0;
+    border-radius: 0;
+    border-right: 0;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 2px;
     background-color: rgba(45, 44, 44, 0.185);
   }
   .selectlinks {
@@ -227,5 +280,53 @@
   }
   .SelectHeader {
     display: none;
+  }
+}
+/* responsive 598 to 615 */
+@media screen and (min-width: 598px) and (max-width: 615px) {
+  .mainselect {
+    display: flex;
+    flex-direction: row;
+    border-right: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height:4vh;
+    padding: 0.5vh 0;
+    margin: 0;
+    border-radius: 0;
+    border-right: 0;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 30px;
+    background-color: rgba(45, 44, 44, 0.185);
+  }
+  .selectlinks {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+  }
+  .selectlinks a {
+    display: flex;
+    gap: 1vw;
+    font-size: 1.7vh;
+    font-weight: 300;
+    border: none;
+    color: #898a8a;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: none;
+    border: none;
+  }
+  .SelectHeader {
+    display: none;
+  }
+  .Icons{
+    font-size: 20px;
   }
 }
