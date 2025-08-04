@@ -82,12 +82,23 @@ export default function DashboardPage() {
   const isAdmin = true;
   const { user, loading } = useUser();
 
-  const { leadInfo, fetchSaleExecutiveLeads } = useData();
+  const {
+    leadInfo,
+    fetchSaleExecutiveLeads,
+    siteInfo,
+    fetchDataAnalyzerVisits,
+    dashCount,
+    getSalesManagerDashBoardCount,
+  } = useData();
 
   useEffect(() => {
     if (user && !loading) {
       console.log("use effect dashboard");
       fetchSaleExecutiveLeads({ id: user?._id, query: "", page: 1, limit: 10 });
+      fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
+      getSalesManagerDashBoardCount({  id: user?._id ?? null});
+
+
     }
   }, [user, loading]);
 
@@ -109,16 +120,16 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <OverviewCard
             title="Total Leads"
-            value={leadInfo?.totalItems ?? 0}
+            value={dashCount?.lead?.total ?? 0}
             description="+20.1% from last month"
-            linkHref="/dashboard/leads?status=total"
+            linkHref="/lead-details"
             linkText="View all leads"
             icon={Users}
             iconColorClass="text-blue-500"
           />
           <OverviewCard
             title="CP Visits"
-            value={leadInfo?.visitCount ?? 0}
+            value={dashCount?.lead?.visit1 ?? 0}
             description="+15% from last month"
             linkHref="/dashboard/leads?status=cp-visits"
             linkText="View CP visits"
@@ -127,7 +138,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Walk-in Leads"
-            value={leadInfo?.visit2Count ?? 0}
+            value={dashCount?.lead?.visit2 ?? 0}
             description="+5% from last month"
             linkHref="/dashboard/leads?status=walk-in"
             linkText="View walk-ins"
@@ -136,7 +147,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Internal Leads"
-            value={leadInfo?.internalLeadCount ?? 0}
+            value={dashCount?.lead?.internalLeadCount ?? 0}
             description="+10% from last month"
             linkHref="/dashboard/leads?status=internal"
             linkText="View internal leads"
@@ -145,7 +156,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Bookings"
-            value={leadInfo?.bookingCount ?? 0}
+            value={dashCount?.lead?.booking ?? 0}
             description="+25% from last month"
             linkHref="/dashboard/leads?status=bookings"
             linkText="View bookings"
@@ -154,7 +165,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Bulk Leads"
-            value={leadInfo?.bulkCount ?? 0}
+            value={dashCount?.lead?.bulkCount ?? 0}
             description="New bulk leads this week"
             linkHref="/dashboard/leads?status=bulk"
             linkText="View bulk leads"
@@ -170,7 +181,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <OverviewCard
             title="Total Visits"
-            value="600"
+            value= {siteInfo?.totalItems?? 0}
             description="+10% from last month"
             linkHref="/dashboard/visits?status=total"
             linkText="View all visits"
@@ -179,7 +190,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Virtual Meetings"
-            value="250"
+            value="0"
             description="+8% from last month"
             linkHref="/dashboard/visits?status=virtual"
             linkText="View virtual meetings"
@@ -188,17 +199,17 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Physical Visits"
-            value="350"
+            value={siteInfo?.visitCount?? 0}
             description="+12% from last month"
             linkHref="/dashboard/visits?status=physical"
             linkText="View physical visits"
             icon={Home}
             iconColorClass="text-cyan-500"
           />
-          <OverviewCard
+          <OverviewCard 
             title="Revisits"
-            value="90"
-            description="+7% from last month"
+            value={siteInfo?.revisitCount?? 0}
+             description="+7% from last month"
             linkHref="/dashboard/visits?status=revisits"
             linkText="View revisits"
             icon={ArrowRight}
@@ -213,8 +224,8 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <OverviewCard
             title="Total Tasks"
-            value="75"
-            description="5 new tasks this week"
+            value={dashCount?.task?.total??0}
+            // description="5 new tasks this week"
             linkHref="/dashboard/tasks?status=total"
             linkText="View all tasks"
             icon={ClipboardList}
@@ -222,8 +233,8 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Completed Tasks"
-            value="50"
-            description="80% completion rate"
+            value={dashCount?.task?.completed?? 0}
+            // description="80% completion rate"
             linkHref="/dashboard/tasks?status=completed"
             linkText="View completed tasks"
             icon={CheckCircle}
@@ -231,8 +242,8 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Pending Tasks"
-            value="25"
-            description="Action required"
+            value={dashCount?.task?.pending?? 0}
+            // description="Action required"
             linkHref="/dashboard/tasks?status=pending"
             linkText="View pending tasks"
             icon={XCircle}

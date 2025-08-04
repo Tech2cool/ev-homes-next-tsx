@@ -1,0 +1,137 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.dialog {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  scrollbar-width: thin;
+  scrollbar-color: #c0c0c0 transparent;
+}
+
+.dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 12px;
+}
+
+.dialog::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0;
+  border-radius: 12px;
+  border: 2px solid #ffffff;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.closeBtn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.closeBtn:hover {
+  color: #000;
+}
+
+.fieldGroup {
+  display: grid;
+  gap: 14px;
+}
+
+.fieldGroup label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.fieldGroup select,
+.fieldGroup input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease;
+}
+
+.fieldGroup select:focus,
+.fieldGroup input[type="date"]:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.clearBtn {
+  background: none;
+  border: 1px solid #aaa;
+  color: #555;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearBtn:hover {
+  background-color: #f0f0f0;
+}
+
+.applyBtn {
+  background-color: #6c5ce7;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.applyBtn:hover {
+  background-color: #5a4ed1;
+}

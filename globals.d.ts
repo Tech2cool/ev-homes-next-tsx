@@ -127,8 +127,8 @@ interface Cycle {
   currentOrder: number;
   currentDays: number;
   teamLeader: string | null;
-  startDate: string | null;
-  validTill: string | null;
+  startDate: Date | null;
+  validTill: Date | null;
   internalDeadline: string | null;
   internalDate: string | null;
   internalCallDone: boolean | null;
@@ -179,9 +179,9 @@ interface Lead {
   address: string | null;
   leadType: string;
   reference: string | null;
-  channelPartner: string | null;
+  channelPartner: ChannelPartner | null;
   dataAnalyzer: string | null;
-  teamLeader: string | null;
+  teamLeader: Employee | null;
   countryCode: string;
   phoneNumber: number;
   altPhoneNumber: number | null;
@@ -198,7 +198,7 @@ interface Lead {
   visitDate: string | null;
   revisitDate: string | null;
   visitRef: string | null;
-  taskRef: string | null;
+  taskRef: Task | null;
   revisitStatus: string;
   revisitRef: string | null;
   bookingStatus: string;
@@ -227,11 +227,91 @@ interface Lead {
   createdThrough: string | null;
 }
 
+interface SiteVisit {
+  _id?: string | null;
+  date?: Date | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  phoneNumber?: numbe | null;
+  altPhoneNumber?: number | null;
+  countryCode?: string | null;
+  email?: string | null;
+  residence?: string | null;
+  visitType?: string | null;
+  projects: OurProject[] | null;
+  location?: OurProject | null;
+  choiceApt: string[] | null;
+  closingManager?: Employee | null;
+  callBy?: Employee | null;
+  entryBy?: Employee | null;
+  // channelPartner?: ChannelPartner | null;
+  closingTeam: Employee[] | null;
+  attendedBy?: Employee | null;
+  dataEntryBy?: Employee | null;
+  gender?: string | null;
+  feedback?: string | null;
+  cpfeedback?: string | null;
+  namePrefix?: string | null;
+  source?: string | null;
+  verified: boolean | null;
+  virtualMeetingDoc?: string | null;
+  approvalStatus?: string | null;
+  createdThrough?: string | null;
+  approvalRemark?: string | null;
+  approveBy?: Employee | null;
+  approvalDate?: Date | null;
+  dataAnalyzer?: Employee | null;
+  lead?: Lead | null;
+}
 
+interface ChannelPartner {
+  id?: string | null;
+  firstName?: string | null;
+  profilePic?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  gender?: string | null;
+  dateOfBirth?: Date | null; // ISO string format recommended
+  firmName?: string | null;
+  homeAddress?: string | null;
+  firmAddress?: string | null;
+  phoneNumber?: number;
+  haveReraRegistration?: boolean;
+  reraNumber?: string | null;
+  reraCertificate?: string | null;
+  isVerified?: boolean | null;
+  sameAdress?: boolean | null;
+  isVerifiedPhone?: boolean | null;
+  isVerifiedEmail?: boolean | null;
+  role?: string | null;
+  onBoarding?: string | null;
+  maritalStatus?: string | null;
+  orgType?: string | null;
+  onBoardingApprovalRemark?: string | null;
+  onBoardingDate?: Date | null; // string instead of Date for JSON compatibility
+}
 
-
-
-
-
-
-
+interface Task {
+  id?: string | null;
+  assignTo?: Employee | null;
+  assignBy?: Employee | null;
+  lead?: Lead | null;
+  visit?: SiteVisit;
+  booking?: PostSaleLead;
+  name?: string | null;
+  details?: string | null;
+  type?: string | null;
+  remark?: string | null;
+  assignDate?: string | null; // ISO 8601 format (Date as string| null)
+  completed?: boolean | null;
+  completedDate?: string | null;
+  deadline?: string | null;
+  remindMe?: boolean | null;
+  reminderDate?: string | null;
+  reminderDescription?: string | null;
+  transferTaskFrom?: Employee | null;
+  transferReason?: string | null;
+  reminderType?: string | null;
+  reminderDueDate?: string | null;
+  reminderCompleted?: boolean | null;
+}
