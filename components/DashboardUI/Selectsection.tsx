@@ -9,10 +9,11 @@ function Selectsection(){
             <a href="#">Reports</a>
              <a href="#">Tagging</a>
                <a href="#">Enquiry</a>
-                <div><a href="#">Inventory</a></div>
+                <a href="#">Inventory</a>
+                </div>
                 
         </div>
-        </div>
+        
         </>
     )
 }

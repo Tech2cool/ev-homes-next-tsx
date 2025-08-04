@@ -29,7 +29,8 @@ function VisitOverview() {
 
       <div className={styles.VisitContainer}>
         <div className={styles.GraphWithInfo}>
-        <ResponsiveContainer className={styles.Graphsection}  >
+          <div className={styles.GraphWrapper}>
+        <ResponsiveContainer height={150} width={100} className={styles.Graphsection}  >
           <PieChart>
             <Pie
               data={dynamicVisitData}
@@ -48,6 +49,7 @@ function VisitOverview() {
             </Pie>
           </PieChart>
         </ResponsiveContainer>  
+        </div>
         <div className={styles.VisitInfo}>
           <p className={styles.VisitNumber}>1844</p>
           <p className={styles.TotalVisits}>Total Visits</p>

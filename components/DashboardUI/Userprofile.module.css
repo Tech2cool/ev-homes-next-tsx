@@ -111,9 +111,9 @@
 .MobileBreakThree {
   display: none;
 }
-/* resoponsive for mobile 100px to 375px*/
+/* resoponsive for mobile 100px to 376px*/
 
-@media screen and (min-width: 50px) and (max-width: 375px) {
+@media screen and (min-width: 50px) and (max-width: 376px) {
   .userglobal {
     display: flex;
     flex-direction: column;
@@ -168,7 +168,7 @@
     margin-right: 1vw;
     flex-wrap: wrap;
   }
-  .userbutton {
+  .userbutton { 
     display: none;
   }
   .number {
@@ -235,6 +235,7 @@
     height: 130px;
     flex-wrap: wrap;
     border-bottom: 1px solid grey;
+    
   }
   .userbutton {
     display: flex;
@@ -390,7 +391,7 @@
     justify-content: space-between;
   }
 }
-/* responsive for  */
+/* responsive for 620 to 620 */
 @media screen and (min-width: 600px) and (max-width: 620px) {
   .userglobal {
     display: flex;

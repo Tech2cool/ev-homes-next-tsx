@@ -128,9 +128,9 @@
   width: 50vw;
 }
 
-/*  responsive for small mobile size 78px to 425px */
+/*  responsive for small mobile size 78px to 426px */
 
-@media screen and (min-width: 78px) and (max-width: 425px) {
+@media screen and (min-width: 78px) and (max-width: 426px) {
   .leadsoverview {
     display: grid;
     flex-direction: row;
@@ -170,6 +170,19 @@
     order: 1;
   }
 }
+/* responsive for 427 to 2560 */
+@media screen and (min-width: 427px) and (max-width: 2560px) {
+  .leadsoverview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-left: 1vw;
+  padding-right: 1vw;
+  box-sizing: border-box;
+  flex-direction: row;
+  gap: 1vh;
+}
+}
+ 
 
 /* responsive for 1 to 77 */
 @media screen and (max-width: 77px) {
@@ -187,19 +200,22 @@
   }
 }
 
+
 /* responsive (assign and feedback pending) mobile view 320px to 425 */
 
-@media screen and (min-width: 320px) and (max-width: 425px) {
+@media screen and (min-width: 320px) and (max-width: 426px) {
   .leadercontainer {
     display: flex;
     flex-direction: row;
     color: white;
     padding-left: 1vw;
+width: 100%;
   }
   .container {
     border-radius: 8px;
     border: none;
     background-color: #141414;
+    width: 100%;
   }
   .leadername {
     font-size: 3vw;

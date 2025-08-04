@@ -122,7 +122,8 @@ body {
 
 @media screen and (min-width: 50px) and (max-width: 600px) {
   .Navbar{
-    height: 4vh;
+    height: 5vh;
+  
   }
   .HomeMenu {
     display: block;
