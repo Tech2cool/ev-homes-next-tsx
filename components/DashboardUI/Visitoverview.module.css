@@ -89,395 +89,166 @@
 .TotalVisit{
   font-size: 10px;
 }
-.GraphWithInfo{
+
+
+/* responsive for mobile max width 425 */
+@media screen and (max-width:615px) {
+  .VisitContainer{
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0;
-  margin-right: 10vw;
-  height: auto;
-  width: 100%;
-  text-align:center;
-  margin-top: 2px;
-  padding-top: 2px;
-  
-}
-
-/*  */
-/* resoponsive for mobile 376 */
-
-@media screen and (max-width:376px) {
- .VisitWrapper {
-  align-items: center;
-  width: 100%;
-  padding: 2vh 2vw;
-}
-.sectionHeader {
-  color: white;
-  font-weight: 
-  800;
-  margin-bottom: 2vh;
-  font-size: 2vh;
-}
-.VisitContainer {
-  flex-direction: row;
-display: flex;
+  flex-direction:row;
+  font-size: 1vw;
   border-radius: 8px;
   background-color: #141414;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 90%;
   color: white;
-  height: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2vh 2vw;
   position: relative;
-  padding-top: 0;
-
-}
-.VisitInfo {
-  display: flex;
-  flex-direction: column;
-  color: white;
-  justify-content: center;
-  text-align: center;
+  
 }
 .OverviewStatus {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-
-  margin-bottom: 1.5vw;
-  font-size: 1.5vh;
-  padding: 1vh;
-  width: 100%;
-
-}
-.percentage {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 6px;
+  align-items: center;
+  margin-bottom: 1vh;
   font-size: 1vh;
+  padding: 1vh;
+  justify-content: center;
+  text-align: center;
+  gap: 1vw;
 }
-.GreenDot {
-  background-color: green;
-  display: inline-block;
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  color: green;
-  font-size: 1px;
+.GraphWrapper{
+  height: 80px;
 }
-.YellowDot {
-  background-color: yellow;
-  color: yellow;
-  border-radius: 50%;
-  font-size: 1px;
-  height: 10px;
-  width: 10px;
-}
-.RedDot {
-  background-color: red;
-  color: red;
-  border-radius: 50%;
-  font-size: 1px;
-  height: 10px;
-  width: 10px;
-}
-
-.VisitNumber{
+.VisitInfo{
   font-size: 10px;
-  white-space: nowrap;
-}
-.TotalVisits{
-  font-size: 2vw;
-  white-space: nowrap;
-
-}
-.Approved{
-  gap: 1vw;
-}
-.GraphWrapper{
-  width: 100%;
-  height: 70px;
-  display: flex;
-  justify-content: center;
-
-}
-.GraphWithInfo{
-  display: flex;
-  justify-content: center;
-  
-}
-
-}
-/* responsive for 426 */
-
-@media screen and (min-width:377px) and (max-width:426px) {
- .VisitWrapper {
-  align-items: center;
-  width: 100%;
-  padding: 2vh 2vw;
-}
-.GraphWrapper{
-  width: 100%;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  
-}
-.sectionHeader {
-  color: white;
-  font-weight: 
-  800;
-  margin-bottom: 2vh;
-  font-size: 2vh;
-}
-.VisitContainer {
-  display: flex;
-  flex-direction: row;
-  border-radius: 8px;
-  background-color: #141414;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  color: white;
-  height:30vh;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2vh 2vw;
-  position: relative;
-  padding-top: 0;
-
-}
-.VisitInfo {
-  display: flex;
-  flex-direction: column;
-  color: white;
-  justify-content: center;
-  text-align: center;
-
-}
-.OverviewStatus {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  align-items: center;
-  margin-bottom: 1.5vw;
-  font-size: 1.5vh;
-  padding: 1vh;
-  width: 100%;
-  align-items: center;
-}
-.percentage {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 1vh;
-}
-.GreenDot {
-  background-color: green;
-  display: inline-block;
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  color: green;
-  font-size: 1px;
-}
-.YellowDot {
-  background-color: yellow;
-  color: yellow;
-  border-radius: 50%;
-  font-size: 1px;
-  height: 10px;
-  width: 10px;
-}
-.RedDot {
-  background-color: red;
-  color: red;
-  border-radius: 50%;
-  font-size: 1px;
-  height: 10px;
-  width: 10px;
-}
-
-.VisitNumber{
-  font-size: 25px;
-  white-space: nowrap;
-  padding-top:8vh ;
-}
-.TotalVisits{
-  font-size: 2vw;
-  white-space: nowrap;
-}
-.Approved{
-  gap: 1vw;
-}
-}
-/* responsive for 427 to 615 */
-@media screen and (min-width:427px) and (max-width:615px) {
- .VisitWrapper {
-  align-items: center;
-  width: 100%;
-  padding: 2vh 2vw;
-}
-.GraphWrapper{
-  width: 100%;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  
-}
-
-.sectionHeader {
-  color: white;
-  font-weight: 
-  800;
-  margin-bottom: 2vh;
-  font-size: 2vh;
-}
-.VisitContainer {
-display: flex;
-flex-direction: row;
-  border-radius: 8px;
-  background-color: #141414;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  color: white;
-  height:30vh;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2vh 2vw;
-  position: relative;
-  padding-top: 0;
-
-}
-.VisitInfo {
-  display: flex;
-  flex-direction: column;
-  color: white;
-  justify-content: center;
-  text-align: center;
-}
-.OverviewStatus {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  align-items: center;
-  margin-bottom: 1.5vw;
-  font-size: 1.5vh;
-  padding: 1vh;
-  width: 100%;
-  align-items: center;
-}
-.percentage {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 1vh;
-}
-.GreenDot {
-  background-color: green;
-  display: inline-block;
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  color: green;
-  font-size: 1px;
-}
-.YellowDot {
-  background-color: yellow;
-  color: yellow;
-  border-radius: 50%;
-  font-size: 1px;
-  height: 10px;
-  width: 10px;
-}
-.RedDot {
-  background-color: red;
-  color: red;
-  border-radius: 50%;
-  font-size: 1px;
-  height: 10px;
-  width: 10px;
-}
-
-.VisitNumber{
-  font-size: 25px;
-  white-space: nowrap;
-  padding-top:8vh ;
-}
-.TotalVisits{
-  font-size: 2vw;
-  white-space: nowrap;
-}
-.Approved{
-  gap: 1vw;
 }
 }
 /*  */
-@media screen and (min-width:616px) and (max-width:1025px) {
-  .GraphWrapper{
-  width: 100%;
-  height: 80px;
+@media screen and (min-width:616px) and (max-width:1024px) {
+  .VisitContainer{
   display: flex;
+  flex-direction:column;
+  border-radius: 8px;
+  background-color: #141414;
+  align-items: center;
   justify-content: center;
-  padding-left: 10vw;
+  width: 60%;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2vh 2vw;
+  position: relative;
+  margin-left: 5vw;
 }
+.OverviewStatus {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  align-items: center;
+  margin-bottom: 2.5vh;
+  font-size: 0.8vh;
+  padding: 1vh;
+  justify-content: center;
+  text-align: center;
+  gap: 1vw;
+}
+.GraphWrapper{
+  height: 80px; 
+}
+.VisitInfo{
+  font-size: 10px;
+}
+.sectionHeader {
+  color: #f5f5f5;
+  font-weight: 600;
+  margin-bottom: 2vh;
+  font-size: 2vh;
+}
+
+}
+/*  */
+@media screen and (min-width:1025px) and (max-width:1440px) {
 .VisitContainer{
-display: flex;
-justify-content: center;
-padding-left:1vw;
-padding-right: 5vw;
+  display: flex;
+  flex-direction:column;
+  border-radius: 8px;
+  background-color: #141414;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2vh 2vw;
+  position: relative;
+  margin-left: 1vw;
+}
+.OverviewStatus {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  align-items: center;
+  margin-bottom: 2.5vh;
+  font-size: 1.7vh;
+  padding: 1vh;
+  justify-content: center;
+  text-align: center;
+  gap: 1vw;
+}
+.GraphWrapper{
+  height: 80px;
+}
+.VisitInfo{
+  font-size: 15px;
+}
+
+
+}
+/*  */
+@media screen and (min-width:1441px) and (max-width:2710px) {
+  .VisitContainer{
+  display: flex;
+  flex-direction:column;
+  border-radius: 8px;
+  background-color: #141414;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2vh 2vw;
+  position: relative;
+  margin-left: 1vw;
+}
+.OverviewStatus {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  align-items: center;
+  margin-bottom: 2.5vh;
+  font-size: 1.7vh;
+  padding: 1vh;
+  justify-content: center;
+  text-align: center;
+  gap: 1vw;
+}
+.GraphWrapper{
+  height: 80px;
+}
+.VisitInfo{
+  font-size: 20px;
 }
 .VisitNumber{
-  display: flex;
-  padding-left: 14vw;
-}
-.TotalVisits{
-  display: flex;
-  padding-left: 12vw;
-  white-space: nowrap;
+  font-size: 20px;
 }
 .ViewVisit{
-  display: flex;
-  white-space: nowrap;
-  padding-left: 12vw;
+  font-size: 20px;
 }
 
-
-
-  
-}
-@media screen and (min-width:1025px) and (max-width:3000px) {
-   .GraphWrapper{
-  width: 100%;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  padding-left: 10vw;
-}
-.VisitContainer{
-display: flex;
-justify-content: center;
-padding-left:1vw;
-padding-right: 5vw;
-}
-.VisitNumber{
-  display: flex;
-  padding-left: 12vw;
-}
-.TotalVisits{
-  display: flex;
-  padding-left: 11vw;
-  white-space: nowrap;  
-}
-.ViewVisit{
-  display: flex;
-  white-space: nowrap;
-  padding-left: 11vw;
-}
 }

@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "nextnpm ";
 
 const nextConfig: NextConfig = {
     async rewrites() {

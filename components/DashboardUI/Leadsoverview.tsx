@@ -72,7 +72,7 @@ function Leadsoverview() {
                   </div>
                   <div className={`${styles.feedback} ${styles.pending}`}>
                     <p>{ele.assignPending}</p>
-                    <p>Assign <p> Pending</p></p>
+                    Assign  Pending
                   </div>
                 </div>
               </div>

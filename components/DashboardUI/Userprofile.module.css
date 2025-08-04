@@ -117,7 +117,7 @@
   .userglobal {
     display: flex;
     flex-direction: column;
-    padding-top: 25px;
+    padding-top: 50px;
     padding-left: 10px;
     background-color: #000000;
     border-bottom: 1px solid grey;
@@ -181,7 +181,7 @@
   .userglobal {
     display: flex;
     flex-direction: column;
-    padding-top: 25px;
+    padding-top: 35px;
     padding-left: 10px;
     background-color: #000000;
     border-bottom: 1px solid grey;
@@ -318,7 +318,7 @@
 }
 
 /* responsive for 4k 1639 to 2560px */
-@media screen and (min-width: 1639px) and (max-width: 2560) {
+@media screen and (min-width: 1639px) and (max-width: 2700) {
   .userglobal {
     display: flex;
     flex-direction: column;
@@ -370,7 +370,7 @@
     border: none;
     padding: 2vh 1vw;
     cursor: pointer;
-    height: 30px;
+    height: 60px;
     font-weight: 200;
   }
   .usertog {
