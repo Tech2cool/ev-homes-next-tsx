@@ -122,7 +122,7 @@ export default function DashboardPage() {
             title="Total Leads"
             value={dashCount?.lead?.total ?? 0}
             description="+20.1% from last month"
-            linkHref="/visit-details"
+            linkHref="/lead-details"
             linkText="View all leads"
             icon={Users}
             iconColorClass="text-blue-500"
@@ -224,8 +224,8 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <OverviewCard
             title="Total Tasks"
-            value="75"
-            description="5 new tasks this week"
+            value={dashCount?.task?.total??0}
+            // description="5 new tasks this week"
             linkHref="/dashboard/tasks?status=total"
             linkText="View all tasks"
             icon={ClipboardList}
@@ -233,8 +233,8 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Completed Tasks"
-            value="50"
-            description="80% completion rate"
+            value={dashCount?.task?.completed?? 0}
+            // description="80% completion rate"
             linkHref="/dashboard/tasks?status=completed"
             linkText="View completed tasks"
             icon={CheckCircle}
@@ -242,8 +242,8 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Pending Tasks"
-            value="25"
-            description="Action required"
+            value={dashCount?.task?.pending?? 0}
+            // description="Action required"
             linkHref="/dashboard/tasks?status=pending"
             linkText="View pending tasks"
             icon={XCircle}

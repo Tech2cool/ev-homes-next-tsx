@@ -1,5 +1,6 @@
 "use client";
 import fetchAdapter from "@/adapter/fetchAdapter";
+import { Params } from "next/dist/server/request/params";
 import React, { useState } from "react";
 
 type DataProviderProps = {
@@ -75,13 +76,37 @@ type SiteVisitParams = {
   date?: string | null;
 };
 
+// types.ts or wherever you define your types
+
+type LeadsReportingToParams = {
+  id?: string | null;
+  query?: string | null;
+  page?: number | null;
+  limit?: number | null;
+  status?: string | null;
+  callData?: string | null;
+  cycle?: number | null;
+  order?: string | null;
+  clientstatus?: string | null;
+  leadstatus?: string | null;
+  startDateDeadline?: string | null;
+  endDateDeadline?: string | null;
+  date?: string | null;
+  member?: string | null;
+  status2?: string | null;
+  channelPartner?: string | null;
+  taskType?: string | null;
+  bulkLead?: string | null;
+  project?: string | null;
+};
+
 type DashboardCount = {
   _id: string | null;
   name: string | null;
   designation: string | null;
   date: Date | null;
-  lead: LeadCount | null ;
-  // task: TaskCount | null;
+  lead: LeadCount | null;
+  task: TaskCount | null;
 };
 
 type LeadCount = {
@@ -102,6 +127,14 @@ type LeadCount = {
   internalLeadCount: number | null;
 };
 
+
+type TaskCount = {
+  total: number | null;
+  pending: number | null;
+  completed: number | null;
+};
+
+
 //model
 type DataProviderState = {
   projects: OurProject[];
@@ -111,6 +144,8 @@ type DataProviderState = {
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
 
   loadingTestimonial: boolean;
+  loadingLeads: boolean;
+  fetchingMoreLeads: boolean;
 
   employees: Employee[];
 
@@ -123,6 +158,10 @@ type DataProviderState = {
     params: FetchLeadsParams
   ) => Promise<{ success: boolean; message?: string }>;
 
+fetchTeamLeaderReportingToLeads:(params:LeadsReportingToParams)=>Promise<{ success: boolean; message?: string }>;
+
+leads: Lead[] | null;
+
   siteInfo: PaginationProps | null;
   visits: SiteVisit[] | null;
 
@@ -130,11 +169,14 @@ type DataProviderState = {
     params: SiteVisitParams
   ) => Promise<{ success: boolean; message?: string }>;
 
+  dashCount: DashboardCount | null;
+  getSalesManagerDashBoardCount: (params: {
+    id: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
 
-dashCount: DashboardCount | null;
- getSalesManagerDashBoardCount: (
-  params: { id: string | null }
-) => Promise<{ success: boolean; message?: string }>;
+
+
+
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 };
@@ -147,18 +189,23 @@ const initialState: DataProviderState = {
   testimonials: [],
   getTestimonals: async () => ({ success: false, message: "Not initialized" }),
   loadingTestimonial: false,
+  fetchingMoreLeads:false,
 
   employees: [],
   fetchReportingToEmployees: async () => ({ success: false }),
+
   fetchSaleExecutiveLeads: async () => ({ success: false }),
+  fetchTeamLeaderReportingToLeads: async()=>({success:false}),
   leadInfo: null,
+  leads:null,
+  loadingLeads: false,
 
   fetchDataAnalyzerVisits: async () => ({ success: false }),
   siteInfo: null,
   visits: null,
 
-dashCount:null,
-getSalesManagerDashBoardCount: async () => ({ success: false }),
+  dashCount: null,
+  getSalesManagerDashBoardCount: async () => ({ success: false }),
   // setLoadingTestimonial: () => {},
 
   //   setTheme: () => null,
@@ -176,10 +223,13 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState<Employee[]>([]);
+
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
+
+  
   const [leadInfo, setleadInfo] = useState<PaginationProps | null>(null);
-const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
+  const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
 
   const [leads, setleads] = useState<Lead[]>([]);
 
@@ -187,6 +237,11 @@ const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
   const [siteInfo, setVisitInfo] = useState<PaginationProps | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
+  
+
+
+
+
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -253,8 +308,8 @@ const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
-      console.log(url);
-      console.log(res);
+      // console.log(url);
+      // console.log(res);
       setEmployees(res?.data);
       setLoading(false);
 
@@ -330,7 +385,7 @@ const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
         method: "GET",
       });
       const { data, ...withoutData } = res as PaginationProps;
- 
+
       setleadInfo(withoutData);
       if (page > 1) {
         // setleads((prev) => [...prev, ...res?.data]);
@@ -353,41 +408,39 @@ const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
     }
   };
 
+  // Function to get dashboard count for a Sales Manager
+  const getSalesManagerDashBoardCount = async ({
+    id = null,
+  }: {
+    id: string | null;
+  }): Promise<{ success: boolean; message?: string }> => {
+    setError("");
 
-// Function to get dashboard count for a Sales Manager
-const getSalesManagerDashBoardCount = async ({
-  id = null,
-}: {
-  id: string | null;
-}): Promise<{ success: boolean; message?: string }> => {
-  setError("");
+    if (!id) {
+      setError("ID is required");
+      return { success: false, message: "ID is required" };
+    }
 
-  if (!id) {
-    setError("ID is required");
-    return { success: false, message: "ID is required" };
-  }
+    try {
+      const url = `/api/v2/sales-dashboard-count/${id}`;
+      console.log("Fetching dashboard count from:", url);
 
-  try {
-    const url = `/api/v2/sales-dashboard-count/${id}`;
-    console.log("Fetching dashboard count from:", url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
 
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
+      // Assuming your fetchAdapter returns { data, status, message }
+      const dashboardData = res.data as DashboardCount;
 
-    // Assuming your fetchAdapter returns { data, status, message }
-    const dashboardData = res.data as DashboardCount;
+      console.log("Lead info:", dashboardData.lead);
+      setDashboardCount(dashboardData);
 
-    console.log("Lead info:", dashboardData.lead);
-    setDashboardCount(dashboardData);
-
-    return { success: true };
-  } catch (err: any) {
-    setError(err.message || "Something went wrong");
-    return { success: false, message: err.message };
-  }
-};
-
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+      return { success: false, message: err.message };
+    }
+  };
 
   //fetch data analyzer visits data
   const fetchDataAnalyzerVisits = async ({
@@ -449,22 +502,135 @@ const getSalesManagerDashBoardCount = async ({
     }
   };
 
+  //fetch team leader reporting to leads
+  const fetchTeamLeaderReportingToLeads = async ({
+    id = null,
+    query = "",
+    page = 1,
+    limit = 10,
+    status = null,
+    callData = null,
+    cycle = null,
+    order = null,
+    clientstatus = null,
+    leadstatus = null,
+    startDateDeadline = null,
+    endDateDeadline = null,
+    date = null,
+    member = null,
+    status2 = null,
+    channelPartner = null,
+    taskType = null,
+    bulkLead = null,
+    project = null,
+  }: LeadsReportingToParams): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
+
+    try {
+      let url = `/api/leads-team-leader-reporting/${id}?query=${query}&page=${page}&limit=${limit}`;
+      if (status != null) {
+        url += "&status=$status";
+      }
+      if (status2 != null) {
+        url += "&status2=$status2";
+      }
+      if (callData != null) {
+        url += "&callData=$callData";
+      }
+      if (cycle != null) {
+        url += "&cycle=$cycle";
+      }
+      if (order != null) {
+        url += "&order=$order";
+      }
+      if (clientstatus != null) {
+        url += "&clientstatus=$clientstatus";
+      }
+      if (leadstatus != null) {
+        url += "&leadstatus=$leadstatus";
+      }
+      if (startDateDeadline != null) {
+        url += "&startDateDeadline=$startDateDeadline";
+      }
+      if (endDateDeadline != null) {
+        url += "&endDateDeadline=$endDateDeadline";
+      }
+      if (date != null) {
+        url += "&date=$date";
+      }
+      if (member != null) {
+        url += "&member=$member";
+      }
+      if (channelPartner != null) {
+        url += "&channelPartner=$channelPartner";
+      }
+      if (bulkLead != null) {
+        url += "&bulkLead=$bulkLead";
+      }
+
+      if (taskType != null) {
+        url += "&taskType=$taskType";
+      }
+      if (project != null) {
+        url += "&project=$project";
+      }
+
+      console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res;
+
+      setleadInfo(withoutData);
+      if (page! > 1) {
+        setleads((prev) => [...prev, ...res?.data]);
+      } else {
+        setleads(res?.data ?? []);
+      }
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
+    loadingLeads:loadingLeads,
     employees: employees,
     leadInfo: leadInfo,
-    dashCount:dashCount,
+    dashCount: dashCount,
     siteInfo: siteInfo,
     visits: visits,
+    leads: leads,
+    fetchingMoreLeads:fetchingMoreLeads,
     getProjects: getProjects,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
     fetchDataAnalyzerVisits: fetchDataAnalyzerVisits,
-    getSalesManagerDashBoardCount:getSalesManagerDashBoardCount,
+    fetchTeamLeaderReportingToLeads:fetchTeamLeaderReportingToLeads,
+    getSalesManagerDashBoardCount: getSalesManagerDashBoardCount,
   };
 
   return (

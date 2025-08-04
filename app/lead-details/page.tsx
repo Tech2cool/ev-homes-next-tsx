@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import styles from "./visit-details.module.css";
+import styles from "./lead-details.module.css";
 import {
   ArrowLeft,
   Calendar,
@@ -22,6 +22,7 @@ import {
   Search,
   Filter,
   SlidersHorizontal,
+  PersonStanding,
 } from "lucide-react";
 
 import React from "react";
@@ -31,24 +32,24 @@ import { useData } from "@/providers/dataContext";
 import { FilterDialog } from "@/components/visit-components/filterDialog";
 import ApprovalDialog from "@/components/visit-components/approvalDialog";
 import PdfDialog from "@/components/visit-components/pdfDialog";
+import EditDialog from "@/components/lead-details-components/edit-dialog";
 
 const VisitDetailWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <VisitDetailsPage />
+      <LeadDetailsPage />
     </Suspense>
   );
 };
 
 export default VisitDetailWrapper;
 
-const  
- VisitDetailsPage = () => {
+const LeadDetailsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const visitId = searchParams.get("id");
-  const [selectedVisit, setSelectedVisit] = useState<SiteVisit | null>(null);
-  const [similarVisits, setSimilarVisits] =  useState<SiteVisit[]>([]);
+  const [selectedVisit, setSelectedVisit] = useState<Lead | null>(null);
+  const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showSimilarVisits, setShowSimilarVisits] = useState<boolean>(false);
   const [showFilterDialog, setShowFilterDialog] = useState<boolean>(false); // Changed from showFilters
@@ -86,11 +87,11 @@ const
 
   const { user, loading } = useUser();
   const {
-    fetchDataAnalyzerVisits,
-    siteInfo,
-    visits,
-    // fetchingMoreVisits,
-    // loadingVisits,
+    fetchTeamLeaderReportingToLeads,
+    leadInfo,
+    leads,
+    loadingLeads,
+    fetchingMoreLeads,
   } = useData();
 
   // Check if mobile
@@ -107,45 +108,52 @@ const
   useEffect(() => {
     if (user && !loading) {
       console.log("Initial fetch - visit details");
-      fetchDataAnalyzerVisits({ query: searchTerm, page: 1, limit: 10 });
+      fetchTeamLeaderReportingToLeads({
+        id: user?._id,
+        query: searchTerm,
+        page: 1,
+        limit: 10,
+      });
     }
   }, [user, loading]);
 
   // Initial data fetch
   useEffect(() => {
-    fetchDataAnalyzerVisits({ query: searchTerm, page: 1, limit: 10 });
+    fetchTeamLeaderReportingToLeads({
+      id: user?._id,
+      query: searchTerm,
+      page: 1,
+      limit: 10,
+    });
   }, [debouncedSearch]);
 
-  // Update refs when siteInfo changes
+  // Update refs when leadInfo changes
   useEffect(() => {
-    if (siteInfo) {
-      hasMoreRef.current = (siteInfo.page ?? 0) < (siteInfo.totalPages ?? 0);
-      //   loadingRef.current = loadingVisits || fetchingMoreVisits;
+    if (leadInfo) {
+      hasMoreRef.current = (leadInfo.page ?? 0) < (leadInfo.totalPages ?? 0);
+      loadingRef.current = loadingLeads || fetchingMoreLeads;
     }
-  }, [
-    siteInfo,
-    //  loadingVisits, fetchingMoreVisits
-  ]);
+  }, [leadInfo, loadingLeads, fetchingMoreLeads]);
 
   // Find selected visit when visitId changes
   useEffect(() => {
-    if (visitId && visits!.length > 0) {
-      const foundVisit = visits?.find((v: any) => v?._id === visitId);
+    if (visitId && leads!.length > 0) {
+      const foundVisit = leads?.find((v: any) => v?._id === visitId);
       if (foundVisit) {
         setSelectedVisit(foundVisit);
         // Find similar visits logic here if needed
       }
     }
-  }, [visitId, visits]);
+  }, [visitId, leads]);
 
   // Fixed loadMoreVisits function
-  const loadMoreVisits = useCallback(
+  const loadMoreLeads = useCallback(
     (resetPage = false) => {
       console.log("Load more called", {
         loadingRef: loadingRef.current,
         hasMoreRef: hasMoreRef.current,
-        currentPage: siteInfo?.page,
-        totalPages: siteInfo?.totalPages,
+        currentPage: leadInfo?.page,
+        totalPages: leadInfo?.totalPages,
         resetPage,
       });
 
@@ -159,21 +167,18 @@ const
         return;
       }
 
-      loadingRef.current = true;
-      const page = resetPage ? 1 : (siteInfo?.page || 0) + 1;
+      // loadingRef.current = true;
+      const page = resetPage ? 1 : (leadInfo?.page || 0) + 1;
 
       console.log(`Fetching page ${page}`);
-      fetchDataAnalyzerVisits({
+      fetchTeamLeaderReportingToLeads({
+        id: user?._id,
         query: searchTerm,
         page: page,
         limit: 10,
-      }).finally(() => {
-        setTimeout(() => {
-          loadingRef.current = false;
-        }, 500);
       });
     },
-    [siteInfo, fetchDataAnalyzerVisits]
+    [leadInfo, fetchTeamLeaderReportingToLeads]
   );
 
   // Fixed scroll handler with debouncing
@@ -184,10 +189,10 @@ const
 
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
         console.log("Reached end of scroll");
-        loadMoreVisits(false);
+        loadMoreLeads(false);
       }
     },
-    [loadMoreVisits]
+    [loadMoreLeads]
   );
 
   // Debounced scroll handler to prevent excessive calls
@@ -223,6 +228,30 @@ const
     }
   };
 
+  const getTimeLineStatus = (
+    status: string,
+    lead: { bookingStatus?: string }
+  ) => {
+    const lowerStatus = status?.toLowerCase();
+    const bookingStatus = lead?.bookingStatus?.toLowerCase();
+
+    // Handle booking cancelled
+    if (lowerStatus.includes("booking") && bookingStatus === "cancelled") {
+      return styles.cancelled; // Add this class to your CSS module
+    }
+
+    switch (lowerStatus) {
+      case "approved":
+        return styles.approved;
+      case "rejected":
+        return styles.rejected;
+      case "pending":
+        return styles.pending;
+      default:
+        return styles.pending;
+    }
+  };
+
   const getSourceColor = (source: string) => {
     switch (source?.toLowerCase()) {
       case "cp":
@@ -240,13 +269,13 @@ const
     }
   };
 
-  const handleVisitSelect = (selectedVisit: SiteVisit) => {
-    router.push(`/visit-details?id=${selectedVisit._id}`);
+  const handleVisitSelect = (selectedVisit: Lead) => {
+    router.push(`/lead-details?id=${selectedVisit._id}`);
     setShowSidebar(false);
   };
 
   const handleBackToList = () => {
-    router.push("/visit-details");
+    router.push("/lead-details");
   };
 
   const clearFilters = () => {
@@ -260,11 +289,11 @@ const
     });
   };
 
-    // const getUniqueValues = (key) => {
-    //   return [
-    //     ...new Set(visits?.map((visit) => visit[key]).filter(Boolean) || []),
-    //   ];
-    // };
+  // const getUniqueValues = (key) => {
+  //   return [
+  //     ...new Set(visits?.map((visit) => visit[key]).filter(Boolean) || []),
+  //   ];
+  // };
 
   // Desktop view - Two panel layout
   if (!isMobile) {
@@ -273,12 +302,12 @@ const
         {/* Left Sidebar - Visits List with Filters */}
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
-            <h1 className={styles.title}>Site Visits</h1>
+            <h1 className={styles.title}>Leads</h1>
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
                 type="text"
-                placeholder="Search visits..."
+                placeholder="Search leads..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={styles.searchInput}
@@ -294,10 +323,11 @@ const
             </button>
           </div>
 
-          <div className={styles.visitsList} 
-        //   onScroll={debouncedHandleScroll}
+          <div
+            className={styles.visitsList}
+              onScroll={debouncedHandleScroll}  
           >
-            {visits?.map((visit) => (
+            {leads?.map((visit) => (
               <div
                 key={visit._id}
                 className={`${styles.visitCard} ${
@@ -305,23 +335,23 @@ const
                 }`}
                 onClick={() => {
                   setSelectedVisit(visit);
-                  router.push(`/visit-details?id=${visit._id}`, {
+                  router.push(`/lead-details?id=${visit._id}`, {
                     scroll: false,
                   });
                 }}
               >
                 <div className={styles.cardHeader}>
                   <h3 className={styles.clientName}>
-                    {visit?.namePrefix ?? ""} {visit?.firstName ?? ""}{" "}
+                    {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
                     {visit?.lastName ?? ""}
                   </h3>
-                  <span
+                  {/* <span
                     className={`${styles.statusBadge} ${getStatusColor(
                       visit?.approvalStatus || ""
                     )}`}
                   >
                     {visit?.approvalStatus}
-                  </span>
+                  </span> */}
                 </div>
                 <div className={styles.cardDetails}>
                   <div className={styles.detailRow}>
@@ -330,30 +360,65 @@ const
                       {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
                     </span>
                   </div>
+
                   <div className={styles.detailRow}>
+                    <Calendar className={styles.icon} />
+                    Tagging Date:
+                    {visit.cycle?.startDate ? (
+                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </div>
+                  <div className={styles.detailRow}>
+                    <Calendar className={styles.icon} />
+                    valid Till:
+                    {visit.cycle?.validTill ? (
+                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </div>
+
+                  <div className={styles.detailRow}>
+                    <Calendar className={styles.icon} />
+                    Team Leader :
+                    {visit.teamLeader ? (
+                      <span>
+                        {visit.teamLeader.firstName ?? ""}{" "}
+                        {visit.teamLeader.lastName ?? ""}
+                      </span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </div>
+
+                  {/* <div className={styles.detailRow}>
                     <Calendar className={styles.icon} />
                     {visit.date != null && (
                       <span>
                         {formatDate(visit?.date)} at {formatTime(visit.date)}
                       </span>
                     )}
-                  </div>
+                  </div> */}
                   <div className={styles.detailRow}>
-                    <Building className={styles.icon} />
-                    <span
+                    <PersonStanding className={styles.icon} />
+                    Client Status:
+                    <span>{visit.clientInterestedStatus}</span>
+                    {/* <span
                       className={`${styles.sourceBadge} ${getSourceColor(
                         visit.source ?? ""
                       )}`}
                     >
                       {visit.source}
-                    </span>
-                    <span className={styles.visitType}>
+                    </span> */}
+                    {/* <span className={styles.visitType}>
                       • {visit.visitType}
-                    </span>
+                    </span> */}
                   </div>
-                  {visit.verified && (
+                  {/* {visit.verified && (
                     <div className={styles.verifiedBadge}>✓ Verified</div>
-                  )}
+                  )} */}
                 </div>
               </div>
             ))}
@@ -363,7 +428,7 @@ const
               <div className={styles.loadMoreContainer}>
                 <button
                   className={styles.loadMoreBtn}
-                  onClick={() => loadMoreVisits(false)}
+                  onClick={() => loadMoreLeads(false)}
                   disabled={loadingRef.current}
                 >
                   {loadingRef.current ? "Loading..." : "Load More"}
@@ -381,7 +446,7 @@ const
               <div className={styles.detailsHeader}>
                 <div className={styles.headerInfo}>
                   <h2 className={styles.detailsTitle}>
-                    {selectedVisit.namePrefix} {selectedVisit.firstName}{" "}
+                    {selectedVisit.prefix} {selectedVisit.firstName}{" "}
                     {selectedVisit.lastName}
                   </h2>
                   <div className={styles.badgeContainer}>
@@ -394,15 +459,15 @@ const
                     </span>
                     <span
                       className={`${styles.sourceBadge} ${getSourceColor(
-                        selectedVisit.source ?? ""
+                        selectedVisit.leadType ?? ""
                       )}`}
                     >
-                      {selectedVisit.source}
+                      {selectedVisit.leadType}
                     </span>
                     <span className={styles.visitTypeBadge}>
-                      {selectedVisit.visitType}
+                      {selectedVisit.leadType}
                     </span>
-                    {selectedVisit.verified && (
+                    {selectedVisit.approvalStatus && (
                       <span className={styles.verifiedBadge}>✓ Verified</span>
                     )}
                   </div>
@@ -420,15 +485,7 @@ const
                     <Edit className={styles.btnIcon} />
                     Edit
                   </button>
-                  <button
-                    className={styles.pdfBtn}
-                    onClick={() => {
-                      setShowPdfDialog(true);
-                    }}
-                  >
-                    <Download className={styles.btnIcon} />
-                    Generate PDF
-                  </button>
+
                   {selectedVisit.approvalStatus === "pending" && (
                     <button
                       className={styles.approveBtn}
@@ -508,22 +565,24 @@ const
           ) : (
             <div className={styles.emptyState}>
               <FileText className={styles.emptyIcon} />
-              <p className={styles.emptyText}>Select a visit to view details</p>
+              <p className={styles.emptyText}>Select a lead to view details</p>
             </div>
           )}
         </div>
 
         {/* Filter Dialog */}
-        { <FilterDialog
-          open={showFilterDialog}
-          onClose={() => setShowFilterDialog(false)}
-          onOpenChange={setShowFilterDialog}
-          filters={filters}
-          onFiltersChange={setFilters}
-          onClearFilters={clearFilters}
-          visits={visits || []}
-          resultCount={visits?.length || 0}
-        /> }
+        {
+          <FilterDialog
+            open={showFilterDialog}
+            onClose={() => setShowFilterDialog(false)}
+            onOpenChange={setShowFilterDialog}
+            filters={filters}
+            onFiltersChange={setFilters}
+            onClearFilters={clearFilters}
+            visits={leads || []}
+            resultCount={leads?.length || 0}
+          />
+        }
 
         {/* Mobile Sidebar */}
         {showSidebar && (
@@ -568,7 +627,7 @@ const
               </div>
 
               <div className={styles.visitsList}>
-                {visits?.map((visitItem) => (
+                {leads?.map((visitItem) => (
                   <div
                     key={visitItem._id}
                     className={`${styles.visitCard} ${
@@ -578,7 +637,7 @@ const
                   >
                     <div className={styles.cardHeader}>
                       <h3 className={styles.clientName}>
-                        {visitItem.namePrefix} {visitItem.firstName}{" "}
+                        {visitItem.prefix} {visitItem.firstName}{" "}
                         {visitItem.lastName}
                       </h3>
                       <span
@@ -599,13 +658,13 @@ const
                       <div className={styles.detailRow}>
                         <span
                           className={`${styles.sourceBadge} ${getSourceColor(
-                            visitItem.source ?? ""
+                            visitItem.leadType ?? ""
                           )}`}
                         >
-                          {visitItem.source}
+                          {visitItem.leadType}
                         </span>
                         <span className={styles.visitType}>
-                          • {visitItem.visitType}
+                          • {visitItem.leadType}
                         </span>
                       </div>
                     </div>
@@ -617,51 +676,14 @@ const
         )}
 
         {/* Edit Dialog */}
-        {/* {showEditDialog && (
+        {showEditDialog && (
           <EditDialog
             visit={editFormData}
             onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit) => {
+            onSave={(updatedVisit: any) => {
               console.log("Saving visit:", updatedVisit);
               setSelectedVisit(updatedVisit);
               setShowEditDialog(false);
-            }}
-          />
-        )} */}
-
-        {/* Approval Dialog */}
-        {/* {showApprovalDialog && (
-          <ApprovalDialog
-            visit={selectedVisit}
-            onClose={() => setShowApprovalDialog(false)}
-            onSubmit={(action, remark) => {
-              console.log("Approval action:", action, "Remark:", remark);
-              const updatedVisit = {
-                ...selectedVisit,
-                approvalStatus: action,
-                approvalRemark: remark,
-                approveBy: user?.name || "Current User",
-                approvalDate: new Date(),
-              };
-              setSelectedVisit(updatedVisit);
-              setShowApprovalDialog(false);
-            }}
-          />
-        )} */}
-
-        {/* PDF Generation Dialog */}
-        {showPdfDialog && (
-          <PdfDialog
-            visit={selectedVisit}
-            isGenerating={pdfGenerating}
-            onClose={() => setShowPdfDialog(false)}
-            onGenerate={() => {
-              setPdfGenerating(true);
-              setTimeout(() => {
-                setPdfGenerating(false);
-                setShowPdfDialog(false);
-                // console.log("PDF generated for visit:", selectedVisit._id);
-              }, 3000);
             }}
           />
         )}
@@ -698,10 +720,8 @@ const
         </div>
 
         {/* Visits List */}
-        <div className={styles.visitsList} 
-        onScroll={debouncedHandleScroll}
-        >
-          {visits?.map((visit) => (
+        <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
+          {leads?.map((visit) => (
             <div
               key={visit._id}
               className={styles.visitCard}
@@ -709,7 +729,7 @@ const
             >
               <div className={styles.cardHeader}>
                 <h3 className={styles.clientName}>
-                  {visit.namePrefix} {visit.firstName} {visit.lastName}
+                  {visit.prefix} {visit.firstName} {visit.lastName}
                 </h3>
                 <span
                   className={`${styles.statusBadge} ${getStatusColor(
@@ -729,9 +749,10 @@ const
                 <div className={styles.detailRow}>
                   <Calendar className={styles.icon} />
 
-                  {visit.date != null && (
+                  {visit.startDate != null && (
                     <span>
-                      {formatDate(visit.date)} at {formatTime(visit.date)}
+                      {formatDate(new Date(visit.startDate))} at{" "}
+                      {formatTime(new Date(visit.startDate))}
                     </span>
                   )}
                 </div>
@@ -739,16 +760,16 @@ const
                   <Building className={styles.icon} />
                   <span
                     className={`${styles.sourceBadge} ${getSourceColor(
-                      visit.source??""
+                      visit.leadType ?? ""
                     )}`}
                   >
-                    {visit.source}
+                    {visit.leadType}
                   </span>
-                  <span className={styles.visitType}>• {visit.visitType}</span>
+                  <span className={styles.visitType}>• {visit.leadType}</span>
                 </div>
-                {visit.verified && (
+                {/* {visit.verified && (
                   <div className={styles.verifiedBadge}>✓ Verified</div>
-                )}
+                )} */}
               </div>
             </div>
           ))}
@@ -757,7 +778,7 @@ const
             <div className={styles.loadMoreContainer}>
               <button
                 className={styles.loadMoreBtn}
-                onClick={() => loadMoreVisits(false)}
+                onClick={() => loadMoreLeads(false)}
                 disabled={loadingRef.current}
               >
                 {loadingRef.current ? "Loading..." : "Load More"}
@@ -767,15 +788,17 @@ const
         </div>
 
         {/* Filter Dialog */}
-        { <FilterDialog
-          open={showFilterDialog}
-          onOpenChange={setShowFilterDialog}
-          filters={filters}
-          onFiltersChange={setFilters}
-          onClearFilters={clearFilters} 
-          visits={visits || []}
-          resultCount={visits?.length || 0}
-        /> }
+        {
+          <FilterDialog
+            open={showFilterDialog}
+            onOpenChange={setShowFilterDialog}
+            filters={filters}
+            onFiltersChange={setFilters}
+            onClearFilters={clearFilters}
+            visits={leads || []}
+            resultCount={leads?.length || 0}
+          />
+        }
       </div>
     );
   }
@@ -797,7 +820,7 @@ const
           <ArrowLeft className={styles.backIcon} />
         </button>
         <h1 className={styles.headerTitle}>
-          {selectedVisit.namePrefix} {selectedVisit.firstName}{" "}
+          {selectedVisit.prefix} {selectedVisit.firstName}{" "}
           {selectedVisit.lastName}
         </h1>
         <button className={styles.menuBtn} onClick={() => setShowSidebar(true)}>
@@ -842,7 +865,7 @@ const
                 <ChevronDown className={styles.chevron} />
               )}
             </div>
-             {showSimilarVisits && (
+            {showSimilarVisits && (
               <div className={styles.similarVisitsList}>
                 {similarVisits.map((similarVisit) => (
                   <div
@@ -852,12 +875,12 @@ const
                   >
                     <div className={styles.similarVisitHeader}>
                       <span className={styles.similarVisitName}>
-                        {similarVisit.namePrefix} {similarVisit.firstName}{" "}
+                        {similarVisit.prefix} {similarVisit.firstName}{" "}
                         {similarVisit.lastName}
                       </span>
                       <span
                         className={`${styles.statusBadge} ${getStatusColor(
-                          similarVisit.approvalStatus??""
+                          similarVisit.approvalStatus ?? ""
                         )}`}
                       >
                         {similarVisit.approvalStatus}
@@ -866,7 +889,7 @@ const
                     <div className={styles.similarVisitDetails}>
                       {/* <span>{formatDate(similarVisit.date)}</span> */}
                       <span>•</span>
-                      <span>{similarVisit.source}</span>
+                      <span>{similarVisit.leadType}</span>
                       <span>•</span>
                       {/* <span>{similarVisit.location??""}</span> */}
                     </div>
@@ -922,7 +945,7 @@ const
             </div>
 
             <div className={styles.visitsList}>
-              {visits?.map((visitItem) => (
+              {leads?.map((visitItem) => (
                 <div
                   key={visitItem._id}
                   className={`${styles.visitCard} ${
@@ -932,12 +955,12 @@ const
                 >
                   <div className={styles.cardHeader}>
                     <h3 className={styles.clientName}>
-                      {visitItem.namePrefix} {visitItem.firstName}{" "}
+                      {visitItem.prefix} {visitItem.firstName}{" "}
                       {visitItem.lastName}
                     </h3>
                     <span
                       className={`${styles.statusBadge} ${getStatusColor(
-                        visitItem.approvalStatus??""
+                        visitItem.approvalStatus ?? ""
                       )}`}
                     >
                       {visitItem.approvalStatus}
@@ -953,13 +976,13 @@ const
                     <div className={styles.detailRow}>
                       <span
                         className={`${styles.sourceBadge} ${getSourceColor(
-                          visitItem.source??""
+                          visitItem.leadType ?? ""
                         )}`}
                       >
-                        {visitItem.source}
+                        {visitItem.leadType}
                       </span>
                       <span className={styles.visitType}>
-                        • {visitItem.visitType}
+                        • {visitItem.leadType}
                       </span>
                     </div>
                   </div>
@@ -971,7 +994,7 @@ const
       )}
 
       {/* Filter Dialog */}
-   <FilterDialog
+      {/* <FilterDialog
           open={showFilterDialog}
           onClose={() => setShowFilterDialog(false)}
           onOpenChange={setShowFilterDialog}
@@ -980,121 +1003,118 @@ const
           onClearFilters={clearFilters}
           visits={visits || []}
           resultCount={visits?.length || 0}
-        />
+        /> */}
 
       {/* Edit Dialog */}
-     {showSidebar && (
-          <div
-            className={styles.sidebarOverlay}
-            onClick={() => setShowSidebar(false)}
-          >
-            <div
-              className={styles.sidebar}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className={styles.sidebarHeader}>
-                <h2 className={styles.sidebarTitle}>All Visits</h2>
-                <button
-                  className={styles.closeBtn}
-                  onClick={() => setShowSidebar(false)}
-                >
-                  <X className={styles.closeIcon} />
-                </button>
-              </div>
-              <div className={styles.searchContainer}>
-                <Search className={styles.searchIcon} />
-                <input
-                  type="text"
-                  placeholder="Search visits..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={styles.searchInput}
-                />
-              </div>
+      {showSidebar && (
+        <div
+          className={styles.sidebarOverlay}
+          onClick={() => setShowSidebar(false)}
+        >
+          <div className={styles.sidebar} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.sidebarHeader}>
+              <h2 className={styles.sidebarTitle}>All Visits</h2>
+              <button
+                className={styles.closeBtn}
+                onClick={() => setShowSidebar(false)}
+              >
+                <X className={styles.closeIcon} />
+              </button>
+            </div>
+            <div className={styles.searchContainer}>
+              <Search className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search visits..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
 
-              {/* Filters in Sidebar - Now opens dialog */}
-              <div className={styles.sidebarFilters}>
-                <button
-                  className={styles.filtersToggle}
-                  onClick={() => setShowFilterDialog(true)}
-                >
-                  <Filter className={styles.filterIcon} />
-                  Filters
-                  <ChevronDown className={styles.chevron} />
-                </button>
-              </div>
+            {/* Filters in Sidebar - Now opens dialog */}
+            <div className={styles.sidebarFilters}>
+              <button
+                className={styles.filtersToggle}
+                onClick={() => setShowFilterDialog(true)}
+              >
+                <Filter className={styles.filterIcon} />
+                Filters
+                <ChevronDown className={styles.chevron} />
+              </button>
+            </div>
 
-              <div className={styles.visitsList}>
-                {visits?.map((visitItem) => (
-                  <div
-                    key={visitItem._id}
-                    className={`${styles.visitCard} ${
-                      visitItem._id === visitId ? styles.selectedCard : ""
-                    }`}
-                    onClick={() => handleVisitSelect(visitItem)}
-                  >
-                    <div className={styles.cardHeader}>
-                      <h3 className={styles.clientName}>
-                        {visitItem.namePrefix} {visitItem.firstName}{" "}
-                        {visitItem.lastName}
-                      </h3>
-                      <span
-                        className={`${styles.statusBadge} ${getStatusColor(
-                          visitItem.approvalStatus??""
-                        )}`}
-                      >
-                        {visitItem.approvalStatus}
+            <div className={styles.visitsList}>
+              {leads?.map((visitItem) => (
+                <div
+                  key={visitItem._id}
+                  className={`${styles.visitCard} ${
+                    visitItem._id === visitId ? styles.selectedCard : ""
+                  }`}
+                  onClick={() => handleVisitSelect(visitItem)}
+                >
+                  <div className={styles.cardHeader}>
+                    <h3 className={styles.clientName}>
+                      {visitItem.prefix} {visitItem.firstName}{" "}
+                      {visitItem.lastName}
+                    </h3>
+                    <span
+                      className={`${styles.statusBadge} ${getStatusColor(
+                        visitItem.approvalStatus ?? ""
+                      )}`}
+                    >
+                      {visitItem.approvalStatus}
+                    </span>
+                  </div>
+                  <div className={styles.cardDetails}>
+                    <div className={styles.detailRow}>
+                      <Phone className={styles.icon} />
+                      <span>
+                        {visitItem.countryCode} {visitItem.phoneNumber}
                       </span>
                     </div>
-                    <div className={styles.cardDetails}>
-                      <div className={styles.detailRow}>
-                        <Phone className={styles.icon} />
-                        <span>
-                          {visitItem.countryCode} {visitItem.phoneNumber}
-                        </span>
-                      </div>
-                      <div className={styles.detailRow}>
-                        <span
-                          className={`${styles.sourceBadge} ${getSourceColor(
-                            visitItem.source??""
-                          )}`}
-                        >
-                          {visitItem.source}
-                        </span>
-                        <span className={styles.visitType}>
-                          • {visitItem.visitType}
-                        </span>
-                      </div>
+                    <div className={styles.detailRow}>
+                      <span
+                        className={`${styles.sourceBadge} ${getSourceColor(
+                          visitItem.leadType ?? ""
+                        )}`}
+                      >
+                        {visitItem.leadType}
+                      </span>
+                      <span className={styles.visitType}>
+                        • {visitItem.leadType}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       {/* Approval Dialog */}
       {showApprovalDialog && (
-          <ApprovalDialog
-            visit={selectedVisit}
-            onClose={() => setShowApprovalDialog(false)}
-            onSubmit={(action:any, remark:any) => {
-              console.log("Approval action:", action, "Remark:", remark);
-              const updatedVisit = {
-                ...selectedVisit,
-                approvalStatus: action,
-                approvalRemark: remark,
-                approveBy: user?.firstName || "Current User",
-                approvalDate: new Date(),
-              };
-              // setSelectedVisit(updatedVisit);
-              setShowApprovalDialog(false);
-            }}
-          />
-        )}
+        <ApprovalDialog
+          visit={selectedVisit}
+          onClose={() => setShowApprovalDialog(false)}
+          onSubmit={(action: any, remark: any) => {
+            console.log("Approval action:", action, "Remark:", remark);
+            const updatedVisit = {
+              ...selectedVisit,
+              approvalStatus: action,
+              approvalRemark: remark,
+              approveBy: user?.firstName || "Current User",
+              approvalDate: new Date(),
+            };
+            // setSelectedVisit(updatedVisit);
+            setShowApprovalDialog(false);
+          }}
+        />
+      )}
 
       {/* PDF Generation Dialog */}
-      {/* {showPdfDialog && (
+      {showPdfDialog && (
         <PdfDialog
           visit={selectedVisit}
           isGenerating={pdfGenerating}
@@ -1108,7 +1128,7 @@ const
             }, 3000);
           }}
         />
-      )} */}
+      )}
     </div>
   );
 };
@@ -1128,10 +1148,9 @@ function debounce(func: (...args: any[]) => void, wait: number) {
   };
 }
 
-
 // VisitDetailsContent component (keeping it the same as your original)
-const VisitDetailsContent = ({ visit }:any) => {
-  const formatDate = (date:any) => {
+const VisitDetailsContent = ({ visit }: { visit: Lead }) => {
+  const formatDate = (date: any) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
@@ -1139,7 +1158,7 @@ const VisitDetailsContent = ({ visit }:any) => {
     });
   };
 
-  const renderValue = (value:any) => {
+  const renderValue = (value: any) => {
     if (value === null || value === undefined) return "Not specified";
     if (typeof value === "object") {
       if (Array.isArray(value)) {
@@ -1171,16 +1190,11 @@ const VisitDetailsContent = ({ visit }:any) => {
             <div className={styles.infoItem}>
               <label className={styles.infoLabel}>Full Name</label>
               <p className={styles.infoValue}>
-                {visit?.namePrefix ?? ""} {visit?.firstName ?? ""}{" "}
+                {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
                 {visit?.lastName ?? ""}
               </p>
             </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Gender</label>
-              <p className={styles.infoValue}>
-                {visit?.gender || "Not specified"}
-              </p>
-            </div>
+
             <div className={styles.infoItem}>
               <label className={styles.infoLabel}>Phone Number</label>
               <p className={styles.infoValue}>
@@ -1206,46 +1220,35 @@ const VisitDetailsContent = ({ visit }:any) => {
                 </p>
               </div>
             )}
-            {visit?.residence && (
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Residence</label>
-                <p className={styles.infoValue}>
-                  {renderValue(visit.residence)}
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
-      {/* Visit Information */}
+      {/* Lead Information */}
       <div className={styles.detailsCard}>
         <div className={styles.cardTitle}>
           <Calendar className={styles.titleIcon} />
-          Visit Information
+          Lead Information
         </div>
         <div className={styles.cardContent}>
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Visit Date</label>
+              <label className={styles.infoLabel}>Tagging Date</label>
               <p className={styles.infoValue}>
                 <Calendar className={styles.infoIcon} />
-                {formatDate(visit.date)}
+                {formatDate(visit.cycle.startDate)}
               </p>
             </div>
             <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Visit Type</label>
-              <p className={styles.infoValue}>{renderValue(visit.visitType)}</p>
+              <label className={styles.infoLabel}>Valid Till</label>
+              <p className={styles.infoValue}>
+                <Calendar className={styles.infoIcon} />
+                {formatDate(visit.cycle.validTill)}
+              </p>
             </div>
             <div className={styles.infoItem}>
               <label className={styles.infoLabel}>Source</label>
-              <p className={styles.infoValue}>{renderValue(visit.source)}</p>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Location</label>
-              <p className={styles.infoValue}>
-                {visit?.location?.name || "Not specified"}
-              </p>
+              <p className={styles.infoValue}>{renderValue(visit.leadType)}</p>
             </div>
             {visit?.channelPartner != null && (
               <div className={styles.infoItem}>
@@ -1253,12 +1256,6 @@ const VisitDetailsContent = ({ visit }:any) => {
                 <p className={styles.infoValue}>
                   {visit?.channelPartner?.firmName ?? ""}
                 </p>
-              </div>
-            )}
-            {visit?.reference && (
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Reference</label>
-                <p className={styles.infoValue}>{visit?.reference}</p>
               </div>
             )}
           </div>
@@ -1276,7 +1273,7 @@ const VisitDetailsContent = ({ visit }:any) => {
             <div className={styles.infoItem}>
               <label className={styles.infoLabel}>Projects</label>
               <div className={styles.projectsList}>
-                {visit.projects?.map((project:any, index:number) => (
+                {visit.project?.map((project: any, index: number) => (
                   <span key={index} className={styles.projectBadge}>
                     {project?.name ?? ""}
                   </span>
@@ -1286,7 +1283,7 @@ const VisitDetailsContent = ({ visit }:any) => {
             <div className={styles.infoItem}>
               <label className={styles.infoLabel}>Apartment Choices</label>
               <div className={styles.choicesList}>
-                {visit.choiceApt?.map((choice:any, index:number) => (
+                {visit.requirement?.map((choice: any, index: number) => (
                   <span key={choice} className={styles.choiceBadge}>
                     {choice}
                   </span>
@@ -1298,110 +1295,73 @@ const VisitDetailsContent = ({ visit }:any) => {
       </div>
 
       {/* Team Information */}
-      <div className={styles.detailsCard}>
-        <div className={styles.cardTitle}>
-          <User className={styles.titleIcon} />
-          Team Information
-        </div>
-        <div className={styles.cardContent}>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Closing Manager</label>
-              <p className={styles.infoValue}>
-                {visit?.closingManager?.firstName ?? ""}{" "}
-                {visit?.closingManager?.lastName ?? ""}
-              </p>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Attended By</label>
-              <p className={styles.infoValue}>
-                {visit?.attendedBy?.firstName ?? ""}{" "}
-                {visit?.attendedBy?.lastName ?? ""}
-              </p>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Entry By</label>
-              <p className={styles.infoValue}>
-                {visit?.entryBy?.firstName ?? ""}{" "}
-                {visit?.entryBy?.lastName ?? ""}
-              </p>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Data Analyzer</label>
-              <p className={styles.infoValue}>
-                {visit?.dataAnalyzer?.firstName ?? ""}{" "}
-                {visit?.dataAnalyzer?.lastName ?? ""}
-              </p>
-            </div>
+      {visit.taskRef && (
+        <div className={styles.detailsCard}>
+          <div className={styles.cardTitle}>
+            <User className={styles.titleIcon} />
+            Task Details
           </div>
-        </div>
-      </div>
 
-      {/* Approval Information */}
-      <div className={styles.detailsCard}>
-        <div className={styles.cardTitle}>
-          <Check className={styles.titleIcon} />
-          Approval Information
-        </div>
-        <div className={styles.cardContent}>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Approval Status</label>
-              <span
-                className={`${styles.statusBadge} ${
-                  styles[visit.approvalStatus?.toLowerCase()]
-                }`}
-              >
-                {visit.approvalStatus}
-              </span>
-            </div>
-            {visit?.approveBy != null && (
+          <div className={styles.cardContent}>
+            {/* Row 1: Assigned Date & Deadline */}
+            <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Approved By</label>
+                <label className={styles.infoLabel}>Assigned Date</label>
                 <p className={styles.infoValue}>
-                  {visit?.approveBy?.firstName ?? ""}{" "}
-                  {visit?.approveBy?.lastName ?? ""}
+                  {formatDate(visit?.taskRef.assignDate)}
                 </p>
               </div>
-            )}
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Approval Date</label>
-              <p className={styles.infoValue}>
-                {formatDate(visit.approvalDate)}
-              </p>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}>Deadline</label>
+                <p className={styles.infoValue}>
+                  {formatDate(visit?.taskRef.deadline)}
+                </p>
+              </div>
             </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Created Through</label>
-              <p className={styles.infoValue}>
-                {visit?.createdThrough ?? "NA"}
-              </p>
+
+            {/* Row 2: Assigned By & Assigned To */}
+            <div className={styles.infoGrid}>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}>Assigned By</label>
+                <p className={styles.infoValue}>
+                  {visit?.taskRef.assignBy?.firstName ?? ""}{" "}
+                  {visit?.taskRef.assignBy?.lastName ?? ""}
+                </p>
+              </div>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}>Assigned To</label>
+                <p className={styles.infoValue}>
+                  {visit?.taskRef.assignTo?.firstName ?? ""}{" "}
+                  {visit?.taskRef.assignTo?.lastName ?? ""}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 3: Task Details */}
+            <div className={styles.infoGrid}>
+              <div className={styles.infoItem} style={{ gridColumn: "1 / -1" }}>
+                <label className={styles.infoLabel}>Task Details</label>
+                <p className={styles.infoValue}>{visit?.taskRef.details}</p>
+              </div>
             </div>
           </div>
-          {visit?.approvalRemark && (
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Approval Remark</label>
-              <p className={styles.remarkText}>
-                {visit?.approvalRemark ?? "NA"}
-              </p>
-            </div>
-          )}
         </div>
-      </div>
+      )}
 
       {/* Feedback */}
-      {(visit?.feedback || visit?.cpfeedback) && (
+      {/* {(visit?.visitRef!=null ) && (
         <div className={styles.detailsCard}>
           <div className={styles.cardTitle}>
             <FileText className={styles.titleIcon} />
-            Feedback
+            Follow up History
           </div>
           <div className={styles.cardContent}>
-            {visit?.feedback && (
+            {
               <div className={styles.feedbackItem}>
                 <label className={styles.infoLabel}>Visit Feedback</label>
                 <p className={styles.feedbackText}>{visit?.feedback ?? "NA"}</p>
               </div>
-            )}
+            }
             {visit?.cpfeedback && (
               <div className={styles.feedbackItem}>
                 <label className={styles.infoLabel}>CP Feedback</label>
@@ -1412,7 +1372,7 @@ const VisitDetailsContent = ({ visit }:any) => {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };
