@@ -5,10 +5,19 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useData } from "@/providers/dataContext";
 import Footer from "../../components/home-components/Contact";
+import Navbar from "../../components/home-components/HomeNavbar";
+import { ArrowRightCircleIcon, ArrowUpFromDot, ArrowUpFromDotIcon, Locate, Map, MapIcon, MapPinCheck, PlayIcon, ReceiptIndianRupeeIcon, Youtube } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+
+
 const ProjectShowCase = () => {
   const imageSrc = "/images/HomePageImage.png";
   const { projects } = useData();
-
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const formatDescription = (desc: string): string[] => {
     if (!desc) return [];
 
@@ -22,11 +31,16 @@ const ProjectShowCase = () => {
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const currentProject = projects[currentIndex]
   const router = useRouter();
-
+  const { theme } = useTheme()
+  const imageS =
+    theme === "dark"
+      ? "/images/dark-abstract-background.jpg"
+      : "/images/white.jpg";
   return (
     <>
+      <Navbar />
       <div id="projects" className={styles.projects}>
-        <div className={styles.imageShowCase}>
+        {/* <div className={styles.imageShowCase}>
           <Image
             src={imageSrc || "/placeholder.svg"}
             alt="Hero Background"
@@ -43,17 +57,115 @@ const ProjectShowCase = () => {
               projects -- premium projects
             </div>
           </div>
-        </div>
+        </div> */}
+
 
         <div className={styles.projectSection}>
-          <Image
-            src={"/images/dark-abstract-background.jpg"}
-            alt="Hero Background"
-            fill
-            priority
-            quality={75}
-          />
+          <div className={styles.mainimg}>
+            {mounted && (
+              <Image
+                src={imageS}
+                alt="Hero Background"
+                fill
+                priority
+                quality={75}
+              />
 
+            )}
+
+          </div>
+          <div className={styles.projectcontainer}>
+            <div className={styles.projectimg}>
+              <Image src={"/images/Base.png"}
+                alt="Hero Background"
+                fill
+                priority
+                quality={75}
+              />
+              <div className={styles.imgblur}></div>
+              <h2>EV 9 Square</h2>
+              <div className={styles.locationimg}>
+                <div><MapPinCheck className={styles.locationIcon} size={8} /></div>
+                <p>Vashi</p>
+              </div>
+              <div className={styles.imgbutton}><p>Read More...</p></div>
+              <div className={styles.slidercontainer}>
+                <div className={styles.slidertrack}>
+                  <div className={styles.slide}>
+                    <img src="/images/gim.png" alt="1" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>Gym</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/Banquet hall.png" alt="2" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>Banquet hall</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/sky lounge.png" alt="3" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>sky lounge</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/sport trufts.png" alt="4" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>sport trufts</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/Workspace.png" alt="5" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>Workspace</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/meditation center.png" alt="6" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>meditation center</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/park.png" alt="7" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>park</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/tennis court.png" alt="8" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>tennis court</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/infinity sky pool.png" alt="9" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>infinity sky pool</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/flowwer garden.png" alt="10" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>flowwer garden</p>
+                    </div>
+                  </div>
+                  <div className={styles.slide}>
+                    <img src="/images/jopgging track.png" alt="11" />
+                    <div className={styles.overlay}>
+                      <p className={styles.slideText}>jopgging track</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div>
+
+          </div>
+          <div className={styles.pd}> </div>
           {projects.map((project, index) => (
             <div key={index} className={styles.projectCard}>
               <div className={styles.projectContent}>
@@ -118,6 +230,7 @@ const ProjectShowCase = () => {
                       {project.carouselImages?.[0] && (
                         <Image
                           src={project.carouselImages[0] || "/placeholder.svg"}
+                          // src={project.carouselImages?.[1] || "/placeholder.svg"}
                           alt={`Main image of ${project.name}`}
                           fill
                           priority
@@ -125,10 +238,45 @@ const ProjectShowCase = () => {
                           className={styles.mainImage}
                         />
                       )}
+                      <div className={styles.boxtext}>
+                        <div className={styles.boxWrapper}>
+                          <div className={styles.boxname}>{project.name}</div>
+                          <div className={styles.circleIcon}>
+                            <ArrowRightCircleIcon />
+                          </div>
+                        </div>
+
+
+                        <div className={styles.boxImg}>
+                          <Image
+                            src={project.carouselImages?.[1] || "/placeholder.svg"}
+                            alt="small preview"
+                            width={40}
+                            height={40}
+                            className={styles.smallImage}
+                          />
+                        </div>
+                      </div>
+
+
                       <div className={styles.imageOverlay}></div>
+                      <div className={styles.imageText}>
+                        <p>
+                          <span className={styles.verticalLine}></span>
+                          Discover an exclusive lifestyle at {project.name} right here in {project.locationName}
+                        </p>
+                      </div>
+                      <div className={styles.testim}>
+                        <div><PlayIcon size={15} /></div>
+                        <p>Testimonials</p>
+                      </div>
+                      <div className={styles.loca}>
+                        <div><Locate size={15} /></div>
+                        <p>Location</p>
+                      </div>
                     </div>
 
-                    <div className={styles.thumbnailGrid}>
+                    {/* <div className={styles.thumbnailGrid}>
                       {project.carouselImages?.slice(1, 3).map((img, i) => (
                         <div key={i} className={styles.thumbnailContainer}>
                           <Image
@@ -142,14 +290,15 @@ const ProjectShowCase = () => {
                           <div className={styles.imageOverlay}></div>
                         </div>
                       ))}
-                    </div>
+                    </div> */}
+
                   </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-<Footer/>
+        <Footer />
         {/* <div className={styles.footerSection}>
           <div className={styles.footerDivider}>
             <div className={styles.designWrapper}>
