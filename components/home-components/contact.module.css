@@ -165,7 +165,7 @@
 }
 .addressSection{
      flex: 2; 
-
+line-height: 1.8rem;
 }
 .quicklinks:not(:last-child),
 .addressSection:not(:last-child) {
@@ -318,7 +318,46 @@
 .copyRightText a:hover {
   text-decoration: underline;
 }
+@media screen and (max-width: 600px) {
+  .logoWrapper {
+  position: relative;
+  width: 40vw;
+  height: 5vh;
+}
+.quicklinks,
+.addressSection2,
+.addressSection,
+.projectsName {
+  padding-left: 2rem;
+}
 
+.linkItem{
+  font-size: 16px;
+}
+.addressSection {
+  font-size: 0.9rem;
+
+  
+}
+}
+@media screen and (min-width: 700px) and (max-width:1000px) {
+.quicklinks,
+.addressSection2,
+.addressSection,
+.projectsName {
+  padding-left: 1rem;
+}
+.projectsName,
+.quicklinks{
+  max-width: 200px;
+  min-width: 100px;
+}
+.addressSection{
+    max-width: 
+    400px;
+  min-width: 250px;
+}
+}
 
 
 
