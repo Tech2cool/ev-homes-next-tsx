@@ -1,0 +1,89 @@
+.DiscMain {
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10vw;
+  gap: 1vw;
+}
+
+.Thumbnail {
+  font-size: 1.1vw;
+  font-weight: 700;
+}
+
+.Channel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.ChannelLogo {
+  background-color: white;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.Btns {
+  height: 1.3vw;
+  width: 1.3vw;
+  min-width: 16px;
+  min-height: 16px;
+}
+
+.likebtn,
+.dislike {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0 0.5vw;
+}
+
+.ChannelName {
+  margin-left: 0.5vw;
+  font-size: 20px;
+  font-weight: 700;
+  flex-grow: 1;
+}
+
+.BtnContainer {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.Sharebtn {
+  border-radius: 20px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  background-color: rgba(128, 128, 128, 0.26);
+  padding: 0.3vw 0.8vw;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.LikeDislike {
+  display: flex;
+  align-items: center;
+  background-color: rgba(128, 128, 128, 0.205);
+  border-radius: 999px;
+  padding: 0.3vw 0.8vw;
+  gap: 0.5vw;
+}
+
+.DiscStorage {
+  background-color: rgba(128, 128, 128, 0.233);
+  padding: 0.5vw 1vw;
+  border-radius: 10px;
+}
+
+.Breaker{
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 2vh;
+}

@@ -1,0 +1,8 @@
+.PlaylistMainContainer{
+    display: flex;
+    flex-direction: column;
+    margin-top: 6.5vw;
+    height: auto;
+    margin-left: 1vw;
+    width: fit-content;
+}

@@ -1,0 +1,48 @@
+.Navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 2.5vh;
+  padding: 0.7rem 0.6rem;
+  color: white;
+  width: 100%;
+  position: fixed;
+  height: 50px;
+
+}
+.NavLinks{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  gap: 4vw;
+  position: fixed;
+  background-color: transparent;
+  z-index: 1000;
+  margin-left: 39vw;
+  white-space: nowrap;
+}
+.Loginbtn{
+    height: 3vh;
+    width: 6vw;
+    border: 1px solid  white;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1vw;
+    margin-left: 20vw;
+        background-color:#ffffff0d;
+}
+.Logo{
+    margin-left: 1vw;
+
+    transition: 0.3s backgroundcolor ease;
+   
+}
+.Loginbtn:hover{
+    background-color: #c49b66;
+}
+
+
