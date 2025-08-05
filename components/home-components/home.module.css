@@ -80,12 +80,14 @@
   :global(html.dark) .goldenOverlay {
     background-color: rgba(12, 12, 12, 0.3);
   }
+
   /* Add this inside hero.module.css */
 
   :global(html.light) .container {
     background-color: #fffdf8;
   }
-  :global(html.light) .heroBackground{
+
+  :global(html.light) .heroBackground {
     background-color: #fdf3db;
 
   }
@@ -206,9 +208,9 @@
     width: 60vw;
     font-family: Poppins, sans-serif;
     text-align: center;
-    line-height: 1.5;      
-    letter-spacing: 0.5px;  
-    padding: 10px;         
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    padding: 10px;
   }
 
   /* .sparkles {
@@ -257,5 +259,67 @@
     100% {
       transform: scale(1.5);
       opacity: 1;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .aboutUs {
+      padding-top: 5vh;
+    }
+
+    .subtext {
+      width: 95vw;
+    }
+
+    .btn {
+      width: 5vw;
+    }
+
+    .scroll {
+      width: 1vw;
+    }
+
+  }
+
+  @media screen and (min-width: 481px) and (max-width: 800px) {
+    .btn {
+      width: 3vw;
+    }
+
+    .scroll {
+      width: 0.5vw;
+    }
+     .subtext {
+      width: 90vw;
+    }
+
+  }
+
+  @media screen and (max-width: 450px) {
+
+    .heroBackground {
+      height: 40vh;
+    }
+  }
+   @media screen and (min-width: 451px) and (max-width: 700px) {
+
+    .heroBackground {
+      height: 50vh;
+    }
+  }
+  @media screen and (min-width: 701px) and (max-width: 800px) {
+
+    .heroBackground {
+      height: 80vh;
+    }
+  }
+   @media screen and (min-width: 801px) and (max-width: 900px) {
+
+    .heroBackground {
+      height: 90vh;
+      
+    }
+     .subtext {
+      width: 90vw;
     }
   }

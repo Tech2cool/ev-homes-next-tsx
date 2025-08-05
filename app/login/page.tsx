@@ -18,6 +18,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { redirect } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import router from "next/router";
+import Navbar from "../../components/home-components/HomeNavbar"
 
 const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
@@ -108,7 +109,9 @@ const LoginPage = () => {
   };
 
   return (
+    
     <div className={styles.loginContainer}>
+      {/* <Navbar/> */}
       <div className={styles.themeToggleWrapper}>
         <ThemeToggle />
       </div>
@@ -143,10 +146,10 @@ const LoginPage = () => {
           {/* Login Card (Top Right) */}
           <div className={styles.loginCard}>
             <div className={styles.loginHeader}>
-              <h1 className={styles.loginTitle}>Welcome Back!</h1>
-              <p className={styles.loginSubtitle}>
+<div className={styles.loginHeading}>Login</div>  
+            {/* <p className={styles.loginSubtitle}>
                 Sign in to your account to continue.
-              </p>
+              </p> */}
             </div>
 
             <div className={styles.loginTabs}>
@@ -375,7 +378,7 @@ const LoginPage = () => {
           </div>
 
           {/* Reliability Section (Bottom Right) */}
-          <div className={styles.reliabilitySection}>
+          {/* <div className={styles.reliabilitySection}>
             <h2 className={styles.reliabilityTitle}>
               Your Journey Starts Here
             </h2>
@@ -415,7 +418,7 @@ const LoginPage = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

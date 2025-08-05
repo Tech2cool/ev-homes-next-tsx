@@ -145,3 +145,62 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
+/* -------- Responsive Design -------- */
+
+/* Tablet screens */
+@media screen and (max-width: 1024px) {
+  .videoBox {
+    width: 35vw;
+    height: 25vh;
+  }
+  .caption {
+    font-size: 0.8rem;
+  }
+}
+
+/* Mobile screens */
+@media screen and (max-width: 768px) {
+  .videoGallery {
+    gap: 4vw;
+    padding-left: 2vw;
+  }
+
+  .videoBox {
+    width: 60vw;
+    height: 30vh;
+  }
+
+  .caption {
+    font-size: 0.8rem;
+  }
+
+  .scrollButton {
+    padding: 0.3rem 0.6rem;
+  }
+
+  .heading {
+    font-size: 1.5rem;
+  }
+
+  .subtext {
+    width: 80vw;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .videoBox {
+    width: 80vw;
+    height: 30vh;
+  }
+
+  .caption {
+    font-size: 0.75rem;
+  }
+  .heading {
+    font-size: 1.3rem;
+  }
+  .scrollButton {
+display: none;
+}
+}

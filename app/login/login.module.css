@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap");
 .loginContainer {
   min-height: 100vh;
   display: flex;
@@ -145,7 +147,7 @@
   margin-bottom: 2.5rem;
 }
 
-.loginTitle {
+/* .loginTitle {
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--foreground);
@@ -154,6 +156,12 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+} */
+
+.loginHeading {
+  text-align: center;
+  font-size: 10vh;
+  font-family: "Fleur De Leah", cursive;
 }
 
 .loginSubtitle {
@@ -525,7 +533,7 @@
   }
 
   .visualShowcaseTitle,
-  .loginTitle,
+  /* .loginTitle, */
   .reliabilityTitle {
     font-size: 2rem;
   }
@@ -554,9 +562,13 @@
   }
 
   .visualShowcaseTitle,
-  .loginTitle,
+  /* .loginTitle, */
   .reliabilityTitle {
     font-size: 1.8rem;
+  }
+  
+  .loginHeading {
+    font-size: 5vh;
   }
 
   .visualShowcaseSubtitle,
@@ -599,7 +611,7 @@
   }
 
   .visualShowcaseTitle,
-  .loginTitle,
+  /* .loginTitle, */
   .reliabilityTitle {
     font-size: 1.5rem;
   }
