@@ -341,3 +341,197 @@
 .linkWrapper:active {
   transform: scale(0.98);
 }
+
+
+@media screen and (max-width: 1024px) {
+  .projectDetailSection {
+    flex-direction: column;
+    width: 90vw;
+    padding: 3vh 3vw;
+    gap: 3vh;
+  }
+  .circle {
+    width: 12vw;
+    height: 12vw;
+  }
+
+  .posterImage {
+    width: 100%;
+    height: 40vh;
+  }
+
+  .rightSection {
+    width: 100%;
+  }
+
+  .selectedProjName {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  .selectedProjIcon {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1.5vh;
+  }
+
+   .logoImage{
+    width: 11vw;
+  }
+  .brochure,
+  .enquire {
+    width: 10vw;
+    height: 10vw;
+    font-size: 0.9rem;
+    margin-left: 0;
+  }
+
+  .imagesSection {
+    width: 100%;
+    height: auto;
+    gap: 2vw;
+  }
+
+  .imageBox {
+    width: 20vw;
+    height: 20vh;
+  }
+   .circleTopImage {
+    width: 18vw;
+    top: -30px;
+  }
+}
+
+/* Mobile (<= 768px) */
+@media screen and (max-width: 768px) {
+  .projectsHeading {
+    font-size: 1.3rem;
+  }
+
+  .projectCircles {
+    gap: 10vw;
+  }
+
+  .circle {
+    width: 20vw;
+    height: 20vw;
+  }
+
+  .circleTopImage {
+    width: 30vw;
+    top: -35px;
+  }
+
+  .projectName {
+    font-size: 0.9rem;
+    margin-top: 7vh;
+  }
+
+  .location {
+    font-size: 0.75rem;
+  }
+
+  .posterImage {
+    height: 35vh;
+  }
+
+  .selectedProjName {
+    font-size: 1.6rem;
+  }
+
+  .brochure,
+  .enquire {
+    width: 13vw;
+    height: 13vw;
+    font-size: 2vw;
+  }
+
+  .imageBox {
+    width: 28vw;
+    height: 18vh;
+  }
+
+  .linkWrapper {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+  .selectedProjIcon{
+    display: flex;
+    justify-content: space-between
+    ;
+  }
+   .logoImage{
+    width: 14vw;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .projects {
+    gap: 3vh;
+    padding-top: 5vh;
+  }
+
+  .projectsHeading {
+    font-size: 1.2rem;
+  }
+.initial {
+  font-size: 4vw;
+}
+  .circle {
+    width: 30vw;
+    height: 30vw;
+  }
+
+  .circleTopImage {
+    width: 40vw;
+    top: -20px;
+  }
+
+  .projectName {
+    font-size: 3.5vw;
+    margin-top: 30px;
+  }
+
+  .posterImage {
+    height: 30vh;
+  }
+
+  .selectedProjName {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .selectedProjIcon {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1vh;
+  }
+
+  .brochure,
+  .enquire {
+    width: 15vw;
+    height: 15vw;
+    font-size: 2.5vw;
+    margin: 0 auto;
+  }
+
+  .imagesSection {
+    gap: 4vw;
+    padding: 1vh 0;
+  }
+
+  .imageBox {
+    width: 40vw;
+    height: 15vh;
+  }
+
+  .linkWrapper {
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+  }
+  .logoImage{
+    width: 20vw;
+  }
+ 
+}
+

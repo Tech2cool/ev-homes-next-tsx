@@ -116,3 +116,69 @@ letter-spacing: 1px;
 :global(html.light) .imageText{
   color: #323232;
 }
+
+@media screen and (max-width: 1024px) {
+  .galleryCard {
+    width: 30vw;
+  }
+  .galleryImageBox {
+    width: 30vw;
+    height: 22vh;
+  }
+  .mainGallery {
+    width: 90vw;
+  }
+}
+
+/* Mobile (up to 768px) */
+@media screen and (max-width: 768px) {
+  .heading {
+    font-size: 1.6rem;
+  }
+  .galleryGrid {
+    gap: 3vw;
+    padding: 3vh 0;
+  }
+  .galleryCard {
+    width: 42vw;
+  }
+  .galleryImageBox {
+    width: 42vw;
+    height: 20vh;
+  }
+  .mainGallery {
+    width: 95vw;
+    gap: 2vw;
+  }
+  .galleryCardInfo h3 {
+    font-size: 1rem;
+  }
+  .imageText {
+    font-size: 0.75rem;
+  }
+}
+
+/* Small Mobile (up to 480px) */
+@media screen and (max-width: 480px) {
+  .heading {
+    font-size: 1.4rem;
+  }
+  .galleryCard {
+    width: 80vw;
+  }
+  .galleryImageBox {
+    width: 80vw;
+    height: 18vh;
+  }
+  .mainGallery {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+  .galleryCardInfo h3 {
+    font-size: 0.9rem;
+  }
+  .imageText {
+    font-size: 0.7rem;
+  }
+}

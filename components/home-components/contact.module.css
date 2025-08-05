@@ -213,7 +213,7 @@ line-height: 1.8rem;
 }
 .logoWrapper {
   position: relative;
-  width: 12vw;
+  width: 14vw;
   height: 5vh;
 }
 .projectname {
@@ -318,7 +318,7 @@ line-height: 1.8rem;
 .copyRightText a:hover {
   text-decoration: underline;
 }
-@media screen and (max-width: 600px) {
+/* @media screen and (max-width: 600px) {
   .logoWrapper {
   position: relative;
   width: 40vw;
@@ -360,4 +360,118 @@ line-height: 1.8rem;
 }
 
 
+ */
 
+ @media (min-width: 768px) and (max-width: 1024px) {
+  .mainFooter {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: left;
+    gap: 2rem;
+    padding: 3rem 2rem;
+  }
+
+  .quicklinks,
+  .addressSection,
+  .projectsName {
+    min-width: 30%;
+    max-width: 35%;
+    text-align: left;
+        padding-right: 1rem;
+    padding-left: 1rem;
+
+  }
+
+  .logoWrapper {
+    width: 140px;
+    height: 40px;
+    margin: 0;
+  }
+
+  .head {
+    font-size: 1.3rem;
+  }
+
+  .projectname a {
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mainFooter {
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    gap: 3rem;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 3rem 0;
+    text-align: start;
+  }
+
+  .quicklinks,
+  .addressSection,
+  .projectsName {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    padding-left: 4rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .projectsName{
+    border-right: 0px solid rgba(255, 255, 255, 0.2);
+  }
+
+  :global(html.light) .quicklinks,
+  :global(html.light) .addressSection {
+    border-right: 2px solid #c49b66;
+  }
+
+  .addressSection {
+    flex: 2;
+    line-height: 1.8rem;
+  }
+
+  .logoWrapper {
+  width: 140px;
+    height: 40px;
+  }
+
+  .head {
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 800px) {
+    .logoWrapper {
+    width: 140px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .head {
+    font-size: 1rem;
+  }
+.quicklinks,
+  .addressSection,
+  .projectsName {
+
+    padding-left: 2rem;
+    padding-right: 2rem;
+
+  }
+  .logoWrapper {
+    width: 140px;
+    height: 40px;
+  }
+
+  .iconCircle {
+    width: 30px;
+    height: 30px;
+  }
+
+  .copyRightText {
+    font-size: 0.75rem;
+  }
+}
