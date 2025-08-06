@@ -89,6 +89,8 @@ export default function DashboardPage() {
     fetchDataAnalyzerVisits,
     dashCount,
     getSalesManagerDashBoardCount,
+    fetchAssignFeedbackLeads,
+    assignInfo,
   } = useData();
 
   useEffect(() => {
@@ -97,6 +99,7 @@ export default function DashboardPage() {
       fetchSaleExecutiveLeads({ id: user?._id, query: "", page: 1, limit: 10 });
       fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
       getSalesManagerDashBoardCount({  id: user?._id ?? null});
+      fetchAssignFeedbackLeads({ query: "", page: 1, limit: 10 });
 
 
     }
@@ -122,7 +125,7 @@ export default function DashboardPage() {
             title="Total Leads"
             value={dashCount?.lead?.total ?? 0}
             description="+20.1% from last month"
-            linkHref="/lead-details"
+            linkHref="/lead-details?status=all"
             linkText="View all leads"
             icon={Users}
             iconColorClass="text-blue-500"
@@ -131,7 +134,7 @@ export default function DashboardPage() {
             title="CP Visits"
             value={dashCount?.lead?.visit1 ?? 0}
             description="+15% from last month"
-            linkHref="/dashboard/leads?status=cp-visits"
+            linkHref="/lead-details?status=visit-done"
             linkText="View CP visits"
             icon={CalendarCheck}
             iconColorClass="text-green-500"
@@ -140,7 +143,7 @@ export default function DashboardPage() {
             title="Walk-in Leads"
             value={dashCount?.lead?.visit2 ?? 0}
             description="+5% from last month"
-            linkHref="/dashboard/leads?status=walk-in"
+            linkHref="/lead-details?status=walk-in"
             linkText="View walk-ins"
             icon={ArrowRight}
             iconColorClass="text-purple-500"
@@ -183,7 +186,7 @@ export default function DashboardPage() {
             title="Total Visits"
             value= {siteInfo?.totalItems?? 0}
             description="+10% from last month"
-            linkHref="/dashboard/visits?status=total"
+            linkHref="/visit-details"
             linkText="View all visits"
             icon={Home}
             iconColorClass="text-indigo-500"
@@ -264,7 +267,7 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0">
-                <p className="text-4xl font-bold text-red-500">5</p>
+                <p className="text-4xl font-bold text-red-500">{assignInfo?.notFollowUpCount}</p>
                 <Link
                   href="/dashboard/feedback"
                   className="text-sm text-primary hover:underline mt-2 block"
@@ -280,7 +283,7 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0">
-                <p className="text-4xl font-bold text-orange-500">3</p>
+                <p className="text-4xl font-bold text-orange-500">{assignInfo?.notAssignedCount}</p>
                 <Link
                   href="/dashboard/assignments"
                   className="text-sm text-primary hover:underline mt-2 block"

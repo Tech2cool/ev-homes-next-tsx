@@ -3,7 +3,9 @@
 import fetchAdapter from "@/adapter/fetchAdapter";
 import React from "react";
 import { createContext, useEffect, useRef, useState } from "react";
-// import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+
+
 
 type UserProviderProps = {
   children: React.ReactNode;
@@ -23,6 +25,8 @@ type UserProviderState = {
   logout: () => void;
   loading: boolean;
   error: string | null | undefined;
+    getSocket: () => Socket | null;
+  reconnectSocket: () => void;
 };
 
 //initial values should define here
@@ -32,6 +36,8 @@ const initialState: UserProviderState = {
   logout: () => {},
   loading: false,
   error: null,
+   getSocket: () => null,
+  reconnectSocket: () => {},
 }; 
 
 const userContext = React.createContext<UserProviderState>(initialState);
@@ -41,7 +47,7 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
   const [socketInfo, setSocketInfo] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null | undefined>(null);
-  const socketRef = useRef(null);
+  const socketRef = useRef<Socket | null>(null);
 
   // Load user from localStorage on initial mount
   useEffect(() => {
@@ -50,62 +56,53 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
       setUser(JSON.parse(storedUser));
     }
   }, []);
-  //   const initSocket = (userData = user) => {
-  //     if (!userData) return;
+   const initSocket = (userData = user) => {
+    if (!userData || socketRef.current) return;
 
-  //     if (socketRef.current) {
-  //       console.log("Socket already exists, skipping init.");
-  //       return;
-  //     }
+    const socket = io("https://api.evhomes.tech", {
+      transports: ["websocket"],
+      reconnection: true,
+    });
 
-  //     // const socket = io("https://api.evhomes.tech", {
-  //     //   transports: ["websocket"],
-  //     //   reconnection: true,
-  //     // });
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("userConnected", {
+        userId: userData._id,
+        platform: "web",
+      });
+    });
 
-  //     socket.on("connect", () => {
-  //       console.log("Socket connected:", socket.id);
-  //       socket.emit("userConnected", {
-  //         userId: userData._id,
-  //         platform: "web",
-  //       });
-  //     });
+    socket.on("callCustomer", (data) => {
+      console.log("callCustomer event:", data);
+    });
 
-  //     socket.on("callCustomer", (data) => {
-  //       console.log("callCustomer event:", data);
-  //       // Add UI feedback (e.g., toast) here
-  //     });
+    socket.on("onChangeUserInfo", (data) => {
+      console.log("onChangeUserInfo event:", data);
+    });
 
-  //     socket.on("onChangeUserInfo", (data) => {
-  //       console.log("onChangeUserInfo event:", data);
-  //       // Add UI feedback (e.g., toast) here
-  //       setSocketInfo(data);
-  //     });
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
 
-  //     socket.on("disconnect", () => {
-  //       console.log("Socket disconnected");
-  //     });
+    socketRef.current = socket;
+  };
+    const reconnectSocket = () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      initSocket();
+    };
 
-  //     socketRef.current = socket;
-  //   };
-
-  //   const reconnectSocket = () => {
-  //     if (socketRef.current) {
-  //       socketRef.current.disconnect();
-  //       socketRef.current = null;
-  //     }
-  //     initSocket();
-  //   };
-
-  //   useEffect(() => {
-  //     if (user) initSocket();
-  //     return () => {
-  //       if (socketRef.current) {
-  //         socketRef.current.disconnect();
-  //         socketRef.current = null;
-  //       }
-  //     };
-  //   }, [user]);
+    useEffect(() => {
+      if (user) initSocket();
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+          socketRef.current = null;
+        }
+      };
+    }, [user]);
 
   const login = async (email: string, password: string): Promise<userSuccess> => {
     setLoading(true);
@@ -152,6 +149,8 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
     user: user,
     loading: loading,
     error: error,
+          getSocket: () => socketRef.current,
+        reconnectSocket,
     login: login,
     logout: logout,
     setLoading: setLoading,

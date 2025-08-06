@@ -295,7 +295,7 @@ const
           </div>
 
           <div className={styles.visitsList} 
-        //   onScroll={debouncedHandleScroll}
+          onScroll={debouncedHandleScroll}
           >
             {visits?.map((visit) => (
               <div
