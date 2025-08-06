@@ -5,7 +5,6 @@ import styles from "./filterDialog.module.css";
 const DATE_OPTIONS = ["today", "yesterday", "last7days", "custom"];
 const VISIT_TYPES = ["visit", "revisit", "virtual-meeting"];
 const APPROVAL_STATUSES = ["pending", "approved", "rejected"];
-const VERIFIED_STATUSES = ["true", "false"];
 
 export function FilterDialog({
   open,
@@ -74,19 +73,8 @@ export function FilterDialog({
               ))}
             </select>
 
-            <label>Verified</label>
-            <select
-              value={filters.verifiedStatus}
-              onChange={(e) => handleChange("verifiedStatus", e.target.value)}
-            >
-              <option value="">All</option>
-              {VERIFIED_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-
+            
+            
             <label>Closing Manager</label>
             <select
               value={filters.closingManager}
