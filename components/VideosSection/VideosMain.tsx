@@ -16,6 +16,7 @@ return(
             <VideoPart/>
             <VideoDiscription/>
             </div>
+          
             <VideoPlaylist/>
             </div>
          </div>

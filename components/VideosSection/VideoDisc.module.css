@@ -3,12 +3,12 @@
   color: white;
   display: flex;
   flex-direction: column;
-  margin-left: 10vw;
+  margin-left: 6vw;
   gap: 1vw;
 }
 
 .Thumbnail {
-  font-size: 1.1vw;
+  font-size: 1.5vw;
   font-weight: 700;
 }
 

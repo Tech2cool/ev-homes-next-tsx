@@ -1,0 +1,46 @@
+.Wrapper{
+    display: flex;
+    position: relative;
+
+}
+.ScrollContainer {
+  display: flex;
+  flex-direction: row;
+  margin-top: 6vw;
+  white-space: nowrap;
+  margin-left: 1vw;
+  margin-bottom: 1vw;
+  justify-content: space-between;
+  gap: 1vw;
+  padding-left: 4vw;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+   -ms-overflow-style: none;     
+  scrollbar-width: none; 
+}
+.Element{
+  background-color: #272727;
+  height: 2vw;
+  width: 15vw;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  border-radius: 20vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.All{
+    background-color: white;
+    color: black;
+}
+.ScrollButton{
+    position:absolute;
+    width: 2vw;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 28vw;
+    border-radius: 40%;
+    margin-top: 6vw;
+    
+}   
