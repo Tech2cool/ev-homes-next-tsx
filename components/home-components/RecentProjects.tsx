@@ -106,177 +106,176 @@ const oleo = Oleo_Script({
 // ];
 
 const RecentProjects = () => {
-    const {projects  } = useData();
-  
+  const { projects } = useData();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasUserSelected, setHasUserSelected] = useState(false);
 
 
   const currentProject = projects[currentIndex];
-  
-  
+
+
   const projectDetailRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
     if (projects.length === 0) return;
-    if (hasUserSelected &&  projectDetailRef.current) {
+    if (hasUserSelected && projectDetailRef.current) {
       projectDetailRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-  }, [currentIndex, hasUserSelected,projects]); 
+  }, [currentIndex, hasUserSelected, projects]);
 
 
-//  const handleNext = () => {
-//     setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
-//     setHasUserSelected(true);
-//   };
+  //  const handleNext = () => {
+  //     setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
+  //     setHasUserSelected(true);
+  //   };
 
-//   const handlePrev = () => {
-//     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
-//     setHasUserSelected(true);
-//   };
+  //   const handlePrev = () => {
+  //     setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
+  //     setHasUserSelected(true);
+  //   };
 
-    return (
-      <div id="recentProjects" className={styles.projects}>
-        <h2 className={styles.projectsHeading}>Recent Projects</h2>
-        <div className={styles.projectCircles}>
-          {/* projects */}
+  return (
+    <div id="recentProjects" className={styles.projects}>
+      <h2 className={styles.projectsHeading}>Recent Projects</h2>
+      <div className={styles.projectCircles}>
+        {/* projects */}
 
-          {projects.length > 0 ? (
-            projects.slice(0,4).map((proj, i) => (
-              <div
-                key={proj._id || i}
-                className={`${styles.circleWrapper} ${
-                  i === currentIndex ? styles.activeCircle : ""
+        {projects.length > 0 ? (
+          projects.slice(0, 4).map((proj, i) => (
+            <div
+              key={proj._id || i}
+              className={`${styles.circleWrapper} ${i === currentIndex ? styles.activeCircle : ""
                 }`}
               onClick={() => {
-                      setCurrentIndex(i);
-                      setHasUserSelected(true);
-                    }}
-              >
-                <div className={styles.circleTopImage}>
-                  <Image
-                    src="/images/award.png"
-                    alt="Award"
-                    width={100}
-                    height={100}
-                  />
-                </div>
-                <div className={styles.circle}>
-                  <span className={styles.initial}>{proj.name}</span>
-                  <Image
-                    src={proj?.showCaseImage ?? "/images/ev23malibuwestmodel.png"}
-                    alt={proj?.name ?? ""}
-                    // width={100}
-                    // height={100}
-                    fill
-                  />
-                </div>
-                <span className={styles.projectName}>
-                  {proj.name}
-                  <br />
-                  <span className={styles.location} style={{ display: "flex" }}>
-                    <MapPin className={styles.locationIcon} size={19}/>
-                    {proj.locationName || "Location Unknown"}
-                  </span>
-                </span>
-              </div>
-            ))
-          ) : (
-            <p>Loading projects...</p>
-          )}
-        </div>
-        {/* current proj */}
-        {currentProject && (
-          <div ref={projectDetailRef} className={styles.projectDetailWrapper}>
-            <div className={styles.projectDetailSection}>
-              <div className={styles.posterImage}>
+                setCurrentIndex(i);
+                setHasUserSelected(true);
+              }}
+            >
+              <div className={styles.circleTopImage}>
                 <Image
-                  src={currentProject?.showCaseImage ?? "/images/Building1.jpg"}
-                  alt="Project Poster"
-                  // width={800}
-                  // height={500}
-                  fill
-                  className={styles.imagePoster}
-                  priority
+                  src="/images/award.png"
+                  alt="Award"
+                  width={100}
+                  height={100}
                 />
               </div>
-              <div className={styles.rightSection}>
-<div className={`${oleo.className} ${styles.selectedProjName}`}>
-                  {currentProject.name}
-                </div>
-
-                <div className={styles.selectedProjIcon}>
-                  <Image
-                    src={currentProject?.logo ?? "/images/evhomeslogo.png"}
-                    alt="Project Logo"
-                    width={120}
-                    height={100}
-                    className={styles.logoImage}
-                  />
-                  <div style={{ display: "flex" }}>
-                    <a
-                      className={styles.brochure}
-                      target="_blank"
-                      href={`${currentProject?.brochure}`}
-                    >
-                      <Download size={20} />
-                      Brochure
-                    </a>
-                    <div style={{ width: 15 }} />
-                    <div className={styles.enquire}>Enquire Now!</div>
-                  </div>
-                </div>
-                <div className={styles.text1}>
-                  <Building2 size={25} />
-                  Spacious Apartments
-                </div>
-                <div className={styles.selectedProjLocation}>
-                  <MapPin size={22} /> {currentProject.locationName}
-                </div>
-                <div className={styles.imagesSection}>
-                  {currentProject?.amenities?.map((amenity, i) => {
-                    return (
-                      <div key={i} className={styles.imageBox}>
-                        <Image
-                          src={
-                            amenity?.image ?? "/images/buildingforDescription.jpg"
-                          }
-                          alt={amenity?.name ?? "Image 1"}
-                          // width={100}
-                          // height={100}
-                          fill
-                          unoptimized
-                          className={styles.boxImage}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className={styles.text2}>
-                  Configurations.... Amenities...
-                </div>
-
-                <a
-                  href={
-                    currentProject?._id
-                      ? `/project/${currentProject._id}`
-                      : "#learn-more"
-                  }
-                  className={styles.linkWrapper}
-                >
-                  Learn More
-                </a>
+              <div className={styles.circle}>
+                <span className={styles.initial}>{proj.name}</span>
+                <Image
+                  src={proj?.showCaseImage ?? "/images/ev23malibuwestmodel.png"}
+                  alt={proj?.name ?? ""}
+                  // width={100}
+                  // height={100}
+                  fill
+                />
               </div>
+              <span className={styles.projectName}>
+                {proj.name}
+                <br />
+                <span className={styles.location} style={{ display: "flex" }}>
+                  <MapPin className={styles.locationIcon} size={19} />
+                  {proj.locationName || "Location Unknown"}
+                </span>
+              </span>
             </div>
-          </div>
+          ))
+        ) : (
+          <p>Loading projects...</p>
         )}
       </div>
-    );
+      {/* current proj */}
+      {currentProject && (
+        <div ref={projectDetailRef} className={styles.projectDetailWrapper}>
+          <div className={styles.projectDetailSection}>
+            <div className={styles.posterImage}>
+              <Image
+                src={currentProject?.showCaseImage ?? "/images/Building1.jpg"}
+                alt="Project Poster"
+                // width={800}
+                // height={500}
+                fill
+                className={styles.imagePoster}
+                priority
+              />
+            </div>
+            <div className={styles.rightSection}>
+              <div className={`${oleo.className} ${styles.selectedProjName}`}>
+                {currentProject.name}
+              </div>
+
+              <div className={styles.selectedProjIcon}>
+                <Image
+                  src={currentProject?.logo ?? "/images/evhomeslogo.png"}
+                  alt="Project Logo"
+                  width={120}
+                  height={100}
+                  className={styles.logoImage}
+                />
+                <div style={{ display: "flex" }}>
+                  <a
+                    className={styles.brochure}
+                    target="_blank"
+                    href={`${currentProject?.brochure}`}
+                  >
+                    <Download size={20} />
+                    Brochure
+                  </a>
+                  <div style={{ width: 15 }} />
+                  <div className={styles.enquire}>Enquire Now!</div>
+                </div>
+              </div>
+              <div className={styles.text1}>
+                <Building2 size={25}  className={styles.texticon}/>
+                Spacious Apartments
+              </div>
+              <div className={styles.selectedProjLocation}>
+                <MapPin size={22} className={styles.texticon} /> {currentProject.locationName}
+              </div>
+              <div className={styles.imagesSection}>
+                {currentProject?.amenities?.map((amenity, i) => {
+                  return (
+                    <div key={i} className={styles.imageBox}>
+                      <Image
+                        src={
+                          amenity?.image ?? "/images/buildingforDescription.jpg"
+                        }
+                        alt={amenity?.name ?? "Image 1"}
+                        // width={100}
+                        // height={100}
+                        fill
+                        unoptimized
+                        className={styles.boxImage}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className={styles.text2}>
+                Configurations.... Amenities...
+              </div>
+
+              <a
+                href={
+                  currentProject?._id
+                    ? `/project/${currentProject._id}`
+                    : "#learn-more"
+                }
+                className={styles.linkWrapper}
+              >
+                Learn More
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default RecentProjects;

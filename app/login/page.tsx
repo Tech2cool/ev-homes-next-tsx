@@ -19,6 +19,8 @@ import { redirect } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import router from "next/router";
 import Navbar from "../../components/home-components/HomeNavbar"
+import { MdOutlineEmail, MdPassword } from "react-icons/md";
+
 
 const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
@@ -76,7 +78,7 @@ const LoginPage = () => {
   const handleSendOtp = async () => {
     setIsSubmitting(true);
     setLoginMessage(null);
-    setOtpSent(false); 
+    setOtpSent(false);
 
     // Simulate OTP sending
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -109,12 +111,12 @@ const LoginPage = () => {
   };
 
   return (
-    
+
     <div className={styles.loginContainer}>
-      {/* <Navbar/> */}
-      <div className={styles.themeToggleWrapper}>
+      <Navbar />
+      {/* <div className={styles.themeToggleWrapper}>
         <ThemeToggle />
-      </div>
+      </div> */}
 
       <div className={styles.mainContentArea}>
         {/* Visual Showcase Section (Left Side - Blending Background) */}
@@ -145,37 +147,33 @@ const LoginPage = () => {
         <div className={styles.rightColumnCards}>
           {/* Login Card (Top Right) */}
           <div className={styles.loginCard}>
-            <div className={styles.loginHeader}>
-<div className={styles.loginHeading}>Login</div>  
+            <div className={styles.loginHeading}>Login</div>
             {/* <p className={styles.loginSubtitle}>
                 Sign in to your account to continue.
               </p> */}
-            </div>
 
             <div className={styles.loginTabs}>
               <button
-                className={`${styles.tabButton} ${
-                  activeLoginTab === "email" ? styles.activeTab : ""
-                }`}
+                className={`${styles.tabButton} ${activeLoginTab === "email" ? styles.activeTab : ""
+                  }`}
                 onClick={() => {
                   setActiveLoginTab("email");
                   setLoginMessage(null);
                   setOtpSent(false);
                 }}
               >
-                <Mail className={styles.tabIcon} /> Email & Password
+                <Mail className={styles.tabIcon} color="#c49b66" /> Email & Password
               </button>
               <button
-                className={`${styles.tabButton} ${
-                  activeLoginTab === "phone" ? styles.activeTab : ""
-                }`}
+                className={`${styles.tabButton} ${activeLoginTab === "phone" ? styles.activeTab : ""
+                  }`}
                 onClick={() => {
                   setActiveLoginTab("phone");
                   setLoginMessage(null);
                   setOtpSent(false);
                 }}
               >
-                <Phone className={styles.tabIcon} /> Phone & OTP
+                <Phone className={styles.tabIcon} color="#c49b66" /> Phone & OTP
               </button>
             </div>
 
@@ -183,7 +181,8 @@ const LoginPage = () => {
               <form className={styles.loginForm} onSubmit={handleEmailSubmit}>
                 <div className={styles.inputGroup}>
                   <label htmlFor="email" className={styles.label}>
-                    Email Address
+                    <MdOutlineEmail className={styles.allIcons} />
+                    Enter your email :
                   </label>
                   <div className={styles.inputWithIcon}>
                     <Mail className={styles.inputIcon} />
@@ -202,7 +201,8 @@ const LoginPage = () => {
 
                 <div className={styles.inputGroup}>
                   <label htmlFor="password" className={styles.label}>
-                    Password
+                    <MdPassword className={styles.allIcons} />
+                    Enter your password :
                   </label>
                   <div className={styles.inputWithIcon}>
                     <Lock className={styles.inputIcon} />
@@ -224,11 +224,10 @@ const LoginPage = () => {
 
                 {loginMessage && (
                   <p
-                    className={`${styles.loginMessage} ${
-                      loginMessage.includes("successful")
-                        ? styles.success
-                        : styles.error
-                    }`}
+                    className={`${styles.loginMessage} ${loginMessage.includes("successful")
+                      ? styles.success
+                      : styles.error
+                      }`}
                   >
                     {loginMessage}
                   </p>
@@ -320,13 +319,12 @@ const LoginPage = () => {
 
                 {loginMessage && (
                   <p
-                    className={`${styles.loginMessage} ${
-                      loginMessage.includes("successful")
-                        ? styles.success
-                        : loginMessage.includes("sent")
+                    className={`${styles.loginMessage} ${loginMessage.includes("successful")
+                      ? styles.success
+                      : loginMessage.includes("sent")
                         ? styles.info
                         : styles.error
-                    }`}
+                      }`}
                   >
                     {loginMessage}
                   </p>
@@ -357,7 +355,7 @@ const LoginPage = () => {
             <div className={styles.divider}>
               <span>OR</span>
             </div>
-
+{/* 
             <div className={styles.socialLogin}>
               <button className={styles.socialButton}>
                 <Google className={styles.socialIcon} />
@@ -367,7 +365,7 @@ const LoginPage = () => {
                 <Github className={styles.socialIcon} />
                 Sign in with GitHub
               </button>
-            </div>
+            </div> */}
 
             <p className={styles.signupText}>
               Don&apos;t have an account?{" "}

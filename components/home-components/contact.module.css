@@ -450,6 +450,9 @@ line-height: 1.8rem;
 }
 
 @media (max-width: 480px) {
+  .designWrapper {
+  width: 60vw;
+}
   .head {
     font-size: 1rem;
   }
