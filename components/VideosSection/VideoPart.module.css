@@ -9,8 +9,28 @@
 }
 .Videobox {
   height: 35vw;
-  width: 60vw;
+  width: 100vw;
   border: none;
   border-radius: 10px;
   object-fit: cover;
+}
+
+.Start {
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Perfect center */
+  cursor: pointer;
+  background: none;
+  border: none;
+  z-index: 10;
+}
+.Pause {
+  cursor: pointer;
+  position: absolute;
+  display: none;
+}
+.VideoController {
+  position: absolute;
 }

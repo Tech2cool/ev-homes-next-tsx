@@ -12,3 +12,9 @@
     display: flex;
     flex-direction: column;
 }
+@media screen and (max-width:615px) {
+.SubContainer{
+display: flex;
+flex-direction: column;
+}
+}
