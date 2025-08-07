@@ -1,0 +1,152 @@
+.mobileView {
+  padding: 0vh 3vh 3vh 3vh;
+  max-width: 100%;
+}
+
+.calendarHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: normal;
+  text-align: center;
+  margin-bottom: 2vh;
+  color: #a7a6a6;
+}
+
+.weekday {
+  font-size: 2vh;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1vh;
+}
+
+.emptyCell {
+  height: 7vh;
+}
+
+.calendarCell {
+  height: 7vh;
+  text-align: center;
+  line-height: 6vh;
+  position: relative;
+  border-radius: 8px;
+  cursor: default;
+  font-size: 2.5vh;
+  font-weight: normal;
+}
+
+.calendarCell {
+  height: 7vh;
+  text-align: center;
+  line-height: 7vh;
+  border-radius: 8px;
+  cursor: default;
+  font-size: 2.5vh;
+  transition: background-color 0.3s ease;
+}
+
+.today {
+  outline: 2px solid blue;
+}
+
+.dayText {
+  font-weight: normal;
+}
+
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialogBox {
+  background: #121212;
+  padding: 3vh 5vw;
+  border-radius: 8px;
+  width: 70%;
+  text-align: center;
+  color: #e0e0e0;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+  border: 1px solid #333;
+}
+
+.buttonCol{
+  display: flex;
+  justify-content: space-around;
+}
+
+.reguBtn,
+.closeBtn {
+  margin-top: 4vh;
+  background: #1f1f1f;
+  color: #fff;
+  border: none;
+  padding: 1.5vh 3vw;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.closeBtn:hover {
+  background: #333;
+}
+
+.reguBtn {
+  background-color: #4caf50;
+}
+
+.reguBtn:hover {
+  background-color: #527053;
+}
+
+.timeInOutSection {
+  display: flex;
+  justify-content: space-around;
+  margin: 4vh 0;
+  gap: 1vw;
+}
+
+.timeBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.timeOutImage,
+.timeInImage {
+  width: 15vw;
+  height: 15vw;
+  background-color: #1f1f1f;
+  border-radius: 8px;
+  margin-bottom: 0.5vh;
+  border: 1px solid #333;
+}
+
+.label {
+  font-size: 2vh;
+  font-weight: 600;
+  color: #bbbbbb;
+  margin-bottom: 0.5vh;
+}
+
+.value {
+  font-size: 2.5vh;
+  color: #ffffff;
+}
+
+.shiftTiming {
+  text-align: left;
+  margin-top: 1vh;
+  color: #cccccc;
+  font-size: 2.5vh;
+}

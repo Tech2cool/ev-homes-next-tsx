@@ -1,0 +1,19 @@
+"use client";
+import moment from "moment-timezone";
+
+export const dateFormatWithTime = (dateStr) => {
+  const localTime = moment.utc(dateStr).local().format("DD MMM YYYY HH:mm");
+  return localTime;
+};
+
+export const dateFormatOnly = (dateStr) => {
+  if (!dateStr) return "NA";
+  const localTime = moment.utc(dateStr).local().format("DD MMM YYYY");
+  return localTime;
+};
+
+export const timeFormatOnly = (dateStr) => {
+  if (!dateStr) return "NA";
+  const localTime = moment.utc(dateStr).local().format("hh:mm a");
+  return localTime;
+};

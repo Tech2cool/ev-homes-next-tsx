@@ -1,0 +1,456 @@
+.maincontainer {
+  display: flex;
+  flex-direction: row;
+  
+}
+
+.leaveSection {
+  display: flex;
+  flex-direction: column;
+  flex: 2;
+  height: 100%;
+}
+/* ...............................aprove reject card................................... */
+.leavecontainer {
+  margin: 3vh;
+  display: flex;
+  flex-direction: row;
+  padding: 2vh 1vh;
+  cursor: pointer;
+}
+.leavecard {
+  display: flex;
+  flex-direction: column;
+  width: 12vw;
+  color: #d7cfcf;
+  padding-left: 2vw;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.numberleave {
+  font-size: 1.2rem;
+}
+
+.request {
+  color: #9cc3ef;
+  font-size: 1.2rem;
+}
+
+.aproved {
+  color: rgb(163, 253, 163);
+  font-size: 1.2rem;
+}
+
+.rejected {
+  color: red;
+  font-size: 1.2rem;
+}
+
+.pending {
+  color: orange;
+  font-size: 1.2rem;
+}
+
+/* table container  */
+
+.tableContainer {
+  overflow-x: auto;
+  padding: 4vh;
+}
+
+.applyIcon {
+  margin-right: 0.5vw;
+  font-size: 1.2rem;
+}
+
+.topBar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 3vh;
+}
+
+.applyButton {
+    display: flex;
+  background-color: #238dfe;
+  border: 2px solid #007bff;
+  color: white;
+  padding: 1vh 1vw;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.applyButton:hover {
+  background-color: #0056b3;
+}
+
+.leaveTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: white;
+}
+.iconText {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leaveTable th,
+.leaveTable td {
+  border: 1px solid #333;
+  padding: 1.5vh;
+  text-align: left;
+  cursor: pointer;
+}
+
+.leaveTable th {
+  background-color: #121212;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.leaveTable td {
+  background-color: #1a1a1a;
+}
+
+.leaveTable a {
+  color: #4dabf7;
+  text-decoration: none;
+}
+
+.leaveTable a:hover {
+  text-decoration: underline;
+}
+
+.statusApproved {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.statusPending {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.statusRejected {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.statsWithProgress {
+  margin-left: 2vh;
+  margin-right: 2vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  /* flex-wrap: wrap; */
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+}
+
+/* progress container  */
+.progressContainer {
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  padding: 1vh 2vw;
+  border-radius: 12px;
+}
+
+.leaveHeadline {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #007bff;
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.progressGroup {
+  display: flex;
+  gap: 1vw;
+}
+
+.labelColumn {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #919090;
+  gap: 0.8vh;
+  /* width: 25%; */
+}
+
+.countColumn {
+  display: flex;
+  flex-direction: column;
+  width: 2%;
+  color: #919090;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #919090;
+  gap: 0.8vh;
+}
+
+.barColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2.7vh;
+}
+
+.progressBar {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  height: 1.1vh;
+  overflow: hidden;
+  width: 15vw;
+}
+
+.progressFillCL {
+  height: 100%;
+  background-color: orange;
+  transition: width 0.5s ease;
+}
+
+.progressFillCO {
+  height: 100%;
+  background-color: blue;
+  transition: width 0.5s ease;
+}
+
+.progressFillPL {
+  height: 100%;
+  background-color: green;
+  transition: width 0.5s ease;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: black;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 2rem;
+  width: 90%;
+  max-width: 30vw;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: white;
+}
+
+/* reimbursement page filter css  */
+
+.filterReimbursement {
+  align-items: center;
+  font-size: 1rem;
+  gap: 1vw;
+  color: white;
+  display: flex;
+  margin-left: 10vw;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 0vh 2vh;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filterReimbursement:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.03);
+}
+
+.noDataContainer {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  flex-direction: column;
+}
+
+
+.noDataText {
+  color: rgb(154, 154, 154);
+  font-size: 0.9rem;
+}
+
+.noDataImage {
+  width: 20vw;
+  height: auto;
+}
+
+.tableDesktop {
+  display: block;
+}
+
+.cardsMobile {
+  display: none;
+}
+
+@media screen and (max-width: 615px) {
+  .filterReimbursement span {
+    display: none;
+  }
+  .noDataImage {
+    width: 50vw;
+  }
+
+  .progressContainer {
+    display: none;
+  }
+
+  .leavecontainer {
+    display: flex;
+    gap: 2vh;
+    padding: 1vh;
+    justify-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .leavecard {
+    min-width: 20vw;
+    height: 20vw;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    text-align: center;
+    border-right: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .numberleave {
+    font-size: 1rem;
+  }
+
+  .request,
+  .aproved,
+  .rejected,
+  .pending {
+    font-size: 0.8rem;
+    margin-bottom: 1vh;
+  }
+
+  .statsWithProgress {
+    margin-left: 0vh;
+    margin-right: 0vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* flex-wrap: wrap; */
+    border-bottom: 0px solid rgba(255, 255, 255, 0.3);
+    width: 100vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tableDesktop {
+    display: none;
+  }
+
+  .cardsMobile {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+  }
+
+  .leaveCardMobile {
+    border: 1px solid #505050;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: black;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    color: rgb(210, 210, 210);
+    font-size: 0.8rem;
+  }
+
+  .leaveCardMobile div {
+    margin-bottom: 0.5rem;
+  }
+
+  .filesDiv,
+  .firstSectMobile {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .statusRejected,
+  .statusPending,
+  .statusApproved {
+    color: #4caf50;
+    font-weight: bold;
+    border: 1px solid #4caf50;
+    border-radius: 20px;
+    padding: 1vh 2vw;
+  }
+
+  .statusPending {
+    color: #ff9800;
+    border: 1px solid #ff9800;
+  }
+
+  .statusRejected {
+    color: #f44336;
+    border: 1px solid #f44336;
+  }
+  .tableContainer {
+    padding: 2vh;
+  }
+
+  .modalContent {
+    padding: 2vh 2vw;
+    width: 100%;
+    max-width: 85vw;
+  }
+
+  .filterReimbursement {
+    margin-left: 0vw;
+    padding: 0 1vw;
+  }
+}
+
+@media screen and (max-width: 1024px) and (min-width: 616px) {
+  .leaveTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: white;
+  }
+
+  .leaveTable th,
+  .leaveTable td {
+    padding: 1vh;
+  }
+
+  .leaveTable th {
+    font-weight: 400;
+  }
+}
