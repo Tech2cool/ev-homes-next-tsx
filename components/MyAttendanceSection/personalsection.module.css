@@ -1,0 +1,276 @@
+.maincontainer {
+  display: flex;
+  flex-direction: column;
+  color: #efeaea;
+  align-items: center;
+  margin-top: 5vh;
+}
+
+.headsection {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 3vw;
+  padding: 2vh 3vw 2vh 3vw;
+  align-items: center;
+}
+
+/* *****************************profile section*************************** */
+.profilesection {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(14, 13, 13, 0.8);
+  width: 25%;
+  padding: 1vh;
+  border-radius: 8px;
+}
+
+.imagesection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1vh;
+      padding-top: 5vh;
+      padding-bottom: 2vh;
+
+}
+
+.profileImage {
+  width: 20vh;
+  height: 20vh;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profilesection h6 {
+  font-size: 2.5vh;
+  font-weight: 400;
+}
+
+.employeebutton {
+  display: flex;
+  width: 7vw;
+  height: 4vh;
+  background-color: #504f4f52;
+  font-size: 1.9vh;
+  font-weight: 300;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.3rem;
+}
+
+/* ******************************Contact Section************************* */
+.contact {
+  padding: 1.5rem;
+}
+
+.contact p {
+  font-size: 2.5vh;
+  font-weight: 500;
+  color: rgb(58, 58, 204);
+}
+
+.container {
+  height: 8vh;
+  width: 100%;
+  background-color: #34333336;
+  /* padding: 0.4rem 0rem 0.4rem 0.6rem; */
+  padding: 1vh 0vw 1vh 1vw;
+  margin-top: 0.5rem;
+  border-radius: 0.3rem;
+}
+
+.container h5 {
+  color: grey;
+  font-size: 1.7vh;
+}
+
+.container p {
+  color: #c5c1c1;
+  font-size: 2vh;
+}
+
+.joincontainer {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+/* ****************************PERSONAL INFOMATION************************* */
+.personalInfo {
+  background-color: rgb(14, 13, 13, 0.8);
+  border-radius: 8px;
+  padding: 2vh 2vw;
+  color: rgb(58, 58, 204);
+  font-size: 2.5vh;
+  font-weight: 500;
+}
+
+.containerrow {
+  display: flex;
+  flex-direction: row;
+  gap: 2vw;
+}
+
+/* * ****************************Information professional*****************************  */
+.proInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  width: 19vw;
+  height: 100%;
+  background-color: rgb(14, 13, 13, 0.8);
+  border-radius: 8px;
+  padding: 5vh 2vw;
+  color: rgb(58, 58, 204);
+  font-size: 2.5vh;
+  font-weight: 500;
+}
+
+/* *******************************LEAVE AND REPORTING******************** */
+.leaverepoting {
+  flex-direction: row;
+  display: flex;
+  border-radius: 8px;
+  padding: 1vh 2vw 1vh 2vw;
+  align-items: center;
+  gap: 4vw;
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+}
+
+.leaveHeadline {
+  font-size: 2.5vh;
+  font-weight: 500;
+  color: rgb(58, 58, 204);
+
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.progressGroup {
+  display: flex;
+  gap: 1vw;
+}
+
+.labelColumn {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.8vh;
+  font-weight: 500;
+  color: #919090;
+  gap: 1vh;
+}
+
+.countColumn {
+  display: flex;
+  flex-direction: column;
+  color: #919090;
+  font-size: 1.8vh;
+  font-weight: 500;
+  color: #919090;
+  gap: 1vh;
+}
+
+.barColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+}
+
+.progressBar {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  height: 1vh;
+  overflow: hidden;
+  width: 10vw;
+}
+
+.progressFillCL {
+  height: 100%;
+  background-color: #2e073f;
+  transition: width 0.5s ease;
+}
+
+.progressFillCO {
+  height: 100%;
+  background-color: #750e21;
+  transition: width 0.5s ease;
+}
+
+.progressFillPL {
+  height: 100%;
+  background-color: #ff4c29;
+  transition: width 0.5s ease;
+}
+
+/* **********************REPORTING TO ********************** */
+.reportingContair {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+.reportingContair p {
+  font-size: 2.5vh;
+  font-weight: 500;
+  color: rgb(58, 58, 204);
+}
+.imagecontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2vh 1vw;
+  background-color: #1e1e1e98;
+  border-radius: 8px;
+  width: 19vw;
+  height: 28vh;
+}
+.repotingImage {
+  width: 15vh;
+  height: 15vh;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.imagecontainer h6 {
+  font-size: 1vw;
+  font-weight: 600;
+  padding-top: 0.5vh;
+}
+.imagecontainer p {
+  font-size: 1.1vw;
+  font-weight: 400;
+  color: #bfbebe;
+}
+
+@media screen and (max-width: 1024px) and (min-width: 616px) {
+  .profileImage {
+    width: 18vh;
+    height: 18vh;
+  }
+  .contact {
+    padding: 8vh 2vw 5vh 1vw;
+  }
+
+  .container h5 {
+    color: grey;
+    font-size: 1.5vh;
+  }
+
+  .container p {
+    color: #c5c1c1;
+    font-size: 1.8vh;
+  }
+
+  .headsection {
+    width: 95%;
+    gap: 2vw;
+    padding: 1vh;
+  }
+}

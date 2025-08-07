@@ -36,6 +36,7 @@ export function DashboardSidebar() {
 
   const navigationItems = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+     { title: "Attendance", href: "/attandance", icon: Calendar },
     { title: "Leads", href: "/dashboard/leads", icon: Users },
     { title: "Visits", href: "/dashboard/visits", icon: Home },
     { title: "Tasks", href: "/dashboard/tasks", icon: ClipboardList },

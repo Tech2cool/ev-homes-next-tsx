@@ -203,6 +203,7 @@
 
 
   .subtext {
+    
     font-size: 1rem;
     color: #696767;
     width: 60vw;
@@ -278,6 +279,10 @@
     .scroll {
       width: 1vw;
     }
+  .heading {
+    font-size: 1.5rem;
+    margin-bottom: 0.5vh;
+  }
 
   }
 
@@ -289,37 +294,61 @@
     .scroll {
       width: 0.5vw;
     }
-     .subtext {
+
+    .subtext {
       width: 90vw;
     }
+
 
   }
 
   @media screen and (max-width: 450px) {
 
     .heroBackground {
-      height: 40vh;
+      height: 28vh;
+
     }
+
+    .subtext {
+      font-size: 12px;
+           text-align: justify;  
+
+    }
+
   }
-   @media screen and (min-width: 451px) and (max-width: 700px) {
+
+  @media screen and (min-width: 451px) and (max-width: 700px) {
 
     .heroBackground {
-      height: 50vh;
+      height: 42vh;
+    }
+
+    .subtext {
+      font-size: 13px;
+           text-align: justify;  
+
     }
   }
+
   @media screen and (min-width: 701px) and (max-width: 800px) {
 
     .heroBackground {
-      height: 80vh;
+      height: 60vh;
+    }
+
+    .subtext {
+      font-size: 13px;
     }
   }
-   @media screen and (min-width: 801px) and (max-width: 900px) {
+
+  @media screen and (min-width: 801px) and (max-width: 900px) {
 
     .heroBackground {
-      height: 90vh;
-      
+      height: 70vh;
+
     }
-     .subtext {
+
+    .subtext {
       width: 90vw;
     }
   }
