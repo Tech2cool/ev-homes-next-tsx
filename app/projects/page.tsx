@@ -82,7 +82,7 @@ const ProjectShowCase = () => {
                 fill
                 priority
                 quality={75}
-                
+                className={styles.imgproject}
               />
               <div className={styles.imgblur}></div>
               <h2>EV 9 Square</h2>
