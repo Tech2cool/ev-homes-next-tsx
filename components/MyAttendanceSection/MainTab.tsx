@@ -12,7 +12,7 @@ import Regularization from "./Regularizationsection";
 import Assets from "./Assetssection";
 import ShiftPlannerSection from "./ShiftPlannerSection";
 import ReimbursementSection from "./ReimbursementSection";
-import ApprovalSection from "./Personalsection";
+import ApprovalSection from "./ApprovalSection/ApprovalSection";
 import GracetimeSection from "./GracetimeSection";
 import { useRouter } from "next/navigation";
 
@@ -91,9 +91,10 @@ const MainTab = () => {
         return <ShiftPlannerSection  />;
       case "Approval":
         return (
-          <ApprovalSection
-         
-          />
+<ApprovalSection onPendingCountChange={setApprovalPendingCount} />
+
+
+
         );
       default:
         return null;
