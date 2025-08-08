@@ -5,15 +5,15 @@ import { MdBadge } from "react-icons/md";
 import { IoPersonCircle } from "react-icons/io5";
 
 import AttendanceSection from "./AttendanceSection";
-import LeaveSection from "./AttendanceSection";
+import LeaveSection from "./LeaveSection";
 import Personalsection from "./Personalsection";
-import WeekOffSection from "./AttendanceSection";
-import Regularization from "./AttendanceSection";
+import WeekOffSection from "./WeekOffSection";
+import Regularization from "./Regularizationsection";
 import Assets from "./Assetssection";
-import ShiftPlannerSection from "./AttendanceSection";
-import ReimbursementSection from "./AttendanceSection";
-import ApprovalSection from "./AttendanceSection";
-import GracetimeSection from "./AttendanceSection";
+import ShiftPlannerSection from "./ShiftPlannerSection";
+import ReimbursementSection from "./ReimbursementSection";
+import ApprovalSection from "./Personalsection";
+import GracetimeSection from "./GracetimeSection";
 import { useRouter } from "next/navigation";
 
 const MainTab = () => {
@@ -74,7 +74,7 @@ const MainTab = () => {
       case "Personal":
         return <Personalsection  />;
       case "Attendance":
-        return <AttendanceSection  />;
+        return <AttendanceSection />
       case "Leave":
         return <LeaveSection />;
       case "Weekoff":
