@@ -82,6 +82,29 @@ type SiteVisitParams = {
   date?: string | null;
 };
 
+//total count
+type SearchLeadParms = {
+  query: string;
+  page?: number;
+  limit?: number;
+  status?: string | null;
+  callData?: string | null;
+  cycle?: string | null;
+  order?: string | null;
+  interval?: string | null;
+  clientstatus?: string | null;
+  leadstatus?: string | null;
+  startDateDeadline?: string | null;
+  endDateDeadline?: string | null;
+  date?: string | null;
+  status2?: string | null;
+  //  approvalStatus?:string|null;
+  //  stage?:string|null;
+  channelPartner?: string | null;
+  teamLeader?: string | null;
+  taskType?: string | null;
+};
+
 // types.ts or wherever you define your types
 
 type LeadsReportingToParams = {
@@ -140,27 +163,36 @@ type TaskCount = {
 };
 
 type AssignParms = {
-  query?: string ;
-  page?: number ;
-  limit?: number ;
+  query?: string;
+  page?: number;
+  limit?: number;
   status?: string | null;
 };
+
 
 //model
 type DataProviderState = {
   projects: OurProject[];
-  getProjects: () => Promise<{ success: boolean; message?: string }>;
-
   testimonials: Testimonial[];
-  getTestimonals: () => Promise<{ success: boolean; message?: string }>;
-
   loadingTestimonial: boolean;
   loadingLeads: boolean;
   fetchingMoreLeads: boolean;
-
   employees: Employee[];
-
+  requirements: string[];
   leadInfo: PaginationProps | null;
+  assignInfo: PaginationProps | null;
+  leads: Lead[] | null;
+  dashCount: DashboardCount | null;
+  siteInfo: PaginationProps | null;
+  visits: SiteVisit[] | null;
+  channelPartners: ChannelPartner[];
+  searchLeadInfo: PaginationProps | null;
+  leadsTeamLeaderGraphForDT: ChartModel[];
+
+  getTestimonals: () => Promise<{ success: boolean; message?: string }>;
+  getProjects: () => Promise<{ success: boolean; message?: string }>;
+  getRequirements: () => Promise<{ success: boolean; message?: string }>;
+  getChannelPartners: () => Promise<{ success: boolean; message?: string }>;
   fetchReportingToEmployees: (
     id: string,
     dept: string
@@ -169,21 +201,18 @@ type DataProviderState = {
     params: FetchLeadsParams
   ) => Promise<{ success: boolean; message?: string }>;
 
-  assignInfo: PaginationProps| null;
   fetchTeamLeaderReportingToLeads: (
     params: LeadsReportingToParams
   ) => Promise<{ success: boolean; message?: string }>;
 
-  leads: Lead[] | null;
-
-  siteInfo: PaginationProps | null;
-  visits: SiteVisit[] | null;
+  fetchSearchLeads: (
+    params: SearchLeadParms
+  ) => Promise<{ success: boolean; message?: string }>;
 
   fetchDataAnalyzerVisits: (
     params: SiteVisitParams
   ) => Promise<{ success: boolean; message?: string }>;
 
-  dashCount: DashboardCount | null;
   getSalesManagerDashBoardCount: (params: {
     id: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
@@ -192,6 +221,22 @@ type DataProviderState = {
     params: AssignParms
   ) => Promise<{ success: boolean; message?: string }>;
 
+  fetchAssignFeedbackLeadsCount: (params: {
+    query?: string | null;
+    page?: number | null;
+    limit?: number | null;
+    teamLeader?: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
+  addNewLead: (data: Lead) => Promise<{ success: boolean; message?: string }>;
+  fetchTeamLeaderGraphForDA: (params: {
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    month?: number | null;
+  }) => Promise<{success: boolean; message?: string }>;
+
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 };
@@ -199,31 +244,41 @@ type DataProviderState = {
 //initial values should define here
 const initialState: DataProviderState = {
   projects: [],
-  getProjects: async () => ({ success: false, message: "Not initialized" }),
-
   testimonials: [],
-  getTestimonals: async () => ({ success: false, message: "Not initialized" }),
   loadingTestimonial: false,
   fetchingMoreLeads: false,
-
   employees: [],
-  fetchReportingToEmployees: async () => ({ success: false }),
-
-  fetchSaleExecutiveLeads: async () => ({ success: false }),
-  fetchTeamLeaderReportingToLeads: async () => ({ success: false }),
+  searchLeadInfo: null,
   leadInfo: null,
+  requirements: [],
   leads: null,
   loadingLeads: false,
-
-  fetchDataAnalyzerVisits: async () => ({ success: false }),
   siteInfo: null,
   visits: null,
-
   dashCount: null,
+  assignInfo: null,
+  channelPartners: [],
+  leadsTeamLeaderGraphForDT: [],
+  getProjects: async () => ({ success: false, message: "Not initialized" }),
+  getRequirements: async () => ({ success: false, message: "Not initialized" }),
+  getTestimonals: async () => ({ success: false, message: "Not initialized" }),
+  getChannelPartners: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  fetchReportingToEmployees: async () => ({ success: false }),
+  fetchSaleExecutiveLeads: async () => ({ success: false }),
+  fetchTeamLeaderReportingToLeads: async () => ({ success: false }),
+  fetchSearchLeads: async () => ({ success: false }),
+  fetchDataAnalyzerVisits: async () => ({ success: false }),
   getSalesManagerDashBoardCount: async () => ({ success: false }),
-
   fetchAssignFeedbackLeads: async () => ({ success: false }),
-  assignInfo:null,
+  fetchAssignFeedbackLeadsCount: async () => ({ success: false }),
+  addNewLead: async () => ({ success: false, message: "Not initialized" }),
+  fetchTeamLeaderGraphForDA: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
   // setLoadingTestimonial: () => {},
 
   //   setTheme: () => null,
@@ -235,6 +290,8 @@ const dataProviderContext =
 
 export function DataProvider({ children, ...props }: DataProviderProps) {
   const [projects, setProjects] = useState<OurProject[]>([]);
+  const [requirements, setRequirements] = useState<string[]>([]);
+
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loadingTestimonial, setLoadingTestimonial] = useState<boolean>(false);
   const [loadingProject, setLoadingProject] = useState<boolean>(false);
@@ -246,6 +303,11 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
 
   const [leadInfo, setleadInfo] = useState<PaginationProps | null>(null);
+
+  const [searchLeadInfo, setSearchLeadInfo] = useState<PaginationProps | null>(
+    null
+  );
+
   const [assignInfo, setAssignInfo] = useState<PaginationProps | null>(null);
 
   const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
@@ -256,6 +318,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
   const [siteInfo, setVisitInfo] = useState<PaginationProps | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
+  const [loadingChannelPartners, setLoadingChannelPartners] =
+    useState<boolean>(false);
+  const [channelPartners, setChannelPartners] = useState<ChannelPartner[]>([]);
+  const [leadsTeamLeaderGraphForDT, setChartData] = useState<ChartModel[]>([]);
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -269,6 +335,31 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       console.log(res?.data);
       setProjects(res?.data ?? []);
+      setLoadingProject(false);
+
+      return { success: true };
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setLoadingProject(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoadingProject(false);
+    }
+  };
+  //requirement
+  const getRequirements = async () => {
+    setLoadingProject(true);
+    setError("");
+
+    try {
+      let url = `/api/requirements`;
+      const res = await fetchAdapter(url, {
+        method: "get",
+      });
+      let reqs = res?.data?.map((ele: any) => ele?.requirement);
+      setRequirements(reqs ?? []);
       setLoadingProject(false);
 
       return { success: true };
@@ -306,6 +397,60 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       return { success: false, message: err.message };
     } finally {
       setLoadingTestimonial(false);
+    }
+  };
+
+  //get channel Partners
+  const getChannelPartners = async () => {
+    setLoadingChannelPartners(true);
+    setError("");
+
+    try {
+      let url = `/api/channel-partner`;
+      const res = await fetchAdapter(url, {
+        method: "get",
+      });
+
+      setChannelPartners(res?.data ?? []);
+      setLoadingChannelPartners(false);
+
+      return { success: true };
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setLoadingChannelPartners(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoadingChannelPartners(false);
+    }
+  };
+
+  //tagging form
+  const addNewLead = async (data: Lead) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      let url = `/api/leads-add`;
+
+      // console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      setLoading(false);
+
+      return { success: true, message: res?.message };
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setLoading(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -647,7 +792,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  //assign / feedback pending
+  //assign / feedback pending...hold
   const fetchAssignFeedbackLeads = async ({
     query = "",
     page = 1,
@@ -695,6 +840,191 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  // asign/feedback lead list count
+  const fetchAssignFeedbackLeadsCount = async ({
+    query = "",
+    page = 1,
+    limit = 10,
+    teamLeader = null,
+  }: {
+    query?: string | null;
+    page?: number | null;
+    limit?: number | null;
+    teamLeader?: string | null;
+  }): Promise<{ success: boolean; message?: string }> => {
+    setError("");
+
+    try {
+      const url = `/api/leads-assign-count?query=${query}&page=${page}&limit=${limit}`;
+      console.log("Fetching dashboard count from:", url);
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const { data, ...withoutData } = res;
+
+      setAssignInfo(withoutData);
+      if (page! > 1) {
+        setleads((prev) => [...prev, ...res?.data]);
+      } else {
+        setleads(res?.data ?? []);
+      }
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+      return { success: false, message: err.message };
+    }
+  };
+
+  const fetchSearchLeads = async ({
+    query = "",
+    page = 1,
+    limit = 20,
+    status = null,
+    callData = null,
+    cycle = null,
+    order = null,
+    interval = null,
+    clientstatus = null,
+    leadstatus = null,
+    startDateDeadline = null,
+    endDateDeadline = null,
+    date = null,
+    status2 = null,
+    //  approvalStatus = null,
+    //  stage = null,
+    channelPartner = null,
+    teamLeader = null,
+    taskType = null,
+  }: SearchLeadParms): Promise<{ success: boolean; message?: string }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
+
+    try {
+      let url = `/api/search-lead?query=${query}&page=${page}&limit=${limit}`;
+      if (status != null) {
+        url += `&status=${status}`;
+      }
+      if (status2 != null) {
+        url += `&status2=${status2}`;
+      }
+      if (callData != null) {
+        url += `&callData=${callData}`;
+      }
+      if (cycle != null) {
+        url += `&cycle=${cycle}`;
+      }
+      if (order != null) {
+        url += `&order=${order}`;
+      }
+      if (interval != null) {
+        url += `&interval=${interval}`;
+      }
+      if (clientstatus != null) {
+        url += `&clientstatus=${clientstatus}`;
+      }
+      if (leadstatus != null) {
+        url += `&leadstatus=${leadstatus}`;
+      }
+      if (startDateDeadline != null) {
+        url += `&startDateDeadline=${startDateDeadline}`;
+      }
+      if (endDateDeadline != null) {
+        url += `&endDateDeadline=${endDateDeadline}`;
+      }
+      if (date != null) {
+        url += `&date=${date}`;
+      }
+
+      // if (approvalStatus != null) {
+      //   url += `&approvalStatus=${approvalStatus}`;
+      // }
+      // if (stage != null) {
+      //   url += `&stage=${stage}`;
+      // }
+      if (channelPartner != null) {
+        url += `&channelPartner=${channelPartner}`;
+      }
+      if (teamLeader != null) {
+        url += `&teamLeader=${teamLeader}`;
+      }
+      if (taskType != null) {
+        url += `&taskType=${taskType}`;
+      }
+      console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res as PaginationProps;
+
+      setSearchLeadInfo(withoutData);
+      if (page > 1) {
+        // setleads((prev) => [...prev, ...res?.data]);
+      } else {
+        setleads(res?.data ?? []);
+      }
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
+
+  //data analyzer graph
+const fetchTeamLeaderGraphForDA = async ({
+  interval = "monthly",
+  year = null,
+  startDate = null,
+  endDate = null,
+  month = null,
+}: {
+  interval?: string | null;
+  year?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  month?: number | null;
+}): Promise<{ success: boolean; message?: string }> => {
+  setError("");
+
+  try {
+    let url = `/api/lead-count-pre-sale-team-leader-for-data-analyser?interval=${interval}`;
+    if (year != null) url += `&year=${year}`;
+    if (month != null) url += `&month=${month}`;
+    if (startDate != null) url += `&startDate=${startDate}`;
+    if (endDate != null) url += `&endDate=${endDate}`;
+
+    console.log("Fetching dashboard count from:", url);
+
+    const res = await fetchAdapter(url, { method: "GET" });
+    console.log(res);
+    setChartData(res?.data ?? []);
+
+    return { success: true };
+  } catch (err: any) {
+    const message = String(err);
+    setError(message);
+    return { success: false, message };
+  }
+};
+
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -707,8 +1037,13 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     visits: visits,
     leads: leads,
     fetchingMoreLeads: fetchingMoreLeads,
-    assignInfo:assignInfo,
+    assignInfo: assignInfo,
+    searchLeadInfo: searchLeadInfo,
+    requirements: requirements,
+    channelPartners: channelPartners,
+    leadsTeamLeaderGraphForDT: leadsTeamLeaderGraphForDT,
     getProjects: getProjects,
+    getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
     fetchReportingToEmployees: fetchReportingToEmployees,
@@ -717,6 +1052,11 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchTeamLeaderReportingToLeads: fetchTeamLeaderReportingToLeads,
     getSalesManagerDashBoardCount: getSalesManagerDashBoardCount,
     fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
+    fetchSearchLeads: fetchSearchLeads,
+    fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
+    getChannelPartners: getChannelPartners,
+    addNewLead: addNewLead,
+    fetchTeamLeaderGraphForDA: fetchTeamLeaderGraphForDA,
   };
 
   return (

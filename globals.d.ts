@@ -43,7 +43,7 @@ interface Testimonial {
   videoUrl?: string | null;
   thumbnail?: string | null;
   shareLink?: string | null;
-  project?: string | OurProject | null;
+  project?: OurProject;
   date?: string | null;
   views?: Number | null;
 }
@@ -67,9 +67,9 @@ interface Employee {
   bloodGroup?: string | null;
   maritalStatus?: string | null;
   department?: string | Department;
-  designation?: string | Designation;
-  division?: string | Division;
-  reportingTo?: string | Employee;
+  designation?: Designation;
+  division?: Division;
+  reportingTo?: Employee;
   phoneNumber?: Number | null;
   status?: string | null;
   remark?: string | null;
@@ -83,7 +83,7 @@ interface Department {
 
 interface Designation {
   _id?: string | null;
-  designation: string | null;
+  designation?: string | null;
 }
 
 interface Division {
@@ -170,61 +170,61 @@ interface ChannelPartnerHistory {
 
 interface Lead {
   _id?: string; // optional if client-side
-  email: string | null;
-  project: string[];
+  email?: string | null;
+  project: OurProject[];
   requirement: string[];
-  prefix: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  address: string | null;
-  leadType: string;
-  reference: string | null;
-  channelPartner: ChannelPartner | null;
-  dataAnalyzer: string | null;
-  teamLeader: Employee | null;
-  countryCode: string;
-  phoneNumber: number;
-  altPhoneNumber: number | null;
-  remark: string | null;
-  stage: string;
-  startDate: string;
-  validTill: string;
-  approvalStatus: string;
-  approvalRemark: string;
-  approvalDate: string | null;
-  visitStatus: string;
-  disabled: boolean;
-  firstVisit: boolean;
-  visitDate: string | null;
-  revisitDate: string | null;
-  visitRef: string | null;
-  taskRef: Task | null;
-  revisitStatus: string;
-  revisitRef: string | null;
-  bookingStatus: string;
-  bookingRef: string | null;
-  followupStatus: string;
-  contactedStatus: string;
-  interestedStatus: string;
-  clientInterestedStatus: string | null;
-  clientStatus: string;
-  clientRef: string | null;
-  status: string;
-  siteVisitInterested: boolean;
-  siteVisitInterestedDate: string | null;
-  cycle: Cycle;
-  approvalHistory: Approval[];
-  updateHistory: Update[];
-  cycleHistory: Cycle[];
-  cycleHistoryNew: Cycle[];
-  callHistory: CallHistory[];
-  followupHistory: CallHistory[];
-  channelPartnerHistory: ChannelPartnerHistory[];
-  lostHistory: Lost[];
-  virtualMeetingDoc: string | null;
-  leadAssignedEmailSent: boolean;
-  feedbackPendingEmailSent: boolean;
-  createdThrough: string | null;
+  prefix?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  address?: string | null;
+  leadType?: string;
+  reference?: string | null;
+  channelPartner?: ChannelPartner;
+  dataAnalyzer?: string | null;
+  teamLeader?: Employee;
+  countryCode?: string;
+  phoneNumber?: number | null;
+  altPhoneNumber?: number | null;
+  remark?: string | null;
+  stage?: string;
+  startDate?: string;
+  validTill?: string;
+  approvalStatus?: string;
+  approvalRemark?: string;
+  approvalDate?: string | null;
+  visitStatus?: string;
+  disabled?: boolean;
+  firstVisit?: boolean;
+  visitDate?: string | null;
+  revisitDate?: string | null;
+  visitRef?: string | null;
+  taskRef?: Task | null;
+  revisitStatus?: string;
+  revisitRef?: string | null;
+  bookingStatus?: string;
+  bookingRef?: string | null;
+  followupStatus?: string;
+  contactedStatus?: string;
+  interestedStatus?: string;
+  clientInterestedStatus?: string | null;
+  clientStatus?: string;
+  clientRef?: string | null;
+  status?: string;
+  siteVisitInterested?: boolean;
+  siteVisitInterestedDate?: string | null;
+  cycle?: Cycle;
+  approvalHistory?: Approval[];
+  updateHistory?: Update[];
+  cycleHistory?: Cycle[];
+  cycleHistoryNew?: Cycle[];
+  callHistory?: CallHistory[];
+  followupHistory?: CallHistory[];
+  channelPartnerHistory?: ChannelPartnerHistory[];
+  lostHistory?: Lost[];
+  virtualMeetingDoc?: string | null;
+  leadAssignedEmailSent?: boolean;
+  feedbackPendingEmailSent?: boolean;
+  createdThrough?: string | null;
 }
 
 interface SiteVisit {
@@ -265,7 +265,7 @@ interface SiteVisit {
 }
 
 interface ChannelPartner {
-  id?: string | null;
+  _id?: string | null;
   firstName?: string | null;
   profilePic?: string | null;
   lastName?: string | null;
@@ -314,4 +314,18 @@ interface Task {
   reminderType?: string | null;
   reminderDueDate?: string | null;
   reminderCompleted?: boolean | null;
+}
+
+interface TeamLeaderAssignFolloupUp {
+  teamLeader?: Employee;
+  totalItems: number | null;
+  assignedCount: number | null;
+  notAssignedCount: number | null;
+  notFollowUpCount: number | null;
+}
+
+interface ChartModel {
+  category: string | null;
+  value: number | null;
+  value2: number | null;
 }
