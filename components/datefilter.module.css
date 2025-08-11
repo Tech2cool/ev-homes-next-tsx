@@ -1,0 +1,72 @@
+.calendarWrapper {
+  position: fixed;
+  top: 50%;
+  left: 30%;
+  transform: translate(-20%, -50%);
+  display: flex;
+  background: #111;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  gap: 2vw;
+}
+
+.okButton {
+  margin-top: 2vh;
+  margin-left: 2vh;
+  padding: 2vh 1vw;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.calendarWrapper :global(.rdrCalendarWrapper),
+.calendarWrapper :global(.rdrDefinedRangesWrapper),
+.calendarWrapper :global(.rdrDateRangeWrapper),
+.calendarWrapper :global(.rdrMonth),
+.calendarWrapper :global(.rdrMonthAndYearWrapper),
+.calendarWrapper :global(.rdrDay),
+.calendarWrapper :global(.rdrStaticRange),
+.calendarWrapper :global(.rdrMonthPicker),
+.calendarWrapper :global(.rdrYearPicker) {
+  background-color: #111 !important;
+  color: #fff !important;
+}
+
+.calendarWrapper :global(.rdrDateDisplayItem),
+.calendarWrapper :global(.rdrDateDisplayWrapper) {
+  background-color: #353535 !important;
+}
+
+.calendarWrapper :global(.rdrStaticRange:hover) {
+  background-color: #3c3c3c !important;
+  color: black !important;
+}
+
+.calendarWrapper :global(.rdrDayToday .rdrDayNumber span) {
+  color: #007bff !important;
+}
+
+.calendarWrapper :global(.rdrDayNumber span) {
+  color: #b4b3b3 !important;
+}
+
+.calendarWrapper :global(.rdrDayDisabled) {
+  background-color: #333 !important;
+  color: #777 !important;
+}
+
+.calendarWrapper :global(.rdrDayHovered),
+.calendarWrapper :global(.rdrDayStartPreview),
+.calendarWrapper :global(.rdrDayInPreview),
+.calendarWrapper :global(.rdrDayEndPreview),
+.calendarWrapper :global(.rdrDaySelected) {
+  background-color: #007bff !important;
+  color: white !important;
+}

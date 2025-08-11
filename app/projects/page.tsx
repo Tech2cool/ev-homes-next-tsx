@@ -69,6 +69,7 @@ const ProjectShowCase = () => {
                 fill
                 priority
                 quality={75}
+                objectFit="cover"
               />
 
             )}
@@ -81,6 +82,7 @@ const ProjectShowCase = () => {
                 fill
                 priority
                 quality={75}
+                className={styles.imgproject}
               />
               <div className={styles.imgblur}></div>
               <h2>EV 9 Square</h2>
@@ -88,7 +90,7 @@ const ProjectShowCase = () => {
                 <div><MapPinCheck className={styles.locationIcon} size={8} /></div>
                 <p>Vashi</p>
               </div>
-              <div className={styles.imgbutton}><p>Read More...</p></div>
+              <div className={styles.imgbutton}>Read More...</div>
               <div className={styles.slidercontainer}>
                 <div className={styles.slidertrack}>
                   <div className={styles.slide}>

@@ -1,0 +1,491 @@
+.container {
+  display: flex;
+  gap: 16px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px;
+  padding-top: 3vh;
+  border-radius: 0px 0px 20px 20px;
+  justify-content: space-between;
+  overflow-x: auto;
+  cursor: pointer;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.container::-webkit-scrollbar {
+  height: 3px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.card {
+  color: white;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1vh 1vw;
+  /* width: 100vw; */
+  /* flex: 1; */
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 4vw;
+  /* 
+  align-items: center;
+  justify-content: space-between; */
+}
+
+.title {
+  font-size: 2vh;
+  opacity: 0.8;
+}
+
+.value {
+  font-size: 3vh;
+  font-weight: 500;
+}
+
+/* header section  */
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2vh 1vh;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  background-color: transparent;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 2vh;
+}
+
+.active {
+  background-color: #1c1c1c;
+  border: 1px solid green;
+  color: white;
+}
+
+/* month picker  */
+
+.monthPicker {
+  margin-left: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2vw;
+}
+
+.monthPickerWrapper {
+  display: flex;
+  background-color: black;
+  color: white;
+  padding: 1vh 1vh;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  font-size: 2vh;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.monthInput {
+  margin-left: 1vw;
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 2vh;
+  cursor: pointer;
+}
+
+.calendarIcon {
+  color: white;
+  font-size: 2vh;
+}
+
+/* search by status  */
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  width: 25vw;
+  margin-right: 1vw;
+}
+
+.searchInput::placeholder {
+  color: rgb(237, 228, 228);
+  font-size: 2vhs;
+  font-weight: 400;
+  opacity: 1;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  padding: 8px;
+  background: transparent;
+  color: white;
+  flex: 1;
+  width: 100%;
+}
+
+.searchButton {
+  background: #007bff;
+  border: none;
+  padding: 0.5vh 1vh;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  margin-right: 0.5vw;
+}
+
+/* attendance list  */
+
+.attList {
+  height: 50vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+/* timeline  */
+
+.timelineRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 2vh;
+  margin: 1vh 1vw;
+}
+
+/* date and time in section  */
+.dateSection,
+.detailsSection {
+  width: 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+  font-size: 2vh;
+}
+
+.date {
+  color: #878787;
+}
+
+.clockText {
+  font-size: 2vh;
+  color: white;
+}
+
+.statusClockText {
+  font-size: 2vh;
+  color: green;
+}
+
+/* time in time out image  */
+
+.timeInImage {
+  margin-left: 1vw;
+}
+
+.cardTimeImage {
+  margin-bottom: 1vh;
+  width: 3.5vw;
+  height: 3.3vw;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.timeOutImage {
+  margin-left: 4vw;
+  margin-right: 2vw;
+}
+
+/* timeline bar css  */
+
+.barWrapper {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+}
+
+.barSection {
+  width: 90%;
+  padding: 1vh;
+}
+
+.bar {
+  display: flex;
+  height: 4vh;
+  border-radius: 0px;
+  overflow: hidden;
+}
+
+/* diff bars  */
+
+.overtimeBar,
+.expectedWorkingTimeBar,
+.workingTimeBar,
+.workingOnWeekoffBar,
+.pendingTimeBar,
+.lateArrivalBar,
+.workingOnHolidayBar,
+.absentBar,
+.holidayBar,
+.leaveBar,
+.weekOffBar {
+  width: 100%;
+  background-color: #f39c12;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.lateArrivalBar,
+.absentBar {
+  background-color: #e74c3c;
+  border-right: 1px solid white;
+}
+
+.leaveBar {
+  background-color: #9b59b6;
+}
+
+.workingOnHolidayBar,
+.holidayBar {
+  background-image: url("/images/Building2.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-right: 1px solid white;
+}
+
+.pendingTimeBar {
+  background-color: rgba(246, 232, 232, 0.2);
+}
+
+.workingOnWeekoffBar {
+  background: linear-gradient(to right, #f39c12, #0bbc55);
+  border-right: 1px solid white;
+}
+
+.workingTimeBar {
+  background-color: #0bbc55;
+  border-right: 1px solid white;
+}
+
+.expectedWorkingTimeBar {
+  background-color: rgb(0, 196, 0);
+  border-right: 1px solid white;
+}
+
+.overtimeBar {
+  background-color: #3498db;
+}
+
+/* labels  */
+
+.barLabel {
+  font-size: 1.6vh;
+  color: rgb(255, 254, 254);
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  cursor: pointer;
+}
+
+.timeLabels {
+  position: relative;
+  margin-top: 1vh;
+  height: 2vh;
+  width: 100%;
+  cursor: pointer;
+}
+
+.fixedLabel {
+  position: absolute;
+  top: 0;
+  font-size: 2vh;
+  color: white;
+  cursor: pointer;
+}
+
+.tooltip {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  font-size: 1.5vh;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.fixedLabel:hover .tooltip,
+.dynamicLabel:hover .tooltip,
+.dynamicExpectedLabel:hover .tooltip,
+.dynamicTimeOutLabel:hover .tooltip {
+  display: block;
+}
+.tool {
+  position: relative;
+  background-color: #333;
+  color: #fff;
+  font-size: 1.5vh;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 100;
+}
+.tool button {
+  background-color: #1171d8;
+  color: white;
+  border: none;
+  border-radius: 0.5vh;
+  font-size: 1.7vh;
+  font-weight: 400;
+  margin-left: 1rem;
+}
+
+.dynamicExpectedLabel,
+.dynamicTimeOutLabel,
+.dynamicLabel {
+  position: absolute;
+  font-size: 1.7vh;
+  background-color: transparent;
+  color: #007bff;
+  font-weight: 600;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.aboveBar {
+  top: -8vh;
+}
+
+.dynamicExpectedLabel {
+  color: grey;
+}
+
+.dynamicTimeOutLabel {
+  margin-left: 0.5vw;
+  transform: translateX(-0%);
+  transform: translateY(-150%);
+  cursor: pointer;
+}
+
+.mobilePieChart {
+  display: none;
+}
+
+@media screen and (max-width: 1024px) and (min-width: 616px) {
+  .value {
+    font-size: 2vh;
+    font-weight: 300;
+  }
+}
+
+@media (max-width: 615px) {
+  .container {
+    display: none;
+  }
+
+  .timelineRow {
+    display: none;
+  }
+
+  .tab {
+    display: none;
+  }
+
+  .mobilePieChart {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1vh 2vh 1vh 2vh;
+    gap: 3vw;
+  }
+
+  .pieContainer {
+    width: 50vw;
+    height: 40vw;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+    flex: 1;
+    height: 40vw;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .legendItem {
+    display: flex;
+    align-items: center;
+    font-size: 2vh;
+    gap: 1.5vh;
+    border-radius: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: auto;
+    padding: 0.5vh 1vw;
+  }
+
+  .colorDot {
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .legendText {
+    color: #7a7a7a;
+  }
+
+  /* .monthPicker {
+display: none;
+} */
+
+  .searchContainer {
+    display: none;
+  }
+}
+
+.mobileView {
+  color: white;
+}

@@ -5,18 +5,14 @@ import React from "react";
 import { createContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
-
-
 type UserProviderProps = {
   children: React.ReactNode;
 };
 
-
 type userSuccess = {
-  success:boolean,
-  message?: null| undefined | string,
+  success: boolean;
+  message?: null | undefined | string;
 };
-
 
 //model
 type UserProviderState = {
@@ -25,20 +21,22 @@ type UserProviderState = {
   logout: () => void;
   loading: boolean;
   error: string | null | undefined;
-    getSocket: () => Socket | null;
+  getSocket: () => Socket | null;
   reconnectSocket: () => void;
+  updateUser: (newUser: Employee | null) => void; // Add updateUser to the state
 };
 
 //initial values should define here
 const initialState: UserProviderState = {
   user: null,
-  login:async (email, password) => ({success:false}),
+  login: async (email, password) => ({ success: false }),
   logout: () => {},
   loading: false,
   error: null,
-   getSocket: () => null,
+  getSocket: () => null,
   reconnectSocket: () => {},
-}; 
+  updateUser: () => {}, // Add updateUser to the initial state
+};
 
 const userContext = React.createContext<UserProviderState>(initialState);
 
@@ -56,7 +54,8 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
       setUser(JSON.parse(storedUser));
     }
   }, []);
-   const initSocket = (userData = user) => {
+
+  const initSocket = (userData = user) => {
     if (!userData || socketRef.current) return;
 
     const socket = io("https://api.evhomes.tech", {
@@ -86,25 +85,29 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
 
     socketRef.current = socket;
   };
-    const reconnectSocket = () => {
+
+  const reconnectSocket = () => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+    initSocket();
+  };
+
+  useEffect(() => {
+    if (user) initSocket();
+    return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
       }
-      initSocket();
     };
+  }, [user]);
 
-    useEffect(() => {
-      if (user) initSocket();
-      return () => {
-        if (socketRef.current) {
-          socketRef.current.disconnect();
-          socketRef.current = null;
-        }
-      };
-    }, [user]);
-
-  const login = async (email: string, password: string): Promise<userSuccess> => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<userSuccess> => {
     setLoading(true);
     setError("");
 
@@ -114,7 +117,7 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-    //   console.log(res);
+      //   console.log(res);
       if (res.code != 200) {
         setError(res?.message);
         return { success: false, message: res?.message };
@@ -125,13 +128,13 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
 
       setUser(res?.data);
       return { success: true, ...res.data };
-    } catch (err:any) {
-        setError(err.message);
-        return { success: false, message: err.message };
+    } catch (err: any) {
+      setError(err.message);
+      return { success: false, message: err.message };
     } finally {
       setLoading(false);
     }
-        return { success: false};
+    return { success: false };
   };
 
   const logout = async () => {
@@ -145,23 +148,29 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
     setUser(null);
   };
 
+  const updateUser = (newUser: Employee | null) => {
+    setUser(newUser); 
+  }
+
   const value = {
     user: user,
     loading: loading,
     error: error,
-          getSocket: () => socketRef.current,
-        reconnectSocket,
+    getSocket: () => socketRef.current,
+    reconnectSocket,
     login: login,
     logout: logout,
     setLoading: setLoading,
+    updateUser:updateUser,
   };
 
   return (
-    <userContext.Provider {...props} value={value} >
+    <userContext.Provider {...props} value={value}>
       {children}
     </userContext.Provider>
   );
 };
+
 export const useUser = () => {
   const context = React.useContext(userContext);
 
