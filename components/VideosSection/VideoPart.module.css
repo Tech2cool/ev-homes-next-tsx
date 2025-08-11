@@ -1,36 +1,81 @@
 .VideosContainer {
   margin-left: 6vw;
-  /* height: 50px; */
   margin-top: 12vh;
   display: flex;
   justify-content: center;
   align-items: center;
   height: auto;
 }
+
+.VideoWrapper {
+  position: relative;
+  width: 790px;
+  height: 450px;
+}
+
 .Videobox {
-  height: 35vw;
-  width: 100vw;
+  width: 100%;
+  height: 100%;
   border: none;
   border-radius: 10px;
   object-fit: cover;
 }
 
-.Start {
+.ControlsContainer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 13vw;
+}
 
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Perfect center */
+.VideoController, .ForwardBack {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.Icon, .ControlIcon {
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 10px;
   cursor: pointer;
-  background: none;
-  border: none;
-  z-index: 10;
+  transition: all 0.2s ease;
 }
-.Pause {
+
+.Icon {
+  width: 64px;
+  height: 64px;
+}
+
+.ControlIcon {
+  width: 40px;
+  height: 40px;
+}
+
+.Icon:hover, .ControlIcon:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.05);
+}
+.TimeLine{
+position: absolute;     
+  left: 20px;          
+  right: 20px;         
+  height: 6px;
   cursor: pointer;
-  position: absolute;
-  display: none;
-}
-.VideoController {
-  position: absolute;
-}
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  bottom:70px ;
+ }  
+
+ .BottomController  {
+ position: absolute;
+ bottom: 20;
+ left: 20 ;
+ cursor: pointer;
+ }
