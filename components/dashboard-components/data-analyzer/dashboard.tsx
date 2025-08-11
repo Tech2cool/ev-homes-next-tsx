@@ -283,11 +283,11 @@ const router = useRouter();
               }>
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey="name"
+                  dataKey="teamLeader"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
+                  tickFormatter={(value) => value.slice(0, 7)}
                 />
                 <YAxis />
                 <ChartTooltip
@@ -295,26 +295,26 @@ const router = useRouter();
                   content={<ChartTooltipContent />}
                 />
                 <Line
-                  dataKey="leads"
+                  dataKey="count"
                   type="monotone"
                   stroke="hsl(var(--chart-1))"
                   strokeWidth={2}
                   dot={false}
                 />
-                <Line
-                  dataKey="visits"
+                {/* <Line
+                  dataKey="count"
                   type="monotone"
                   stroke="hsl(var(--chart-2))"
                   strokeWidth={2}
                   dot={false}
                 />
                 <Line
-                  dataKey="bookings"
+                  dataKey="count"
                   type="monotone"
                   stroke="hsl(var(--chart-3))"
                   strokeWidth={2}
                   dot={false}
-                />
+                /> */}
               </LineChart>
             }
           />

@@ -16,6 +16,8 @@ import Image from "next/image";
 import Select, { MultiValue, SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import { useData } from "@/providers/dataContext";
+import moment from "moment-timezone";
+import { useUser } from "@/providers/userContext";
 
 // Type definitions
 interface SelectOption {
@@ -32,7 +34,7 @@ interface LeadDetail {
   email: string;
   address: string;
   remark: string;
-  projects: SelectOption[];
+  project: SelectOption[];
   requirements: SelectOption[];
   channelPartner: SelectOption | null;
   startDate: string;
@@ -43,8 +45,8 @@ interface TaggingFormSectionProps {
   onClose?: () => void;
 }
 
-const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({ 
-  onClose = () => {} 
+const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
+  onClose = () => {},
 }) => {
   const {
     projects,
@@ -56,6 +58,8 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
     // error,
     addNewLead,
   } = useData();
+
+  const { user } = useUser();
 
   const [startDate, setStartDate] = useState<string>("");
   const [validTill, setValidTill] = useState<string>("");
@@ -69,7 +73,7 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
     email: "",
     address: "",
     remark: "",
-    projects: [],
+    project: [],
     requirements: [],
     channelPartner: null,
     startDate: "",
@@ -83,26 +87,26 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
   const projectOptions = useMemo(() => {
     return projects.length > 0
       ? projects.map((ele) => ({
-          value: ele?._id??"",
-          label: ele?.name??"",
+          value: ele?._id ?? "",
+          label: ele?.name ?? "",
         }))
       : [];
-  }, [projects]);
+  }, [projects.length]);
 
   const apartmentOptions = useMemo((): SelectOption[] => {
     return requirements.length > 0
       ? requirements.map((ele: string) => ({ value: ele, label: ele }))
       : [];
-  }, [requirements]);
+  }, [requirements.length]);
 
   const channelPartnerOptions = useMemo(() => {
     return channelPartners?.length > 0
       ? channelPartners.map((ele) => ({
-          value: ele?._id??"",
-          label: ele?.firmName??"",
+          value: ele?._id ?? "",
+          label: ele?.firmName ?? "",
         }))
       : [];
-  }, [channelPartners]);
+  }, [channelPartners.length]);
 
   // Phone number validation and formatting
   const validatePhoneNumber = useCallback((value: string): string => {
@@ -124,32 +128,49 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
     [validatePhoneNumber]
   );
 
-  const onChangeStartDate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setStartDate(value);
-    // Add your date logic here if needed
-    // const today = moment().tz("Asia/Kolkata");
-    // const stDate = moment.tz(value, "YYYY-MM-DD", "Asia/Kolkata").set({
-    //   hour: today.hour(),
-    //   minute: today.minute(),
-    //   second: today.second(),
-    // });
-    // const validTillDate = moment(stDate).add(59, "days");
-    // setValidTill(validTillDate.format("YYYY-MM-DD"));
-    // setDetail((prev) => ({
-    //   ...prev,
-    //   startDate: stDate.toISOString(),
-    //   validTill: validTillDate.toISOString(),
-    // }));
-  }, []);
+  const onChangeStartDate = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setStartDate(value);
+      // Add your date logic here if needed
+      const today = moment().tz("Asia/Kolkata");
+      const stDate = moment.tz(value, "YYYY-MM-DD", "Asia/Kolkata").set({
+        hour: today.hour(),
+        minute: today.minute(),
+        second: today.second(),
+      });
 
-  const onChangeField = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setDetail((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }, []);
+      console.log(value);
+      console.log(today);
+      console.log(stDate);
+
+      const validTillDate = moment(stDate).add(59, "days");
+      setValidTill(validTillDate.format("YYYY-MM-DD"));
+      setDetail((prev) => ({
+        ...prev,
+        startDate: stDate.toISOString(),
+        validTill: validTillDate.toISOString(),
+      }));
+
+      console.log(validTillDate);
+    },
+    []
+  );
+
+  const onChangeField = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >
+    ) => {
+      const { name, value } = e.target;
+      setDetail((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    },
+    []
+  );
 
   // Remove or comment out the selectStyles useMemo completely
   // const selectStyles = useMemo(
@@ -200,15 +221,15 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
   // Initialize dates on mount
   useEffect(() => {
     // Add your date initialization logic here if needed
-    // const startDate = moment().tz("Asia/Kolkata");
-    // const validTill = moment(startDate).add(59, "days");
-    // setStartDate(startDate.format("YYYY-MM-DD"));
-    // setValidTill(validTill.format("YYYY-MM-DD"));
-    // setDetail((prev) => ({
-    //   ...prev,
-    //   startDate: startDate.toISOString(),
-    //   validTill: validTill.toISOString(),
-    // }));
+    const startDate = moment().tz("Asia/Kolkata");
+    const validTill = moment(startDate).add(59, "days");
+    setStartDate(startDate.format("YYYY-MM-DD"));
+    setValidTill(validTill.format("YYYY-MM-DD"));
+    setDetail((prev) => ({
+      ...prev,
+      startDate: startDate.toISOString(),
+      validTill: validTill.toISOString(),
+    }));
   }, []);
 
   // Load data on mount
@@ -231,14 +252,17 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
     getChannelPartners,
   ]);
 
-  const replaceEmptyStringsWithNull = useCallback((obj: Record<string, any>) => {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [
-        key,
-        value === "" ? null : value,
-      ])
-    );
-  }, []);
+  const replaceEmptyStringsWithNull = useCallback(
+    (obj: Record<string, any>) => {
+      return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => [
+          key,
+          value === "" ? null : value,
+        ])
+      );
+    },
+    []
+  );
 
   const onSubmit = useCallback(async () => {
     try {
@@ -263,18 +287,24 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
       if (detail.channelPartner) {
         datas.channelPartner = detail.channelPartner?.value;
       }
-      if (detail.projects?.length > 0) {
-        const projs = detail.projects.map((ele) => ele.value);
-        datas.projects = projs;
+      if (detail.project?.length > 0) {
+        const projs = detail.project.map((ele) => ele.value);
+        datas.project = projs;
       }
       if (detail.requirements?.length > 0) {
         const reqs = detail.requirements.map((ele) => ele.value);
         datas.requirement = reqs;
       }
 
-      const resp = await addNewLead((datas));
+      if (user?._id != null) {
+        datas.dataAnalyzer = user?._id;
+      }
+
+      console.log(datas);
+      console.log(detail);
+      const resp = await addNewLead(datas);
       toast(resp?.message);
-      
+
       setDetail({
         leadType: "cp",
         firstName: "",
@@ -284,7 +314,7 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
         email: "",
         address: "",
         remark: "",
-        projects: [],
+        project: [],
         requirements: [],
         channelPartner: null,
         startDate: "",
@@ -308,7 +338,7 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
       email: "",
       address: "",
       remark: "",
-      projects: [],
+      project: [],
       requirements: [],
       channelPartner: null,
       startDate: "",
@@ -318,26 +348,36 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
     onClose();
   }, [onClose]);
 
-  const handleProjectsChange = useCallback((selectedOptions: MultiValue<SelectOption>) => {
-    setDetail((prev) => ({ 
-      ...prev, 
-      projects: selectedOptions ? Array.from(selectedOptions) : [] 
-    }));
-  }, []);
+  const handleProjectsChange = useCallback(
+    (selectedOptions: MultiValue<SelectOption>) => {
+      setDetail((prev) => ({
+        ...prev,
+        project: selectedOptions ? Array.from(selectedOptions) : [],
+      }));
+    },
+    []
+  );
 
-  const handleRequirementsChange = useCallback((selectedOptions: MultiValue<SelectOption>) => {
-    setDetail((prev) => ({ 
-      ...prev, 
-      requirements: selectedOptions ? Array.from(selectedOptions) : [] 
-    }));
-  }, []);
+  const handleRequirementsChange = useCallback(
+    (selectedOptions: MultiValue<SelectOption>) => {
+      setDetail((prev) => ({
+        ...prev,
+        requirements: selectedOptions ? Array.from(selectedOptions) : [],
+      }));
+    },
+    []
+  );
 
-  const handleChannelPartnerChange = useCallback((selectedOption: SingleValue<SelectOption>) => {
-    setDetail((prev) => ({ 
-      ...prev, 
-      channelPartner: selectedOption 
-    }));
-  }, []);
+  const handleChannelPartnerChange = useCallback(
+    (selectedOption: SingleValue<SelectOption>) => {
+      setDetail((prev) => ({
+        ...prev,
+        channelPartner: selectedOption,
+      }));
+    },
+    []
+  );
+
 
   return (
     <div className={styles.container}>
@@ -473,35 +513,47 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
           </div>
           <div className={styles.card}>
             <div className={styles.formControl}>
-              <label htmlFor="selectproject">
-                <BsBuildingFill className={styles.icon} /> Projects
-              </label>
-              <Select
-                id="projects"
-                isMulti
-                name="projects"
-                options={projectOptions}
-                value={detail.projects}
-                onChange={handleProjectsChange}
-                placeholder="Select projects..."
-                classNamePrefix="react-select"
-                closeMenuOnSelect={false}
-              />
+              {projectOptions.length > 0 ? (
+                <>
+                  <label htmlFor="selectproject">
+                    <BsBuildingFill className={styles.icon} /> Projects
+                  </label>
+                  <Select
+                    id="projects"
+                    isMulti
+                    name="projects"
+                    options={projectOptions || []}
+                    value={detail.project}
+                    onChange={handleProjectsChange}
+                    placeholder="Select projects..."
+                    classNamePrefix="react-select"
+                    closeMenuOnSelect={false}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
             </div>
             <div className={styles.formControl}>
-              <label htmlFor="requirement">
-                <BsBuildingFill className={styles.icon} /> Requirements
-              </label>
-              <Select
-                id="requirements"
-                isMulti
-                options={apartmentOptions}
-                value={detail.requirements}
-                onChange={handleRequirementsChange}
-                placeholder="Select apartments..."
-                classNamePrefix="react-select"
-                closeMenuOnSelect={false}
-              />
+              {apartmentOptions.length ? (
+                <>
+                  <label htmlFor="requirement">
+                    <BsBuildingFill className={styles.icon} /> Requirements
+                  </label>
+                  <Select
+                    id="requirements"
+                    isMulti
+                    options={apartmentOptions || []}
+                    value={detail.requirements}
+                    onChange={handleRequirementsChange}
+                    placeholder="Select apartments..."
+                    classNamePrefix="react-select"
+                    closeMenuOnSelect={false}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <div className={styles.card}>
@@ -535,20 +587,26 @@ const TaggingFormSection: React.FC<TaggingFormSectionProps> = ({
         <div className={styles.clientdetails}>
           <div className={styles.card}>
             <div className={styles.formControl}>
-              <label htmlFor="cpname">
-                <IoPersonOutline className={styles.icon} /> Channel Partner
-              </label>
-              <Select
-                id="channelPartner"
-                name="channelPartner"
-                options={channelPartnerOptions}
-                value={detail.channelPartner}
-                onChange={handleChannelPartnerChange}
-                placeholder="Select Channel Partner..."
-                classNamePrefix="react-select"
-                closeMenuOnSelect={true}
-                isClearable
-              />
+              {channelPartnerOptions.length > 0 ? (
+                <>
+                  <label htmlFor="cpname">
+                    <IoPersonOutline className={styles.icon} /> Channel Partner
+                  </label>
+                  <Select
+                    id="channelPartner"
+                    name="channelPartner"
+                    options={channelPartnerOptions || []}
+                    value={detail.channelPartner}
+                    onChange={handleChannelPartnerChange}
+                    placeholder="Select Channel Partner..."
+                    classNamePrefix="react-select"
+                    closeMenuOnSelect={true}
+                    isClearable
+                  />
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>
