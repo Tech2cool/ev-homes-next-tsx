@@ -3,8 +3,11 @@ import styles from "./VideoDisc.module.css";
 import Image from "next/image";
 import { Forward, ThumbsUp } from 'lucide-react';  
 import {ThumbsDown } from 'lucide-react';
+import {useState} from "react"
 
 function VideoDiscription() {
+  const [like,setLike]= useState(false);
+
   return (
     <>
       <div className={styles.DiscMain}>
@@ -18,7 +21,9 @@ function VideoDiscription() {
           <p className={styles.ChannelName}>EV Homes</p>
             <div className={styles.BtnContainer}>
                 <div className={styles.LikeDislike}>
-          <button className={styles.likebtn}><ThumbsUp className={styles.Btns}/> <p style={{fontWeight:"700", paddingLeft:"7px"}}>32k </p></button>
+          <button className={styles.likebtn}><ThumbsUp className={styles.Btns} 
+          onClick={(prev)=>!prev} />
+           <p style={{fontWeight:"700", paddingLeft:"7px"}}>32k </p></button>
           <div className={styles.Breaker}></div>
           <button className={styles.dislike}><ThumbsDown  className={styles.Btns}  /></button>
           </div>

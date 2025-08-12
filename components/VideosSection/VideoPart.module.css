@@ -33,13 +33,15 @@
   margin-bottom: 13vw;
 }
 
-.VideoController, .ForwardBack {
+.VideoController,
+.ForwardBack {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.Icon, .ControlIcon {
+.Icon,
+.ControlIcon {
   color: white;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
@@ -58,24 +60,105 @@
   height: 40px;
 }
 
-.Icon:hover, .ControlIcon:hover {
+.Icon:hover,
+.ControlIcon:hover {
   background: rgba(0, 0, 0, 0.7);
   transform: scale(1.05);
 }
-.TimeLine{
-position: absolute;     
-  left: 20px;          
-  right: 20px;         
+.TimeLine {
+  position: absolute;
+  left: 20px;
+  right: 20px;
   height: 6px;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.3);
   border-radius: 4px;
-  bottom:70px ;
- }  
+  bottom: 70px;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    red 0%,
+    red var(--progress, 0%),
+    rgba(103, 101, 101, 0.5) var(--progress, 0%),
+    rgba(103, 101, 101, 0.5) 100%
+  );
+}
 
- .BottomController  {
- position: absolute;
- bottom: 20;
- left: 20 ;
- cursor: pointer;
- }
+.BottomController {
+  position: absolute;
+  bottom: 20;
+  left: 20;
+  cursor: pointer;
+  display: flex;
+align-items: center;
+justify-content: center;
+  flex-direction: row;
+}
+.soundRange {
+  display: flex;
+  flex-direction: row;
+}
+.PlayPauseTwo {
+  display: flex;
+  flex-direction: row;
+}
+.soundRangeTwo {
+  cursor: pointer;
+  appearance: none;
+  background-color:rgba(103, 101, 101, 0.5);
+  height: 5px;
+}
+
+/* for setting */
+.SettingWrapper {
+  position: relative;
+}
+
+.SettingMenu {
+  cursor: pointer;
+}
+
+.SettingMenu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+}
+
+.speedOption {
+  color: white;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.speedOption:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.activeSpeed {
+  background: rgba(255, 255, 255, 0.3);
+}
+.LeftContainers{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+
+}
+.RightContainer{
+    display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  margin-left: 25vw;
+}
+.Timer{
+  display: flex;
+  flex-direction: row;
+}
