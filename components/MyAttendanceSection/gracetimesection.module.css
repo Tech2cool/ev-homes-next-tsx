@@ -194,3 +194,9 @@
   /* color: beige; */
 }
 }
+@media (min-width: 616px) and (max-width: 935px) {
+.card {
+    width: 30vw;
+
+}
+}

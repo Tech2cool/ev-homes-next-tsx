@@ -105,7 +105,7 @@
   position: absolute;
   bottom: 20;
   left: 10;
-  width: 13%;
+  
   padding: 1vh;
   z-index: 500;
 }
@@ -383,7 +383,7 @@
   .assetSection,
   .weekoffSection,
   .leaveSection {
-    width: 22vw;
+    width: 25vw;
     height: 45vh;
     gap: 2vh;
     padding: 2vh;
@@ -470,13 +470,14 @@
   .filteringDataSection {
     display: flex;
     flex-direction: row;
-    gap: 1vw;
+    gap: 2vw;
     position: absolute;
     bottom: auto;
     left: auto;
     width: 100%;
-    padding: 1vh 1vw;
+    padding: 2.5vh 2vw;
     z-index: 500;
+    text-align: center;
   }
 
   .pendingDataButton,
@@ -492,7 +493,7 @@
   .assetSection,
   .weekoffSection,
   .leaveSection {
-    width: 85vw;
+    width: 95vw;
     height: 50vh;
     margin: 1vh;
     scrollbar-width: thin;
@@ -504,4 +505,5 @@
     width: auto;
     height: auto;
   }
+  
 }

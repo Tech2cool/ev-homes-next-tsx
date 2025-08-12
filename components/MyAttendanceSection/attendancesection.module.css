@@ -441,16 +441,16 @@
   }
 
   .pieContainer {
-    width: 50vw;
-    height: 40vw;
+    width: 55vw;
+    height: 50vw;
   }
 
   .legend {
     display: flex;
     flex-direction: column;
     gap: 2vw;
-    flex: 1;
-    height: 40vw;
+   
+    height: 50vw;
     overflow-y: auto;
     scrollbar-width: none;
   }

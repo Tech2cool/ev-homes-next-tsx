@@ -155,7 +155,7 @@ export default function ReimbursementSection() {
                     </th>
                     <th>
                       <span className={styles.iconText}>
-                        <PiAirplaneTakeoffFill /> <span>Reimbursement Type</span>
+                        <PiAirplaneTakeoffFill /> <span>Type</span>
                       </span>
                     </th>
                      <th>

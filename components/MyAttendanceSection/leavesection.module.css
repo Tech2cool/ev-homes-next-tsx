@@ -307,13 +307,14 @@
 
 .tableDesktop {
   display: block;
+  
 }
 
 .cardsMobile {
   display: none;
 }
 
-@media screen and (max-width: 615px) {
+@media screen and (max-width: 650px) {
   .filterReimbursement span {
     display: none;
   }
@@ -321,9 +322,18 @@
     width: 50vw;
   }
 
-  .progressContainer {
-    display: none;
-  }
+  .statsWithProgress {
+        flex-direction: column;
+    }
+.progressContainer {
+   
+    width: 100%;
+    padding: 1vh 10vw;
+
+}
+.progressBar {
+    width: 40vw;
+}
 
   .leavecontainer {
     display: flex;
@@ -332,11 +342,13 @@
     justify-items: center;
     overflow-x: auto;
     scrollbar-width: none;
+    margin: 0px;
+    margin-top: 0.5rem;
   }
 
   .leavecard {
-    min-width: 20vw;
-    height: 20vw;
+    min-width: 18vw;
+    height: 18vw; 
     align-items: center;
     justify-content: center;
     padding: 0;
@@ -355,7 +367,7 @@
   .aproved,
   .rejected,
   .pending {
-    font-size: 0.8rem;
+    font-size: 3vw;
     margin-bottom: 1vh;
   }
 
@@ -384,7 +396,7 @@
 
   .leaveCardMobile {
     border: 1px solid #505050;
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: 10px;
     background-color: black;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -393,7 +405,7 @@
   }
 
   .leaveCardMobile div {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.1rem;
   }
 
   .filesDiv,
@@ -409,7 +421,7 @@
     font-weight: bold;
     border: 1px solid #4caf50;
     border-radius: 20px;
-    padding: 1vh 2vw;
+    padding: 0.5vh 2vw;
   }
 
   .statusPending {
@@ -435,9 +447,24 @@
     margin-left: 0vw;
     padding: 0 1vw;
   }
+  .applyButton {
+    display: flex;
+  background-color: #238dfe;
+  border: 2px solid #007bff;
+  color: white;
+  padding: 1vh 1vw;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 400;
+}
 }
 
-@media screen and (max-width: 1024px) and (min-width: 616px) {
+@media screen and (max-width: 1024px) and (min-width: 651px) {
+  
   .leaveTable {
     width: 100%;
     border-collapse: collapse;
@@ -453,4 +480,34 @@
   .leaveTable th {
     font-weight: 400;
   }
+  .leavecard {
+  width: 15vw;
+  padding-left: 1vw;
+}
+.request,
+  .aproved,
+  .rejected,
+  .pending {
+    font-size: 2vw;
+    margin-bottom: 1vh;
+  }
+.progressContainer {
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  padding: 1vh 0vw;
+  border-radius: 12px;
+}
+  .filterReimbursement span {
+    display: none;
+  }
+.maincontainer {
+  display:block;
+  flex-direction: row;
+  
+}
+.modalContent {
+    max-width: 40vw;
+}
 }
