@@ -225,7 +225,7 @@ const AttendanceSection = ({ item, leaveInfo }) => {
       <div className={styles.dateSection}>
         <div className={styles.date}>{dateFormatOnly(item?.date)}</div>
         <div className={styles.clockText}>
-          <div>Time-in: {timeFormatOnly(item?.checkInTime)}</div>
+          <div className={styles.time}>Time-in: {timeFormatOnly(item?.checkInTime)}</div>
         </div>
         <div className={styles.statusClockText}>
           <div>Status: {item?.status}</div>

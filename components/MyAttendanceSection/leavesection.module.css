@@ -26,7 +26,11 @@
   padding-left: 2vw;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
+:global(html.light) .leavecard {
+    border-right: 1px solid rgba(0, 0, 0, 0.3);
+    color: #363535;
 
+  }
 .numberleave {
   font-size: 1.2rem;
 }
@@ -35,12 +39,16 @@
   color: #9cc3ef;
   font-size: 1.2rem;
 }
-
+:global(html.light) .request {
+  color: #3386e6;
+  }
 .aproved {
   color: rgb(163, 253, 163);
   font-size: 1.2rem;
 }
-
+:global(html.light) .aproved {
+  color: rgb(57, 234, 57);
+  }
 .rejected {
   color: red;
   font-size: 1.2rem;
@@ -113,11 +121,19 @@
   color: #ffffff;
   font-weight: 600;
 }
+:global(html.light) .leaveTable th {
+    background-color: transparent;
+      color: black;
 
+  }
 .leaveTable td {
   background-color: #1a1a1a;
 }
+:global(html.light) .leaveTable td {
+    background-color: transparent;
+      color: black;
 
+  }
 .leaveTable a {
   color: #4dabf7;
   text-decoration: none;
@@ -151,6 +167,9 @@
   /* flex-wrap: wrap; */
   border-bottom: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
+}
+:global(html.light) .statsWithProgress {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.3);
 }
 
 /* progress container  */
@@ -186,7 +205,9 @@
   gap: 0.8vh;
   /* width: 25%; */
 }
-
+:global(html.light) .labelColumn {
+  color: #484848;
+}
 .countColumn {
   display: flex;
   flex-direction: column;
@@ -197,7 +218,9 @@
   color: #919090;
   gap: 0.8vh;
 }
-
+:global(html.light) .countColumn {
+  color: #484848;
+}
 .barColumn {
   display: flex;
   flex-direction: column;
@@ -252,7 +275,9 @@
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
-
+:global(html.light) .modalContent {
+  background-color: white;
+}
 .closeButton {
   position: absolute;
   top: 10px;
@@ -263,7 +288,9 @@
   cursor: pointer;
   color: white;
 }
-
+:global(html.light) .closeButton {
+  color: black;
+}
 /* reimbursement page filter css  */
 
 .filterReimbursement {
@@ -279,7 +306,11 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
+:global(html.light) .filterReimbursement {
+  border: 1px solid rgba(0, 0, 0, 0.502);
+    color: black;
 
+}
 .filterReimbursement:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.4);
@@ -358,7 +389,10 @@
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-
+:global(html.light) .leavecard {
+    background-color: rgba(138, 137, 137, 0.133);
+         border: 1px solid rgba(0, 0, 0, 0.1);
+}
   .numberleave {
     font-size: 1rem;
   }
@@ -403,6 +437,12 @@
     color: rgb(210, 210, 210);
     font-size: 0.8rem;
   }
+  :global(html.light) .leaveCardMobile {
+        border: 1px solid #0000001a;
+        background-color: #8a898922;
+            color: rgb(36, 36, 36);
+
+}
 
   .leaveCardMobile div {
     margin-bottom: 0.1rem;
@@ -507,7 +547,20 @@
   flex-direction: row;
   
 }
+
+}
+@media screen and (max-width: 800px) and (min-width: 651px) {
+.modalContent {
+    max-width: 60vw;
+}
+}
+@media screen and (max-width: 1000px) and (min-width: 801px) {
 .modalContent {
     max-width: 40vw;
+}
+}
+@media screen and (max-width: 1200px) and (min-width: 1001px) {
+.modalContent {
+    max-width: 35vw;
 }
 }
