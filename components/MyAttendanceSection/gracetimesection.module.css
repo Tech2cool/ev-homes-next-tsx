@@ -14,6 +14,12 @@
   color: aliceblue;
 }
 
+:global(html.light) .lablesection {
+  color: black;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+
+}
+
 .maincontainer {
   display: flex;
   flex-direction: row;
@@ -28,6 +34,10 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 0.5rem 1rem;
+}
+
+:global(html.light) .card {
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .headlline {
@@ -58,6 +68,10 @@
   font-weight: 400;
 }
 
+:global(html.light) .name {
+  color: black;
+}
+
 .shift {
   display: flex;
   justify-content: center;
@@ -69,6 +83,13 @@
   color: rgb(175, 175, 175);
   font-size: 0.8vw;
 }
+
+:global(html.light) .shift {
+  color: rgb(37, 36, 36);
+  border: 1px solid rgba(3, 49, 255, 0.909);
+
+}
+
 .infocard {
   display: flex;
   flex-direction: row;
@@ -77,15 +98,20 @@
   gap: 4vw;
   padding-top: 1rem;
 }
+
 .checkin {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
 .infolable {
   font-size: 0.8vw;
   color: beige;
+}
+:global(html.light) .infolable {
+  color: black;
 }
 .photo {
   width: 8vh;
@@ -93,12 +119,16 @@
   object-fit: cover;
   border-radius: 50%;
 }
+
 .infovalue {
   font-size: 0.8vw;
   color: rgb(184, 183, 183);
 }
+:global(html.light) .infovalue {
+  color: rgb(62, 61, 61);
+}
 .button {
-    padding-top: 2rem;
+  padding-top: 2rem;
   height: 6vh;
   border-radius: 8px;
   background-color: rgba(0, 0, 255, 0.055);
@@ -107,11 +137,20 @@
   color: beige;
   padding: 0.1rem;
 }
+:global(html.light) .button {
+  background-color: rgba(125, 125, 249, 0.192);
+    border: 1px solid rgba(3, 49, 255, 0.847);
+
+    color: black;
+
+}
 .line {
   height: 8vh;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
-
+:global(html.light) .line {
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
 @media screen and (max-width: 615px) {
   .templet {
     display: flex;
@@ -185,18 +224,19 @@
   }
 
   .button {
-  /* margin-top: 1rem;
+    /* margin-top: 1rem;
   height: 5vh;
   border-radius: 8px;
   background-color: rgba(0, 0, 255, 0.055);
   border: 1px solid rgba(3, 49, 255, 0.604); */
-  font-size: 2vh;
-  /* color: beige; */
+    font-size: 2vh;
+    /* color: beige; */
+  }
 }
-}
+
 @media (min-width: 616px) and (max-width: 935px) {
-.card {
+  .card {
     width: 30vw;
 
-}
+  }
 }

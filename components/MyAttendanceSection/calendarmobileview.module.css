@@ -11,7 +11,9 @@
   margin-bottom: 2vh;
   color: #a7a6a6;
 }
-
+:global(html.light) .calendarHeader {
+  color: black;
+}
 .weekday {
   font-size: 2vh;
 }

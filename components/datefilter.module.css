@@ -14,6 +14,10 @@
   gap: 2vw;
 }
 
+:global(html.light) .calendarWrapper {
+  background: white;
+}
+
 .okButton {
   margin-top: 2vh;
   margin-left: 2vh;
@@ -36,12 +40,85 @@
 .calendarWrapper :global(.rdrMonthPicker),
 .calendarWrapper :global(.rdrYearPicker) {
   background-color: #111 !important;
-  color: #fff !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDay) {
+  color: black !important;
+  background-color: rgb(244, 244, 244) !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrMonth) {
+  color: black !important;
+  background-color: rgb(232, 232, 232) !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrMonthPicker) {
+  color: black !important;
+  background-color: rgb(219, 219, 219) !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrYearPicker) {
+  color: black !important;
+  background-color: rgb(219, 219, 219) !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrMonthAndYearWrapper) {
+  color: black !important;
+  background-color: rgb(240, 240, 240) !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrNextPrevButton) {
+  background-color: #b4b3b3 !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDateRangeWrapper) {
+  color: black !important;
+  background-color: white !important;
+
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDefinedRangesWrapper) {
+  color: black !important;
+  background-color: white !important;
+
+}
+
+:global(html.light) .calendarWrapper :global(.rdrStaticRange) {
+  color: black !important;
+  background-color: white !important;
+
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDefinedRangesWrapper) {
+  border-right: 1px solid black !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrStaticRange) {
+
+  border-bottom: 1px solid black !important;
+
+}
+
+:global(html.light) .calendarWrapper :global(.rdrInputRangeInput) {
+  color: #212223 !important;
+  border: 1px solid black !important;
 }
 
 .calendarWrapper :global(.rdrDateDisplayItem),
 .calendarWrapper :global(.rdrDateDisplayWrapper) {
   background-color: #353535 !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDateDisplayWrapper) {
+  background-color: #eaeaea !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDateDisplayItem) {
+  background-color: #d6d4d4 !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrDateDisplayItem input) {
+  color: #111 !important;
 }
 
 .calendarWrapper :global(.rdrStaticRange:hover) {
@@ -57,6 +134,10 @@
   color: #b4b3b3 !important;
 }
 
+:global(html.light) .calendarWrapper :global(.rdrDayNumber span) {
+  color: #212223 !important;
+}
+
 .calendarWrapper :global(.rdrDayDisabled) {
   background-color: #333 !important;
   color: #777 !important;
@@ -69,4 +150,47 @@
 .calendarWrapper :global(.rdrDaySelected) {
   background-color: #007bff !important;
   color: white !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrMonthName) {
+  color: #212223 !important;
+}
+
+:global(html.light) .calendarWrapper :global(.rdrWeekDay) {
+  color: #212223 !important;
+}
+
+@media (max-width: 768px) {
+
+  .calendarWrapper :global(.rdrDefinedRangesWrapper) {
+    display: none;
+  }
+
+  .calendarWrapper {
+    width: 70%;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  .okButton {
+    width: 25%;
+    margin: 0rem 0 0 0;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+}
+
+@media (max-width: 550px) {
+  
+  .calendarWrapper {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    left: 20%;
+  }
+  .calendarWrapper :global(.rdrMonth){
+    width: 24em;
+  }
 }

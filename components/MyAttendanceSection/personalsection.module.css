@@ -24,6 +24,9 @@
   padding: 1vh;
   border-radius: 8px;
 }
+:global(html.light) .profilesection {
+  background-color: rgba(217, 209, 209, 0.244);
+}
 
 .imagesection {
   display: flex;
@@ -47,6 +50,10 @@
   font-size: 2.5vh;
   font-weight: 400;
 }
+:global(html.light) .profilesection h6 {
+  color: black;
+}
+
 
 .employeebutton {
   display: flex;
@@ -58,6 +65,12 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.3rem;
+
+}
+:global(html.light) .employeebutton{
+    background-color: #cecccc52;
+    color: black;
+
 }
 
 /* ******************************Contact Section************************* */
@@ -79,15 +92,22 @@
   margin-top: 0.5rem;
   border-radius: 0.3rem;
 }
-
+:global(html.light) .container {
+    background-color: rgba(206, 204, 204, 0.32);
+}
 .container h5 {
   color: grey;
   font-size: 1.7vh;
 }
-
+:global(html.light) .container h5{
+color: rgb(37, 37, 37);
+}
 .container p {
   color: #c5c1c1;
   font-size: 2vh;
+}
+:global(html.light) .container p{
+  color: #060505;
 }
 
 .joincontainer {
@@ -105,7 +125,9 @@
   font-size: 2.5vh;
   font-weight: 500;
 }
+:global(html.light) .personalInfo {
 
+    background-color: rgba(217, 209, 209, 0.243);}
 .containerrow {
   display: flex;
   flex-direction: row;
@@ -126,7 +148,9 @@
   font-size: 2.5vh;
   font-weight: 500;
 }
-
+:global(html.light) .proInfo {
+    background-color: rgba(217, 209, 209, 0.243);
+  }
 /* *******************************LEAVE AND REPORTING******************** */
 .leaverepoting {
   flex-direction: row;
@@ -233,7 +257,8 @@
   width: 19vw;
   height: 28vh;
 }
-
+:global(html.light) .imagecontainer {
+    background-color: rgba(206, 204, 204, 0.32);  }
 .repotingImage {
   width: 15vh;
   height: 15vh;
@@ -246,11 +271,17 @@
   font-weight: 600;
   padding-top: 0.5vh;
 }
+:global(html.light) .imagecontainer h6 {
+  color: black;
+}
 
 .imagecontainer p {
   font-size: 1.1vw;
   font-weight: 400;
   color: #bfbebe;
+}
+:global(html.light) .imagecontainer p {
+color: #3c3c3c;
 }
 
 /* ================== Mobile View ================== */

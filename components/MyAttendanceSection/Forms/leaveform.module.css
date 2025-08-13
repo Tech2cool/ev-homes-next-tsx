@@ -7,6 +7,10 @@
   font-weight: 500;
 }
 
+:global(html.light) .formHeadline {
+  color: rgb(37, 37, 37);
+}
+
 .formControlAttach,
 .formControl {
   display: flex;
@@ -31,14 +35,23 @@
 }
 
 .formControl label {
+
+  display: flex;
+  gap: 3px;
   font-size: 0.7rem;
   position: absolute;
-  top: -12px;
+  top: -10px;
   left: 10px;
   background-color: black;
   padding: 0 10px;
   color: rgb(170, 170, 170);
   border-radius: 8px;
+}
+
+:global(html.light) .formControl label {
+  color: black;
+  background-color: white;
+
 }
 
 .formControl select {
@@ -68,6 +81,7 @@
 .dateSection {
   display: flex;
   justify-content: space-between;
+  gap: 5px;
 }
 
 .uploadBox {
@@ -83,6 +97,13 @@
   position: relative;
 }
 
+:global(html.light) .uploadBox {
+  background-color: white;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0.751);
+
+}
+
 .inputIcon {
   font-size: 1rem;
   color: #007bff;
@@ -92,6 +113,10 @@
 .uploadText {
   font-size: 0.8rem;
   color: rgba(252, 245, 245, 0.8);
+}
+
+:global(html.light) .uploadText {
+  color: rgba(24, 24, 24, 0.8);
 }
 
 .fileName {
@@ -153,18 +178,25 @@
   color: #ccc;
 }
 
+:global(html.light) .radioSection label {
+  color: black;
+}
+
 .attachmentContainer {
   display: flex;
   justify-content: space-evenly;
 }
+
 .regularizedate h6 {
   color: #6d6b6b;
 }
+
 .regularizedate p {
   font-size: 0.8rem;
   color: #6d6b6b;
   font-weight: 500;
 }
+
 .formControl p {
   color: rgb(255, 8, 8);
   font-size: 0.8rem;
@@ -179,9 +211,29 @@
   border: 1px solid #444;
 }
 
+:global(html.light) .formControl select {
+  background-color: white;
+  color: black;
+
+}
+
+:global(html.light) .formControl input {
+  background-color: white;
+  color: black;
+}
+
+:global(html.light) .formControl textarea {
+  background-color: white;
+  color: black;
+}
+
 .formControl textarea::placeholder,
 .formControl input::placeholder {
   color: #888;
+}
+
+:global(html.light) .formControl textarea::placeholder {
+  color: #818181;
 }
 
 @media screen and (max-width: 615px) {
@@ -189,6 +241,10 @@
     font-size: 1rem;
     padding-bottom: 2vh;
     width: 60vw;
+  }
+
+  .formControl textarea {
+    font-size: 14px;
   }
 
   .formControlForDate {
@@ -208,14 +264,25 @@
   }
 
   .attachmentContainer {
-    justify-content: space-around;
+    justify-content: center;
+    flex-direction: column;
   }
 
   .formControlAttach {
-    width: 40vw;
+    width: 100%;
   }
 
   .uploadBox {
     gap: 3vw;
+  }
+}
+
+@media screen and (max-width: 1050px) and (min-width: 616px) {
+  .formControlForDate {
+    width: 100%;
+  }
+
+  .formControlAttach {
+    width: 100%;
   }
 }

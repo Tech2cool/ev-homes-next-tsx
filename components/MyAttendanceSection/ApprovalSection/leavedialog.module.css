@@ -21,7 +21,9 @@
   position: relative;
   height: auto;
 }
-
+:global(html.light) .dialogBox {
+  background: rgb(255, 255, 255);
+}
 .upperSection {
   height: 21vh;
 }
@@ -35,13 +37,18 @@
   padding: 4px 8px;
   cursor: pointer;
 }
-
+:global(html.light) .closeBtn {
+  background: transparent;
+  color: black;
+}
 .dialogHeader {
   font-size: 2.5vh;
   color: white;
   font-weight: 300;
 }
-
+:global(html.light) .dialogHeader {
+  color: black;
+}
 .dateSectionWeekOff,
 .dateSection {
   margin: 2vh 1vh 1vh 1vh;
@@ -65,12 +72,16 @@
   display: flex;
   flex-direction: column;
   margin-top: 0.5vh;
-  align-items: center;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
   padding-right: 2vw;
-  padding-left: 1vw;
+  padding-left: 2vw;
 }
-
+:global(html.light) .date {
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+:global(html.light) .appliedOn {
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
 .number {
   border: none;
 }
@@ -79,11 +90,16 @@
   color: rgb(139, 138, 138);
   font-size: 1.7vh;
 }
-
+:global(html.light) .sectionhead {
+  color: rgb(96, 96, 96);
+}
 .sectionvalue {
   font-size: 2vh;
+  color: white;
 }
-
+:global(html.light) .sectionvalue {
+  color: rgb(41, 41, 41);
+}
 .lowerShiftSection,
 .lowerReimSection,
 .lowerReguSection,
@@ -98,27 +114,47 @@
     inset 0 -10px 20px rgba(0, 0, 0, 0.3);
   padding-bottom: 2vh;
 }
+:global(html.light) .lowerSection {
+ box-shadow: none;
+   background-color: rgba(29, 29, 29, 0.1);
 
+}
 .lowerWeekOffSection {
   border-left: 10px solid orange;
+  
 }
-
+:global(html.light) .lowerWeekOffSection {
+ box-shadow: none;
+   background-color: rgba(29, 29, 29, 0.1);
+}
 .lowerAssetSection {
   border-left: 10px solid rgb(25, 126, 160);
 }
-
+:global(html.light) .lowerAssetSection {
+ box-shadow: none;
+   background-color: rgba(29, 29, 29, 0.1);
+}
 .lowerReguSection {
   border-left: 10px solid rgb(177, 38, 61);
 }
-
+:global(html.light) .lowerReguSection {
+ box-shadow: none;
+   background-color: rgba(29, 29, 29, 0.1);
+}
 .lowerReimSection {
   border-left: 10px solid rgb(80, 79, 79);
 }
-
+:global(html.light) .lowerReimSection {
+ box-shadow: none;
+   background-color: rgba(29, 29, 29, 0.1);
+}
 .lowerShiftSection {
   border-left: 10px solid green;
 }
-
+:global(html.light) .lowerShiftSection {
+ box-shadow: none;
+   background-color: rgba(29, 29, 29, 0.1);
+}
 .statusButton {
   border: 2px solid orange;
   background-color: rgb(243, 196, 108, 0.2);
@@ -128,15 +164,21 @@
   display: flex;
   font-size: 2vh;
 }
-
+:global(html.light) .statusButton {
+  color: orange;
+}
 .empName {
   font-size: 3vh;
 }
-
+:global(html.light) .empName {
+  color: black;
+}
 .empPhone {
   font-size: 2vh;
 }
-
+:global(html.light) .empPhone {
+  color: black;
+}
 .name {
   display: flex;
   justify-content: space-between;
@@ -154,7 +196,12 @@
   color: #c6c6c6;
   margin-top: 0.5vh;
 }
-
+:global(html.light) .type {
+  color: rgb(48, 48, 48);
+}
+:global(html.light) .reason {
+  color: rgb(48, 48, 48);
+}
 .attachment {
   margin-top: 1vh;
   margin-left: 1vw;
@@ -185,7 +232,9 @@
   object-fit: cover;
   border: 1px solid white;
 }
-
+:global(html.light) .profilePic {
+  border: 2px solid white;
+}
 .forback {
   margin: 2vh;
   display: flex;
@@ -215,7 +264,9 @@
 .cardCount {
   font-size: 2vh;
 }
-
+:global(html.light) .cardCount {
+  color: black;
+}
 .rejapprove {
   display: flex;
   gap: 1vw;
@@ -254,7 +305,9 @@
   font-weight: 500;
   transition: background-color 0.3s ease;
 }
-
+:global(html.light) .approveButton {
+  color: green;
+}
 .approveButton:hover {
   background-color: rgb(25, 81, 25);
 }
@@ -335,8 +388,9 @@
 
   .reason,
   .type {
-    font-size: 2vh;
-  }
+    font-size: 1.8vh;
+  margin-top: 0.2vh;  
+}
 
   .attachment {
     font-size: 1.5vh;
@@ -367,5 +421,16 @@
     bottom: -15vh;
     right: 10vw;
     width: auto;
+  }
+}
+@media screen and (max-width: 850px) and (min-width: 616px) {
+   .dialogBox {
+    width: 60vw;
+  }
+}
+@media screen and (max-width: 1050px) and (min-width: 851px) {
+   .dialogBox {
+
+    width: 50vw;
   }
 }

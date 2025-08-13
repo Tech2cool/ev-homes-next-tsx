@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./calendarmobileview.module.css";
+import { useTheme } from "next-themes";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -64,7 +65,7 @@ const CalendarMobileView = () => {
   };
 
   const closeDialog = () => setDialogData(null);
-
+  const { theme } = useTheme();
   return (
     <div className={styles.mobileView}>
       <div className={styles.calendarHeader}>
@@ -91,8 +92,16 @@ const CalendarMobileView = () => {
               className={styles.calendarCell}
               onClick={() => handleCellClick(day)}
               style={{
-                backgroundColor: markerColor || "#171717",
-                color: markerColor ? "#fff" : "rgba(167, 167, 167, 0.5)",
+                backgroundColor: markerColor
+                  ? markerColor
+                  : theme === "dark"
+                    ? "#000000"
+                    : "#ecececa7",
+                color: markerColor
+                  ? "#fff"
+                  : theme === "dark"
+                    ? "#a7a7a7"
+                    : "#333333",
               }}
               title={entry?.status || "No record"}
             >
