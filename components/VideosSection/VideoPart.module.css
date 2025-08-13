@@ -162,3 +162,13 @@ justify-content: center;
   display: flex;
   flex-direction: row;
 }
+.ContrllersMain{
+  opacity: 0;
+  transition: opacity 0.3 ease;
+}
+.ContrllersMain.show{
+  opacity: 1;
+}
+ContrllersMain.hide{
+  opacity: 0;
+}

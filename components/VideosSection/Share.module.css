@@ -1,0 +1,44 @@
+.ShareContainer {
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: fit-content;
+  padding: 2vh 2vw;
+  border: none;
+  border-radius: 5%;
+  left: 35%;
+  top: 30%;
+  position: absolute;
+}
+.first {
+  display: flex;
+  gap: 28vw;
+  margin-bottom: 1vw;
+  margin-top: 1vw;
+}
+.Second {
+  display: flex;
+  gap: 2vw;
+  margin-bottom: 2vw;
+  
+}
+.input {
+  background-color: rgba(128, 128, 128, 0.363);
+  height: 2.5vw;
+  border: none;
+  width: 25vw;
+  border-radius: 5px;
+}
+.copy{
+    background-color: rgb(84, 84, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3vw;
+    width: 5vw;
+
+}
+.WhiteLine{
+    margin-bottom: 1vw;
+}

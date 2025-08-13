@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, use } from "react";
 import styles from "./VideoPart.module.css";
+import Share from "./Share"
 import {
   CirclePause,
   CirclePlay,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { GrBackTen, GrForwardTen } from "react-icons/gr";
 
-function VideoPart() {
+function VideoPart({currentVideo}:{currentVideo:any}) {  
   const inputRef = useRef<HTMLInputElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const volumeRef = useRef<HTMLInputElement | null>(null);
@@ -23,6 +24,8 @@ function VideoPart() {
   const [volume, setVolume] = useState(1);
   const [ShowSetting, setShowSetting] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showControllers,setShowControllers] =useState(false);
+
 
   let speed = [0.25, 0.5, 0.75, 1, 1.25, 1.75, 2];
 
@@ -135,19 +138,26 @@ function VideoPart() {
     return `${String(minutes)} : ${String(seconds)}`;
   };
 
+
+
   return (
-    <div className={styles.VideosContainer}>
+    <>
+    <div className={styles.VideosContainer}
+     onMouseEnter={()=>setShowControllers(true)}
+          onMouseLeave={()=>setShowControllers(false)}>
       <div className={styles.VideoWrapper}>
         <video
           ref={videoRef}
-          src="/images/Videos/sample.mp4"
+          src={currentVideo.src}
           className={styles.Videobox}
           controls={false}
           width="100%"
           height="100%"
           onLoadedMetadata={videoTimeLine}
+         
         />
-
+      <div className={`${styles.ContrllersMain}  ${showControllers? styles.show : styles.hide}` } 
+       >
         <div className={styles.ControlsContainer}>
           <div className={styles.ForwardBack}>
             <GrBackTen
@@ -249,6 +259,9 @@ function VideoPart() {
         </div>
       </div>
     </div>
+    </div>
+    <Share/>
+    </>
   );
 }
 
