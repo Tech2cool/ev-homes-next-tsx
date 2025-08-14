@@ -4,8 +4,10 @@ import styles from "./VideosPlaylist.module.css";
 import { EllipsisVertical } from "lucide-react";
 import ScrollSelection from "./ScrollSection";
 
-function VideoPlaylist({onVideoClick}: {onVideoClick: (video: any) => void;
+function VideoPlaylist({onVideoClick,onShareClick}: {onVideoClick: (video: any) => void , onShareClick:any;
 }) {
+
+
   const PlayList = [
     {
        src: "images/Videos/sample_1.mp4",
@@ -48,6 +50,8 @@ function VideoPlaylist({onVideoClick}: {onVideoClick: (video: any) => void;
        likes:"1k"
     },
   ];
+
+
   return (
     <>
       <div className={styles.PlaylistMainContainer}>
@@ -67,8 +71,11 @@ function VideoPlaylist({onVideoClick}: {onVideoClick: (video: any) => void;
                   <div className={styles.ThumbnailRow}>
                     <div className={styles.PlaylistThumbnail}>
                       {item.thumbnail}
-                    </div>
+                    </div> 
+                    <button className={styles.PlaylistShare} onClick={onShareClick}>
                     <EllipsisVertical className={styles.icon} />
+                    </button>
+                    
                   </div>
                   <div className={styles.Channel}>{item.Channel}</div>
                   <div className={styles.views}>{item.views}</div>

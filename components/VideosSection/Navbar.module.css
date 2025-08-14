@@ -24,16 +24,17 @@
   white-space: nowrap;
 }
 .Loginbtn{
-    height: 3vh;
-    width: 6vw;
+    height: 5vh;
+    width: 7vw;
     border: 1px solid  white;
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1vw;
-    margin-left: 20vw;
+    margin-left: 18vw;
         background-color:#ffffff0d;
+       
 }
 .Logo{
     margin-left: 1vw;

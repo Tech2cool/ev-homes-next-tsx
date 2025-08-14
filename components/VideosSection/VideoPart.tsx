@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, use } from "react";
 import styles from "./VideoPart.module.css";
-import Share from "./Share"
+
 import {
   CirclePause,
   CirclePlay,
@@ -260,7 +260,7 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
       </div>
     </div>
     </div>
-    <Share/>
+   
     </>
   );
 }
