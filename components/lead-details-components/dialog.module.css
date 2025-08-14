@@ -24,7 +24,10 @@
   flex-direction: column;
   color: #111827; /* Explicit text color added */
 }
+:global(html.dark) .dialogContainer{
+    background: black;
 
+}
 .dialogHeader {
   display: flex;
   align-items: center;
@@ -33,7 +36,11 @@
   border-bottom: 1px solid #e5e7eb;
   background: #f9fafb;
 }
+:global(html.dark) .dialogHeader{
+    background: black;
+      border-bottom: 1px solid #303030;
 
+}
 .dialogTitle {
   display: flex;
   align-items: center;
@@ -43,7 +50,9 @@
   color: #111827;
   margin: 0;
 }
-
+:global(html.dark) .dialogTitle{
+  color: #6a95f1;
+}
 .titleIcon {
   width: 20px;
   height: 20px;
@@ -68,7 +77,9 @@
   height: 20px;
   color: #6b7280;
 }
-
+:global(html.dark) .closeIcon {
+  color:white;
+}
 .dialogContent {
   flex: 1;
   overflow-y: auto;
@@ -94,7 +105,10 @@
   padding-bottom: 8px;
   border-bottom: 1px solid #e5e7eb;
 }
-
+:global(html.dark) .sectionTitle {
+  border-bottom: 1px solid #2b2b2b;
+    color: #9bbaed;
+}
 .sectionIcon {
   width: 16px;
   height: 16px;
@@ -118,7 +132,9 @@
   font-weight: 500;
   color: #374151;
 }
-
+:global(html.dark) .formLabel {
+    color: #5d708f;
+}
 .formInput,
 .formSelect,
 .formTextarea {
@@ -126,11 +142,25 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 14px;
-  color: #111827; /* Text color added */
+  color: #111827; 
   background-color: #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
+:global(html.dark) .formInput {
+  background-color: #111111;
+    border: 1px solid #1b1b1b;
+  color: #ffffff;
+}
+:global(html.dark) .formSelect {
+  background-color: #111111;
+    border: 1px solid #1b1b1b;
+  color: #ffffff;
+}
+:global(html.dark) .formTextarea {
+  background-color: #111111;
+    border: 1px solid #1b1b1b;
+  color: #ffffff;
+}
 .formInput::placeholder,
 .formTextarea::placeholder {
   color: #9ca3af; /* Placeholder color added */
@@ -177,7 +207,11 @@
   border-top: 1px solid #e5e7eb;
   background: #f9fafb;
 }
+:global(html.dark) .dialogFooter {
+  background: #000000;
+    border-top: 1px solid #181818;
 
+}
 .cancelButton {
   padding: 10px 20px;
   border: 1px solid #d1d5db;
@@ -189,7 +223,10 @@
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
 }
-
+:global(html.dark) .cancelButton {
+  background: black;
+  color: white;
+}
 .cancelButton:hover {
   background-color: #f9fafb;
   border-color: #9ca3af;
