@@ -2,6 +2,8 @@
     background-color: black;
     width: 100%;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 
 }
 .SubContainer{
@@ -10,11 +12,16 @@
 }
 .LeftSide{
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
 }
-@media screen and (max-width:615px) {
+.NavbarMain{
+    position: relative;
+    z-index: 1000;  
+}
+@media screen and (max-width:572px) {
 .SubContainer{
 display: flex;
 flex-direction: column;
 }
+
 }

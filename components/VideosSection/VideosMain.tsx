@@ -35,7 +35,9 @@ function VideosMain() {
   return (
     <>
       <div className={styles.MainContainer}>
+        <div className={styles.NavbarMain}>
         <Navbar />
+        </div>
         <div className={styles.SubContainer}>
           <div className={styles.LeftSide}>
             <VideoPart currentVideo={currentVideo} />

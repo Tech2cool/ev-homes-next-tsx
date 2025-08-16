@@ -87,3 +87,43 @@
   background-color: rgba(255, 255, 255, 0.2);
   height: 2vh;
 }
+
+/* responsive for mobile and tablet */
+@media screen and (max-width:768px){
+  .Thumbnail {
+  font-size: 15px;
+  font-weight: 700;
+}
+.DiscMain {
+  margin-left: 3vw;
+  margin-top: 3vw;
+  gap: 1vw;
+  margin-right: 2vw;
+}
+.ChannelLogo {
+  height: 30px;
+  width: 30px;
+}
+.ChannelName{
+  padding-left: 5px;
+  font-size: 2vw;
+}
+.BtnContainer{
+  gap: 5vw;
+}
+.DiscStorage {
+  padding: 1vh 1vw;
+  margin-top: 3vw;
+}
+.LikeDislike {
+  padding: 1vw 1vw;
+  gap: 4vw;
+}
+.Sharebtn {
+  padding: 1vw 1vw;
+}
+
+
+
+
+}

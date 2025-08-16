@@ -44,3 +44,88 @@
     margin-top: 6vw;
     
 }   
+
+/* responsive for mobile and laptop */
+@media screen and (max-width:572px){
+.ScrollContainer {
+  display: flex;
+  margin-top: 1vw;
+  white-space: nowrap;
+  margin-left: 18vw;
+  margin-bottom: 1vw;
+  gap: 1vw;
+  padding-left: 4vw;
+  overflow-x:auto;
+  width: 70vw;
+}
+.Element{
+  flex:  0 0 45%;
+  height: 8vw;
+  padding-left: 22vw;
+  padding-right: 22vw;
+  
+
+}
+.ScrollButton{
+    position:absolute;
+    width: 8vw;
+    padding-left: 0;
+    padding-right: 0;
+    right: 4vw;
+    border-radius: 50%;
+    margin-top: 1vw;
+}  
+.All{
+   padding-left: 1vw;
+   padding-right: 1vw;
+
+}
+}
+
+/* resoponsive for 573 to 768 */
+
+@media screen and (max-width:768px){
+
+.ScrollContainer {
+  display: flex;
+  flex-direction: row;
+  margin-top: 6vw;
+  white-space: nowrap;
+  margin-left: 1vw;
+  margin-bottom: 1vw;
+  justify-content: space-between;
+  gap: 1vw;
+  padding-left: 4vw;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+   -ms-overflow-style: none;     
+  scrollbar-width: none; 
+}
+.Element{
+  background-color: #272727;
+  height: 4vw;
+  width: 100%;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  border-radius: 20vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.All{
+    background-color: white;
+    color: black;
+}
+.ScrollButton{
+    position:absolute;
+    width: 2vw;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 28vw;
+    border-radius: 40%;
+    margin-top: 6vw;
+    
+}   
+
+}

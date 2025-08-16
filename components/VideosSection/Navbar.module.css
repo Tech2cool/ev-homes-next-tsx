@@ -9,9 +9,8 @@
   width: 100%;
   position: fixed;
   height: 50px;
-
 }
-.NavLinks{
+.NavLinks {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -23,27 +22,102 @@
   margin-left: 39vw;
   white-space: nowrap;
 }
-.Loginbtn{
-    height: 5vh;
-    width: 7vw;
-    border: 1px solid  white;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1vw;
-    margin-left: 18vw;
-        background-color:#ffffff0d;
-       
+.Loginbtn {
+  height: 5vh;
+  width: 7vw;
+  border: 1px solid white;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1vw;
+  margin-left: 18vw;
+  background-color: #ffffff0d;
 }
-.Logo{
-    margin-left: 1vw;
+.Logo {
+  margin-left: 1vw;
 
-    transition: 0.3s backgroundcolor ease;
-   
+  transition: 0.3s backgroundcolor ease;
 }
-.Loginbtn:hover{
-    background-color: #c49b66;
+.Loginbtn:hover {
+  background-color: #c49b66;
+}
+.NavContainerTwo {
+  display: none;
+}
+.LoginbtnTwo {
+  display: none;
+}
+.HomeIconIn{
+  display: none;
 }
 
 
+/* responsive for mobile and tablet */
+
+@media screen and (max-width: 614px) {
+  .Navbar {
+    display: none;
+  }
+}
+.NavContainerTwo {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0;
+  height: 0;
+  margin-top: 5px;
+  padding-top: 0;
+  justify-content: space-between;
+  /* padding-left: 10px; */
+  padding-right: 15px;
+  width: 100%;
+}
+
+.NavlinksContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: #141414;
+  top: 0;
+  height: 100vh;
+  width: 70%;
+  position: fixed;
+  z-index: 1000;
+  gap: 10px;
+  padding-left: 20px;
+  padding-top: 1px;
+  border-right: 0.1px solid black;
+  border-radius: 20px;
+  margin-left: 0;
+}
+
+.NavLinksTwo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-size: 6vw;
+  color: rgb(190, 189, 189);
+}
+.LoginbtnTwo {
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border: 1px solid grey;
+  height: 5vw;
+  width: 20vw;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.HomeIconIn {
+  margin-left: 50vw;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
