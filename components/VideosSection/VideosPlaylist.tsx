@@ -18,7 +18,7 @@ function VideoPlaylist({onVideoClick,onShareClick}: {onVideoClick: (video: any) 
        likes:"50k"
     },
     {
-      src: "images/Videos/sample_1.mp4",
+      src: "images/Videos/sample.mp4",
       thumbnail: "Mr.Asok EV Homes 9 Square Vashi Testimonial",
       heading: "Mr.Asok EV Homes 9 Square Vashi Testimonial",
       Channel: "EV three",

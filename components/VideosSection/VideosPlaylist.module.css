@@ -56,9 +56,9 @@ flex: 1;
 }
 /* responsive for mobile and tablet */
 
-@media screen and (min-width:572px) and (max-width:768px){
+@media screen and  (max-width:572px){
 .Videobox {
-  width: 35vw;
+  width: 30vw;
   height: 20vw;
   margin-right: 1vw;
   border-radius: 5px;
@@ -71,17 +71,17 @@ flex: 1;
   height: auto;
   margin-left: 5px;
   width: 100%;
+  gap:0;
+  
   
 }
 .PlaylistThumbnail {
- display: inline-block;
-  font-size: 12px;
+ display:flex;
+  font-size: 4.5vw;
   font-weight: 400;
-  max-width: 100px;
-flex: 1;
 margin-left: 5px;
-text-overflow: ellipsis;
-word-break: break-all;
+
+
 
 }
 .ThumbnailRow{
@@ -89,10 +89,8 @@ word-break: break-all;
     justify-content: space-between;
     align-items: flex-start;  
     margin-right: 5vw;
-    white-space: nowrap;
-text-overflow: ellipsis;
-overflow: hidden;
-
+    white-space:wrap;
+    gap: 0vw;
 
 }
 .icon {
@@ -119,44 +117,136 @@ overflow: hidden;
   flex-direction: row;
   margin-left: 1vw;
   align-items: flex-start;
-  margin-bottom: 7vw;
+  margin-bottom: 4vw;
 }
 
 }
 
 /* responsive for max 768px */
 
-@media screen and (min-width:573) and (max-width:768px){
+@media screen and (min-width:573px) and (max-width:768px){
 .PlaylistMainContainer {
   display: flex;
   flex-direction: column;
   margin-top: 1vw;
   height: auto;
-  margin-left: 1px;
+  margin-left: 4px;
   width: 50vw;
+}
+.PlayListInfo {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.PlaylistThumbnail {
+flex: 1;
+font-size: 13px;
+}
+.ThumbnailRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    gap: 2px;
+}
+.Videobox {
+  width: 20vw;
+  height: 9vw;
+  margin-right: 1vw;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+} 
+@media screen and (min-width:769px) and (max-width:1024px){
+  .PlaylistMainContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  height: auto;
+  margin-left: 5px;
+  width: 97%;
+}
+.Videobox {
+  width: 20vw;
+  height: 9vw;
+  margin-right: 1vw;
+  border-radius: 5px;
+  object-fit: cover;
 }
 .Playlist {
   width: 100%;
   display: flex;
   flex-direction: row;
-  margin-left: 0.5vw;
+  margin-left: 1vw;
+  align-items: flex-start;
+  margin-bottom: 3vw;
+}
+.PlaylistThumbnail {
+ display: inline;
+  font-size: 2vw;
+  font-weight: 400;
+  width: auto;
+  word-break: break-word;
+flex: 1;
+}
+  
+}
+/*  */
+@media screen and (min-width:1025px) and (max-width:1440px){
+  .PlaylistMainContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  height: auto;
+  margin-left: 1px;
+  width: 57%;
+}
+.Playlist {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-left: 0vw;
   align-items: flex-start;
   margin-bottom: 1vw;
 }
+.PlayListInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
 .Videobox {
   width: 15vw;
-  height: 9vw;
+  height: 7vw;
   margin-right: 1vw;
   border-radius: 5px;
   object-fit: cover;
 }
 .PlaylistThumbnail {
  display: inline;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   width: auto;
   word-break: break-word;
 flex: 1;
-
 }
-} 
+.Channel {
+  font-weight: 200;
+  color: grey;
+  font-size: 13px;
+}
+.views {
+  font-size: 13px;
+  font-weight: 200;
+  color: grey;
+}
+.icon {
+  cursor: pointer;
+}
+.ThumbnailRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+}

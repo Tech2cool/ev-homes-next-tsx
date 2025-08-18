@@ -36,7 +36,6 @@
 }
 .Logo {
   margin-left: 1vw;
-
   transition: 0.3s backgroundcolor ease;
 }
 .Loginbtn:hover {
@@ -48,9 +47,7 @@
 .LoginbtnTwo {
   display: none;
 }
-.HomeIconIn{
-  display: none;
-}
+
 
 
 /* responsive for mobile and tablet */
@@ -59,7 +56,7 @@
   .Navbar {
     display: none;
   }
-}
+
 .NavContainerTwo {
   display: flex;
   flex-direction: row;
@@ -113,11 +110,183 @@
 .HomeIconIn {
   margin-left: 50vw;
 }
-
+}
 html,
 body {
   margin: 0;
   padding: 0;
   width: 100%;
   overflow-x: hidden;
+}
+
+/* responsive for 615px to 768px */
+@media screen  and (min-width:615px) and (max-width: 768px) {
+  .Navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 2.5vh;
+  padding: 0.5rem 0.6rem;
+  width: 100%;
+  position: fixed;
+  height: 50px;
+  
+}
+.Logo {
+  margin-left: 1vw;
+  transition: 0.3s backgroundcolor ease;
+  height: 7vw;
+  width: 15vw;
+}
+.Loginbtn {
+  height: 5vh;
+  width: 10vw;
+  border: 1px solid white;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2vw;
+  margin-left: 8vw;
+  background-color: #ffffff0d;
+}
+.NavLinks {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  gap: 2vw;
+  position: fixed;
+  background-color: transparent;
+  z-index: 1000;
+  margin-left: 39vw;
+  white-space: nowrap;
+  justify-content: center;
+}
+
+}
+@media screen  and (min-width:769px) and (max-width: 1024px) {
+  .Logo {
+  margin-left: 1vw;
+  transition: 0.3s backgroundcolor ease;
+  height: 5vw;
+  width: 15vw;
+  display: flex;
+  
+}
+.Loginbtn {
+  margin-left: auto;
+
+}
+.NavLinks {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  gap: 2vw;
+  position: fixed;
+  background-color: transparent;
+  z-index: 1000;
+  white-space: nowrap;
+  justify-content: center;
+  flex: 1;
+}
+.Navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 2.5vh;
+  padding: 0.7rem 0.6rem;
+  color: white;
+  width: 100%;
+  position: fixed;
+  height: 50px;
+}
+}
+
+/*  r*/
+@media screen  and (min-width:1025px) and (max-width: 1440px) {
+   .Logo {
+  margin-left: 1vw;
+  transition: 0.3s backgroundcolor ease;
+  height: 4vw;
+  width: 15vw;
+  display: flex;
+  
+}
+.Loginbtn {
+  margin-left: auto;
+
+}
+.NavLinks {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  gap: 4vw;
+  position: fixed;
+  background-color: transparent;
+  z-index: 1000;
+  white-space: nowrap;
+  justify-content: center;
+  flex: 1;
+}
+.Navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 2.5vh;
+  padding: 0.7rem 0.6rem;
+  color: white;
+  width: 100%;
+  position: fixed;
+  height: 50px;
+  margin-top: 0.5VW;
+}
+
+}
+
+/* 1441 to 2560 */
+@media screen  and (min-width:1441px) and (max-width: 2560px) {
+  .Logo {
+  margin-left: 1vw;
+  transition: 0.3s backgroundcolor ease;
+  height: 5vw;
+  width: 15vw;
+  display: flex;
+  
+}
+.Loginbtn {
+  margin-left: auto;
+
+}
+.NavLinks {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  gap: 4vw;
+  position: fixed;
+  background-color: transparent;
+  z-index: 1000;
+  white-space: nowrap;
+  justify-content: center;
+  flex: 1;
+}
+.Navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 2.5vh;
+  padding: 0.7rem 0.6rem;
+  color: white;
+  width: 100%;
+  position: fixed;
+  height: 50px;
+  margin-top: 1vw;
+}
+
 }

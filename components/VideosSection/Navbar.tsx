@@ -17,14 +17,15 @@ function Navbar() {
   return (
     <>
       <div className={styles.Navbar}>
-        <div className={styles.Logo}>
+   
           <Image
             src="/images/evhomeslogo_1.webp"
             alt="EV Homes Logo"
             width={250}
             height={50}
+            className={styles.Logo}
           />
-        </div>
+    
 
         <ul className={styles.NavLinks}>
           <li>
@@ -40,8 +41,9 @@ function Navbar() {
             <a href="#">Videos</a>
           </li>
 
-          <button className={styles.Loginbtn}>Login</button>
+        
         </ul>
+          <button className={styles.Loginbtn}>Login</button>
       </div>
 
       {/* navbar for mobile and tablet */}
