@@ -1,56 +1,65 @@
 .Wrapper {
   position: relative;
-  width: vw;         
+  width: 100%;         
   overflow: hidden;    
   align-items: center;
+  display: flex;
 }
-
 
 .ScrollContainer {
+  align-items: center;
   display: flex;
   flex-direction: row;
-  gap: 1vw;
-  padding-left: 1vw;
+  gap: 0.5vw;
+  padding-left: 7vw;
   margin-top: 6vw;
+
   margin-bottom: 1vw;
-
-  overflow-x: auto;    
   scroll-behavior: smooth;
-
-  -ms-overflow-style: none;     
-  scrollbar-width: none; 
+overflow-x: auto;
 }
 
-.ScrollContainer::-webkit-scrollbar {
+.ScrollContainer::-webkit-scrollbar { 
   display: none;
 }
 
 .Element {
   flex: 0 0 auto;      
   background-color: #272727;
-  height: 2vw;
-  min-width: 15vw;     
+  height: 2vw;     
   padding: 0 1vw;
   border-radius: 20vw;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  width: fit-content;
 }
 
 .All {
-  background-color: white;
-  color: black;
+   background-color: white;
+    color: black;
+    display: flex;
+    padding: 0.5vh 0.5vw;
+    height: 4vh;
+    width: 3vw;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
 }
 
 .ScrollButton {
-  position: absolute;
-  top: 50%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transform: translateY(-50%);
-  width: 2vw;
-  height: 2vw;
+  width: 4vw;
+  height: 4vh;
   border-radius: 50%;
-  background: white;
+  margin-top: 7vw;
+  background-color: #272727E6;
+  
   border: none;
   cursor: pointer;
   z-index: 10;
@@ -59,39 +68,75 @@
 
 /* responsive for mobile and laptop */
 @media screen and (max-width:572px){
-.ScrollContainer {
+.Wrapper {
+  position: relative;
+  width: 100%;         
+  overflow: hidden;    
+  align-items: center;
   display: flex;
-  margin-top: 1vw;
-  white-space: nowrap;
-  margin-left: 18vw;
-  margin-bottom: 1vw;
-  gap: 1vw; 
-  padding-left: 4vw;
-  overflow-x:auto;
-  width: 70vw;
 }
-.Element{
-  flex:  0 0 45%;
-  height: 8vw;
-  padding-left: 22vw;
-  padding-right: 22vw;
-  
 
+.ScrollContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5vw;
+  padding-left: 20vw;
+  margin-right: 1vw;
+  margin-top: 0;
+  margin-bottom: 0;
+  scroll-behavior: smooth;
+overflow-x: auto;
 }
-.ScrollButton{
-    position:absolute;
-    width: 8vw;
-    padding-left: 0;
-    padding-right: 0;
-    right: 4vw;
+
+.ScrollContainer::-webkit-scrollbar { 
+  display: none;
+}
+
+.Element {
+  flex: 0 0 auto;      
+  background-color: #272727;
+  height: 7vw;     
+  padding: 0 1vw;
+  border-radius: 20vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.All {
+   background-color: white;
+    color: black;
+    display: flex;
+    padding: 0.5vh 0.5vw;
+    height: 4vh;
+    width: 7vw;
+    align-items: center;
     border-radius: 50%;
-    margin-top: 1vw;
-}  
-.All{
-   padding-left: 1vw;
-   padding-right: 1vw;
-
+    justify-content: center;
 }
+
+.ScrollButton {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-50%);
+  width: 5vw;
+  height: 5vh;
+  border-radius: 50%;
+  margin-top: 5vw;
+  margin-bottom: 0;
+  background-color: #272727E6;
+margin-right: 5vw;
+margin-left: 0;  
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
 }
 
 /* resoponsive for 573 to 768 */
@@ -108,15 +153,18 @@
   justify-content: space-between;
   gap: 1vw;
   padding-left: 4vw;
-  overflow-x: auto;
+  overflow-x: visible;
   scroll-behavior: smooth;
    -ms-overflow-style: none;     
-  scrollbar-width: none; 
+   align-items: center;
+
 }
 .Element{
+  display: flex;
+  width: fit-content;
   background-color: #272727;
-  height: 4vw;
-  width: 100%;
+  height: 2vw;
+
   padding-left: 1vw;
   padding-right: 1vw;
   border-radius: 20vw;
@@ -128,11 +176,13 @@
 .All{
     background-color: white;
     color: black;
+    display: flex;
+    padding: 0.5vh 0.5vw;
+    height: 4vh;
+    width: 4vw;
+    align-items: center;
+    border-radius: 50%;
 }
-.ScrollButton{
-  display: none;
-}   
-
 }
 @media screen and  (min-width:769px) and  (max-width:1024px){
   
@@ -165,9 +215,7 @@
     background-color: white;
     color: black;
 }
-.ScrollButton{
-  display: none;
-}   
+ 
 }
 
 /* r */
@@ -177,7 +225,7 @@
     position: relative;
 
 }
-.ScrollContainer {
+/* .ScrollContainer {
   display: flex;
   flex-direction: row;
   margin-top: 6vw;
@@ -190,37 +238,21 @@
   overflow-x: auto;
   scroll-behavior: smooth;
    -ms-overflow-style: none;     
-  scrollbar-width: none; 
-}
-.Element{
-  background-color: #272727;
-  height: 2vw;
-  width: 15vw;
-  padding-left: 1vw;
-  padding-right: 1vw;
-  border-radius: 20vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
+ 
+} */
+
 .All{
     background-color: white;
     color: black;
 }
-.ScrollButton{
-    position:absolute;
-    width: 2vw;
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: 28vw;
-    border-radius: 40%;
-    margin-top: 6vw;
-    
-}   
+
 }
 
 /* r */
-/* @media screen and(min-width:1441px) and(max-width:2550px) {
-  
-} */
+ @media screen and (min-width:1441px) and (max-width:2550px) {
+.All{
+    background-color: white;
+    color: black;
+}
+
+} 

@@ -5,6 +5,7 @@
   height: auto;
   margin-left: 5px;
   width: 28vw;
+  color: white;
 }
 .Playlist {
   width: 100%;
@@ -23,7 +24,7 @@
 }
 .Videobox {
   width: 10vw;
-  height: 7vw;
+  height: 5vw;
   margin-right: 1vw;
   border-radius: 5px;
   object-fit: cover;
@@ -199,7 +200,8 @@ flex: 1;
   margin-top: 0;
   height: auto;
   margin-left: 1px;
-  width: 57%;
+  
+  
 }
 .Playlist {
   width: 100%;
@@ -217,8 +219,8 @@ flex: 1;
   box-sizing: border-box;
 }
 .Videobox {
-  width: 15vw;
-  height: 7vw;
+  width: 13vw;
+  height: 6vw;
   margin-right: 1vw;
   border-radius: 5px;
   object-fit: cover;
@@ -246,7 +248,12 @@ flex: 1;
 }
 .ThumbnailRow{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
+    word-wrap:break-word;
     align-items: flex-start;
 }
+}
+/* r */
+@media screen and (min-width:1441px) and (max-width:2550px){
+  
 }
