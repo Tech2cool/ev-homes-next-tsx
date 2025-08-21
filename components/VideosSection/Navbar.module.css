@@ -71,28 +71,19 @@
 }
 
 .NavlinksContainer {
-  display: flex;
-  flex-direction: column;
-  background-color: #141414;
-  top: 0;
-  height: 100vh;
   width: 70%;
   position: fixed;
   z-index: 1000;
   gap: 10px;
   padding-left: 20px;
   padding-top: 1px;
-  border-right: 0.1px solid black;
   border-radius: 20px;
   margin-left: 0;
 }
 
 .NavLinksTwo {
-  display: flex;
-  flex-direction: column;
   gap: 15px;
   font-size: 6vw;
-  color: rgb(190, 189, 189);
 }
 .LoginbtnTwo {
   font-size: 1rem;
@@ -122,15 +113,7 @@ body {
 /* responsive for 615px to 768px */
 @media screen  and (min-width:615px) and (max-width: 768px) {
   .Navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 2.5vh;
-  padding: 0.5rem 0.6rem;
-  width: 100%;
-  position: fixed;
   height: 50px;
-  
 }
 .Logo {
   margin-left: 1vw;
@@ -141,37 +124,21 @@ body {
 .Loginbtn {
   height: 5vh;
   width: 10vw;
-  border: 1px solid white;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 2vw;
   margin-left: 8vw;
-  background-color: #ffffff0d;
 }
 .NavLinks {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  list-style: none;
   gap: 2vw;
-  position: fixed;
-  background-color: transparent;
   z-index: 1000;
   margin-left: 39vw;
-  white-space: nowrap;
-  justify-content: center;
 }
 
 }
 @media screen  and (min-width:769px) and (max-width: 1024px) {
   .Logo {
-  margin-left: 1vw;
-  transition: 0.3s backgroundcolor ease;
   height: 5vw;
   width: 15vw;
-  display: flex;
   
 }
 .Loginbtn {
@@ -179,28 +146,15 @@ body {
 
 }
 .NavLinks {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  list-style: none;
   gap: 2vw;
   position: fixed;
   background-color: transparent;
   z-index: 1000;
-  white-space: nowrap;
-  justify-content: center;
   flex: 1;
 }
 .Navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
   font-size: 2.5vh;
   padding: 0.7rem 0.6rem;
-  color: white;
-  width: 100%;
-  position: fixed;
   height: 50px;
 }
 }
@@ -209,37 +163,24 @@ body {
 @media screen  and (min-width:1025px) and (max-width: 1440px) {
    .Logo {
   margin-left: 1vw;
-  transition: 0.3s backgroundcolor ease;
   height: 4vw;
   width: 15vw;
-  display: flex;
   
 }
 .Loginbtn {
   margin-left: auto;
+  margin-right: 2vw;
 
 }
+
 .NavLinks {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  list-style: none;
   gap: 4vw;
-  position: fixed;
-  background-color: transparent;
   z-index: 1000;
-  white-space: nowrap;
-  justify-content: center;
   flex: 1;
 }
 .Navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
   font-size: 2.5vh;
   padding: 0.7rem 0.6rem;
-  color: white;
   width: 100%;
   position: fixed;
   height: 50px;
@@ -263,26 +204,12 @@ body {
 
 }
 .NavLinks {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  list-style: none;
-  gap: 4vw;
   position: fixed;
   background-color: transparent;
   z-index: 1000;
-  white-space: nowrap;
-  justify-content: center;
   flex: 1;
 }
 .Navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-  font-size: 2.5vh;
-  padding: 0.7rem 0.6rem;
-  color: white;
   width: 100%;
   position: fixed;
   height: 50px;

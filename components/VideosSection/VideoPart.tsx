@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, use } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./VideoPart.module.css";
 
 import {
@@ -13,6 +13,7 @@ import {
   VolumeOff,
 } from "lucide-react";
 import { GrBackTen, GrForwardTen } from "react-icons/gr";
+import { clearTimeout } from "timers";
 
 function VideoPart({currentVideo}:{currentVideo:any}) {  
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -25,7 +26,6 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
   const [ShowSetting, setShowSetting] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showControllers,setShowControllers] =useState(false);
-
 
   let speed = [0.25, 0.5, 0.75, 1, 1.25, 1.75, 2];
 
@@ -144,7 +144,8 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
     <>
     <div className={styles.VideosContainer}
      onMouseEnter={()=>setShowControllers(true)}
-          onMouseLeave={()=>setShowControllers(false)}>
+     onMouseLeave={()=>setShowControllers(false)}>
+            
       <div className={styles.VideoWrapper}>
         <video
           ref={videoRef}
@@ -159,8 +160,9 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
       <div className={`${styles.ContrllersMain}  ${showControllers? styles.show : styles.hide}` } 
        >
         <div className={styles.ControlsContainer}>
-          <div className={styles.ForwardBack}>
-            <GrBackTen
+          <div className={styles.ForwardBack}>  
+            <GrBackTen  
+            style={{color:"white"}}
               size={40}
               className={styles.ControlIcon}
               onClick={handleBackward}
@@ -174,7 +176,7 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
 
           <div className={styles.ForwardBack}>
             <GrForwardTen
-              size={40}
+           
               className={styles.ControlIcon}
               onClick={ForwardBack}
             />
@@ -196,36 +198,35 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
           <div className={styles.LeftContainers}>
             <div className={styles.PlayPauseTwo}>
               {isPlaying ? (
-                <Pause className={styles.PauseTwo} onClick={handlePause} />
+                <Pause className={styles.PauseTwo} onClick={handlePause} style={{color:"white"}} />
               ) : (
-                <Play className={styles.PlayTwo} onClick={handleStart} />
+                <Play className={styles.PlayTwo} onClick={handleStart} style={{color:"white"}} />
               )}
             </div>
 
             <div className={styles.soundRange}>
               {volume === 0 ? (
-                <VolumeOff />
+                <VolumeOff className={styles.soundIcon} style={{color:"white"}} />
               ) : volume <= 0.5 ? (
-                <Volume1 />
+                <Volume1 className={styles.soundIcon} style={{color:"white"}}  />
               ) : (
-                <Volume2 />
+                <Volume2 className={styles.soundIcon} style={{color:"white"}} />
               )}
             </div>
-            <div>
+            
               <input
                 type="range"
                 className={styles.soundRangeTwo}
                 min={0}
-                defaultValue={1}
                 max={1}
                 step={0.1}
+                value={volume}
                 onChange={handleVolumeChange}
               />
-            </div>
+            
 
             <div
               className={styles.Timer}
-              style={{ color: "white", fontSize: "14px", fontWeight: "700" }}
             >
               {formatTime(currentTime)} / {formatTime(duration)}
             </div>
@@ -234,6 +235,7 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
           <div className={styles.RightContainer}>
             <div className={styles.SettingWrapper}>
               <Settings
+              style={{color:"white"}}
                 onClick={SettingToggle}
                 className={styles.SettingIcon}
               />
@@ -254,7 +256,7 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
               )}
             </div>
             <div className={styles.Max}></div>
-            <Maximize onClick={handleVideoMaxScreen} />
+            <Maximize onClick={handleVideoMaxScreen} className={styles.MaxIcon} style={{color:"white"}} />
           </div>
         </div>
       </div>

@@ -23,10 +23,8 @@ function ScrollSelection() {
         <div className={styles.Element}>EV 9 Square</div>
         <div className={styles.Element}>Heart City</div>
       </div>
-
-      {/* ✅ Only right button */}
       <div className={styles.ScrollButton} onClick={scrollToEnd}>
-        <ChevronRight color="white" size={20} />
+        <ChevronRight color="white"  />
       </div>
     </div>
   );

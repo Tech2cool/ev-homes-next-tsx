@@ -51,7 +51,7 @@ function Share({onClose,currentVideo}:{onClose:()=>void,currentVideo:any} ) {
           Starts at 00:00
         </p>
 
-        <h2 style={{ fontWeight: "700", fontSize: "1.2vw", marginTop:"1vw", marginBottom:"1.2vw" }}>
+        <h2 className={styles.ShareHeader}>
           Share to Social Media
         </h2>
 

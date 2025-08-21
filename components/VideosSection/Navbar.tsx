@@ -50,13 +50,13 @@ function Navbar() {
 
       <div className={styles.NavContainerTwo}>
         <div className={styles.HomeIcon} onClick={handleNavbar}>
-          <TbLayoutNavbar size={25}  />
+          <TbLayoutNavbar size={25}  style={{color:"white"}}/>
         </div>
 
         {open && (
           <div className={styles.NavlinksContainer}>
             <div className={styles.HomeIconIn} onClick={handleNavbarClose}>
-              <TbLayoutNavbar size={25} />
+              <TbLayoutNavbar size={25} style={{color:"white"}}/>
             </div>
             <div className={styles.NavLogo}>
               <Image
@@ -82,7 +82,7 @@ function Navbar() {
             </ul>
           </div>
         )}
-        <button className={styles.LoginbtnTwo}>Login</button>
+        <button className={styles.LoginbtnTwo} style={{color:"white"}}>Login</button>
       </div>
     </>
   );
