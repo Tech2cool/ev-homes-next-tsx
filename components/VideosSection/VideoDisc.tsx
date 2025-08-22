@@ -33,7 +33,7 @@ function VideoDiscription({
     <>
       <div className={styles.DiscMain}>
         <p className={styles.Thumbnail}>
-          {currentVideo?.heading ?? "not available"}
+          {currentVideo?.heading ?? "not available"}                       
         </p>
         <div className={styles.Channel}>
           <div className={styles.ChannelLogo}>

@@ -1,0 +1,16 @@
+.ScrollMain{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    color: black;
+align-items: center; 
+/* padding-top: 50vh;    */
+}
+.bildone{
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    z-index: -1;
+}

@@ -26,7 +26,7 @@ function VideoPlaylist({onVideoClick,onShareClick}: {onVideoClick: (video: any) 
        likes:"37k"
     },
     {
-      src: "images/Videos/sample.mp4",
+      src: "images/Videos/sample_1.mp4",
       thumbnail: "Mr.Arihant Jain EV Homes 9 Square Vashi Testimonia",
       heading: "Mr.Arihant Jain EV Homes 9 Square Vashi Testimonia",
       Channel: "EV four",

@@ -58,8 +58,7 @@ function VideoPart({currentVideo}:{currentVideo:any}) {
     if (videoRef.current) {
       setDuration(videoRef.current.duration || 0);
     }
-  };
-
+  };  
   useEffect(() => {
     if (inputRef.current && duration > 0) {
       const progress = (currentTime / duration) * 100;
