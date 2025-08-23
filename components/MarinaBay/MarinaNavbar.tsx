@@ -3,9 +3,10 @@ import styles from "./MarinaNavbar.module.css";
 import { House, Mail, MapPin, Phone } from "lucide-react";
 import logo from ".././../public/images/malibu.webp";
 import { FaDownload } from "react-icons/fa";
-import "../../public/pdf/"
+// import "../../public/Brochure.pdf"
 
 function MarinaNavbar() {
+  
   return (
     <>
       <div className={styles.NavMain}>
@@ -68,7 +69,12 @@ function MarinaNavbar() {
               <a href="#">Configuration</a>
             </li>
           </ul>
-          <button className={styles.BrochureBtn}><FaDownload  style={{marginRight:"10px"}}/><p> Brochure</p></button>
+          <a className={styles.BrochureBtn}
+          href="/Brochure.pdf" 
+          target="_blank" 
+  rel="noopener noreferrer">
+            <FaDownload  style={{marginRight:"10px"}}/>
+             Brochure</a>
         </div>
       </div>
     </>

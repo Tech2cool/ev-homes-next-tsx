@@ -1,16 +1,125 @@
-.ScrollMain{
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+body{
+     font-family: 'Playfair Display', serif;
+}
+.building {
+  height: 100%;
+  position: relative;
+  z-index: -1;
+   filter: brightness(40%);
+  width: 100vw;
+}
+.ImageContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
+   overflow: hidden; 
+
+}
+.ImageSlide{
+    position:relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.tagContainer{
     display: flex;
+    flex-direction: column;
+    position:absolute; 
+    align-items: center;
     justify-content: center;
+    left: 45%;
+    bottom: 45%; 
+    justify-content: center;
+       animation: slidUpFade 1.5s ease forwards;
+  animation-delay:0.5s ;    
+
+}
+.tag{
+       position:relative; 
+
+  color: gold;
+  font-size: 1.5rem;
+  font-weight: bold;
+
+}
+.desginImage{
+    width: 10vw;
+    height: 3vh;
+     position:relative; 
+ 
+} 
+.headingOne{
+    position: absolute;
+    top: 59%;
+    left: 30%;
+    font-size: 10vh;
+    text-align: center;
+    line-height: 1;
+    white-space: pre-line;
+     animation: slidUpFade 1.5s ease forwards;
+    animation-delay: 1.3s;
+}
+.headingTwo{
+    position: absolute;
+    bottom: 10%;
+    left: 34%;
+    font-weight: 700;
+    font-size: 1.5rem;
+     animation: slidUpFade 1.5s ease forwards;
+    animation-delay: 1.6s;
+}
+.ScrollBtnMain{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    height: 5vw;
+    gap: 87vw;
+    left: 4%;
+    top: 70%;
+    cursor: pointer;
+    transition: hover 0.3s ease;
+}
+.ScrollBtn{
+    position: absolute;
+    height: 5vw;
+}
+.ScrollFilledBtn{
+    position: absolute;
+ height: 5vw;
+    display: none;
+}
+.ScrollBtnFilledMain{
+    
+    flex-direction: row;
     position: relative;
-    height: 100vh;
-    width: 100vw;
-    color: black;
-align-items: center; 
-/* padding-top: 50vh;    */
+    height: 5vw;
+    gap: 80vw;
+    left: 4%;
+    top: 70%;
+    cursor: pointer;
 }
-.bildone{
-    height: 100vh;
-    width: 100vw;
-    position: fixed;
-    z-index: -1;
+.ScrollBtnWrapper:hover .ScrollBtn{
+display: none;
 }
+
+.ScrollBtnWrapper:hover .ScrollFilledBtn {
+  display: block;
+}
+/* animation for the scroll */
+
+@keyframes slidUpFade {
+    0%{
+        opacity: 0;
+        transform: translateY(80px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
