@@ -1,0 +1,223 @@
+.DisMain {
+  display: flex;
+  flex-direction: row;
+  height: 90vh;
+  width: 100%;
+  background-image: url("/images/DisImage.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  color: white;
+  /* z-index: 1; */
+  align-items: center;
+}
+.DisInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  color: white;
+  align-items: center;
+  z-index: 1;
+  max-width: 50%;
+  margin-left: 2vw;
+  margin-top: 0vw;
+}
+.Heading {
+  font-size: 5vh;
+}
+.DisDetail {
+  font-size: 1rem;
+  width: 90%;
+  line-height: 1.5em;
+  transition: max-height 0.4s ease;
+  overflow: hidden;
+  margin-bottom: 3vw;
+  text-align: justify;
+  text-justify: inter-word;
+  text-indent: 1.5em;
+}
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 6; /* 👈 show only 8 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.KnowMoreBtn {
+  border: 2px solid rgb(101, 101, 252);
+  padding: 2vh 2vw;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  border-radius: 3px;
+
+  transition: background-color 1s ease;
+}
+.KnowMoreBtn:hover {
+  background-color: rgb(101, 101, 252);
+}
+
+.ContactHeading {
+  color: rgb(164, 152, 152);
+  margin-bottom: 0.5vw;
+  margin-top: 1vw;
+}
+.Number {
+  color: orange;
+}
+.DisMain::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.899);
+  z-index: 1;
+}
+.DisMain::after {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+.FullInfoMain {
+  position: fixed;
+  background-color: white;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  font-size: 2vh;
+  justify-content: center;
+  align-items: center;
+  top: 20%;
+  left: 20%;
+  bottom: 10%;
+  z-index: 3;
+  padding: 2vh 30vw;
+  height: 70vh;
+  border-radius: 10px;
+}
+.FullDis {
+  display: flex;
+  flex-direction: column;
+  width: 50vw;
+}
+.ParentImage {
+  height: 60vh;
+  width: 25vw;
+  position: absolute;
+  top: 105%;
+  right: 3%;
+  z-index: 1;
+}
+.ChildImage {
+  height: 35vh;
+  width: 15vw;
+  position: absolute;
+  top: 145%;
+  right: 20%;
+  z-index: 1;
+}
+.PrimeLocationMain {
+  position: absolute;
+  z-index: 2;
+  top: 110%;
+  right: 45%;
+  cursor: pointer;
+}
+.LandMarkIcon {
+  position: absolute;
+  /* z-index: 3; */
+  color: orange;
+  height: 7vh;
+  width: 10vw;
+   animation: popUpDown 0.8s ease-in-out infinite;
+    animation-delay: 2s;
+    cursor: pointer;
+}
+@keyframes popUpDown {
+    0%,100%{
+        transform: translateY(0px);
+    }
+    50%{
+        opacity: 1;
+        transform: translateY(-12px);
+    }
+}
+
+.IconBottom {
+  position: absolute;
+  top: 114%;
+  right: 38%;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 4vw;
+  height: 4vh;
+  border-radius: 50%;
+  z-index: 3;
+  cursor: pointer;
+}
+.PrimeLocationMain{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+   background-color: transparent;
+   background-color: black;
+   
+
+}
+.LocationHeading{
+    font-size: 2rem;
+     color: rgb(152,112,38);
+}
+.IconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+ .LocationHighlights{
+    display: flex;
+    gap: 2vw;
+    margin-top: 2vw;
+    height: 10vw;
+    justify-content: center;
+    align-items: flex-start;
+}
+.LandMarkImg{
+    height: 10vh;
+    width: 7vw;
+    border: 1px solid grey;
+    padding: 3vh 2vw;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    background-color: #333;
+}
+.LandMarkImg img{
+   transition: transform 0.3s ease-in-out; 
+   
+}
+
+.LandMarkImg:hover img {
+  transform: scale(1.50); 
+}
+.LandMarkImg p {
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  text-align: center;
+  color:white;
+}
+.LandMarkImg:hover p {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+} 
+

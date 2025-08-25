@@ -69,12 +69,12 @@ function MarinaNavbar() {
               <a href="#">Configuration</a>
             </li>
           </ul>
-          <a className={styles.BrochureBtn}
+           <a className={styles.BrochureBtn}
           href="/Brochure.pdf" 
           target="_blank" 
   rel="noopener noreferrer">
             <FaDownload  style={{marginRight:"10px"}}/>
-             Brochure</a>
+             Brochure</a> 
         </div>
       </div>
     </>

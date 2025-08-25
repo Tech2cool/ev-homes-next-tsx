@@ -3,6 +3,8 @@ import styles from "./MarinaMain.module.css"
 import React from "react";
 import MarinaNavbar from "./MarinaNavbar";
 import HomePage from "./HomePage";
+import Discription from "./Discription";
+
 
 
 
@@ -12,6 +14,7 @@ function Marinamain(){
         <div className={styles.MainContainer}>
         <MarinaNavbar/>
         <HomePage/>
+        <Discription/>
         </div>
         </>
     )
