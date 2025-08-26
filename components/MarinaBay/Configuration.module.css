@@ -1,0 +1,115 @@
+.ConfigMain {
+  height: 100vh;
+  background-image: url(/images/AmentiesBg.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.ConfigMain::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.899);
+  z-index: 1;
+}
+.ConfigMain::after {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+.configHeader {
+  font-size: 3vw;
+  font-weight: 700;
+}
+.configStart {
+  position: absolute;
+  color: white;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  top: 15%;
+  gap: 10vw;
+  align-items: center;
+}
+.FlatBtns {
+  display: flex;
+  gap: 2vw;
+}
+.BtnDesgin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid gold;
+  background-color: black;
+  width: 12vw;
+  height: 4vw;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  color: white;
+  z-index: 0;
+}
+.BtnDesgin::before {
+  content: "";
+  position: absolute;
+  background-color: gold;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+.BtnDesgin:hover::before {
+  transform: scaleX(1);
+}
+.BtnDesgin:hover {
+  color: black;
+}
+.BtnDesgin span {
+  z-index: 1;
+}
+.CardsMain{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    z-index: 1;
+    margin-top: 15vw;
+    gap: 2vw;
+    margin-right: 10vw;
+    justify-content: center;
+    flex-wrap: wrap;
+    left: 5%;
+   
+}
+.cardInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 1vw;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    border: none;
+    height: 25vw;
+    border-radius: 10px;
+    background-color: rgba(255,255,255,.1);
+}
+.CardImg{
+    height: 12vw;
+    width: 17vw;
+    border-radius: 10px;
+    transition: trasnform 0.5s ease;
+}
+.CardImg:hover{
+    transform: scale(1.08);
+}

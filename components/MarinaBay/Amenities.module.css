@@ -1,0 +1,191 @@
+.AmenitesMain{
+    display: flex;
+    flex-direction: column;
+    background-image: url(/images/AmentiesBg.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    height: 200vh;
+    
+}
+.AmenitesMain::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.899);
+  z-index: 1;
+}
+.AmenitesMain::after {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+.AmentiesContaint{
+    position: absolute;
+    z-index: 1;
+}
+.AmenitesHeading{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 40px;
+    font-weight: 600;
+    gap: 0.5rem;
+    position: absolute;
+    left: 10%;
+    top: 5%;
+   
+}
+.AmenitiesFirst{
+    display: flex;
+    flex-direction: row;
+    gap: 7vw;
+    margin-left: 5vw;
+    margin-top: 5vw;
+}
+.AmentiesImg{
+    height: 27vw;
+    width: 25vw;
+    border-radius: 10px;
+  
+}
+.ImgContainer:hover {
+    transform: scale(1.08);
+}
+
+.AmenitesText{
+     position: absolute; 
+     left: 50%;
+     top: 70%;
+    font-size: 2rem;
+    transform: translateX(-50%);
+    font-weight: 600;
+      display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+ bottom: 10%;
+    
+}
+.ImgContainer{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+   margin-top: 10vw;
+   overflow: hidden;
+  transition: transform 0.4s ease;
+
+    
+}
+.Centerimg{
+
+  transform: translateY(-160px); 
+  z-index: 2;
+
+}
+.ImgContainer:hover .Centerimg {
+  transform: scale(1.08);
+}
+.AmenitesInfo{
+    position: absolute;
+      padding-top: 0px;
+  text-align: center;
+  max-width: 25vw;  
+ left: 39%;
+ top: 40%;
+ z-index: 1;
+ gap: 0.5vh;
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+    
+}
+.AmentiesSecond{
+    display: flex;
+    flex-direction: row;
+    gap:7vw;
+    margin-left: 5vw;
+    margin-top: 10vw;
+}
+
+.ImgContainerTwo{
+     display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+     transition: transform 0.4s ease;
+     overflow: hidden;
+}
+.ImgContainerTwo:hover{
+    transform: scale(1.08);
+}
+
+.AmenitesTextTwo{
+      position: absolute; 
+     left: 50%;
+     top: 70%;
+    font-size: 2rem;
+    transform: translateX(-50%);
+    font-weight: 600;
+      display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+ bottom: 10%;
+}
+.CenterimgTwo{
+
+      transform: translateY(160px); 
+  z-index: 1;
+}
+.AmentiesInfoTwo{
+      position: absolute;
+      padding-top: 0px;
+  text-align: center;
+  max-width: 25vw;  
+ left: 39%;
+ top: 67%;
+ z-index: 0;
+ gap: 0.5vh;
+ display: flex;
+ flex-direction: column;
+}
+.Centerimg,.CenterimgTwo{
+    transition: transform 0.3 ease;
+}
+.ImgContainer::after,
+.ImgContainerTwo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%; 
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+}
+
+.ImgContainer:hover::after,
+.ImgContainerTwo:hover::after {
+  animation: shine 0.8s ease-in-out forwards;
+}
+
+@keyframes shine {
+  100% {
+    left: 125%; /* move across to the right */
+  }
+}
+
+
