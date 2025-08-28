@@ -1,0 +1,437 @@
+.container {
+  padding: 1vh;
+  margin: 2vh;
+  color: #fff;
+  border-radius: 8px;
+  overflow-x: auto;
+  overflow-y: auto;
+  height: 50vh;
+  scrollbar-width: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+:global(html.light) .container {
+   border: 1px solid rgba(26, 26, 26, 0.2);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 90%;
+}
+
+.table th,
+.table td {
+  padding: 1.5vh 1vw;
+  text-align: left;
+}
+
+.table th {
+  background-color: rgb(12, 12, 12);
+  color: white;
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+:global(html.light) .table th {
+ background-color: rgb(245, 245, 245);
+    color: #282828;
+}
+.headmin{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.table tr:nth-child(odd) {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+:global(html.light) .table tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.06);
+
+}
+
+.timein {
+  color: rgb(6, 206, 6);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+:global(html.light) .timein {
+  color: rgb(3, 182, 3);
+}
+.timeout {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.overtime {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+}
+:global(html.light) .overtime {
+  color: rgb(18, 17, 17);
+}
+.profileImage {
+  width: 3vw;
+  height: 6.5vh;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1.5vh;
+}
+
+.employeeInfo {
+  display: flex;
+}
+
+.namePhone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.employeeName {
+  font-weight: 400;
+  font-size: 1rem;
+}
+:global(html.light) .employeeName {
+  color: black;
+}
+.phoneNumber {
+  font-size: 0.8rem;
+  color: #7d7d7d;
+}
+:global(html.light) .phoneNumber {
+  color: #5a5959;
+}
+.timeContainer {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.timeImage {
+  width: 3.5vw;
+  height: 3.3vw;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.location {
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+:global(html.light) .location {
+  color: #444444;
+   
+
+}
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+}
+.line{
+  color: white;
+}
+:global(html.light) .line{
+  color: rgb(48, 48, 48);
+}
+.dot {
+  font-size: 1rem;
+  color: white;
+  margin: 0;
+}
+:global(html.light) .dot {
+  color: rgb(48, 48, 48);
+
+}
+.workingTime {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #7d7d7d;
+  white-space: nowrap;
+}
+:global(html.light) .workingTime {
+   color: #474747;
+}
+.statusOnLeave,
+.statusAbsent,
+.statusPresent,
+.statusHalfDay,
+.statusWeekOff,
+.statusActive {
+  position: relative;
+  padding-right: 1.3vh;
+}
+
+.statusOnLeave::before,
+.statusAbsent::before,
+.statusPresent::before,
+.statusHalfDay::before,
+.statusWeekOff::before,
+.statusActive::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.3vh;
+  height: 100%;
+  background: linear-gradient(to top, rgb(191, 191, 14), yellow);
+}
+
+.statusWeekOff::before {
+  background: linear-gradient(to top, rgb(190, 124, 1), orange);
+}
+
+.statusHalfDay::before {
+  background: linear-gradient(to top, rgb(246, 46, 79), pink);
+}
+
+.statusPresent::before {
+  background: linear-gradient(to top, rgb(0, 74, 0), rgb(10, 247, 10));
+}
+
+.statusAbsent::before {
+  background: linear-gradient(to top, rgb(117, 1, 1), red);
+}
+
+.statusOnLeave::before {
+  background: linear-gradient(to top, rgb(60, 0, 60), rgb(194, 0, 194));
+}
+
+.date {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #a29f9f;
+}
+ :global(html.light) .date {
+   color: #474747;
+
+
+}
+
+.cardContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5vw;
+  padding: 2vh;
+  height: 40vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 20vw;
+  height: 25vh;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+:global(html.light) .card {
+  background-color: rgba(0, 0, 0, 0.041);
+  border: 1px solid rgba(147, 147, 147, 0.075);
+  box-shadow: 0 2px 10px rgba(145, 145, 145, 0.1);
+
+}
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardStatusBtn {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
+.cardPresent {
+  background-color: green;
+}
+:global(html.light) .cardPresent {
+  color: #444444;
+    background-color: transparent;
+  border: 1px solid green;
+  color: green;
+font-weight: 600;
+}
+.cardAbsent {
+  background-color: red;
+}
+:global(html.light) .cardAbsent {
+  color: #444444;
+    background-color: transparent;
+  border: 1px solid red;
+  color: red;
+font-weight: 600;
+}
+.cardWeekOff {
+  background-color: rgb(139, 101, 32);
+}
+:global(html.light) .cardWeekOff {
+  color: #444444;
+    background-color: transparent;
+  border: 1px solid rgb(139, 101, 32);
+  color: rgb(139, 101, 32);
+font-weight: 600;
+}
+.cardActive {
+  background-color: orange;
+}
+:global(html.light) .cardActive {
+  color: #444444;
+    background-color: transparent;
+  border: 1px solid orange;
+  color: orange;
+font-weight: 600;
+}
+.cardHalfDay {
+  background-color: rgb(246, 21, 58);
+}
+:global(html.light) .cardHalfDay {
+  color: #444444;
+    background-color: transparent;
+  border: 1px solid rgb(246, 21, 58);
+  color: rgb(246, 21, 58);
+font-weight: 600;
+}
+.cardOnLeave {
+  background-color: purple;
+}
+:global(html.light) .cardOnLeave {
+  color: #444444;
+    background-color: transparent;
+  border: 1px solid purple;
+  color: purple;
+font-weight: 600;
+}
+.cardContent {
+  display: flex;
+  justify-content: space-between;
+  gap: 2vw;
+}
+
+.timeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+}
+
+.cardWorkingTime {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #7d7d7d;
+  white-space: nowrap;
+}
+:global(html.light) .cardWorkingTime {
+  color: #444444;
+
+}
+.cardTimeImage {
+  margin-bottom: 1vh;
+  width: 3.5vw;
+  height: 3.3vw;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cardDate {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #d8d5d5;
+}
+:global(html.light) .cardDate {
+  color: #444444;
+
+}
+.cardName {
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #ede2e2;
+  margin-bottom: 1.7vh;
+}
+:global(html.light) .cardName {
+  color: #444444;
+}
+.timeDetails {
+  text-align: center;
+}
+
+.timeValue {
+  font-size: 0.8rem;
+  margin: 4px 0;
+  color: white;
+}
+:global(html.light) .timeValue {
+  color: #444444;
+}
+.display {
+  display: none;
+}
+
+@media screen and (max-width: 601px) {
+  .cardContainer {
+    flex-direction: row;
+    height: 55vh;
+    gap: 2vh;
+      flex-wrap: wrap;
+
+  overflow-y: auto;
+  scrollbar-width: none;
+  }
+ 
+  .card {
+    min-width: 75vw;
+    max-width: 75vw;
+    height: 21vh;
+    padding: 0.5rem;
+ 
+  }
+  .cardTimeImage {
+    margin-bottom: 0.1vh;
+    width: 9vw;
+    height: 9vw;
+
+    border-radius: 50%;
+  }
+ 
+ 
+}
+@media screen and (min-width: 400px) and (max-width:601px) {
+  .cardContainer {
+    flex-direction: row;
+    height: 55vh;
+    gap: 2vh;
+  }
+
+  .card {
+    min-width: 75vw;
+    max-width: 75vw;
+    height: 24vh;
+    padding: 0.5rem;
+  }}
+ @media screen and (max-width: 900px){
+ .nodipaly {
+    display: none;
+  }
+  .display {
+    display: flex;
+  }
+   .container {
+    display: none;
+  }
+ }

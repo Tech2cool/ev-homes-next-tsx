@@ -1,0 +1,174 @@
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem;
+  padding: 0 1.2rem;
+}
+
+.header {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+:global(html.light) .header {
+  color: black;
+}
+
+.reportButton {
+  max-width: 20vw;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+:global(html.light) .reportButton {
+  background-color: #0066d2;
+}
+
+.reportButton:hover {
+  transform: scale(1.05);
+  background-color: #0056b3;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 5vw;
+}
+
+.dateSelector {
+  display: flex;
+  align-items: center;
+  background-color: black;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  gap: 2vw;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #a8a5a5;
+}
+
+:global(html.light) .dateSelector {
+  background-color: rgb(242, 242, 242);
+  color: #282828;
+  border: 1px solid rgba(255, 255, 255, 0.135);
+}
+
+.arrowButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #d6d2d2;
+  padding: 2px;
+}
+
+:global(html.light) .arrowButton {
+  color: #282828;
+}
+
+.dropdownWrapper {
+  display: none;
+}
+
+@media screen and (max-width: 615px) {
+  .header {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .leftSection {
+    padding-right: 0.5rem;
+    gap: 3vw;
+  }
+
+  .dateSelector {
+    padding: 0px;
+
+    font-size: 0.7rem;
+    color: #a8a5a5;
+  }
+
+  .reportButton {
+    display: none;
+  }
+
+  .noreportButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 6px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  :global(html.light) .noreportButton {
+    background-color: rgba(0, 0, 0, 0.068);
+    color: black;
+  }
+
+  .headerWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem;
+    padding: 0 1rem;
+  }
+
+  .dropdownWrapper {
+    position: relative;
+    display: block;
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: black;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 1);
+    z-index: 10;
+    width: 25vw;
+    border-radius: 4px;
+  }
+
+  .dropdownItem {
+    padding: 1vh;
+    width: 100%;
+    font-size: 0.8rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: white;
+  }
+
+  .dropdownItem:hover {
+    background-color: #2b2b2b;
+  }
+}
+@media screen and (min-width: 616px) and (max-width: 792){
+  
+.reportButton {
+  max-width: 25vw;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+}

@@ -1,0 +1,251 @@
+.filterSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.attSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.2rem  0.2rem 0.5rem;
+  width: 20vw;
+  height: 5vh;
+  margin-right: 2vw;
+  margin-left: 1vw;
+}
+:global(html.light) .searchContainer {
+  background-color: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(218, 217, 217, 0.2);
+}
+.searchInput {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  flex: 1;
+  width: 100%;
+}
+:global(html.light) .searchInput {
+color: black;
+}
+.searchInput::placeholder {
+  color: rgb(119, 116, 116);
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.searchButton {
+  background: #007bff;
+  border: none;
+  padding: 0.4rem 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+:global(html.light) .searchButton {
+    color: #007bff;
+  background: transparent;
+}
+
+.customDropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.4rem;
+  border-radius: 8px;
+  min-width: 18vw;
+  cursor: pointer;
+}
+:global(html.light) .customDropdown {
+    color: #007bff;
+  background-color: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(233, 233, 233, 0.2);
+
+}
+.leftSide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  color: #aaa;
+  font-size: 1rem;
+}
+:global(html.light) .icon {
+  color: #007bff;
+}
+.label {
+  color: white;
+  font-size: 0.8rem;
+}
+:global(html.light) .label {
+  color: black;
+}
+.arrowIcon {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+:global(html.light) .arrowIcon {
+  color: #444444;
+}
+.filterSectionWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.filterSectionLeft {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.toggleIcons {
+  display: flex;
+  gap: 0.6vw;
+}
+
+.tableIcon,
+.gridIcon {
+  font-size: 1.2rem;
+}
+
+.toggleBtn {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1vh;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #aaa;
+  transition: background 0.3s, color 0.3s;
+}
+:global(html.light) .toggleBtn {
+  color: #444444;
+    background-color: rgba(0, 0, 0, 0.094);
+  border: 1px solid rgba(180, 180, 180, 0.2);
+
+}
+.toggleBtn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.toggleBtn.active {
+  background-color: #007bff;
+  color: white;
+}
+:global(html.light) .toggleBtn.active {
+  color: white;
+    background-color: #007bff;
+
+}
+.calendarWrapper {
+  /* position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 100;
+  margin-top: 10vh; */
+  /* max-width: 40vw; */
+    /* padding: 10px; */
+  /* border-radius: 20px; */
+}
+
+/* .okButton {
+  margin-top: 2vh;
+  margin-left: 2vh;
+  padding: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.calendarWrapper {
+  position: absolute;
+  border: 1px solid #ccc;
+  margin-top: 10vh;
+  display: flex;
+  gap: 2rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+} */
+.displaymobile{
+  display: none;
+}
+.noleftSide{
+  display: none;
+}
+
+@media screen and (max-width: 615px) {
+  .displaymobile{
+    display: flex;
+   
+    justify-content: center;
+  }
+  
+  .searchContainer {
+    width: 70vw;
+  }
+  .searchButton {
+   
+    padding: 0.2rem 0.3rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 0vw;
+  }
+ .tableIcon{
+  display: none;
+ }
+ /* .calendarWrapper {
+flex-direction: column;
+  gap: 2rem;
+  padding: 0.5rem;
+} */
+.searchInput::placeholder {
+  font-size: 0.8rem;
+}
+
+.noleftSide{
+  display:flex;
+}
+.customDropdown{
+  display: none;
+}
+.icon {
+   font-size: 1rem;
+}
+.filterSectionLeft {
+ justify-content: center;
+}
+.filterSectionWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+}
+ @media screen and (max-width: 900px){
+
+.nodisplaymobile{
+    display: none;
+   
+  }
+}

@@ -136,7 +136,7 @@ const MainTab = () => {
         </div>
         <button
           className={styles.btn}
-          onClick={() => router.push("./attendance/attendanceinsight")}
+          onClick={() => router.push("./attandance/attendanceinsight")}
         >
           Attendance Insight
           <svg>
