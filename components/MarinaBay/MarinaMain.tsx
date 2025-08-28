@@ -16,10 +16,16 @@ function Marinamain(){
         <>
         <div className={styles.MainContainer}>
         <MarinaNavbar/>
-        <HomePage/>
+        <HomePage />
+        <div id="Discription">
         <Discription/>
+        </div>
+         <div id="Amenities">
         <AmenitiesMain/>
+        </div>
+           <div id="Configuration">
         <Configuration/>
+        </div>
         </div>
         </>
     )

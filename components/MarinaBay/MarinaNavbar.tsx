@@ -1,12 +1,18 @@
+"use client"
 import React from "react";
 import styles from "./MarinaNavbar.module.css";
-import { House, Mail, MapPin, Phone } from "lucide-react";
+import { House, Mail, MapPin, Phone, X } from "lucide-react";
 import logo from ".././../public/images/malibu.webp";
 import { FaDownload } from "react-icons/fa";
-// import "../../public/Brochure.pdf"
+import Discription from "./Discription";
+import { RiCloseFill, RiMenu4Fill } from "react-icons/ri";
+import { Span } from "next/dist/trace";
+import { useState } from "react";
 
 function MarinaNavbar() {
+  const [show,setShow]=useState(false);
   
+
   return (
     <>
       <div className={styles.NavMain}>
@@ -58,25 +64,111 @@ function MarinaNavbar() {
               <a href="#">EV 23 Malibu West</a>
             </li>
             <li>
-              <a href="#">Description</a>
+              <a href="#Discription">Description</a>
             </li>
 
             <li>
-              <a href="#">Amenities</a>
+              <a href="#Amenities">Amenities</a>
             </li>
 
             <li>
-              <a href="#">Configuration</a>
+              <a href="#Configuration">Configuration</a>
             </li>
           </ul>
-           <a className={styles.BrochureBtn}
-          href="/Brochure.pdf" 
-          target="_blank" 
-  rel="noopener noreferrer">
-            <FaDownload  style={{marginRight:"10px"}}/>
-             Brochure</a> 
+          <a
+            className={styles.BrochureBtn}
+            href="/Brochure.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaDownload style={{ marginRight: "10px" }} />
+            Brochure
+          </a>
         </div>
       </div>
+      <div className={styles.MobileNavbar}>
+        <div className={styles.MobileHomeIcon}>
+          <House className={styles.HomeIconTwo} />
+        </div>
+        <div className={styles.NavMeunContainer}>
+          <img
+            src="/images/malibu.webp"
+            alt="logo"
+            className={styles.MobileLogo}
+          />
+          { show ? (<RiCloseFill className={styles.NavClose} onClick={()=>setShow(false)}/>): 
+        (  <RiMenu4Fill className={styles.NavMenu}  onClick={()=>setShow(true)}/>)
+            
+          }
+          
+ 
+        </div>
+        {show &&
+        <div className={styles.NavListContainer}>
+          <img
+            src="/images/malibu.webp"
+            alt="logo"
+            className={styles.LogoMobileList}
+          />
+
+          <ul className={styles.NavLinksMobile}>
+            <li>
+              <a href="#">EV 23 Malibu West</a>
+            </li>
+            <li>
+              <a href="#Discription">Description</a>
+            </li>
+
+            <li>
+              <a href="#Amenities">Amenities</a>
+            </li>
+
+            <li>
+              <a href="#Configuration">Configuration</a>
+            </li>
+          </ul>
+          <hr
+            style={{
+              backgroundColor: "white",
+              width: "80%",
+              marginTop: "5vw",
+              marginBottom: "5vw",
+            }}
+          />
+          <div className={styles.NavContaintWrapper}>
+            <div className={styles.SiteaddressMobile}>
+          <p className={styles.SiteNameMobile}>
+            <MapPin className={styles.MapIconMobile} />
+            <span> EV 23 Malibu West, Koparkhairne</span>
+          </p>
+          </div>
+          <div className={styles.ContactNumberMobile}>
+            <p style={{ color: "orange", fontSize: "4vw" }}>Contact Us On</p>
+            <div className={styles.ContactMobile}>
+              <Phone className={styles.PhoneIconMoible} />
+              <p> +91 8291668777</p>
+            </div>
+            <p className={styles.MailIdMobile}>
+              <Mail className={styles.MailIconMobile} /> deepak@ebvgroup.co.in
+            </p>
+          </div>
+          <div className={styles.DownloadMobile}>
+            <p style={{color:"orange"}}>Download Now!</p>
+           <a
+            className={styles.BrochureBtnMobile}
+            href="/Brochure.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaDownload style={{ marginRight: "10px" }} />
+            Brochure
+          </a>
+          </div>
+          </div>
+        </div>
+}
+        </div>
+      
     </>
   );
 }
