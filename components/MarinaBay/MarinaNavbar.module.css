@@ -12,7 +12,8 @@
   flex-direction: row;
   padding: 2vh 1vw;
   align-items: center;
-  gap: 47vw;
+  gap: 0;
+  justify-content: space-between;
   font-size: 2vh;
   width: 100%;
 }
@@ -106,7 +107,7 @@
   flex-direction: row;
   align-items: center;
   font-size: 2.3vh;
-  gap: 21vw;
+  justify-content: space-between;
   padding: 0vw;
 }
 .NavLinks {
@@ -149,13 +150,12 @@
 
 /* responsive mobile and tablet */
 @media screen and (min-width: 200px) and (max-width: 615px) {
-
-  html,body{
+  html,
+  body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
     width: 100%;
-  
   }
   .NavMain {
     display: none;
@@ -163,25 +163,21 @@
   .MobileNavbar {
     display: flex;
     flex-direction: column;
-  
-     position: relative;  
-    
+
+    position: relative;
   }
   .MobileHomeIcon {
     position: relative;
     left: 2%;
     top: 2%;
     z-index: 1;
-  
+
     display: flex;
-  
- 
   }
   .HomeIconTwo {
     height: 5vh;
     width: 5vw;
     position: absolute;
-  
   }
 
   .NavMeunContainer {
@@ -191,23 +187,21 @@
     align-items: center;
     gap: 40vw;
     justify-content: center;
-  top: 30%;
+    top: 30%;
     left: 20%;
     z-index: 999;
   }
   .MobileLogo {
     height: 13vh;
     width: 15vw;
-    
   }
   .NavMenu {
     height: 5vh;
     width: 10vw;
   }
-  .NavClose{
+  .NavClose {
     height: 5vh;
     width: 10vw;
-  
   }
   .NavListContainer {
     display: flex;
@@ -226,85 +220,114 @@
     height: 10vh;
     width: 17vw;
   }
-  .NavLinksMobile{
+  .NavLinksMobile {
     display: flex;
     flex-direction: column;
     gap: 5vw;
-    
-    
   }
-  .SiteNameMobile{
+  .SiteNameMobile {
     display: flex;
     flex-direction: row;
-    
+
     gap: 3vw;
-  
-  
   }
-  .MapIconMobile{
+  .MapIconMobile {
     height: 5vh;
     width: 5vw;
   }
-   .ContactNumberMobile{
+  .ContactNumberMobile {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 2vw;
-  } 
-  .PhoneIconMoible{
+  }
+  .PhoneIconMoible {
     display: flex;
     flex-direction: row;
   }
- .ContactMobile{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 3vw;
- }
- .PhoneIconMoible{
-  height: 4vh;
-  width: 4vw;
- }
- .MailIdMobile{
-  display: flex;
-  flex-direction: row;
+  .ContactMobile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3vw;
+  }
+  .PhoneIconMoible {
+    height: 4vh;
+    width: 4vw;
+  }
+  .MailIdMobile {
+    display: flex;
+    flex-direction: row;
 
-   gap: 3vw;
- }
- .MailIconMobile{
-  height: 4vh;
-  width: 4vw;
- 
- }
- .DownloadMobile{
+    gap: 3vw;
+  }
+  .MailIconMobile {
+    height: 4vh;
+    width: 4vw;
+  }
+  .DownloadMobile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+  }
+  .BrochureBtnMobile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid white;
+    height: 5vh;
+    width: 40vw;
+  }
+  .NavContaintWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 7vw;
+    justify-content: center;
+    align-items: center;
+  }
+  .SiteaddressMobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 7vw;
+  }
+}
+/*responsive for 616 to 1024px  */
+@media screen and (min-width: 616px) and (max-width: 1024px) {
+  .NavFirst {
+  padding: 2vh 2vw;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 2vh;
+  width: 100%;
+  white-space: nowrap;
+  gap: 0;
+}
+.leftSide {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
   gap: 2vw;
- }
- .BrochureBtnMobile{
+}
+.Logo {
+  height: 12vw;
+  width: 15vw;
+  margin-left: 2vw;
+}
+.NavSecond {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  border: 1px solid white;
-  height: 5vh;
-  width: 40vw;
- }
- .NavContaintWrapper{
-  display: flex;
-  flex-direction: column;
-  gap: 7vw;
-  justify-content: center;
-  align-items: center;
- }
- .SiteaddressMobile{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 7vw;
- }
+  font-size: 2.3vh;
+ justify-content: space-between;
+  padding: 0vw;
+  gap: 0;
+}
+
+
 
 }

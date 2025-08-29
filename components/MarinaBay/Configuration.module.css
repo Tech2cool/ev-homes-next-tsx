@@ -79,37 +79,204 @@
 .BtnDesgin span {
   z-index: 1;
 }
-.CardsMain{
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    z-index: 1;
-    margin-top: 15vw;
-    gap: 2vw;
-    margin-right: 10vw;
-    justify-content: center;
-    flex-wrap: wrap;
-    left: 5%;
-   
+.CardsMain {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  z-index: 1;
+  margin-top: 15vw;
+  gap: 2vw;
+  margin-right: 10vw;
+  justify-content: center;
+  flex-wrap: wrap;
+  left: 5%;
 }
-.cardInfo{
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  border: none;
+  height: 25vw;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.CardImg {
+  height: 12vw;
+  width: 17vw;
+  border-radius: 10px;
+  transition: trasnform 0.5s ease;
+}
+.CardImg:hover {
+  transform: scale(1.08);
+}
+/* responsive for mobile and tablet */
+@media screen and (max-width: 375px) {
+   .configHeader {
+    font-size: 1.5rem;
+  }
+  .configStart {
+    top: 3%;
+    gap: 5vw;
+    white-space: wrap;
+    left: 5%;
+  }
+  .FlatBtns {
     display: flex;
     flex-direction: column;
+    gap: 2vw;
+    white-space: wrap;
+  }
+  .BtnDesgin {
+    width: 20vw;
+    height: 8vh;
+
+  }
+  .CardsMain {
+    margin-top: 25vh;
+    gap: 7vw;
+    margin-right: 10vw;
+
+    left: 5%;
+  }
+  .CardImg {
+    height: 22vh;
+    width: 50%;
+    border-top-left-radius: 10px;
+  }
+  .cardInfo {
+    display: flex;
+    flex-direction: row;
     gap: 1vw;
     z-index: 2;
     text-align: center;
     color: white;
     border: none;
-    height: 25vw;
-    border-radius: 10px;
-    background-color: rgba(255,255,255,.1);
+    height: 22vh;
+    border-radius: 20px;
+  }
+  .CardSubInfo {
+    width: 100%;
+    white-space: wrap;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+    margin-top: 2vw;
+  }
 }
-.CardImg{
-    height: 12vw;
-    width: 17vw;
-    border-radius: 10px;
-    transition: trasnform 0.5s ease;
+
+@media screen and (min-width: 376px) and (max-width: 615px) {
+  .configHeader {
+    font-size: 1.5rem;
+  }
+  .configStart {
+    top: 3%;
+    gap: 5vw;
+    white-space: wrap;
+  }
+  .FlatBtns {
+    display: flex;
+    gap: 2vw;
+    white-space: wrap;
+  }
+  .BtnDesgin {
+    width: 20vw;
+    height: 8vh;
+  }
+  .CardsMain {
+    margin-top: 15vh;
+    gap: 7vw;
+    margin-right: 10vw;
+
+    left: 5%;
+  }
+  .CardImg {
+    height: 22vh;
+    width: 50%;
+    border-top-left-radius: 10px;
+  }
+  .cardInfo {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    border: none;
+    height: 22vh;
+    border-radius: 20px;
+  }
+  .CardSubInfo {
+    width: 100%;
+    white-space: wrap;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+    margin-top: 2vw;
+  }
+
 }
-.CardImg:hover{
-    transform: scale(1.08);
+
+/* responsive for 616px to 1024px */
+@media screen and (min-width:616px) and (max-width:1024px){
+  .configHeader {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+.configStart {
+  top: 5%;
+  gap: 10vw;
+  left: 5%;
+}
+.FlatBtns {
+  display: flex;
+  gap: 2vw;
+}
+.BtnDesgin {
+  width: 17vw;
+  height: 8vh;
+}
+.CardsMain {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  z-index: 1;
+  margin-top: 15vw;
+  gap: 2vw;
+  justify-content: center;
+  flex-wrap: nowrap;
+  left: 5%;
+  width: 90%;
+}
+.cardInfo {
+  gap: 1vw;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  border: none;
+  height: 60vh;
+  border-radius: 10px;
+  width: 100%;
+
+}
+.CardImg {
+  height: 30vh;
+  width: 100%;
+   overflow: hidden; 
+
+}
+  .CardSubInfo {
+    width: 100%;
+    white-space: wrap;
+    font-size: 1.1rem;
+
+    flex-direction: column;
+    gap: 2vw;
+    margin-top: 2vw;
+  }
+
 }

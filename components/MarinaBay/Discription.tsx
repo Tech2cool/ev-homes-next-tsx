@@ -9,6 +9,7 @@ import { CiLocationOn } from "react-icons/ci";
 const Discription = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [highlight,setShowlight]=useState(false);
+
   const handleHighlight = ()=>{
     setShowlight(true)
   }
@@ -131,7 +132,7 @@ const Discription = () => {
       {/* prime location section */}
       <div className={styles.PrimeLocationMain} >
   <button 
-    onClick={handleHighlight} 
+    onClick={()=>highlight? setShowlight(false) : setShowlight(true)} 
     className={styles.IconButton}
     aria-label="Show Prime Location"
   >
@@ -151,22 +152,22 @@ const Discription = () => {
         <div className={styles.LocationHighlights}>
           <div className={styles.LandMarkImg}>
             <img src="images/marketIcon.webp" alt="marketimg" />
-            <p>Local Market & D-Mart for daily essentials.</p>
+            <p style={{paddingTop:"5vw"}}>Local Market & D-Mart for daily essentials.</p>
           </div>
        
           <div className={styles.LandMarkImg}>
             <img src="/images/hospitalIcon.webp" alt="hospital" />
             <div className={styles.HighlightTagline}>
-            <p>Hospitals for your healthcare needs.</p>
+            <p style={{paddingTop:"5vw"}}>Hospitals for your healthcare needs.</p>
             </div>
           </div>
           <div className={styles.LandMarkImg}>
             <img src="/images/academyIcon.webp" alt="acadamy" />
-            <p>Hospitals for your healthcare needs.</p>
+            <p style={{paddingTop:"5vw"}}>Hospitals for your healthcare needs.</p>
           </div>
           <div className={styles.LandMarkImg}>
             <img src="/images/railwayIcon.webp" alt="railway" />
-            <p>Kopar Khairane Railway Station for seamless connectivity.</p>
+            <p style={{paddingTop:"5vw"}}>Kopar Khairane Railway Station for seamless connectivity.</p>
           </div>
         </div>
       </div>

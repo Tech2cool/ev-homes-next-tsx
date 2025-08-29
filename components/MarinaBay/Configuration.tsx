@@ -59,10 +59,12 @@ const Configuration = () => {
         {filterSelect.map((item, index) => (
           <div key={index} className={styles.cardInfo}>
             <img src={item.src} alt="building" className={styles.CardImg} />
+            <div className={styles.CardSubInfo}>
             <p>{item.Rera}</p>
             <p>{item.area}</p>
             <p>Configuration: {item.config}</p>
             <p style={{ color: "orange" }}>Price: {item.price}</p>
+            </div>
           </div>
         ))}
       </div>
