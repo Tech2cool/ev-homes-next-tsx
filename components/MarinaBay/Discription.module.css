@@ -56,6 +56,15 @@
 .KnowMoreBtn:hover {
   background-color: rgb(101, 101, 252);
 }
+.CloseDiscInfoBtn{
+                 border: none;
+  background-color: black;
+  color: white;
+  height: 2vw;
+  width: 4vw;
+  border-radius: 10px; 
+  cursor: pointer;
+}
 
 .ContactHeading {
   color: rgb(164, 152, 152);
@@ -111,6 +120,7 @@
   top: 105%;
   right: 3%;
   z-index: 1;
+  object-fit: cover;
 }
 .ChildImage {
   height: 35vh;
@@ -119,6 +129,7 @@
   top: 145%;
   right: 20%;
   z-index: 1;
+  object-fit: cover;
 }
 .PrimeLocationMain {
   position: absolute;
@@ -231,8 +242,7 @@
   .DisMain {
   display: flex;
   flex-direction: column;
-
-  height: 130vh;
+  height: 120vh;
   width: 100%;
 }
 .DisInfo {
@@ -243,54 +253,57 @@
   color: white;
   align-items: center;
   z-index: 1;
-  max-width: 50%;
+  max-width: 80%;
   margin-left: 0vw;
   margin-top: 2vw;
-  gap: 5vw;
+  gap: 3vw;
 }
 .Heading {
   font-size: 4vh;
   white-space: nowrap;
 }
-.DisDetail {
-  font-size: 1rem;
+.DisDetail {  
+  font-size: 0.7rem;
   width: 100%;
-  line-height: 1.2em;
+  line-height: 1.5em;
   transition: max-height 0.4s ease;
   overflow: hidden;
-  margin-bottom: 3vw;
+  margin-bottom: 2vw;
   text-align: justify;
   text-justify: inter-word;
-  text-indent: 1.5em;
+
+
 }
 .ParentImage {
   height: 40vh;
   width: 50vw;
   position: absolute;
-  top: 175%;
+  top: 165%;
   left: 40%;
   right: 3%;
   z-index: 1;
+  object-fit: cover;
 }
 .ChildImage {
   height: 35vh;
   width: 35vw;
   position: absolute;
-  top: 193%;
+  top: 183%;
   left: 20%;
   z-index: 1;
+  object-fit: cover;
 }
-/* .PrimeLocationMain {
+ .PrimeLocationMain {
   position: absolute;
   z-index: 2;
-  top: 175%;
-  right: 80%;
+  top: 160%;
+  left: 0%;
   cursor: pointer;
-} */
+} 
 .IconBottom {
   position: absolute;
-  top: 180%;
-  right: 70%;
+  top: 170%;
+  right: 65%;
   background-color: rgba(255, 255, 255, 0.2);
   width: 10vw;
   height: 3vh;
@@ -298,6 +311,94 @@
   z-index: 3;
   cursor: pointer;
 }
+ .PrimeLocationMain{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+   background-color: black;
+   /* background-color: black; */
+   border-radius: 10px;
+   margin-top: 2rem;
+   z-index: 3;
+   width: 50%; 
+   left: 0%;
+   font-size: 0.7rem;
+  
 
+ } 
+ .LocationHeading{
+  font-size: 0.8rem;
+ }
+ .LocationHighlights{
+  height: 12vh;
+ }
+ .highlightTag{
+  font-size: 0.5rem;
+ }
+ .FullDis {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  font-size:0.9rem;
+}
+.FullInfoMain {
+  width: 90%;
+  /* font-size: 2vh; */
+  justify-content: flex-start;
+  align-items: center;
+  top: 15%;
+  left: 5%;
+  bottom: 10%;
+  z-index: 4;
+  padding: 2vh 30vw;
+  height: auto;
+  border-radius: 10px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.CloseDiscInfoBtn{
+                 
+  height: 4vh;
+  width: 12vw;
+
+}
+.ContactHeading {
+  color: rgb(164, 152, 152);
+  margin-bottom: 0.2vw;
+  margin-top: 0.5vw;
+}
+
+}
+@media screen and (min-width:616px) and (max-width:1064px) {
+   .FullDis {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  font-size:0.9rem;
+}
+.FullInfoMain {
+  width: 90%;
+  /* font-size: 2vh; */
+  justify-content: flex-start;
+  align-items: center;
+  top: 15%;
+  left: 5%;
+  bottom: 10%;
+  z-index: 4;
+  padding: 2vh 30vw;
+  height: auto;
+  border-radius: 10px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.CloseDiscInfoBtn{
+                 
+  height: 4vh;
+  width: 12vw;
+
+}
 
 }

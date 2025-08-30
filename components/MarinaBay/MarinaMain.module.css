@@ -1,4 +1,14 @@
+    body {
+    font-family:   'Roboto', sans-serif;
+    }
+    
 .MainContainer{
     display: flex;
     flex-direction: column;
 }
+    @media screen and (min-width:200px) and (max-width:615px){
+        body {
+    font-family:   'Roboto', sans-serif;
+    }
+
+    }

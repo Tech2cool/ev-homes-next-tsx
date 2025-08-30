@@ -1,4 +1,5 @@
-import { defaultOverrides } from "next/dist/server/require-hook";
+"use client"
+
 import styles from "./MarinaMain.module.css"
 import React from "react";
 import MarinaNavbar from "./MarinaNavbar";
@@ -6,6 +7,8 @@ import HomePage from "./HomePage";
 import Discription from "./Discription";
 import AmenitiesMain from "./Amenities";
 import Configuration from "./Configuration";
+import Footer from "../../components/home-components/Contact"
+
 
 
 
@@ -26,7 +29,10 @@ function Marinamain(){
            <div id="Configuration">
         <Configuration/>
         </div>
+<Footer />
+
         </div>
+        
         </>
     )
 }

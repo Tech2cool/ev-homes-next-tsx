@@ -4,7 +4,7 @@ import stylesPro from "./contact.module.css";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Building2, Home, Phone, Video } from "lucide-react";
-  
+
 // import { useRouter } from "next/router";
 const projectInfo: OurProject[] = [
   {
@@ -114,7 +114,7 @@ const Contact = () => {
     theme === "dark" ? "/images/design1.png" : "/images/designlight.png";
   return (
     <div id="contact" className={styles.contactUs}>
-       <div className={styles.goldenOverlay}></div>
+      <div className={styles.goldenOverlay}></div>
       <div className={styles.sparkles}></div>
       <div className={stylesPro.footerSection}>
         <div className={stylesPro.designWrapper}>
@@ -129,22 +129,22 @@ const Contact = () => {
             />
           )}
         </div>
-   
+
       </div>
       <div className={stylesPro.mainFooter}>
         <div className={stylesPro.quicklinks}>
           <div className={stylesPro.head}>
             <div className={stylesPro.logoWrapper}>
-            <Image
-              src={"/images/evhomeslogo_1.webp"}
-              alt="Logo"
-              fill
-              priority
-              quality={75}
-            />
-          </div>
-            {/* QUICK LINKS */}
+              <Image
+                src={"/images/evhomeslogo_1.webp"}
+                alt="Logo"
+                fill
+                priority
+                quality={75}
+              />
             </div>
+            {/* QUICK LINKS */}
+          </div>
           <div className={stylesPro.linkItem}
           //   onClick={() => router.push("/")}
           >
@@ -196,34 +196,34 @@ const Contact = () => {
 
         </div>
       </div>
-     <div className={stylesPro.socialSection}>
-  <div className={stylesPro.leftLine}></div>
-  <div className={stylesPro.socialIcons}>
-  <a href="https://www.facebook.com/people/EV-Homes/100083195565500/" target="_blank" rel="noopener noreferrer">
-    <div className={stylesPro.iconCircle}>
-      <Image src="/images/communication.png" alt="Facebook" width={30} height={30} />
-    </div>
-  </a>
-  <a href="https://www.instagram.com/evhomesofficial/?hl=en" target="_blank" rel="noopener noreferrer">
-    <div className={stylesPro.iconCircle}>
-      <Image src="/images/instagram.png" alt="Instagram" width={30} height={30} />
-    </div>
-  </a>
-  <a href="https://www.youtube.com/channel/UC1Ww0vrG5vSQprMtGxKXCIw" target="_blank" rel="noopener noreferrer">
-    <div className={stylesPro.iconCircle}>
-      <Image src="/images/youtube.png" alt="YouTube" width={30} height={30} />
-    </div>
-  </a>
-</div>
+      <div className={stylesPro.socialSection}>
+        <div className={stylesPro.leftLine}></div>
+        <div className={stylesPro.socialIcons}>
+          <a href="https://www.facebook.com/people/EV-Homes/100083195565500/" target="_blank" rel="noopener noreferrer">
+            <div className={stylesPro.iconCircle}>
+              <Image src="/images/communication.png" alt="Facebook" width={30} height={30} />
+            </div>
+          </a>
+          <a href="https://www.instagram.com/evhomesofficial/?hl=en" target="_blank" rel="noopener noreferrer">
+            <div className={stylesPro.iconCircle}>
+              <Image src="/images/instagram.png" alt="Instagram" width={30} height={30} />
+            </div>
+          </a>
+          <a href="https://www.youtube.com/channel/UC1Ww0vrG5vSQprMtGxKXCIw" target="_blank" rel="noopener noreferrer">
+            <div className={stylesPro.iconCircle}>
+              <Image src="/images/youtube.png" alt="YouTube" width={30} height={30} />
+            </div>
+          </a>
+        </div>
 
-  <div className={stylesPro.rightLine}></div>
-</div>
-<div className={stylesPro.copyRightSection}>
-  <p className={stylesPro.copyRightText}>
-    © 2025 EV Group. All rights reserved. Visit us at 
-    <a href="https://evgroup.in" target="_blank" rel="noopener noreferrer"> evgroup.in</a>
-  </p>
-</div>
+        <div className={stylesPro.rightLine}></div>
+      </div>
+      <div className={stylesPro.copyRightSection}>
+        <p className={stylesPro.copyRightText}>
+          © 2025 EV Group. All rights reserved. Visit us at
+          <a href="https://evgroup.in" target="_blank" rel="noopener noreferrer"> evgroup.in</a>
+        </p>
+      </div>
 
     </div>
   );

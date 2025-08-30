@@ -7,16 +7,35 @@ import { FaDownload } from "react-icons/fa";
 import Discription from "./Discription";
 import { RiCloseFill, RiMenu4Fill } from "react-icons/ri";
 import { Span } from "next/dist/trace";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 function MarinaNavbar() {
   const [show,setShow]=useState(false);
+  const [showNavFirst,setShowNavFirst]=useState(true);
+  const [NavSecBg,setNavSecBg]=useState(false);
+  const [hrHide,setHrHide]=useState(true);
+
+  useEffect(()=>{
+    const handleScroll=()=>{
+        if(window.scrollY>50){
+          setShowNavFirst(false);
+          setNavSecBg(true);
+          setHrHide(false);
+        } else{
+          setShowNavFirst(true)
+          setNavSecBg(false);
+          setHrHide(true);
+        }
+    };
+    window.addEventListener('scroll',handleScroll);
+    return ()=> window.removeEventListener('scroll',handleScroll)
+  },[])
   
 
   return (
     <>
       <div className={styles.NavMain}>
-        <div className={styles.NavFirst}>
+        { showNavFirst && <div className={styles.NavFirst}>
           <div className={styles.leftSide}>
             <House className={styles.HomeIcon} />
 
@@ -46,17 +65,17 @@ function MarinaNavbar() {
               <Mail className={styles.MailIcon} /> deepak@ebvgroup.co.in
             </p>
           </div>
-        </div>
-        <hr
+        </div> }
+        { hrHide && <hr
           style={{
             border: "0.2px solid white",
             opacity: "0.2",
             margin: "0",
             marginLeft: "1vw",
           }}
-        />
+        /> }
 
-        <div className={styles.NavSecond}>
+         <div className={`${styles.NavSecond} ${NavSecBg ? styles.NavSecBg : ""}`} >
           <img src="/images/malibu.webp" alt="logo" className={styles.Logo} />
 
           <ul className={styles.NavLinks}>

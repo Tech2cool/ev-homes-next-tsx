@@ -17,6 +17,11 @@
   font-size: 2vh;
   width: 100%;
 }
+.NavSecBg{
+ background-color: rgba(0, 0, 0, 0.7); 
+  transition: background-color 0.3s ease;
+  margin-top: 0;
+}
 .leftSide {
   display: flex;
   flex-direction: row;
@@ -68,6 +73,7 @@
   height: 7vw;
   width: 7vw;
   margin-left: 2vw;
+  object-fit: cover;
 }
 .BrochureBtn {
   display: flex;
@@ -157,27 +163,26 @@
     overflow-x: hidden;
     width: 100%;
   }
+
   .NavMain {
     display: none;
-  }
+  } 
   .MobileNavbar {
     display: flex;
     flex-direction: column;
-
     position: relative;
+    left: 0%;
   }
   .MobileHomeIcon {
     position: relative;
-    left: 2%;
-    top: 2%;
+    left: 0%;
+    top: 0%;
     z-index: 1;
 
     display: flex;
   }
   .HomeIconTwo {
-    height: 5vh;
-    width: 5vw;
-    position: absolute;
+ display: none;
   }
 
   .NavMeunContainer {
@@ -185,15 +190,16 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 40vw;
-    justify-content: center;
+    gap: 60vw;
+    justify-content: space-between;
     top: 30%;
-    left: 20%;
+    left: 4%;
     z-index: 999;
   }
   .MobileLogo {
     height: 13vh;
-    width: 15vw;
+    width: 22vw;
+    object-fit: cover;
   }
   .NavMenu {
     height: 5vh;

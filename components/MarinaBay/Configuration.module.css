@@ -48,6 +48,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid gold;
+  border-radius: 3px;
   background-color: black;
   width: 12vw;
   height: 4vw;
@@ -108,89 +109,49 @@
   width: 17vw;
   border-radius: 10px;
   transition: trasnform 0.5s ease;
+  object-fit: cover;
 }
 .CardImg:hover {
   transform: scale(1.08);
 }
-/* responsive for mobile and tablet */
-@media screen and (max-width: 375px) {
-   .configHeader {
-    font-size: 1.5rem;
-  }
-  .configStart {
-    top: 3%;
-    gap: 5vw;
-    white-space: wrap;
-    left: 5%;
-  }
-  .FlatBtns {
-    display: flex;
-    flex-direction: column;
-    gap: 2vw;
-    white-space: wrap;
-  }
-  .BtnDesgin {
-    width: 20vw;
-    height: 8vh;
-
-  }
-  .CardsMain {
-    margin-top: 25vh;
-    gap: 7vw;
-    margin-right: 10vw;
-
-    left: 5%;
-  }
-  .CardImg {
-    height: 22vh;
-    width: 50%;
-    border-top-left-radius: 10px;
-  }
-  .cardInfo {
-    display: flex;
-    flex-direction: row;
-    gap: 1vw;
-    z-index: 2;
-    text-align: center;
-    color: white;
-    border: none;
-    height: 22vh;
-    border-radius: 20px;
-  }
-  .CardSubInfo {
+.CardSubInfo {
     width: 100%;
     white-space: wrap;
-    font-size: 0.7rem;
+    font-size: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 2vw;
-    margin-top: 2vw;
+    gap: 1vw;
+    margin-top: 1vw;
   }
-}
-
-@media screen and (min-width: 376px) and (max-width: 615px) {
+@media screen and (min-width: 200px) and (max-width: 615px) {
   .configHeader {
     font-size: 1.5rem;
   }
   .configStart {
-    top: 3%;
-    gap: 5vw;
+    top: 2%;
+    gap: 2vh;
     white-space: wrap;
+    display: flex;
+  left: 4%;
+    flex-direction: column;
   }
   .FlatBtns {
     display: flex;
     gap: 2vw;
     white-space: wrap;
+    
   }
   .BtnDesgin {
     width: 20vw;
-    height: 8vh;
+    height: 5vh;
+    
   }
   .CardsMain {
-    margin-top: 15vh;
-    gap: 7vw;
-    margin-right: 10vw;
-
+    display: flex;
+    flex-direction: column;
+    margin-top: 4rem;
+    gap: 1rem;
+    margin-right: 2rem;
     left: 5%;
   }
   .CardImg {
@@ -211,7 +172,7 @@
   }
   .CardSubInfo {
     width: 100%;
-    white-space: wrap;
+    white-space: normal;
     font-size: 0.7rem;
     display: flex;
     flex-direction: column;

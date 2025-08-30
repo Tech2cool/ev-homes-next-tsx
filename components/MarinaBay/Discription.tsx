@@ -84,7 +84,7 @@ const Discription = () => {
                 Welcome to EV 23 Malibu West 🌴✨ Ultra-Luxury Living Inspired
                 by Malibu, California Developed by EV Homes Construction Pvt
                 Ltd, a name synonymous with quality and innovation, EV 23 Malibu
-                West is an ultra-luxury residential project located in Kopar
+                West is an ultra-luxury residential project located in Kopar 
                 Khairane Sector 23, Navi Mumbai. Inspired by the opulent
                 beachfront lifestyle of Malibu, California, this development
                 offers a range of 2 BHK and 3 BHK sea-facing residences designed
@@ -113,15 +113,8 @@ const Discription = () => {
               </p>
               <button
                 onClick={handleClose}
-                style={{
-                  border: "none",
-                  backgroundColor: "black",
-                  color: "white",
-                  height: "2vw",
-                  width: "4vw",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                }}
+                
+                className={styles.CloseDiscInfoBtn}
               >
                 Cancel
               </button>
@@ -144,7 +137,7 @@ const Discription = () => {
       { highlight && ( 
       <div className={styles.PrimeLocationMain}>
         <h2 className={styles.LocationHeading}>📍 Prime Location</h2>
-        <p style={{ fontSize: "1.2rem" }}>
+        <p style={{ fontSize: "1rem" }}>
           Situated in Kopar Khairane Sector 23{" "}
         </p>
         <p>this project offers easy access to key locations such as:</p>
@@ -152,7 +145,7 @@ const Discription = () => {
         <div className={styles.LocationHighlights}>
           <div className={styles.LandMarkImg}>
             <img src="images/marketIcon.webp" alt="marketimg" />
-            <p style={{paddingTop:"5vw"}}>Local Market & D-Mart for daily essentials.</p>
+            <p  className={styles.highlightTag}style={{paddingTop:"5vw"}}>Local Market & D-Mart for daily essentials.</p>
           </div>
        
           <div className={styles.LandMarkImg}>
