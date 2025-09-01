@@ -69,10 +69,12 @@ function VideoDiscription({
           </div>
         </div>
         <div className={styles.DiscStorage}>
-          <p style={{ fontWeight: "700", paddingBottom: ".5vw" }}>
+          <p style={{ fontWeight: "700", paddingBottom: "0.8vw" }}>
             Description
           </p>
-          <p>DESC</p>
+          <p>This is Descrioption</p>
+          <p>hey i am anurag</p>
+          <p>thanks to ev homes</p>
         </div>
       </div>
     </>

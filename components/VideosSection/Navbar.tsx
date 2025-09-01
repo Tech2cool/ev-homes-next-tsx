@@ -50,7 +50,7 @@ function Navbar() {
 
       <div className={styles.NavContainerTwo}>
         <div className={styles.HomeIcon} onClick={handleNavbar}>
-          <TbLayoutNavbar size={25}  style={{color:"white"}}/>
+          <TbLayoutNavbar size={25}  style={{color:"white", marginTop:"1vw", marginBottom:"1vw"} }/>
         </div>
 
         {open && (
