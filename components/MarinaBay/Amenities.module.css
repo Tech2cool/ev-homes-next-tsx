@@ -1,3 +1,6 @@
+body{
+      font-family: Playfair Display,serif;
+}
 .AmenitesMain {
   display: flex;
   flex-direction: column;
@@ -6,6 +9,8 @@
   background-size: cover;
   position: relative;
   height: 220vh;
+
+
 }
 .AmenitesMain::before {
   content: "";
@@ -59,7 +64,7 @@
   position: absolute;
   left: 50%;
   top: 70%;
-  font-size: 2rem;
+  font-size: 1.6rem;
   transform: translateX(-50%);
   font-weight: 600;
   display: flex;
@@ -97,6 +102,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  font-size: 1vw;
+
+
 }
 .AmentiesSecond {
   display: flex;
@@ -123,7 +131,7 @@
   position: absolute;
   left: 50%;
   top: 70%;
-  font-size: 2rem;
+  font-size: 1.6rem;
   transform: translateX(-50%);
   font-weight: 600;
   display: flex;
@@ -147,6 +155,7 @@
   gap: 0.5vh;
   display: flex;
   flex-direction: column;
+   font-size: 1vw;
 }
 .Centerimg,
 .CenterimgTwo {
@@ -183,9 +192,7 @@
 @media screen and (min-width: 200px) and (max-width: 615px) {
   .AmenitesMain {
     height: 100vh;
-    /* display: flex;
-  flex-direction: column;
-  gap: 5vw; */
+
   }
   .AmenitiesFirst {
     gap: 3vw;
@@ -211,7 +218,7 @@
   }
 
   .ImgContainerTwo {
-    margin-top: 25vh;
+    margin-top: 30vh;
   }
 
   .AmenitesHeading {
@@ -240,7 +247,7 @@
   .AmentiesSecond {
     gap: 3vw;
     margin-left: 0vw;
-    margin-top: 10vh;
+    margin-top: 1vh;
     padding: 2vw;
   }
   .AmenitesTextTwo {
@@ -342,3 +349,4 @@
     flex-direction: column;
   }
 }
+

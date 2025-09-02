@@ -76,7 +76,9 @@ function MarinaNavbar() {
         /> }
 
          <div className={`${styles.NavSecond} ${NavSecBg ? styles.NavSecBg : ""}`} >
+   
           <img src="/images/malibu.webp" alt="logo" className={styles.Logo} />
+       
 
           <ul className={styles.NavLinks}>
             <li>
@@ -124,11 +126,13 @@ function MarinaNavbar() {
         </div>
         {show &&
         <div className={styles.NavListContainer}>
+          <div className={styles.MobileLogoInside}>
           <img
             src="/images/malibu.webp"
             alt="logo"
             className={styles.LogoMobileList}
           />
+          </div>
 
           <ul className={styles.NavLinksMobile}>
             <li>
@@ -146,14 +150,16 @@ function MarinaNavbar() {
               <a href="#Configuration">Configuration</a>
             </li>
           </ul>
-          <hr
+          <div className={styles.HrMain}>          <hr
             style={{
               backgroundColor: "white",
-              width: "80%",
+              width: "90%",
               marginTop: "5vw",
               marginBottom: "5vw",
             }}
           />
+          </div>
+
           <div className={styles.NavContaintWrapper}>
             <div className={styles.SiteaddressMobile}>
           <p className={styles.SiteNameMobile}>
@@ -162,10 +168,10 @@ function MarinaNavbar() {
           </p>
           </div>
           <div className={styles.ContactNumberMobile}>
-            <p style={{ color: "orange", fontSize: "4vw" }}>Contact Us On</p>
+            <p style={{ color: "orange" , fontSize:"0.7rem" }}>Contact Us On</p>
             <div className={styles.ContactMobile}>
               <Phone className={styles.PhoneIconMoible} />
-              <p> +91 8291668777</p>
+              <p style={{whiteSpace:"nowrap", fontSize:"0.8rem"}}> +91 8291668777</p>
             </div>
             <p className={styles.MailIdMobile}>
               <Mail className={styles.MailIconMobile} /> deepak@ebvgroup.co.in

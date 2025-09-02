@@ -39,7 +39,7 @@
 }
 .clamp {
   display: -webkit-box;
-  -webkit-line-clamp: 6; 
+  -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -50,19 +50,18 @@
   cursor: pointer;
   background: transparent;
   border-radius: 3px;
-
   transition: background-color 1s ease;
 }
 .KnowMoreBtn:hover {
   background-color: rgb(101, 101, 252);
 }
-.CloseDiscInfoBtn{
-                 border: none;
+.CloseDiscInfoBtn {
+  border: none;
   background-color: black;
   color: white;
   height: 2vw;
   width: 4vw;
-  border-radius: 10px; 
+  border-radius: 10px;
   cursor: pointer;
 }
 
@@ -103,7 +102,7 @@
   top: 20%;
   left: 20%;
   bottom: 10%;
-  z-index: 3;
+  z-index: 999;
   padding: 2vh 30vw;
   height: 70vh;
   border-radius: 10px;
@@ -137,25 +136,35 @@
   top: 110%;
   right: 45%;
   cursor: pointer;
+   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  border-radius: 10px;
+  margin-top: 2rem;
+  z-index: 3;
+  width: 50%;
+  left: 30%;
 }
-.LandMarkIcon {
+ .LandMarkIcon {
   position: absolute;
-  /* z-index: 3; */
   color: orange;
   height: 7vh;
   width: 10vw;
-   animation: popUpDown 0.8s ease-in-out infinite;
-    animation-delay: 2s;
-    cursor: pointer;
+  animation: popUpDown 0.8s ease-in-out infinite;
+  animation-delay: 2s;
+  cursor: pointer;
 }
 @keyframes popUpDown {
-    0%,100%{
-        transform: translateY(0px);
-    }
-    50%{
-        opacity: 1;
-        transform: translateY(-12px);
-    }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-12px);
+  }
 }
 
 .IconBottom {
@@ -168,25 +177,11 @@
   border-radius: 50%;
   z-index: 3;
   cursor: pointer;
-}
- .PrimeLocationMain{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-   background-color: black;
-   /* background-color: black; */
-   border-radius: 10px;
-   margin-top: 2rem;
-   z-index: 3;
-   width: 50%; 
-   left: 30%;
-  
+} 
 
- } 
-.LocationHeading{
-    font-size: 2rem;
-     color: rgb(152,112,38);
+.LocationHeading {
+  font-size: 2rem;
+  color: rgb(152, 112, 38);
 }
 .IconButton {
   background: none;
@@ -194,211 +189,194 @@
   cursor: pointer;
   padding: 0;
 }
- .LocationHighlights{
-    display: flex;
-    gap: 2vw;
-    margin-top: 2vw;
-    height: 10vw;
-    justify-content: center;
-    align-items: flex-start;
+.LocationHighlights {
+  display: flex;
+  gap: 2vw;
+  margin-top: 2vw;
+  height: 10vw;
+  justify-content: center;
+  align-items: flex-start;
 }
-.LandMarkImg{
-    height: 10vh;
-    width: 7vw;
-    border: 1px solid grey;
-    padding: 3vh 2vw;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    flex-direction: column;
-    align-items: center;
-    background-color: #333;
+.LandMarkImg {
+  height: 10vh;
+  width: 7vw;
+  border: 1px solid grey;
+  padding: 3vh 2vw;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  background-color: #333;
 }
-.LandMarkImg img{
-   transition: transform 0.3s ease-in-out; 
-   
+.LandMarkImg img {
+  transition: transform 0.3s ease-in-out;
 }
 
 .LandMarkImg:hover img {
-  transform: scale(1.50); 
+  transform: scale(1.5);
 }
 .LandMarkImg p {
   display: none;
   margin-top: 0.5rem;
   font-size: 1rem;
   text-align: center;
-  color:white;
+  color: white;
 }
 .LandMarkImg:hover p {
   display: block;
   width: 100%;
   white-space: nowrap;
-} 
+}
 
 /* responsive for mobile and tablet */
-@media screen and (min-width:200px) and (max-width:615px){
+@media screen and (min-width: 200px) and (max-width: 615px) {
   .DisMain {
-  display: flex;
-  flex-direction: column;
-  height: 120vh;
-  width: 100%;
-}
-.DisInfo {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  flex-direction: column;
-  color: white;
-  align-items: center;
-  z-index: 1;
-  max-width: 80%;
-  margin-left: 0vw;
-  margin-top: 2vw;
-  gap: 3vw;
-}
-.Heading {
-  font-size: 4vh;
-  white-space: nowrap;
-}
-.DisDetail {  
-  font-size: 0.7rem;
-  width: 100%;
-  line-height: 1.5em;
-  transition: max-height 0.4s ease;
-  overflow: hidden;
-  margin-bottom: 2vw;
-  text-align: justify;
-  text-justify: inter-word;
-
-
-}
-.ParentImage {
-  height: 40vh;
-  width: 50vw;
-  position: absolute;
-  top: 165%;
-  left: 40%;
-  right: 3%;
-  z-index: 1;
-  object-fit: cover;
-}
-.ChildImage {
-  height: 35vh;
-  width: 35vw;
-  position: absolute;
-  top: 183%;
-  left: 20%;
-  z-index: 1;
-  object-fit: cover;
-}
- .PrimeLocationMain {
-  position: absolute;
-  z-index: 2;
-  top: 160%;
-  left: 0%;
-  cursor: pointer;
-} 
-.IconBottom {
-  position: absolute;
-  top: 170%;
-  right: 65%;
-  background-color: rgba(255, 255, 255, 0.2);
-  width: 10vw;
-  height: 3vh;
-  border-radius: 50%;
-  z-index: 3;
-  cursor: pointer;
-}
- .PrimeLocationMain{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    height: 120vh;
+    width: 100%;
+  }
+  .DisInfo {
+    display: flex;
     align-items: center;
-   background-color: black;
-   /* background-color: black; */
-   border-radius: 10px;
-   margin-top: 2rem;
-   z-index: 3;
-   width: 50%; 
-   left: 0%;
-   font-size: 0.7rem;
-  
-
- } 
- .LocationHeading{
-  font-size: 0.8rem;
- }
- .LocationHighlights{
-  height: 12vh;
- }
- .highlightTag{
-  font-size: 0.5rem;
- }
- .FullDis {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: fit-content;
-  font-size:0.9rem;
+    flex: 1;
+    flex-direction: column;
+    color: white;
+    align-items: center;
+    z-index: 1;
+    max-width: 80%;
+    margin-left: 0vw;
+    margin-top: 2vw;
+    gap: 3vw;
+  }
+  .Heading {
+    font-size: 4vh;
+    white-space: nowrap;
+  }
+  .DisDetail {
+    font-size: 0.7rem;
+    width: 100%;
+    line-height: 1.5em;
+    transition: max-height 0.4s ease;
+    overflow: hidden;
+    margin-bottom: 2vw;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+  .ParentImage {
+    height: 40vh;
+    width: 50vw;
+    position: absolute;
+    top: 165%;
+    left: 40%;
+    right: 3%;
+    z-index: 1;
+    object-fit: cover;
+  }
+  .ChildImage {
+    height: 35vh;
+    width: 35vw;
+    position: absolute;
+    top: 183%;
+    left: 20%;
+    z-index: 1;
+    object-fit: cover;
+  }
+  .PrimeLocationMain {
+    position: absolute;
+    z-index: 2;
+    top: 160%;
+    left: 0%;
+    cursor: pointer;
+ 
+  }
+  .IconBottom {
+    position: absolute;
+    top: 170%;
+    right: 65%;
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 10vw;
+    height: 3vh;
+    border-radius: 50%;
+    z-index: 3;
+    cursor: pointer;
+  }
+  .PrimeLocationMain {
+   
+    border-radius: 10px;
+    margin-top: 2rem;
+    z-index: 3;
+    width: 50%;
+    left: 0%;
+    font-size: 0.7rem;
+  }
+  .LocationHeading {
+    font-size: 0.8rem;
+  }
+  .LocationHighlights {
+    height: 12vh;
+  }
+  .highlightTag {
+    font-size: 0.5rem;
+  }
+  .FullDis {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    font-size: 0.9rem;
+  }
+  .FullInfoMain {
+    width: 90%;
+    justify-content: flex-start;
+    align-items: center;
+    top: 10%;
+    left: 10%;
+    bottom: 10%;
+    z-index: 4;
+    padding: 2vh 30vw;
+    height: auto;
+    border-radius: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  .CloseDiscInfoBtn {
+    height: 4vh;
+    width: 15vw;
+  }
+  .ContactHeading {
+    color: rgb(164, 152, 152);
+    margin-bottom: 0.2vw;
+    margin-top: 0.5vw;
+  }
 }
-.FullInfoMain {
-  width: 90%;
-  /* font-size: 2vh; */
-  justify-content: flex-start;
-  align-items: center;
-  top: 15%;
-  left: 5%;
-  bottom: 10%;
-  z-index: 4;
-  padding: 2vh 30vw;
-  height: auto;
-  border-radius: 10px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-.CloseDiscInfoBtn{
-                 
-  height: 4vh;
-  width: 12vw;
-
-}
-.ContactHeading {
-  color: rgb(164, 152, 152);
-  margin-bottom: 0.2vw;
-  margin-top: 0.5vw;
-}
-
-}
-@media screen and (min-width:616px) and (max-width:1064px) {
-   .FullDis {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: fit-content;
-  font-size:0.9rem;
-}
-.FullInfoMain {
-  width: 90%;
-  /* font-size: 2vh; */
-  justify-content: flex-start;
-  align-items: center;
-  top: 15%;
-  left: 5%;
-  bottom: 10%;
-  z-index: 4;
-  padding: 2vh 30vw;
-  height: auto;
-  border-radius: 10px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-.CloseDiscInfoBtn{
-                 
-  height: 4vh;
-  width: 12vw;
-
-}
-
+@media screen and (min-width: 616px) and (max-width: 1064px) {
+  .FullDis {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    font-size: 0.9rem;
+  }
+  .FullInfoMain {
+    width: 90%;
+    justify-content: flex-start;
+    align-items: center;
+    top: 15%;
+    left: 5%;
+    bottom: 10%;
+    z-index: 4;
+    padding: 2vh 30vw;
+    height: auto;
+    border-radius: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  .CloseDiscInfoBtn {
+    height: 4vh;
+    width: 12vw;
+  }
 }

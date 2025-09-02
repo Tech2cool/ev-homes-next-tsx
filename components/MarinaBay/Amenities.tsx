@@ -65,9 +65,9 @@ const AmenitiesMain = () => {
             </div>
           </div>
              <div className={styles.AmenitesInfo}>
-                <p> <span style={{color:"gold"}}>🏊 Zuma 23</span> – An infinity pool with stunning sea views, perfect for relaxation.</p>
-                <p> <span style={{color:"gold"}}>🌌Crystal Venue 23 </span> – Kopar Khairane’s first sky banquet hall for special events.</p>
-                <p><span  style={{color:"gold"}}>🛝 23 Play Land </span> – A vibrant, specially designed kids’ play area.</p>
+                <p> <span style={{color:"rgb(179, 135, 53)"}}>🏊 Zuma 23</span> – An infinity pool with stunning sea views, perfect for relaxation.</p>
+                <p> <span style={{color:"rgb(179, 135, 53)"}}>🌌Crystal Venue 23 </span> – Kopar Khairane’s first sky banquet hall for special events.</p>
+                <p><span  style={{color:"rgb(179, 135, 53)"}}>🛝 23 Play Land </span> – A vibrant, specially designed kids’ play area.</p>
               </div>
               
 
@@ -110,9 +110,9 @@ const AmenitiesMain = () => {
                 
               </div>
               <div className={styles.AmentiesInfoTwo}>
-                <p><span style={{color:"gold"}}>🏋️ Titan 23  </span>– A fully equipped gym for your health goals.</p>
-                <p><span style={{color:"gold"}}>🧘‍♀️ Dhyana Center 23 </span>– A tranquil sea-facing meditation center.</p>
-                <p><span style={{color:"gold"}}>🏃‍♂️ Dash 23</span> – A jogging track for fitness lovers</p>
+                <p><span style={{color:"rgb(179, 135, 53)"}}>🏋️ Titan 23  </span>– A fully equipped gym for your health goals.</p>
+                <p><span style={{color:"rgb(179, 135, 53)"}}>🧘‍♀️ Dhyana Center 23 </span>– A tranquil sea-facing meditation center.</p>
+                <p><span style={{color:"rgb(179, 135, 53)"}}>🏃‍♂️ Dash 23</span> – A jogging track for fitness lovers</p>
               </div>
 
         </div>

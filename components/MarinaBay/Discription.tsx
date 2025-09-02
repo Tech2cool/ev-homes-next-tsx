@@ -75,6 +75,7 @@ const Discription = () => {
                   fontSize: "2rem",
                   marginBottom: "1vw",
                   marginTop: "2vw",
+                  whiteSpace:"nowrap"
                 }}
               >
                 {" "}
