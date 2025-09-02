@@ -306,7 +306,7 @@
 
     .heroBackground {
       height: 28vh;
-
+margin-top: 5vh;
     }
 
     .subtext {
@@ -317,10 +317,11 @@
 
   }
 
-  @media screen and (min-width: 451px) and (max-width: 700px) {
+  @media screen and (min-width: 450px) and (max-width: 700px) {
 
     .heroBackground {
-      height: 42vh;
+      height: 42vh;margin-top: 3vh;
+
     }
 
     .subtext {

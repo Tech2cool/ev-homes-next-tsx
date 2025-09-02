@@ -425,6 +425,9 @@ font-weight: 600;
     padding: 0.5rem;
   }}
  @media screen and (max-width: 900px){
+    .cardContainer {
+    height: 55vh;
+  }
  .nodipaly {
     display: none;
   }

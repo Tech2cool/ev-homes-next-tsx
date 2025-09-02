@@ -46,12 +46,12 @@ color: black;
 }
 
 .searchButton {
-  background: #007bff;
+  background: transparent;
   border: none;
   padding: 0.4rem 0.5rem;
   border-radius: 5px;
   cursor: pointer;
-  color: white;
+  color: #007bff;
 }
 :global(html.light) .searchButton {
     color: #007bff;
@@ -247,5 +247,13 @@ flex-direction: column;
 .nodisplaymobile{
     display: none;
    
+  }
+
+}
+ @media screen and (min-width:615) and (max-width: 900px){
+
+
+   .searchContainer {
+    width: 40vw;
   }
 }
