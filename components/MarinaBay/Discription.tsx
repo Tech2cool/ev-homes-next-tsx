@@ -5,14 +5,40 @@ import "../../public/images/DisImage.webp";
 import { useState } from "react";
 import "../../public/images/DiscImgTwo.webp";
 import { CiLocationOn } from "react-icons/ci";
+import "./../../public/images/marketIcon.webp";
+import "./../../public/images/hospitalIcon.webp";
+import "./../../public/images/academyIcon.webp";
+import "./../../public/images/railwayIcon.webp";
+import { useRef, useEffect } from "react";
 
 const Discription = () => {
   const [showInfo, setShowInfo] = useState(false);
-  const [highlight,setShowlight]=useState(false);
+  const [highlight, setShowlight] = useState(false);
+  const [showPrime, setShowPrime] = useState(false);
 
-  const handleHighlight = ()=>{
-    setShowlight(true)
-  }
+  const primeRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function handleClickOutside(event:MouseEvent) {
+      if(primeRef.current &&  primeRef.current.contains(event.target as Node)){
+        setShowPrime(false);
+      } else{
+         setShowPrime(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  // if (!showPrime) return null;
+  const handleShowPrime = () => {
+    setShowPrime(true);
+  };
+
+  const handleHighlight = () => {
+    setShowlight(true);
+  };
   const handleClose = () => {
     setShowInfo(false);
   };
@@ -75,7 +101,7 @@ const Discription = () => {
                   fontSize: "2rem",
                   marginBottom: "1vw",
                   marginTop: "2vw",
-                  whiteSpace:"nowrap"
+                  whiteSpace: "nowrap",
                 }}
               >
                 {" "}
@@ -85,7 +111,7 @@ const Discription = () => {
                 Welcome to EV 23 Malibu West 🌴✨ Ultra-Luxury Living Inspired
                 by Malibu, California Developed by EV Homes Construction Pvt
                 Ltd, a name synonymous with quality and innovation, EV 23 Malibu
-                West is an ultra-luxury residential project located in Kopar 
+                West is an ultra-luxury residential project located in Kopar
                 Khairane Sector 23, Navi Mumbai. Inspired by the opulent
                 beachfront lifestyle of Malibu, California, this development
                 offers a range of 2 BHK and 3 BHK sea-facing residences designed
@@ -112,60 +138,75 @@ const Discription = () => {
                 to book your viewing appointment! 🌴 EV 23 Malibu West – Where
                 Dreams Meet Reality. 🌟
               </p>
-              <button
-                onClick={handleClose}
-                
-                className={styles.CloseDiscInfoBtn}
-              >
+              <button onClick={handleClose} className={styles.CloseDiscInfoBtn}>
                 Cancel
               </button>
             </div>
           </div>
         )}
-      </div>
-      {/* prime location section */}
-      <div className={styles.PrimeLocationMain} >
-  <button 
-    onClick={()=>highlight? setShowlight(false) : setShowlight(true)} 
-    className={styles.IconButton}
-    aria-label="Show Prime Location"
-  >
-    <CiLocationOn className={styles.LandMarkIcon} />
-  </button>
-      </div>
-      <div className={styles.IconBottom}></div>
-      {/* inside content of landmarkicon */}
-      { highlight && ( 
-      <div className={styles.PrimeLocationMain}>
-        <h2 className={styles.LocationHeading}>📍 Prime Location</h2>
-        <p style={{ fontSize: "1rem" }}>
-          Situated in Kopar Khairane Sector 23{" "}
-        </p>
-        <p>this project offers easy access to key locations such as:</p>
-
-        <div className={styles.LocationHighlights}>
-          <div className={styles.LandMarkImg}>
-            <img src="images/marketIcon.webp" alt="marketimg" />
-            <p  className={styles.highlightTag}style={{paddingTop:"5vw"}}>Local Market & D-Mart for daily essentials.</p>
-          </div>
-       
-          <div className={styles.LandMarkImg}>
-            <img src="/images/hospitalIcon.webp" alt="hospital" />
-            <div className={styles.HighlightTagline}>
-            <p style={{paddingTop:"5vw"}}>Hospitals for your healthcare needs.</p>
-            </div>
-          </div>
-          <div className={styles.LandMarkImg}>
-            <img src="/images/academyIcon.webp" alt="acadamy" />
-            <p style={{paddingTop:"5vw"}}>Hospitals for your healthcare needs.</p>
-          </div>
-          <div className={styles.LandMarkImg}>
-            <img src="/images/railwayIcon.webp" alt="railway" />
-            <p style={{paddingTop:"5vw"}}>Kopar Khairane Railway Station for seamless connectivity.</p>
-          </div>
+        <div className={styles.LandmarkMain}>
+          <CiLocationOn
+            className={styles.LandMarkIcon}
+            onClick={handleShowPrime}
+          />
+          <div className={styles.IconBottom}></div>
+          <p className={styles.LandmarkAbout}>
+            📍 Want to know why this location is prime? Click me!
+          </p>
         </div>
+        {showPrime && (
+          <div className={styles.primeMain} ref={primeRef}>
+            <div className={styles.primeContent}>
+              <h2 className={styles.PrimeHeading}>📍Prime Location</h2>
+              <div className={styles.PrimeTag}>
+                <p>Situated in Kopar Khairane Sector 23 ,</p>
+                <p>this project offers easy access to key locations such as:</p>
+                <div className={styles.primeImagesContainer}>
+                  <div className={styles.PrimeCircle}>
+                    <img
+                      src="/images/marketIcon.webp"
+                      className={styles.primeimg}
+                    />
+                    <p className={styles.PrimeText}>
+                      Local Market & D-Mart for daily essentials.
+                    </p>
+                  </div>
+
+                  <div className={styles.PrimeCircle}>
+                    <img
+                      src="/images/hospitalIcon.webp"
+                      className={styles.primeimg}
+                    />
+                    <p className={styles.PrimeText}>
+                      Hospitals for your healthcare needs.
+                    </p>
+                  </div>
+                  <div className={styles.PrimeCircle}>
+                    <img
+                      src="/images/academyIcon.webp"
+                      className={styles.primeimg}
+                    />
+                    <p className={styles.PrimeText}>
+                      Christ Academy for quality education.
+                    </p>
+                  </div>
+                  <div className={styles.PrimeCircle}>
+                    <img
+                      src="/images/railwayIcon.webp"
+                      className={styles.primeimg}
+                    />
+                    <p className={styles.PrimeText}>
+                      Kopar Khairane Railway Station for seamless connectivity.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div></div>
+          </div>
+        )}
       </div>
-)}
 
       {/* images */}
       <img

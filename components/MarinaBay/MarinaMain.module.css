@@ -1,18 +1,19 @@
-    body {
-    font-family: Playfair Display,serif;
-    }
-    
-.MainContainer{
-    display: flex;
-    flex-direction: column;
-      font-family: Playfair Display,serif;
+body ,html{
+  font-family: Playfair Display, serif;
+  overflow-x: hidden;
+  width: 100%;
 }
-    @media screen and (min-width:200px) and (max-width:615px){
-        body {
-     font-family: Playfair Display,serif;
-    }
 
-    }
-    .Amenities{
-         font-family: Playfair Display,serif;
-    }
+.MainContainer {
+  display: flex;
+  flex-direction: column;
+  font-family: Playfair Display, serif;
+}
+@media screen and (min-width: 200px) and (max-width: 615px) {
+  body {
+    font-family: Playfair Display, serif;
+  }
+}
+.Amenities {
+  font-family: Playfair Display, serif;
+}
