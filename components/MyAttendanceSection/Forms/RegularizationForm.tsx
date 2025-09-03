@@ -1,29 +1,32 @@
 "use client";
 import React, { useRef, useState } from "react";
 import styles from "./leaveform.module.css";
-import { FaCalendarDay, FaClock } from "react-icons/fa";
+import { FaCalendarDays } from "react-icons/fa6";
 import { MdOutlineFeedback } from "react-icons/md";
-import { FaCalendarDays, FaClockRotateLeft } from "react-icons/fa6";
+import { Clock } from "lucide-react";
 
-const RegularizationForm = ({ oncancel }) => {
-  const [checkIn, setcheckIn] = useState("");
-  const [checkout, setcheckout] = useState("");
-  const [regularizatype, setregularizatype] = useState("Week-Off");
-  const [reason, setreason] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+interface RegularizationFormProps {
+  oncancel: () => void;
+}
 
-  const checkInRef = useRef(null);
-  const checkOutRef = useRef(null);
+const RegularizationForm: React.FC<RegularizationFormProps> = ({ oncancel }) => {
+  const [checkIn, setcheckIn] = useState<string>("");
+  const [checkout, setcheckout] = useState<string>("");
+  const [regularizatype, setregularizatype] = useState<string>("Week-Off");
+  const [reason, setreason] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
-  const handleSubmit = async (e) => {
+  const checkInRef = useRef<HTMLInputElement | null>(null);
+  const checkOutRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage("");
 
-    // Dummy payload
     const payload = {
-      regularizationDate: "2025-04-06", // Ideally, this should be dynamic
+      regularizationDate: "2025-04-06",
       regularizationType: regularizatype,
       checkIn: regularizatype !== "Week-Off" ? checkIn : "NA",
       checkOut: regularizatype !== "Week-Off" ? checkout : "NA",
@@ -33,9 +36,7 @@ const RegularizationForm = ({ oncancel }) => {
     };
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       console.log("Regularization submitted:", payload);
 
       setSuccessMessage("Regularization submitted successfully!");
@@ -46,7 +47,7 @@ const RegularizationForm = ({ oncancel }) => {
 
       setTimeout(() => {
         setSuccessMessage("");
-        oncancel(); // Close modal
+        oncancel();
       }, 1500);
     } catch (error) {
       console.error("Error submitting:", error);
@@ -67,8 +68,7 @@ const RegularizationForm = ({ oncancel }) => {
 
       <div className={styles.formControl}>
         <label htmlFor="select">
-          <FaCalendarDays /> Regularization Type{" "}
-          <span style={{ color: "red" }}>*</span>
+          <FaCalendarDays /> Regularization Type <span style={{ color: "red" }}>*</span>
         </label>
         <select
           id="select"
@@ -84,13 +84,8 @@ const RegularizationForm = ({ oncancel }) => {
 
       {regularizatype !== "Week-Off" && (
         <>
-          <div
-            className={styles.formControl}
-            onClick={() => checkInRef.current?.showPicker()}
-          >
-            <label>
-              <FaClockRotateLeft /> Check In <span style={{ color: "red" }}>*</span>
-            </label>
+          <div className={styles.formControl} onClick={() => checkInRef.current?.showPicker()}>
+            <label><Clock /> Check In <span style={{ color: "red" }}>*</span></label>
             <input
               type="time"
               ref={checkInRef}
@@ -100,13 +95,8 @@ const RegularizationForm = ({ oncancel }) => {
             />
           </div>
 
-          <div
-            className={styles.formControl}
-            onClick={() => checkOutRef.current?.showPicker()}
-          >
-            <label>
-              <FaClockRotateLeft /> Check Out <span style={{ color: "red" }}>*</span>
-            </label>
+          <div className={styles.formControl} onClick={() => checkOutRef.current?.showPicker()}>
+            <label><Clock /> Check Out <span style={{ color: "red" }}>*</span></label>
             <input
               type="time"
               ref={checkOutRef}
@@ -119,9 +109,7 @@ const RegularizationForm = ({ oncancel }) => {
       )}
 
       <div className={styles.formControl}>
-        <label htmlFor="reason">
-          <MdOutlineFeedback /> Reason <span style={{ color: "red" }}>*</span>
-        </label>
+        <label htmlFor="reason"><MdOutlineFeedback /> Reason <span style={{ color: "red" }}>*</span></label>
         <textarea
           id="reason"
           value={reason}
@@ -133,12 +121,7 @@ const RegularizationForm = ({ oncancel }) => {
       </div>
 
       <div className={styles.buttonRow}>
-        <button
-          className={styles.cancelButton}
-          type="button"
-          onClick={oncancel}
-          disabled={loading}
-        >
+        <button className={styles.cancelButton} type="button" onClick={oncancel} disabled={loading}>
           Cancel
         </button>
         <button className={styles.submitButton} type="submit" disabled={loading}>
@@ -146,9 +129,7 @@ const RegularizationForm = ({ oncancel }) => {
         </button>
       </div>
 
-      {successMessage && (
-        <div className={styles.successMessage}>{successMessage}</div>
-      )}
+      {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
     </form>
   );
 };

@@ -1,8 +1,5 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import styles from "./dashboard.module.css";
 import {
  
 } from "lucide-react";
@@ -11,7 +8,6 @@ import { useUser } from "@/providers/userContext";
 import DataAnalyzerDashboardPage from "@/components/dashboard-components/data-analyzer/dashboard";
 
 const DashboardPage = () => {
-  const router = useRouter();
   const { user, loading } = useUser(); 
 
 
@@ -24,12 +20,6 @@ const DashboardPage = () => {
  return <DashboardSalesPage />;
     }
     // else let them stay on this page
-
-  
-  const handleLogout = () => {
-    router.push("/");
-  };
-
 
   //
 

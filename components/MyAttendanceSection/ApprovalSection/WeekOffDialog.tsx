@@ -1,52 +1,67 @@
 import React, { useRef, useState } from "react";
 import styles from "./leavedialog.module.css";
 import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
-import { RiAttachment2 } from "react-icons/ri";
 import { useClickOutside } from "../useClickOutside";
 import Image from "next/image";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const ReimbursementDialog = ({ reim, onClose }) => {
-  const [showReimRejectionReason, setShowReimRejectionReason] = useState(false);
-  const [showReimApproveReason, setShowReimApproveReason] = useState(false);
-  const [reimRejectionText, setReimRejectionText] = useState("");
-  const [reimApproveText, setReimApproveText] = useState("");
-  const reimDialogRef = useRef(null);
+interface WeekoffSelect {
+  appliedOn?: string;
+  weekoffdate?: string;
+  employeeName?: string;
+  status?: string;
+  reason?: string;
+}
+
+interface WeekOffDialogProps {
+  weekoffSelect: WeekoffSelect | null;
+  onClose: () => void;
+}
+
+const WeekOffDialog: React.FC<WeekOffDialogProps> = ({ weekoffSelect, onClose }) => {
+  const [showWeekoffRejectionReason, setShowWeekoffRejectionReason] = useState<boolean>(false);
+  const [showWeekoffApproveReason, setShowWeekoffApproveReason] = useState<boolean>(false);
+  const [weekOffRejectionText, setWeekOffRejectionText] = useState<string>("");
+  const [weekoffApproveText, setWeekoffApproveText] = useState<string>("");
+  const weekOffDialogRef = useRef<HTMLDivElement>(null);
 
   useClickOutside({
-    refs: [reimDialogRef],
+    refs: [weekOffDialogRef],
     handler: onClose,
   });
 
-  if (!reim) return null;
+  if (!weekoffSelect) return null;
 
   return (
     <div className={styles.dialogOverlay}>
-      <div className={styles.dialogBox} ref={reimDialogRef}>
+      <div className={styles.dialogBox} ref={weekOffDialogRef}>
         <div className={styles.upperSection}>
-          <div className={styles.dialogHeader}>
-            Approve Reimbursement Request
-          </div>
+          <div className={styles.dialogHeader}>Approve WeekOff Request</div>
           <button onClick={onClose} className={styles.closeBtn}>
             X
           </button>
 
-          <div className={styles.dateSection}>
+          <div className={styles.dateSectionWeekOff}>
             <div className={styles.appliedOn}>
               <div className={styles.sectionhead}>Applied On:</div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(reim?.appliedOn)}</div>
+              <div className={styles.sectionvalue}>
+                {dateFormatOnly(weekoffSelect?.appliedOn || "")}
+              </div>
             </div>
             <div className={styles.date}>
-              <div className={styles.sectionhead}>Reimburse Date</div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(reim?.reimDate)}</div>
+              <div className={styles.sectionhead}>WeekOff Date</div>
+              <div className={styles.sectionvalue}>
+                {dateFormatOnly(weekoffSelect?.weekoffdate || "")}
+              </div>
             </div>
             <div className={styles.number}>
-              <div className={styles.sectionhead}>Amount</div>
-              <div className={styles.sectionvalue}>{reim?.amount}</div>
+              <div className={styles.sectionhead}>Remark</div>
+              <div className={styles.sectionvalue}>NA</div>
             </div>
           </div>
         </div>
-        <div className={styles.lowerReimSection}>
+
+        <div className={styles.lowerWeekOffSection}>
           <div className={styles.name}>
             <div className={styles.profileContainer}>
               <Image
@@ -58,26 +73,16 @@ const ReimbursementDialog = ({ reim, onClose }) => {
                 priority={true}
               />
               <div className={styles.empDetails}>
-                <div className={styles.empName}>{reim?.employeeName}</div>
-                {/* <div className={styles.empPhone}>123456789</div> */}
+                <div className={styles.empName}>{weekoffSelect?.employeeName}</div>
+                <div className={styles.empPhone}>123456789</div>
               </div>
             </div>
-            <div className={styles.statusButton}>{reim?.status}</div>
+            <div className={styles.statusButton}>{weekoffSelect?.status}</div>
           </div>
 
           <div className={styles.details}>
-            <div className={styles.type}>Reim Type : {reim.reimburseType}</div>
-            <div className={styles.type}>Approval By : {reim.approvalBy}</div>
-            <div className={styles.reason}>Remark : {reim.remark}</div>
-          </div>
-          <div className={styles.reimTwoAttachments}>
-            <div className={styles.attachment}>
-              {" "}
-              <RiAttachment2 /> attached file
-            </div>
-            <div className={styles.attachment}>
-              {" "}
-              <RiAttachment2 /> attached bill invoice
+            <div className={styles.reason}>
+              WeekOff Reason : {weekoffSelect?.reason}
             </div>
           </div>
         </div>
@@ -91,26 +96,24 @@ const ReimbursementDialog = ({ reim, onClose }) => {
               <div className={styles.iconCircle}>
                 <FaArrowRight />
               </div>
-              <div className={styles.cardCount}> 1/3</div>
+              <div className={styles.cardCount}>1/3</div>
             </div>
 
             <div className={styles.rejapprove}>
               <div
                 className={styles.rejectButton}
-                onClick={() =>
-                  setShowReimRejectionReason(!showReimRejectionReason)
-                }
+                onClick={() => setShowWeekoffRejectionReason(!showWeekoffRejectionReason)}
               >
                 <FaTimes className={styles.crossIcon} />
               </div>
 
-              {showReimRejectionReason && (
+              {showWeekoffRejectionReason && (
                 <div className={styles.rejectionTooltip}>
                   <textarea
                     className={styles.rejectionTextarea}
                     placeholder="Enter reason for rejection..."
-                    value={reimRejectionText}
-                    onChange={(e) => setReimRejectionText(e.target.value)}
+                    value={weekOffRejectionText}
+                    onChange={(e) => setWeekOffRejectionText(e.target.value)}
                   />
                   <button className={styles.submitRejection}>Submit</button>
                 </div>
@@ -118,18 +121,18 @@ const ReimbursementDialog = ({ reim, onClose }) => {
 
               <div
                 className={styles.approveButton}
-                onClick={() => setShowReimApproveReason(!showReimApproveReason)}
+                onClick={() => setShowWeekoffApproveReason(!showWeekoffApproveReason)}
               >
                 Approve
               </div>
 
-              {showReimApproveReason && (
+              {showWeekoffApproveReason && (
                 <div className={styles.approveToolTip}>
                   <textarea
                     className={styles.approveTextArea}
                     placeholder="Enter reason for approve..."
-                    value={reimApproveText}
-                    onChange={(e) => setReimApproveText(e.target.value)}
+                    value={weekoffApproveText}
+                    onChange={(e) => setWeekoffApproveText(e.target.value)}
                   />
                   <button className={styles.submitRejection}>Submit</button>
                 </div>
@@ -142,5 +145,4 @@ const ReimbursementDialog = ({ reim, onClose }) => {
   );
 };
 
-export default ReimbursementDialog;
-
+export default WeekOffDialog;

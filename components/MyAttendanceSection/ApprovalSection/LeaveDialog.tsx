@@ -6,12 +6,28 @@ import { useClickOutside } from "../useClickOutside";
 import Image from "next/image";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const LeaveDialog = ({ leaveSelect, onClose }) => {
+interface LeaveSelect {
+  appliedOn: string | Date;
+  startDate: string | Date;
+  endDate: string | Date;
+  numberOfDays: number;
+  employeeName: string;
+  status: string;
+  leaveType: string;
+  reason: string;
+}
+
+interface LeaveDialogProps {
+  leaveSelect: LeaveSelect | null;
+  onClose: () => void;
+}
+
+const LeaveDialog: React.FC<LeaveDialogProps> = ({ leaveSelect, onClose }) => {
   const [showRejectionReason, setShowRejectionReason] = useState(false);
   const [showApproveReason, setShowApproveReason] = useState(false);
   const [rejectionText, setRejectionText] = useState("");
   const [approveText, setApproveText] = useState("");
-  const dialogRef = useRef(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useClickOutside({
     refs: [dialogRef],
@@ -32,23 +48,26 @@ const LeaveDialog = ({ leaveSelect, onClose }) => {
           <div className={styles.dateSection}>
             <div className={styles.appliedOn}>
               <div className={styles.sectionhead}>Applied On:</div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(leaveSelect?.appliedOn)}</div>
+              <div className={styles.sectionvalue}>
+                {dateFormatOnly(leaveSelect.appliedOn)}
+              </div>
             </div>
             <div className={styles.date}>
               <div className={styles.sectionhead}>Date</div>
               <div className={styles.sectionvalue}>
-                {dateFormatOnly(leaveSelect?.startDate)} to {dateFormatOnly(leaveSelect?.endDate)}
-
+                {dateFormatOnly(leaveSelect.startDate)} to{" "}
+                {dateFormatOnly(leaveSelect.endDate)}
               </div>
             </div>
             <div className={styles.number}>
               <div className={styles.sectionhead}>Number Of Days.</div>
               <div className={styles.sectionvalue}>
-                {leaveSelect?.numberOfDays} days
+                {leaveSelect.numberOfDays} days
               </div>
             </div>
           </div>
         </div>
+
         <div className={styles.lowerSection}>
           <div className={styles.name}>
             <div className={styles.profileContainer}>
@@ -58,22 +77,20 @@ const LeaveDialog = ({ leaveSelect, onClose }) => {
                 className={styles.profilePic}
                 width={100}
                 height={100}
-                priority={true}
+                priority
               />
               <div className={styles.empDetails}>
                 <div className={styles.empName}>{leaveSelect.employeeName}</div>
-                {/* <div className={styles.empPhone}>123456789</div> */}
               </div>
             </div>
-            <div className={styles.statusButton}>{leaveSelect?.status}</div>
+            <div className={styles.statusButton}>{leaveSelect.status}</div>
           </div>
 
           <div className={styles.details}>
-            <div className={styles.type}>Leave Type : {leaveSelect?.leaveType}</div>
-            <div className={styles.reason}>Leave Reason : {leaveSelect?.reason}</div>
+            <div className={styles.type}>Leave Type : {leaveSelect.leaveType}</div>
+            <div className={styles.reason}>Leave Reason : {leaveSelect.reason}</div>
           </div>
           <div className={styles.attachment}>
-            {" "}
             <RiAttachment2 /> attachment
           </div>
         </div>
@@ -87,7 +104,7 @@ const LeaveDialog = ({ leaveSelect, onClose }) => {
               <div className={styles.iconCircle}>
                 <FaArrowRight />
               </div>
-              <div className={styles.cardCount}> 1/3</div>
+              <div className={styles.cardCount}>1/3</div>
             </div>
 
             <div className={styles.rejapprove}>

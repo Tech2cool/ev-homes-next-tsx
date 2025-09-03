@@ -3,52 +3,35 @@ import reimstyles from "./reimbursementFilterDialog.module.css";
 import styles from "../../components/MyAttendanceSection/Forms/leaveform.module.css";
 import { FaCalendarAlt, FaChevronDown } from "react-icons/fa";
 import { format } from "date-fns";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 import { useClickOutside } from "../MyAttendanceSection/useClickOutside";
 import DateFilter from "../DateFilter";
-// import DatePicker from "../DatePicker";
+import { Range } from "react-date-range";
+interface ReimbursementFilterDialogProps {
+  onClose: () => void;
+  onApplyFilter: (option: any) => void;
+}
 
-export default function ReimbursementFilterDialog({ onClose, onApplyFilter }) {
-  // const [selectedDate, setSelectedDate] = useState(new Date());
-  // const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // const toggleCalendar = () => {
-  //   setShowDatePicker((prev) => !prev);
-  // };
-
-  // const formattedDate = format(selectedDate, "dd-MM-yyyy");
-
+const ReimbursementFilterDialog: React.FC<ReimbursementFilterDialogProps> = ({ onClose, onApplyFilter }) => {
   const [showCalendar, setShowCalendar] = useState(false);
-  const dialogRef = useRef(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
-  const [dateRange, setDateRange] = useState([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
+const [dateRange, setDateRange] = useState<Range[]>([
+  {
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  },
+]);
+  const toggleCalendar = () => setShowCalendar((prev) => !prev);
 
-  const toggleCalendar = () => {
-    setShowCalendar((prev) => !prev);
-  };
+const formattedDateRange = `${dateRange[0].startDate ? format(dateRange[0].startDate, "dd-MM-yyyy") : ""} - ${dateRange[0].endDate ? format(dateRange[0].endDate, "dd-MM-yyyy") : ""}`;
 
-  const handleSelect = (ranges) => {
-    setDateRange([ranges.selection]);
-    setShowCalendar(false);
-  };
-
-  const formattedDateRange = `${format(
-    dateRange[0].startDate,
-    "dd-MM-yyyy"
-  )} - ${format(dateRange[0].endDate, "dd-MM-yyyy")}`;
-
-  const calendarRef = useRef(null);
+  const calendarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
         setShowCalendar(false);
       }
     };
@@ -83,53 +66,41 @@ export default function ReimbursementFilterDialog({ onClose, onApplyFilter }) {
           <FaChevronDown className={reimstyles.arrowIcon} />
         </div>
 
-        {/* {showDatePicker && (
-          <DatePicker
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            onClose={() => setShowDatePicker(false)}
-          />
-        )} */}
-
-        {showCalendar && (
-          <DateFilter
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-            onClose={() => setShowCalendar(false)}
-          />
-        )}
+        {showCalendar && <DateFilter dateRange={dateRange} setDateRange={setDateRange} onClose={() => setShowCalendar(false)} />}
 
         <div className={styles.formControl}>
           <label htmlFor="select">Reimbursement Type </label>
-          <select name="select" id="select">
+          <select id="select">
             <option value="travel">Travel</option>
             <option value="phone">Phone</option>
             <option value="food">Food</option>
             <option value="miscellaneous">Miscellaneous</option>
           </select>
         </div>
+
         <div className={styles.formControl}>
-          <label htmlFor="select">Paid By</label>
-          <select name="select" id="select">
+          <label htmlFor="selectPaidBy">Paid By</label>
+          <select id="selectPaidBy">
             <option value="company">Company</option>
             <option value="emp">Employee</option>
           </select>
         </div>
+
         <div className={styles.formControl}>
-          <label htmlFor="select">Status </label>
-          <select name="select" id="select">
+          <label htmlFor="selectStatus">Status </label>
+          <select id="selectStatus">
             <option value="pending">Pending</option>
             <option value="reject">Rejected</option>
             <option value="approve">Approved</option>
           </select>
         </div>
-        <button
-          className={reimstyles.applyButton}
-          // onClick={() => onApplyFilter(selectedOption)}
-        >
+
+        <button className={reimstyles.applyButton} onClick={() => onApplyFilter("FilterOption")}>
           Export
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default ReimbursementFilterDialog;

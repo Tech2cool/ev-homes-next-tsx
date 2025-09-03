@@ -1,30 +1,53 @@
 import React, { useRef, useState } from "react";
 import styles from "./leavedialog.module.css";
 import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
+import { RiAttachment2 } from "react-icons/ri";
 import { useClickOutside } from "../useClickOutside";
 import Image from "next/image";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const ShiftRequestDialog = ({ shift, onClose }) => {
-  const [showShiftRejectionReason, setShowShiftRejectionReason] =
-    useState(false);
-  const [showShiftApproveReason, setShowShiftApproveReason] = useState(false);
-  const [shiftRejectionText, setShiftRejectionText] = useState("");
-  const [shiftApproveText, setShiftApproveText] = useState("");
-  const shiftDialogRef = useRef(null);
+interface ReimbursementData {
+  employeeName: string;
+  appliedOn: Date;
+  reimDate: Date;
+  reimburseType: string;
+  amount: number;
+  approvalBy: string;
+  remark: string;
+  attachFile?: string;
+  attachBillInvoice?: string;
+  status: string;
+}
+
+interface ReimbursementDialogProps {
+  reim: ReimbursementData | null;
+  onClose: () => void;
+}
+
+const ReimbursementDialog: React.FC<ReimbursementDialogProps> = ({
+  reim,
+  onClose,
+}) => {
+  const [showReimRejectionReason, setShowReimRejectionReason] = useState(false);
+  const [showReimApproveReason, setShowReimApproveReason] = useState(false);
+  const [reimRejectionText, setReimRejectionText] = useState("");
+  const [reimApproveText, setReimApproveText] = useState("");
+  const reimDialogRef = useRef<HTMLDivElement>(null);
 
   useClickOutside({
-    refs: [shiftDialogRef],
+    refs: [reimDialogRef],
     handler: onClose,
   });
 
-  if (!shift) return null;
+  if (!reim) return null;
 
   return (
     <div className={styles.dialogOverlay}>
-      <div className={styles.dialogBox} ref={shiftDialogRef}>
+      <div className={styles.dialogBox} ref={reimDialogRef}>
         <div className={styles.upperSection}>
-          <div className={styles.dialogHeader}>Approve Shift Request</div>
+          <div className={styles.dialogHeader}>
+            Approve Reimbursement Request
+          </div>
           <button onClick={onClose} className={styles.closeBtn}>
             X
           </button>
@@ -32,21 +55,24 @@ const ShiftRequestDialog = ({ shift, onClose }) => {
           <div className={styles.dateSection}>
             <div className={styles.appliedOn}>
               <div className={styles.sectionhead}>Applied On:</div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(shift?.appliedOn)}</div>
+              <div className={styles.sectionvalue}>
+                {dateFormatOnly(reim.appliedOn)}
+              </div>
             </div>
             <div className={styles.date}>
-              <div className={styles.sectionhead}>Shift Request Date</div>
+              <div className={styles.sectionhead}>Reimburse Date</div>
               <div className={styles.sectionvalue}>
-                {dateFormatOnly(shift?.shiftrequestdate)}
+                {dateFormatOnly(reim.reimDate)}
               </div>
             </div>
             <div className={styles.number}>
-              <div className={styles.sectionhead}>Number of Days</div>
-              <div className={styles.sectionvalue}>1</div>
+              <div className={styles.sectionhead}>Amount</div>
+              <div className={styles.sectionvalue}>{reim.amount}</div>
             </div>
           </div>
         </div>
-        <div className={styles.lowerShiftSection}>
+
+        <div className={styles.lowerReimSection}>
           <div className={styles.name}>
             <div className={styles.profileContainer}>
               <Image
@@ -55,19 +81,27 @@ const ShiftRequestDialog = ({ shift, onClose }) => {
                 className={styles.profilePic}
                 width={100}
                 height={100}
-                priority={true}
+                priority
               />
               <div className={styles.empDetails}>
-                <div className={styles.empName}>{shift?.employeeName}</div>
-                {/* <div className={styles.empPhone}>123456789</div> */}
+                <div className={styles.empName}>{reim.employeeName}</div>
               </div>
             </div>
-            <div className={styles.statusButton}>{shift?.status}</div>
+            <div className={styles.statusButton}>{reim.status}</div>
           </div>
 
           <div className={styles.details}>
-            <div className={styles.type}>Shift : {shift?.shift}</div>
-            <div className={styles.reason}>Reason : {shift?.reason}</div>
+            <div className={styles.type}>Reim Type : {reim.reimburseType}</div>
+            <div className={styles.type}>Approval By : {reim.approvalBy}</div>
+            <div className={styles.reason}>Remark : {reim.remark}</div>
+          </div>
+          <div className={styles.reimTwoAttachments}>
+            <div className={styles.attachment}>
+              <RiAttachment2 /> attached file
+            </div>
+            <div className={styles.attachment}>
+              <RiAttachment2 /> attached bill invoice
+            </div>
           </div>
         </div>
 
@@ -80,26 +114,26 @@ const ShiftRequestDialog = ({ shift, onClose }) => {
               <div className={styles.iconCircle}>
                 <FaArrowRight />
               </div>
-              <div className={styles.cardCount}> 1/3</div>
+              <div className={styles.cardCount}>1/3</div>
             </div>
 
             <div className={styles.rejapprove}>
               <div
                 className={styles.rejectButton}
                 onClick={() =>
-                  setShowShiftRejectionReason(!showShiftRejectionReason)
+                  setShowReimRejectionReason(!showReimRejectionReason)
                 }
               >
                 <FaTimes className={styles.crossIcon} />
               </div>
 
-              {showShiftRejectionReason && (
+              {showReimRejectionReason && (
                 <div className={styles.rejectionTooltip}>
                   <textarea
                     className={styles.rejectionTextarea}
                     placeholder="Enter reason for rejection..."
-                    value={shiftRejectionText}
-                    onChange={(e) => setShiftRejectionText(e.target.value)}
+                    value={reimRejectionText}
+                    onChange={(e) => setReimRejectionText(e.target.value)}
                   />
                   <button className={styles.submitRejection}>Submit</button>
                 </div>
@@ -107,20 +141,18 @@ const ShiftRequestDialog = ({ shift, onClose }) => {
 
               <div
                 className={styles.approveButton}
-                onClick={() =>
-                  setShowShiftApproveReason(!showShiftApproveReason)
-                }
+                onClick={() => setShowReimApproveReason(!showReimApproveReason)}
               >
                 Approve
               </div>
 
-              {showShiftApproveReason && (
+              {showReimApproveReason && (
                 <div className={styles.approveToolTip}>
                   <textarea
                     className={styles.approveTextArea}
                     placeholder="Enter reason for approve..."
-                    value={shiftApproveText}
-                    onChange={(e) => setShiftApproveText(e.target.value)}
+                    value={reimApproveText}
+                    onChange={(e) => setReimApproveText(e.target.value)}
                   />
                   <button className={styles.submitRejection}>Submit</button>
                 </div>
@@ -133,4 +165,4 @@ const ShiftRequestDialog = ({ shift, onClose }) => {
   );
 };
 
-export default ShiftRequestDialog;
+export default ReimbursementDialog;

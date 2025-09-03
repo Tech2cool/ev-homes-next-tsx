@@ -3,13 +3,19 @@ import styles from "./approvalsection.module.css";
 import Image from "next/image";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const ShiftRequestCard = ({
-  // employeeName,
-  // reason,
-  // shiftrequestdate,
-  // shift,
-  pendingShift,
-}) => {
+interface ShiftRequestData {
+  employeeName: string;
+  shiftrequestdate: Date;
+  shift: string;
+  reason: string;
+  status?: string;
+}
+
+interface ShiftRequestCardProps {
+  pendingShift: ShiftRequestData;
+}
+
+const ShiftRequestCard: React.FC<ShiftRequestCardProps> = ({ pendingShift }) => {
   return (
     <div className={styles.weekoffCard}>
       <div className={styles.shiftCardHeader}>
@@ -20,7 +26,7 @@ const ShiftRequestCard = ({
             className={styles.profilePic}
             width={100}
             height={100}
-            priority={true}
+            priority
           />
           <span className={styles.employeeName}>{pendingShift.employeeName}</span>
         </div>

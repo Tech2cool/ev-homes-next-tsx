@@ -1,14 +1,17 @@
 import React, { useRef, useState } from "react";
 import styles from "./leaveform.module.css";
-import { FaCalendarDay, FaFileUpload } from "react-icons/fa";
+import { FaCalendarDay } from "react-icons/fa";
 import { FaPersonWalkingLuggage } from "react-icons/fa6";
 import { MdOutlineFeedback } from "react-icons/md";
 
-const ShiftPlannerForm = ({oncencel}) => {
-  const [shiftrequestdate, setshiftrequestdate] = useState("");
-  const [reason, setreason] = useState("");
+interface ShiftPlannerFormProps {
+  oncencel: () => void;
+}
 
-  const shiftPlannerDateRef = useRef(null);
+const ShiftPlannerForm: React.FC<ShiftPlannerFormProps> = ({ oncencel }) => {
+  const [shiftrequestdate, setshiftrequestdate] = useState<string>("");
+  const [reason, setreason] = useState<string>("");
+  const shiftPlannerDateRef = useRef<HTMLInputElement>(null);
 
   return (
     <div>

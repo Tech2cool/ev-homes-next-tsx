@@ -175,7 +175,6 @@ import {
   FaSignInAlt,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { icons } from "lucide-react";
 interface DailyAttendance {
     presentCount?: number;
   absentCount?: number;

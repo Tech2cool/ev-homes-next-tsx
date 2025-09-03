@@ -5,46 +5,60 @@ import { useClickOutside } from "../useClickOutside";
 import Image from "next/image";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const WeekOffDialog = ({ weekoffSelect, onClose }) => {
-  const [showWeekoffRejectionReason, setShowWeekoffRejectionReason] =
-    useState(false);
-  const [showWeekoffApproveReason, setShowWeekoffApproveReason] =
-    useState(false);
-  const [weekOffRejectionText, setWeekOffRejectionText] = useState("");
-  const [weekoffApproveText, setWeekoffApproveText] = useState("");
-  const weekOffDialogRef = useRef(null);
+interface ShiftRequestData {
+  employeeName: string;
+  appliedOn: Date;
+  shiftrequestdate: Date;
+  shift: string;
+  reason: string;
+  status: string;
+}
+
+interface ShiftRequestDialogProps {
+  shift: ShiftRequestData | null;
+  onClose: () => void;
+}
+
+const ShiftRequestDialog: React.FC<ShiftRequestDialogProps> = ({ shift, onClose }) => {
+  const [showShiftRejectionReason, setShowShiftRejectionReason] = useState(false);
+  const [showShiftApproveReason, setShowShiftApproveReason] = useState(false);
+  const [shiftRejectionText, setShiftRejectionText] = useState("");
+  const [shiftApproveText, setShiftApproveText] = useState("");
+  const shiftDialogRef = useRef<HTMLDivElement>(null);
 
   useClickOutside({
-    refs: [weekOffDialogRef],
+    refs: [shiftDialogRef],
     handler: onClose,
   });
-  if (!weekoffSelect) return null;
+
+  if (!shift) return null;
 
   return (
     <div className={styles.dialogOverlay}>
-      <div className={styles.dialogBox} ref={weekOffDialogRef}>
+      <div className={styles.dialogBox} ref={shiftDialogRef}>
         <div className={styles.upperSection}>
-          <div className={styles.dialogHeader}>Approve WeekOff Request</div>
+          <div className={styles.dialogHeader}>Approve Shift Request</div>
           <button onClick={onClose} className={styles.closeBtn}>
             X
           </button>
 
-          <div className={styles.dateSectionWeekOff}>
+          <div className={styles.dateSection}>
             <div className={styles.appliedOn}>
               <div className={styles.sectionhead}>Applied On:</div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(weekoffSelect?.appliedOn)}</div>
+              <div className={styles.sectionvalue}>{dateFormatOnly(shift.appliedOn)}</div>
             </div>
             <div className={styles.date}>
-              <div className={styles.sectionhead}>WeekOff Date </div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(weekoffSelect?.weekoffdate)}</div>
+              <div className={styles.sectionhead}>Shift Request Date</div>
+              <div className={styles.sectionvalue}>{dateFormatOnly(shift.shiftrequestdate)}</div>
             </div>
             <div className={styles.number}>
-              <div className={styles.sectionhead}>Remark</div>
-              <div className={styles.sectionvalue}>NA</div>
+              <div className={styles.sectionhead}>Number of Days</div>
+              <div className={styles.sectionvalue}>1</div>
             </div>
           </div>
         </div>
-        <div className={styles.lowerWeekOffSection}>
+
+        <div className={styles.lowerShiftSection}>
           <div className={styles.name}>
             <div className={styles.profileContainer}>
               <Image
@@ -53,20 +67,18 @@ const WeekOffDialog = ({ weekoffSelect, onClose }) => {
                 className={styles.profilePic}
                 width={100}
                 height={100}
-                priority={true}
+                priority
               />
               <div className={styles.empDetails}>
-                <div className={styles.empName}>{weekoffSelect?.employeeName}</div>
-                <div className={styles.empPhone}>123456789</div>
+                <div className={styles.empName}>{shift.employeeName}</div>
               </div>
             </div>
-            <div className={styles.statusButton}>{weekoffSelect?.status}</div>
+            <div className={styles.statusButton}>{shift.status}</div>
           </div>
 
           <div className={styles.details}>
-            <div className={styles.reason}>
-              WeekOff Reason : {weekoffSelect?.reason}
-            </div>
+            <div className={styles.type}>Shift : {shift.shift}</div>
+            <div className={styles.reason}>Reason : {shift.reason}</div>
           </div>
         </div>
 
@@ -79,26 +91,24 @@ const WeekOffDialog = ({ weekoffSelect, onClose }) => {
               <div className={styles.iconCircle}>
                 <FaArrowRight />
               </div>
-              <div className={styles.cardCount}> 1/3</div>
+              <div className={styles.cardCount}>1/3</div>
             </div>
 
             <div className={styles.rejapprove}>
               <div
                 className={styles.rejectButton}
-                onClick={() =>
-                  setShowWeekoffRejectionReason(!showWeekoffRejectionReason)
-                }
+                onClick={() => setShowShiftRejectionReason(!showShiftRejectionReason)}
               >
                 <FaTimes className={styles.crossIcon} />
               </div>
 
-              {showWeekoffRejectionReason && (
+              {showShiftRejectionReason && (
                 <div className={styles.rejectionTooltip}>
                   <textarea
                     className={styles.rejectionTextarea}
                     placeholder="Enter reason for rejection..."
-                    value={weekOffRejectionText}
-                    onChange={(e) => setWeekOffRejectionText(e.target.value)}
+                    value={shiftRejectionText}
+                    onChange={(e) => setShiftRejectionText(e.target.value)}
                   />
                   <button className={styles.submitRejection}>Submit</button>
                 </div>
@@ -106,20 +116,18 @@ const WeekOffDialog = ({ weekoffSelect, onClose }) => {
 
               <div
                 className={styles.approveButton}
-                onClick={() =>
-                  setShowWeekoffApproveReason(!showWeekoffApproveReason)
-                }
+                onClick={() => setShowShiftApproveReason(!showShiftApproveReason)}
               >
                 Approve
               </div>
 
-              {showWeekoffApproveReason && (
+              {showShiftApproveReason && (
                 <div className={styles.approveToolTip}>
                   <textarea
                     className={styles.approveTextArea}
                     placeholder="Enter reason for approve..."
-                    value={weekoffApproveText}
-                    onChange={(e) => setWeekoffApproveText(e.target.value)}
+                    value={shiftApproveText}
+                    onChange={(e) => setShiftApproveText(e.target.value)}
                   />
                   <button className={styles.submitRejection}>Submit</button>
                 </div>
@@ -132,4 +140,4 @@ const WeekOffDialog = ({ weekoffSelect, onClose }) => {
   );
 };
 
-export default WeekOffDialog;
+export default ShiftRequestDialog;

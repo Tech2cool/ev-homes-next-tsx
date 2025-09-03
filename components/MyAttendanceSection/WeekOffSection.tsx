@@ -7,7 +7,14 @@ import WeekOffForm from "./Forms/WeekoffForm";
 import { useClickOutside } from "./useClickOutside";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const dummyWeekOffData = [
+interface WeekOffData {
+  appliedOn: string;
+  weekoffDate: string;
+  reason: string;
+  weekoffStatus: "approved" | "pending" | "rejected";
+}
+
+const dummyWeekOffData: WeekOffData[] = [
   {
     appliedOn: "2025-08-01",
     weekoffDate: "2025-08-07",
@@ -28,9 +35,9 @@ const dummyWeekOffData = [
   },
 ];
 
-const WeekOffSection = () => {
-  const modalRef = useRef(null);
-  const [filter, setFilter] = useState("All");
+const WeekOffSection: React.FC = () => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const [filter, setFilter] = useState<"All" | "approved" | "rejected" | "pending">("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useClickOutside({

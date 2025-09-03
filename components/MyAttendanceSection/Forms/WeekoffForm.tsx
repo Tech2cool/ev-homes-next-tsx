@@ -3,11 +3,15 @@ import styles from "./leaveform.module.css";
 import { FaCalendarDay } from "react-icons/fa";
 import { MdOutlineFeedback } from "react-icons/md";
 
-const WeekOffForm = ({ onCancel }) => {
-  const [weekoffdate, setweekoffdate] = useState("");
-  const [reason, setreason] = useState("");
+interface WeekOffFormProps {
+  onCancel: () => void;
+}
 
-  const weekoffDateRef = useRef(null);
+const WeekOffForm: React.FC<WeekOffFormProps> = ({ onCancel }) => {
+  const [weekoffdate, setweekoffdate] = useState<string>("");
+  const [reason, setreason] = useState<string>("");
+
+  const weekoffDateRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div>

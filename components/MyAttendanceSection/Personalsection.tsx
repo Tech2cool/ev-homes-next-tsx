@@ -43,7 +43,7 @@ const Personalsection = () => {
   const compPercent = (leaveInfo.compensatoryoff / totalDaysAll) * 100;
   const paidPercent = (leaveInfo.paidLeave / totalDaysAll) * 100;
 
-  const formatDate = (date) => {
+  const formatDate = (date: string | number | Date) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",

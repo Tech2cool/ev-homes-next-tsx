@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./approvalsection.module.css";
-import { FiSearch, FiPlus } from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
 import LeaveCard from "./LeaveCard";
 import WeekOffCard from "./WeekOffCard";
 import LeaveDialog from "./LeaveDialog";
@@ -13,7 +13,6 @@ import ReimbursementCard from "./ReimbursementCard";
 import ReimbursementDialog from "./ReimbursementDialog";
 import ShiftRequestCard from "./ShiftRequestCard";
 import ShiftRequestDialog from "./ShiftRequestDialog";
-import ApplicationsData from "./ApplicationsData";
 
 import {
   dummyLeaveData,
@@ -24,7 +23,26 @@ import {
   dummyShiftData,
 } from "./approvalsectiondummydata";
 
-const optionsList = [
+// ✅ Types
+interface ApprovalSectionProps {
+  onPendingCountChange?: (count: number) => void;
+}
+
+interface LeaveData {
+  status?: string;
+  [key: string]: any;
+}
+
+type SectionOptions =
+  | "All"
+  | "Leave"
+  | "WeekOff"
+  | "Regularization"
+  | "Reimbursement"
+  | "Asset"
+  | "Shift Requests";
+
+const optionsList: SectionOptions[] = [
   "All",
   "Leave",
   "WeekOff",
@@ -34,61 +52,65 @@ const optionsList = [
   "Shift Requests",
 ];
 
-const ApprovalSection = ({ onPendingCountChange }) => {
-  const [activeSection, setActiveSection] = useState("pending");
+const ApprovalSection: React.FC<ApprovalSectionProps> = ({ onPendingCountChange }) => {
+  const [activeSection, setActiveSection] = useState<string>("pending");
 
-  const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
-  const [openWeekOffDialog, setOpenWeekOffDialog] = useState(false);
-  const [openAssetDialog, setOpenAssetDialog] = useState(false);
-  const [openReguDialog, setOpenReguDialog] = useState(false);
-  const [openReimDialog, setOpenReimDialog] = useState(false);
-  const [openShiftDialog, setOpenShiftDialog] = useState(false);
+  // Dialog states
+  const [openLeaveDialog, setOpenLeaveDialog] = useState<boolean>(false);
+  const [openWeekOffDialog, setOpenWeekOffDialog] = useState<boolean>(false);
+  const [openAssetDialog, setOpenAssetDialog] = useState<boolean>(false);
+  const [openReguDialog, setOpenReguDialog] = useState<boolean>(false);
+  const [openReimDialog, setOpenReimDialog] = useState<boolean>(false);
+  const [openShiftDialog, setOpenShiftDialog] = useState<boolean>(false);
 
-  const [selectedLeave, setSelectedLeave] = useState(null);
-  const [selectedWeekOff, setSelectedWeekOff] = useState(null);
-  const [selectedAsset, setSelectedAsset] = useState(null);
-  const [selectedRegu, setSelectedRegu] = useState(null);
-  const [selectedReim, setSelectedReim] = useState(null);
-  const [selectedShift, setSelectedShift] = useState(null);
+  // Selected Data States
+  const [selectedLeave, setSelectedLeave] = useState<LeaveData | null>(null);
+  const [selectedWeekOff, setSelectedWeekOff] = useState<LeaveData | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState<LeaveData | null>(null);
+  const [selectedRegu, setSelectedRegu] = useState<LeaveData | null>(null);
+  const [selectedReim, setSelectedReim] = useState<LeaveData | null>(null);
+  const [selectedShift, setSelectedShift] = useState<LeaveData | null>(null);
 
-  const handleLeaveCardClick = (leave) => {
+  // Dialog Handlers
+  const handleLeaveCardClick = (leave: LeaveData) => {
     setSelectedLeave(leave);
     setOpenLeaveDialog(true);
   };
 
-  const handleWeekOffCardClick = (weekoff) => {
+  const handleWeekOffCardClick = (weekoff: LeaveData) => {
     setSelectedWeekOff(weekoff);
     setOpenWeekOffDialog(true);
   };
 
-  const handleAssetCardClick = (asset) => {
+  const handleAssetCardClick = (asset: LeaveData) => {
     setSelectedAsset(asset);
     setOpenAssetDialog(true);
   };
 
-  const handleReguCardClick = (regu) => {
+  const handleReguCardClick = (regu: LeaveData) => {
     setSelectedRegu(regu);
     setOpenReguDialog(true);
   };
 
-  const handleReimCardClick = (reim) => {
+  const handleReimCardClick = (reim: LeaveData) => {
     setSelectedReim(reim);
     setOpenReimDialog(true);
   };
 
-  const handleShiftCardClick = (shift) => {
+  const handleShiftCardClick = (shift: LeaveData) => {
     setSelectedShift(shift);
     setOpenShiftDialog(true);
   };
 
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState(["All"]);
+  // Dropdown states
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [selectedOptions, setSelectedOptions] = useState<SectionOptions[]>(["All"]);
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  const handleSelectOption = (option) => {
+  const handleSelectOption = (option: SectionOptions) => {
     setSelectedOptions((prev) => {
       if (option === "All") return ["All"];
       if (prev.includes("All")) return [option];
@@ -98,28 +120,20 @@ const ApprovalSection = ({ onPendingCountChange }) => {
     setShowDropdown(false);
   };
 
-  const handleRemoveOption = (option) => {
+  const handleRemoveOption = (option: SectionOptions) => {
     setSelectedOptions((prev) => prev.filter((item) => item !== option));
   };
 
-  const pendingLeaveCount = dummyLeaveData.filter((leave) => leave.status?.toLowerCase() === activeSection)
-.length;
-  const pendingWeekOffCount = dummyWeekOffData.filter(
-    (item) => item.status?.toLowerCase() === activeSection
-  ).length;
-  
-  const pendingAssetCount = dummyAssetData.filter(
-    (item) => item.status?.toLowerCase() === activeSection
-  ).length;
-  const pendingReguCount = dummyReguData.filter(
-    (item) => item.status?.toLowerCase() === activeSection
-  ).length;
-  const pendingReimCount = dummyReimData.filter(
-    (item) => item.status?.toLowerCase() === activeSection
-  ).length;
-  const pendingShiftCount = dummyShiftData.filter(
-    (item) => item.status?.toLowerCase() === activeSection
-  ).length;
+  // Pending counts
+  const getCount = (data: LeaveData[]) =>
+    data.filter((item) => item.status?.toLowerCase() === activeSection).length;
+
+  const pendingLeaveCount = getCount(dummyLeaveData);
+  const pendingWeekOffCount = getCount(dummyWeekOffData);
+  const pendingAssetCount = getCount(dummyAssetData);
+  const pendingReguCount = getCount(dummyReguData);
+  const pendingReimCount = getCount(dummyReimData);
+  const pendingShiftCount = getCount(dummyShiftData);
 
   const totalPendingCount =
     pendingLeaveCount +
@@ -162,22 +176,13 @@ const ApprovalSection = ({ onPendingCountChange }) => {
         </div>
 
         <div className={styles.filteringDataSection}>
-          <div
-            className={styles.pendingDataButton}
-            onClick={() => setActiveSection("pending")}
-          >
+          <div className={styles.pendingDataButton} onClick={() => setActiveSection("pending")}>
             Pending Applications
           </div>
-          <div
-            className={styles.approveDataButton}
-            onClick={() => setActiveSection("approved")}
-          >
+          <div className={styles.approveDataButton} onClick={() => setActiveSection("approved")}>
             Approved Applications
           </div>
-          <div
-            className={styles.rejectDataButton}
-            onClick={() => setActiveSection("rejected")}
-          >
+          <div className={styles.rejectDataButton} onClick={() => setActiveSection("rejected")}>
             Rejected Applications
           </div>
         </div>
@@ -216,18 +221,27 @@ const ApprovalSection = ({ onPendingCountChange }) => {
             </div>
             {dummyLeaveData
               .filter((leave) => leave.status?.toLowerCase() === activeSection)
-
               .map((leave, index) => (
                 <div key={index} onClick={() => handleLeaveCardClick(leave)}>
                   <LeaveCard pendingLeave={leave} />
                 </div>
               ))}
-            {openLeaveDialog && (
+            {openLeaveDialog && selectedLeave && (
               <LeaveDialog
-                leaveSelect={selectedLeave}
+                leaveSelect={{
+                  appliedOn: selectedLeave.appliedOn ?? new Date(),
+                  startDate: selectedLeave.startDate ?? new Date(),
+                  endDate: selectedLeave.endDate ?? new Date(),
+                  numberOfDays: selectedLeave.numberOfDays ?? 0,
+                  employeeName: selectedLeave.employeeName ?? "",
+                  status: selectedLeave.status ?? "Pending",
+                  leaveType: selectedLeave.leaveType ?? "Other",
+                  reason: selectedLeave.reason ?? "No reason provided"
+                }}
                 onClose={() => setOpenLeaveDialog(false)}
               />
             )}
+
           </div>
         )}
 
@@ -239,17 +253,13 @@ const ApprovalSection = ({ onPendingCountChange }) => {
             </div>
             {dummyWeekOffData
               .filter((item) => item.status?.toLowerCase() === activeSection)
-
               .map((weekoff, index) => (
                 <div key={index} onClick={() => handleWeekOffCardClick(weekoff)}>
                   <WeekOffCard pendingWeekoff={weekoff} />
                 </div>
               ))}
             {openWeekOffDialog && (
-              <WeekOffDialog
-                weekoffSelect={selectedWeekOff}
-                onClose={() => setOpenWeekOffDialog(false)}
-              />
+              <WeekOffDialog weekoffSelect={selectedWeekOff} onClose={() => setOpenWeekOffDialog(false)} />
             )}
           </div>
         )}
@@ -262,17 +272,26 @@ const ApprovalSection = ({ onPendingCountChange }) => {
             </div>
             {dummyAssetData
               .filter((item) => item.status?.toLowerCase() === activeSection)
-
               .map((asset, index) => (
                 <div key={index} onClick={() => handleAssetCardClick(asset)}>
-                  <AssetCard pendingAsset={asset} />
+                  <AssetCard pendingAsset={{ ...asset, quantity: Number(asset.quantity) }} />
                 </div>
               ))}
-            {openAssetDialog && (
+            {openAssetDialog && selectedAsset && (
               <AssetDialog
-                asset={selectedAsset}
+                asset={{
+                  employeeName: selectedAsset.employeeName || "",
+                  appliedOn: selectedAsset.appliedOn || new Date(),
+                  assetDate: selectedAsset.assetDate || new Date(),
+                  assetType: selectedAsset.assetType || "Other",
+                  quantity: Number(selectedAsset.quantity) || 0,
+                  status: selectedAsset.status,
+                  remark: selectedAsset.reason || "",
+                  attachment: selectedAsset.attachment
+                }}
                 onClose={() => setOpenAssetDialog(false)}
               />
+
             )}
           </div>
         )}
@@ -285,18 +304,27 @@ const ApprovalSection = ({ onPendingCountChange }) => {
             </div>
             {dummyReguData
               .filter((item) => item.status?.toLowerCase() === activeSection)
-
               .map((regu, index) => (
                 <div key={index} onClick={() => handleReguCardClick(regu)}>
                   <RegularizationCard pendingRegu={regu} />
                 </div>
               ))}
-            {openReguDialog && (
-              <RegularizationDialog
-                reguSelect={selectedRegu}
-                onClose={() => setOpenReguDialog(false)}
-              />
-            )}
+            {openReguDialog && selectedRegu && (<RegularizationDialog
+              reguSelect={{
+                employeeName: selectedRegu.employeeName || "",
+                appliedOn: selectedRegu.appliedOn || new Date(),
+                checkIn: selectedRegu.checkIn || new Date(),
+                checkOut: selectedRegu.checkOut || new Date(),
+                regularizeDate: selectedRegu.regularizeDate || new Date(),
+                reguType: selectedRegu.reguType || "Other",
+                reason: selectedRegu.reason || "No reason",
+                status: selectedRegu.status || "Pending"
+              }}
+              onClose={() => setOpenReguDialog(false)}
+            />)}
+
+
+
           </div>
         )}
 
@@ -308,15 +336,36 @@ const ApprovalSection = ({ onPendingCountChange }) => {
             </div>
             {dummyReimData
               .filter((item) => item.status?.toLowerCase() === activeSection)
-
               .map((reim, index) => (
-                <div key={index} onClick={() => handleReimCardClick(reim)}>
-                  <ReimbursementCard pendingReim={reim} />
+                <div key={index} onClick={() => handleReimCardClick({
+                  ...reim,
+                  reimDate: new Date(reim.reimDate),
+                  appliedOn: new Date(reim.appliedOn),
+                  amount: Number(reim.amount), // if amount is string
+                })}>
+                  <ReimbursementCard
+                    pendingReim={{
+                      ...reim,
+                      reimDate: new Date(reim.reimDate),
+                      amount: Number(reim.amount),
+                    }}
+                  />
                 </div>
               ))}
-            {openReimDialog && (
+            {openReimDialog && selectedReim && (
               <ReimbursementDialog
-                reim={selectedReim}
+                reim={{
+                  employeeName: selectedReim.employeeName || "",
+                  appliedOn: selectedReim.appliedOn || new Date(),
+                  reimDate: selectedReim.reimDate || new Date(),
+                  reimburseType: selectedReim.reimburseType || "Other",
+                  amount: Number(selectedReim.amount) || 0,
+                  approvalBy: selectedReim.approvalBy || "",
+                  remark: selectedReim.reason || "",
+                  attachFile: selectedReim.attachFile,
+                  attachBillInvoice: selectedReim.attachBillInvoice,
+                  status: selectedReim.status || "Pending",
+                }}
                 onClose={() => setOpenReimDialog(false)}
               />
             )}
@@ -331,18 +380,35 @@ const ApprovalSection = ({ onPendingCountChange }) => {
             </div>
             {dummyShiftData
               .filter((item) => item.status?.toLowerCase() === activeSection)
-
               .map((shift, index) => (
-                <div key={index} onClick={() => handleShiftCardClick(shift)}>
-                  <ShiftRequestCard pendingShift={shift} />
+                <div key={index} onClick={() => handleShiftCardClick({
+                  ...shift,
+                  appliedOn: new Date(shift.appliedOn),
+                  shiftrequestdate: new Date(shift.shiftrequestdate),
+                })}>
+                  <ShiftRequestCard
+                    pendingShift={{
+                      ...shift,
+                      shiftrequestdate: new Date(shift.shiftrequestdate),
+                    }}
+                  />
                 </div>
               ))}
-            {openShiftDialog && (
+            {openShiftDialog && selectedShift && (
               <ShiftRequestDialog
-                shift={selectedShift}
+                shift={{
+                  employeeName: selectedShift.employeeName || "",
+                  appliedOn: selectedShift.appliedOn || new Date(),
+                  shiftrequestdate: selectedShift.shiftrequestdate || new Date(),
+                  shift: selectedShift.shift || "Morning",
+                  reason: selectedShift.reason || "",
+                  status: selectedShift.status || "Pending",
+                }}
                 onClose={() => setOpenShiftDialog(false)}
               />
             )}
+
+
           </div>
         )}
       </div>

@@ -1,43 +1,46 @@
 import React, { useRef, useState } from "react";
 import styles from "./leaveform.module.css";
-import { FaCalendarDay, FaClock, } from "react-icons/fa";
+import { FaCalendarDay } from "react-icons/fa";
 import { MdOutlineFeedback } from "react-icons/md";
-import { FaCalendarDays, FaClockRotateLeft, FaTypo3 } from "react-icons/fa6";
+import { Calendar } from "lucide-react";
 
-function AsstsForm({ onCancel }) {
-  const [assetDate, setassetDate] = useState("");
-  const [Remark, setRemark] = useState("");
-  const [Assettype, setAssettype] = useState("Mobile",)
-  const assetDateRef = useRef(null);
+// Props Interface
+interface AsstsFormProps {
+  onCancel: () => void;
+}
+
+function AsstsForm({ onCancel }: AsstsFormProps) {
+  const [assetDate, setAssetDate] = useState<string>("");
+  const [remark, setRemark] = useState<string>("");
+  const [assetType, setAssetType] = useState<string>("Mobile");
+  const assetDateRef = useRef<HTMLInputElement | null>(null);
+
   return (
     <div>
       <div className={styles.formHeadline}>Apply Asset Request</div>
-      <div
-        className={` ${styles.formControl}`}
-        onClick={() => assetDateRef.current?.showPicker()}
-      >
+
+      <div className={styles.formControl} onClick={() => assetDateRef.current?.showPicker()}>
         <label htmlFor="assetdate">
-          <FaCalendarDay />Date <span style={{ color: "red" }}>*</span>
+          <FaCalendarDay /> Date <span style={{ color: "red" }}>*</span>
         </label>
         <input
           type="date"
           ref={assetDateRef}
           id="assetDate"
           value={assetDate}
-          onChange={(e) => setassetDate(e.target.value)}
+          onChange={(e) => setAssetDate(e.target.value)}
         />
       </div>
+
       <div className={styles.formControl}>
         <label htmlFor="select">
-          <FaCalendarDays />Asset Type{" "}
-          <span style={{ color: "red" }}>*</span>
+          <Calendar /> Asset Type <span style={{ color: "red" }}>*</span>
         </label>
-        <select name="select" id="select" value={Assettype} onChange={(e) => setAssettype(e.target.value)}>
+        <select id="select" value={assetType} onChange={(e) => setAssetType(e.target.value)}>
           <option value="Mobile">Mobile</option>
-          <option value="Labtop">Labtop</option>
+          <option value="Laptop">Laptop</option>
           <option value="SIM">SIM</option>
         </select>
-
       </div>
 
       <div className={styles.formControl}>
@@ -45,16 +48,16 @@ function AsstsForm({ onCancel }) {
           <MdOutlineFeedback /> Remark <span style={{ color: "red" }}>*</span>
         </label>
         <textarea
-          id="Remark"
-          value={Remark}
+          id="remark"
+          value={remark}
           onChange={(e) => setRemark(e.target.value)}
           placeholder="Enter your Remark"
           rows={4}
         />
       </div>
+
       <div className={styles.buttonRow}>
-        <button className={styles.cancelButton} onClick={onCancel}
-          type="button">
+        <button className={styles.cancelButton} onClick={onCancel} type="button">
           Cancel
         </button>
         <button className={styles.submitButton} type="submit">

@@ -1,10 +1,17 @@
+"use client";
 import React from "react";
 import { DateRange, DefinedRange } from "react-date-range";
-import { format } from "date-fns";
-import styles from "./datefilter.module.css"
+import { RangeKeyDict, Range } from "react-date-range";
+import styles from "./datefilter.module.css";
 
-const DateFilter = ({ dateRange, setDateRange, onClose }) => {
-  const handleSelect = (ranges) => {
+interface DateFilterProps {
+  dateRange: Range[];
+  setDateRange: React.Dispatch<React.SetStateAction<Range[]>>;
+  onClose: () => void;
+}
+
+const DateFilter: React.FC<DateFilterProps> = ({ dateRange, setDateRange, onClose }) => {
+  const handleSelect = (ranges: RangeKeyDict) => {
     setDateRange([ranges.selection]);
   };
 
@@ -24,7 +31,6 @@ const DateFilter = ({ dateRange, setDateRange, onClose }) => {
           moveRangeOnFirstSelection={false}
           ranges={dateRange}
           rangeColors={["#007bff"]}
-          showSelectionPreview={true}
           months={1}
           direction="horizontal"
           editableDateInputs={true}

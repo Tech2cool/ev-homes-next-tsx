@@ -12,13 +12,14 @@ import { FaCalendarAlt, FaChevronDown } from "react-icons/fa";
 import { HiOutlineSquares2X2, HiOutlineTableCells } from "react-icons/hi2";
 import Attendancesection from "./Attendancesection";
 import DateFilter from "../DateFilter";
+import { Range } from "react-date-range";
 
-const Attendancefiltersection = () => {
+const Attendancefiltersection = () => { 
   const [viewType, setViewType] = useState<"grid" | "table">("table");
   const [showCalendar, setShowCalendar] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const [dateRange, setDateRange] = useState([
+  const [dateRange, setDateRange] = useState<Range[]>([
     {
       startDate: new Date(),
       endDate: new Date(),
@@ -32,10 +33,11 @@ const Attendancefiltersection = () => {
 
  
 
-  const formattedDateRange = `${format(
-    dateRange[0].startDate,
-    "dd-MM-yyyy"
-  )} - ${format(dateRange[0].endDate, "dd-MM-yyyy")}`;
+const formattedDateRange = `${format(
+  dateRange[0].startDate!,
+  "dd-MM-yyyy"
+)} - ${format(dateRange[0].endDate!, "dd-MM-yyyy")}`;
+
 
 
 

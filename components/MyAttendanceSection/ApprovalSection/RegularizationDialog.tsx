@@ -1,17 +1,33 @@
 import React, { useRef, useState } from "react";
 import styles from "./leavedialog.module.css";
 import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
-import { RiAttachment2 } from "react-icons/ri";
 import { useClickOutside } from "../useClickOutside";
 import Image from "next/image";
 import { dateFormatOnly, timeFormatOnly } from "@/hooks/useDateFormat";
 
-const RegularizationDialog = ({ reguSelect, onClose }) => {
+// ✅ Define the type for Regularization data
+export interface RegularizationData {
+  employeeName: string;
+  appliedOn: Date | string;
+  checkIn: Date | string;
+  checkOut: Date | string;
+  regularizeDate?: Date | string;
+  reguType: string;
+  reason: string;
+  status?: string;
+}
+
+interface RegularizationDialogProps {
+  reguSelect: RegularizationData | null;
+  onClose: () => void;
+}
+
+const RegularizationDialog: React.FC<RegularizationDialogProps> = ({ reguSelect, onClose }) => {
   const [showReguRejectionReason, setShowReguRejectionReason] = useState(false);
   const [showReguApproveReason, setShowReguApproveReason] = useState(false);
   const [reguRejectionText, setReguRejectionText] = useState("");
   const [reguApproveText, setReguApproveText] = useState("");
-  const reguDialogRef = useRef(null);
+  const reguDialogRef = useRef<HTMLDivElement>(null);
 
   useClickOutside({
     refs: [reguDialogRef],
@@ -24,28 +40,25 @@ const RegularizationDialog = ({ reguSelect, onClose }) => {
     <div className={styles.dialogOverlay}>
       <div className={styles.dialogBox} ref={reguDialogRef}>
         <div className={styles.upperSection}>
-          <div className={styles.dialogHeader}>
-            Approve Regularization Request
-          </div>
-          <button onClick={onClose} className={styles.closeBtn}>
-            X
-          </button>
+          <div className={styles.dialogHeader}>Approve Regularization Request</div>
+          <button onClick={onClose} className={styles.closeBtn}>X</button>
 
           <div className={styles.dateSection}>
             <div className={styles.appliedOn}>
               <div className={styles.sectionhead}>Applied On:</div>
-              <div className={styles.sectionvalue}>{dateFormatOnly(reguSelect?.appliedOn)}</div>
+              <div className={styles.sectionvalue}>{dateFormatOnly(reguSelect.appliedOn)}</div>
             </div>
             <div className={styles.date}>
-              <div className={styles.sectionhead}>Check In </div>
-              <div className={styles.sectionvalue}>{timeFormatOnly(reguSelect?.checkIn)}</div>
+              <div className={styles.sectionhead}>Check In</div>
+              <div className={styles.sectionvalue}>{timeFormatOnly(reguSelect.checkIn)}</div>
             </div>
             <div className={styles.number}>
               <div className={styles.sectionhead}>Check Out</div>
-              <div className={styles.sectionvalue}>{timeFormatOnly(reguSelect?.checkOut )}</div>
+              <div className={styles.sectionvalue}>{timeFormatOnly(reguSelect.checkOut)}</div>
             </div>
           </div>
         </div>
+
         <div className={styles.lowerReguSection}>
           <div className={styles.name}>
             <div className={styles.profileContainer}>
@@ -55,45 +68,34 @@ const RegularizationDialog = ({ reguSelect, onClose }) => {
                 className={styles.profilePic}
                 width={100}
                 height={100}
-                priority={true}
+                priority
               />
               <div className={styles.empDetails}>
-                <div className={styles.empName}>{reguSelect?.employeeName}</div>
-                {/* <div className={styles.empPhone}>123456789</div> */}
+                <div className={styles.empName}>{reguSelect.employeeName}</div>
               </div>
             </div>
-            <div className={styles.statusButton}>{reguSelect?.status}</div>
+            <div className={styles.statusButton}>{reguSelect.status}</div>
           </div>
 
           <div className={styles.details}>
-            <div className={styles.type}>Regu Date : {dateFormatOnly(reguSelect?.regularizeDate)}</div>
-            <div className={styles.type}>Regu Type : {reguSelect?.reguType}</div>
-            <div className={styles.reason}>Regu Reason : {reguSelect?.reason}</div>
+            <div className={styles.type}>Regu Date : {reguSelect.regularizeDate ? dateFormatOnly(reguSelect.regularizeDate) : "NA"}</div>
+            <div className={styles.type}>Regu Type : {reguSelect.reguType}</div>
+            <div className={styles.reason}>Regu Reason : {reguSelect.reason}</div>
           </div>
-          {/* <div className={styles.attachment}>
-            {" "}
-            <RiAttachment2 /> attachment
-          </div> */}
         </div>
 
         <div className={styles.bottomSection}>
           <div className={styles.subBottomSection}>
             <div className={styles.forback}>
-              <div className={styles.iconCircle}>
-                <FaArrowLeft />
-              </div>
-              <div className={styles.iconCircle}>
-                <FaArrowRight />
-              </div>
-              <div className={styles.cardCount}> 1/3</div>
+              <div className={styles.iconCircle}><FaArrowLeft /></div>
+              <div className={styles.iconCircle}><FaArrowRight /></div>
+              <div className={styles.cardCount}>1/3</div>
             </div>
 
             <div className={styles.rejapprove}>
               <div
                 className={styles.rejectButton}
-                onClick={() =>
-                  setShowReguRejectionReason(!showReguRejectionReason)
-                }
+                onClick={() => setShowReguRejectionReason(!showReguRejectionReason)}
               >
                 <FaTimes className={styles.crossIcon} />
               </div>

@@ -33,7 +33,7 @@
 
 
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Attendanceheader from "@/components/AllAttendance/Attendanceheader";
 import Attendancesummarycards from "@/components/AllAttendance/Attendancesummarycards";
 import Attendancefiltersection from "@/components/AllAttendance/Attendancefiltersection";

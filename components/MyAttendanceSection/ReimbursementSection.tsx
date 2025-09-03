@@ -12,6 +12,8 @@ import { FaCalendarCheck, FaFileUpload } from "react-icons/fa";
 import ReimbursementForm from "./Forms/ReimbursementForm";
 import ReimbursementFilterDialog from "../Dialogs/ReimbursementFilterDialog";
 import { useClickOutside } from "./useClickOutside";
+import Image from "next/image";
+
 
 const initialLeaveData = [
   {
@@ -63,7 +65,7 @@ const initialLeaveData = [
 export default function ReimbursementSection() {
   const modalRef = useRef(null);
 
-  const [leaveData, setLeaveData] = useState(initialLeaveData);
+  const [leaveData] = useState(initialLeaveData);
   const [filter, setFilter] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -256,7 +258,7 @@ export default function ReimbursementSection() {
                   priority
                 />
                 <div className={styles.noDataText}>
-                  "No reimbursement requests from you so far."
+                  No reimbursement requests from you so far.
                 </div>
               </div>
             )}
@@ -345,7 +347,7 @@ export default function ReimbursementSection() {
                   priority
                 />
                 <div className={styles.noDataText}>
-                  "No reimbursement requests from you so far."
+                  No reimbursement requests from you so far.
                 </div>
               </div>
             )}

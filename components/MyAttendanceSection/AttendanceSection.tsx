@@ -8,11 +8,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import CalendarMobileView from "./CalendarMobileView";
 import { dateFormatOnly, timeFormatOnly } from "@/hooks/useDateFormat";
 import moment from "moment-timezone";
-import Imglog from "../../public/images/Banquet hall.png"
+import Imglog from "../../public/images/Banquet hall.png";
 import Image from "next/image";
 
 // Dummy attendance summary
-const dummySummary = [
+interface SummaryItem {
+  title: string;
+  value: number;
+}
+
+const dummySummary: SummaryItem[] = [
   { title: "Present", value: 3 },
   { title: "Absent", value: 1 },
   { title: "On Leave", value: 1 },
@@ -24,15 +29,33 @@ const dummySummary = [
   { title: "Holiday", value: 0 },
 ];
 
-
-const dummyLeaveInfo = {
+interface LeaveInfo {
   shift: {
-    timeIn: 9, // 9 AM
-    timeOut: 18, // 6 PM
+    timeIn: number;
+    timeOut: number;
+    workingHours: number;
+  };
+}
+
+const dummyLeaveInfo: LeaveInfo = {
+  shift: {
+    timeIn: 9,
+    timeOut: 18,
     workingHours: 9 * 60 * 60 * 1000,
   },
 };
-const dummyAttendanceList = [
+
+interface AttendanceItem {
+  date: string;
+  checkInTime: string;
+  checkOutTime: string;
+  status: string;
+  wlStatus: string;
+  checkInPhoto: string;
+  checkOutPhoto: string;
+}
+
+const dummyAttendanceList: AttendanceItem[] = [
   {
     date: "2025-08-05",
     checkInTime: "2025-08-05T09:10:00",
@@ -79,7 +102,9 @@ const dummyAttendanceList = [
     checkOutPhoto: "",
   },
 ];
-const useIsMobile = () => {
+
+// Hook for mobile detection
+const useIsMobile = (): boolean => {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 615);
@@ -90,8 +115,17 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-const TimelineSection = ({ data = dummySummary, attendanceList = dummyAttendanceList }) => {
-  const [selectedMonth, setSelectedMonth] = useState(new Date());
+// Props for TimelineSection
+interface TimelineSectionProps {
+  data?: SummaryItem[];
+  attendanceList?: AttendanceItem[];
+}
+
+const TimelineSection: React.FC<TimelineSectionProps> = ({
+  data = dummySummary,
+  attendanceList = dummyAttendanceList,
+}) => {
+  const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const isMobile = useIsMobile();
   const COLORS = ["#52bb58", "#e75656", "#b444c8", "#faca2d", "#ec3974", "#fbae3a"];
 
@@ -106,12 +140,13 @@ const TimelineSection = ({ data = dummySummary, attendanceList = dummyAttendance
         ))}
       </div>
 
+      {/* Pie Chart */}
       <div className={styles.mobilePieChart}>
         <div className={styles.pieContainer}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie data={data} dataKey="value" nameKey="title" cx="50%" cy="50%"
-                   innerRadius={30} outerRadius={60} labelLine={false} label>
+                innerRadius={30} outerRadius={60} labelLine={false} label>
                 {data.map((entry, i) => (
                   <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
                 ))}
@@ -130,6 +165,7 @@ const TimelineSection = ({ data = dummySummary, attendanceList = dummyAttendance
         </div>
       </div>
 
+      {/* Month Picker + Search */}
       <div className={styles.headerContainer}>
         <div className={styles.monthPicker}>
           <button className={`${styles.tab} ${styles.active}`}>Your Attendance</button>
@@ -137,7 +173,7 @@ const TimelineSection = ({ data = dummySummary, attendanceList = dummyAttendance
             <IoCalendar className={styles.calendarIcon} />
             <DatePicker
               selected={selectedMonth}
-              onChange={(d) => setSelectedMonth(d)}
+              onChange={(d: Date | null) => d && setSelectedMonth(d)}
               dateFormat="MMMM yyyy"
               showMonthYearPicker
               className={styles.monthInput}
@@ -150,11 +186,12 @@ const TimelineSection = ({ data = dummySummary, attendanceList = dummyAttendance
         </div>
       </div>
 
+      {/* Attendance List */}
       {isMobile ? (
         <CalendarMobileView selectedMonth={selectedMonth} attendanceData={attendanceList} />
       ) : (
-          <div className={styles.attList}>
-          {dummyAttendanceList.map((item, index) => (
+        <div className={styles.attList}>
+          {attendanceList.map((item, index) => (
             <AttendanceSection key={index} item={item} leaveInfo={dummyLeaveInfo} />
           ))}
         </div>
@@ -162,60 +199,31 @@ const TimelineSection = ({ data = dummySummary, attendanceList = dummyAttendance
     </div>
   );
 };
-const AttendanceSection = ({ item, leaveInfo }) => {
 
- const parseTime = (timeStr) => {
-    if (!timeStr || typeof timeStr !== "string") return null;
-    const [time, modifier] = timeStr.split(" ");
-    if (!time || !modifier) return null;
-    let [hours, minutes] = time.split(":").map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return null;
-    if (modifier === "PM" && hours !== 12) hours += 12;
-    if (modifier === "AM" && hours === 12) hours = 0;
-    return hours + minutes / 60;
-  };
+// Attendance Section Component
+interface AttendanceSectionProps {
+  item: AttendanceItem;
+  leaveInfo: LeaveInfo;
+}
 
-  const startTimeIn = timeFormatOnly(item?.checkInTime);
+const AttendanceSection: React.FC<AttendanceSectionProps> = ({ item, leaveInfo }) => {
   const endTimeOut = timeFormatOnly(item?.checkOutTime);
   const checkIn = moment(item?.checkInTime);
   const checkOut = moment(item?.checkOutTime);
-  const onLeave =
-    item?.status === "on-paid-leave" ||
-    item?.status === "on-casual-leave" ||
-    item?.status === "on-compensation-off-leave";
+  const onLeave = ["on-paid-leave", "on-casual-leave", "on-compensation-off-leave"].includes(item?.status);
 
   const duration = moment.duration(checkOut.diff(checkIn));
   const diff = checkOut.diff(checkIn);
   const hours = Math.floor(duration.asHours());
   const minutes = Math.floor(duration.minutes());
 
-  const total = `${isNaN(hours) ? "" : `${hours}hr`} ${
-    isNaN(hours) ? "" : `${minutes}m`
-  }`;
+  const total = `${isNaN(hours) ? "" : `${hours}hr`} ${isNaN(hours) ? "" : `${minutes}m`}`;
+  const shiftStart = leaveInfo.shift.timeIn;
+  const shiftEnd = leaveInfo.shift.timeOut;
 
-  const shiftStart = leaveInfo?.shift?.timeIn;
-  const shiftEnd = leaveInfo?.shift?.timeOut;
-  const workingEnd = leaveInfo?.shift?.timeOut;
-
-  const visibleWhenPending = workingEnd - shiftStart;
-  const visibleEndTime = shiftEnd - shiftStart;
-  const visibleEnd2 = diff;
-  const visibleDuration2 = visibleEnd2 - shiftStart;
-  const visibleDuration = visibleEndTime;
-
-  const isPending = !item?.checkInTime || !item?.checkOutTime;
-
-  const lateDuration = diff - leaveInfo?.shift?.workingHours;
+  const lateDuration = diff - leaveInfo.shift.workingHours;
   const latePercent = (lateDuration / diff) * 100;
-  const workingDuration = diff;
-  const workingPercent = (workingDuration / visibleDuration) * 100;
-
-  const overtimeDuration = Math.max(0, parseTime(endTimeOut) - shiftEnd);
-  const overtimePercent = (overtimeDuration / visibleDuration) * 100;
-
-  const expectedWorkingDuration = Math.max(0, workingEnd - shiftEnd);
-  const expectedWorkingPercent =
-    (expectedWorkingDuration / visibleDuration) * 100;
+  const overtimeDuration = Math.max(0, (parseFloat(endTimeOut) || 0) - shiftEnd);
 
   const [showText, setShowText] = useState(false);
   const handleClick = () => setShowText(!showText);
@@ -233,54 +241,29 @@ const AttendanceSection = ({ item, leaveInfo }) => {
       </div>
 
       <div className={styles.timeInImage}>
-        <Image
-          src={Imglog}
-          alt="Time In"
-          width={100}
-          height={100}
-          className={styles.cardTimeImage}
-        />
+        <Image src={Imglog} alt="Time In" width={100} height={100} className={styles.cardTimeImage} />
       </div>
 
       <div className={styles.barWrapper}>
         <div className={styles.barSection}>
           <div className={styles.bar} onClick={handleClick}>
-            {!item?.checkInTime && !item?.checkOutTime && item?.status === "absent" ? (
-              <div className={styles.absentBar}>
-                <span className={styles.barLabel}>{item?.status}</span>
-              </div>
-            ) : item?.status === "weekoff" ? (
-              <div className={styles.weekOffBar}>
-                <span className={styles.barLabel}>Week off</span>
-              </div>
+            {!item.checkInTime && !item.checkOutTime && item.status === "absent" ? (
+              <div className={styles.absentBar}><span className={styles.barLabel}>{item.status}</span></div>
+            ) : item.status === "weekoff" ? (
+              <div className={styles.weekOffBar}><span className={styles.barLabel}>Week off</span></div>
             ) : onLeave ? (
-              <div className={styles.leaveBar}>
-                <span className={styles.barLabel}>On Leave</span>
+              <div className={styles.leaveBar}><span className={styles.barLabel}>On Leave</span></div>
+            ) : item.status === "present" ? (
+              <div className={styles.expectedWorkingTimeBar}><span className={styles.barLabel}>Present</span></div>
+            ) : lateDuration > 0 && (
+              <div className={styles.lateArrivalBar} style={{ width: `${latePercent}%` }}>
+                {latePercent > 3 && <span className={styles.barLabel}>Late</span>}
               </div>
-            ) : item?.status === "present" ? (
-              <div className={styles.expectedWorkingTimeBar}>
-                <span className={styles.barLabel}>Present</span>
-              </div>
-            ) : (
-              <>
-                {lateDuration > 0 && (
-                  <div
-                    className={styles.lateArrivalBar}
-                    style={{ width: `${latePercent}%` }}
-                  >
-                    {latePercent > 3 && (
-                      <span className={styles.barLabel}>Late</span>
-                    )}
-                  </div>
-                )}
-              </>
             )}
             {showText && (
               <div className={styles.tool}>
                 Do you want to Regularize it ?
-                <span>
-                  <button>Regularize</button>
-                </span>
+                <span><button>Regularize</button></span>
               </div>
             )}
           </div>
@@ -288,25 +271,13 @@ const AttendanceSection = ({ item, leaveInfo }) => {
       </div>
 
       <div className={styles.timeOutImage}>
-        < Image
-          src={Imglog }
-          alt="Time Out"
-          width={100}
-          height={100}
-          className={styles.cardTimeImage}
-        />
+        <Image src={Imglog} alt="Time Out" width={100} height={100} className={styles.cardTimeImage} />
       </div>
 
       <div className={styles.detailsSection}>
-        <div className={styles.clockText}>
-          <div>Time-out: {timeFormatOnly(item?.checkOutTime)}</div>
-        </div>
-        <div className={styles.clockText}>
-          <div>Total: {total}</div>
-        </div>
-        <div className={styles.clockText}>
-          <div>Overtime: {overtimeDuration.toFixed(2)} hrs</div>
-        </div>
+        <div className={styles.clockText}><div>Time-out: {timeFormatOnly(item?.checkOutTime)}</div></div>
+        <div className={styles.clockText}><div>Total: {total}</div></div>
+        <div className={styles.clockText}><div>Overtime: {overtimeDuration.toFixed(2)} hrs</div></div>
       </div>
     </div>
   );

@@ -3,9 +3,21 @@ import styles from "./approvalsection.module.css";
 import Image from "next/image";
 import { dateFormatOnly, timeFormatOnly } from "@/hooks/useDateFormat";
 
-const RegularizationCard = ({
-  pendingRegu,
-}) => {
+// ✅ Define the type for a Regularization item
+export interface RegularizationData {
+  employeeName: string;
+  appliedOn: Date | string;
+  reguType: string;
+  checkIn: Date | string;
+  checkOut: Date | string;
+  reason: string;
+}
+
+interface RegularizationCardProps {
+  pendingRegu: RegularizationData;
+}
+
+const RegularizationCard: React.FC<RegularizationCardProps> = ({ pendingRegu }) => {
   return (
     <div className={styles.leaveCard}>
       <div className={styles.reguCardHeader}>
@@ -18,7 +30,6 @@ const RegularizationCard = ({
             height={100}
             priority={true}
           />
-
           <span className={styles.employeeName}>{pendingRegu.employeeName}</span>
         </div>
         <div className={styles.daysBox}>{dateFormatOnly(pendingRegu.appliedOn)}</div>
@@ -33,6 +44,7 @@ const RegularizationCard = ({
           <span className={styles.date}>CheckIn: {timeFormatOnly(pendingRegu.checkIn)}</span>
           <span className={styles.date}>CheckOut: {timeFormatOnly(pendingRegu.checkOut)}</span>
         </div>
+
         <div className={styles.thirdRow}>
           <span>Reason:</span> {pendingRegu.reason}
         </div>

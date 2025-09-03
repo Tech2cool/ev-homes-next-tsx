@@ -3,13 +3,22 @@ import styles from "./approvalsection.module.css";
 import Image from "next/image";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const ReimbursementCard = ({
+interface PendingAsset {
+  employeeName: string;
+  quantity: number;
+  assetType: string;
+  assetDate: string;
+  remark?: string;
+}
 
-  pendingReim,
-}) => {
+interface AssetCardProps {
+  pendingAsset: PendingAsset;
+}
+
+const AssetCard: React.FC<AssetCardProps> = ({ pendingAsset }) => {
   return (
     <div className={styles.leaveCard}>
-      <div className={styles.reimCardHeader}>
+      <div className={styles.assetCardHeader}>
         <div className={styles.nameSection}>
           <Image
             src="https://cdn.evhomes.tech/7e96bf8a-0881-4f88-b58d-346da0996899-fallback-profile-image_1.jpg"
@@ -19,27 +28,32 @@ const ReimbursementCard = ({
             height={100}
             priority={true}
           />
-          <span className={styles.employeeName}>{pendingReim.employeeName}</span>
+          <span className={styles.employeeName}>
+            {pendingAsset.employeeName}
+          </span>
         </div>
-        <div className={styles.daysBox}>{dateFormatOnly(pendingReim.reimDate)}</div>
+        <div className={styles.daysBox}>{pendingAsset.quantity} No.</div>
       </div>
 
       <div className={styles.cardBody}>
         <div className={styles.firstRow}>
           <span className={styles.leaveType}>
-            Reimburse Type: {pendingReim.reimburseType}
+            Asset Type: {pendingAsset.assetType}
           </span>
         </div>
 
         <div className={styles.secondRow}>
-          <span className={styles.date}>Amount: {pendingReim?.amount}</span>
+          <span className={styles.date}>
+            Date: {dateFormatOnly(pendingAsset.assetDate)}
+          </span>
         </div>
+
         <div className={styles.thirdRow}>
-          <span>Remark:</span> {pendingReim.remark}
+          <span>Remark:</span> {pendingAsset.remark || "NA"}
         </div>
       </div>
     </div>
   );
 };
 
-export default ReimbursementCard;
+export default AssetCard;

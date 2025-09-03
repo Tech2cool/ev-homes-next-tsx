@@ -5,8 +5,22 @@ import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
 import { RiAttachment2 } from "react-icons/ri";
 import { useClickOutside } from "../useClickOutside";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
+interface AssetData {
+  employeeName: string;
+  appliedOn: Date | string;
+  assetDate: Date | string;
+  assetType: string;
+  remark?: string;
+  status?: string;
+  quantity: number;
+  attachment?: string;
+}
+interface AssetDialogProps {
+  asset: AssetData | null;
+  onClose: () => void;
+}
 
-const AssetDialog = ({ asset, onClose }) => {
+const AssetDialog: React.FC<AssetDialogProps> = ({ asset, onClose }) => {
   const [showAssetRejectionReason, setShowAssetRejectionReason] =
     useState(false);
   const [showAssetApproveReason, setShowAssetApproveReason] = useState(false);
