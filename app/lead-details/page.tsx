@@ -68,17 +68,17 @@ const LeadDetailsPage = () => {
   const hasMoreRef = useRef(true);
 
   // Filter states
-const [filters, setFilters] = useState({
-  visitType: "",
-  leadFilter: "",
-  statusFilter: "",
-  feedbackFilter: "",
-  clientStatus: "",
-  leadStatus: "",
-  cycleStatus: 0,
-  dateFrom: "",
-  dateTo: "",
-});
+  const [filters, setFilters] = useState({
+    visitType: "",
+    leadFilter: "",
+    statusFilter: "",
+    feedbackFilter: "",
+    clientStatus: "",
+    leadStatus: "",
+    cycleStatus: 0,
+    dateFrom: "",
+    dateTo: "",
+  });
 
   const { user, loading, getSocket, reconnectSocket } = useUser();
   const {
@@ -92,22 +92,22 @@ const [filters, setFilters] = useState({
   const socket = getSocket();
 
 
-const handleFiltersChange = (newFilters: typeof filters) => {
-  setFilters(newFilters);
+  const handleFiltersChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
 
-  fetchTeamLeaderReportingToLeads({
-    id: user ?._id ?? null,
-    status: newFilters.visitType || null,
-    status2: newFilters.statusFilter || null,
-    callData: newFilters.feedbackFilter || null,
-    clientstatus: newFilters.clientStatus || null,
-    leadstatus: newFilters.leadStatus || null,
-    cycle: newFilters.cycleStatus || null,
-    startDateDeadline: newFilters.dateFrom || null,
-    endDateDeadline: newFilters.dateTo || null,
-    page: 1,
-  });
-};
+    fetchTeamLeaderReportingToLeads({
+      id: user?._id ?? null,
+      status: newFilters.visitType || null,
+      status2: newFilters.statusFilter || null,
+      callData: newFilters.feedbackFilter || null,
+      clientstatus: newFilters.clientStatus || null,
+      leadstatus: newFilters.leadStatus || null,
+      cycle: newFilters.cycleStatus || null,
+      startDateDeadline: newFilters.dateFrom || null,
+      endDateDeadline: newFilters.dateTo || null,
+      page: 1,
+    });
+  };
 
 
 
@@ -209,13 +209,13 @@ const handleFiltersChange = (newFilters: typeof filters) => {
     [leadInfo, fetchTeamLeaderReportingToLeads]
   );
 
-const fetchLeads = () => {
-  fetchTeamLeaderReportingToLeads({
-    id: user?._id,
-    ...filters,
-    page: 1,
-  });
-};
+  const fetchLeads = () => {
+    fetchTeamLeaderReportingToLeads({
+      id: user?._id,
+      ...filters,
+      page: 1,
+    });
+  };
 
   // Fixed scroll handler with debouncing
   const handleScroll = useCallback(
@@ -313,15 +313,15 @@ const fetchLeads = () => {
 
   const clearFilters = () => {
     setFilters({
-      visitType:'',
-    leadFilter: 'string',
-    statusFilter: 'string',
-    feedbackFilter: 'string',
-    clientStatus: 'string',
-    leadStatus: 'string',
-    cycleStatus: 0,
-    dateFrom: 'string',
-    dateTo: 'string',
+      visitType: '',
+      leadFilter: 'string',
+      statusFilter: 'string',
+      feedbackFilter: 'string',
+      clientStatus: 'string',
+      leadStatus: 'string',
+      cycleStatus: 0,
+      dateFrom: 'string',
+      dateTo: 'string',
     });
   };
 
@@ -348,16 +348,14 @@ const fetchLeads = () => {
               onClick={() => setShowFilterDialog(true)}
             >
               <SlidersHorizontal className={styles.filterIcon} />
-              Filters
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
             {leads?.map((visit) => (
               <div
                 key={visit._id}
-                className={`${styles.visitCard} ${
-                  selectedVisit?._id === visit._id ? styles.selectedCard : ""
-                }`}
+                className={`${styles.visitCard} ${selectedVisit?._id === visit._id ? styles.selectedCard : ""
+                  }`}
                 onClick={() => {
                   setSelectedVisit(visit);
                   router.push(`/lead-details?id=${visit._id}`, {
@@ -532,33 +530,33 @@ const fetchLeads = () => {
         </div>
 
         {/* Filter Dialog */}
-       <LeadFilterDialog
-  open={showFilterDialog}
-  onClose={() => setShowFilterDialog(false)}
-  onOpenChange={setShowFilterDialog}
-  filters={filters}
-  onFiltersChange={handleFiltersChange}
-  onClearFilters={() => {
-    const cleared = {
-      visitType: "",
-      leadFilter: "",
-      statusFilter: "",
-      feedbackFilter: "",
-      clientStatus: "",
-      leadStatus: "",
-      cycleStatus: 0,
-      dateFrom: "",
-      dateTo: "",
-    };
-    setFilters(cleared);
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id,
-      page: 1,
-    });
-  }}
-  visits={leads || []}
-  resultCount={leads?.length || 0}
-/>
+        <LeadFilterDialog
+          open={showFilterDialog}
+          onClose={() => setShowFilterDialog(false)}
+          onOpenChange={setShowFilterDialog}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={() => {
+            const cleared = {
+              visitType: "",
+              leadFilter: "",
+              statusFilter: "",
+              feedbackFilter: "",
+              clientStatus: "",
+              leadStatus: "",
+              cycleStatus: 0,
+              dateFrom: "",
+              dateTo: "",
+            };
+            setFilters(cleared);
+            fetchTeamLeaderReportingToLeads({
+              id: user?._id,
+              page: 1,
+            });
+          }}
+          visits={leads || []}
+          resultCount={leads?.length || 0}
+        />
 
 
         {/* Edit Dialog */}
@@ -583,9 +581,156 @@ const fetchLeads = () => {
   // Show detail view when visitId exists
   if (!selectedVisit) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading...</div>
-      </div>
+       <div className={styles.leftSidebar}>
+          <div className={styles.sidebarHeader}>
+            <h1 className={styles.title}>Leads</h1>
+            <div className={styles.searchContainer}>
+              <Search className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+            <button
+              className={styles.filterBtn}
+              onClick={() => setShowFilterDialog(true)}
+            >
+              <SlidersHorizontal className={styles.filterIcon} />
+             
+            </button>
+          </div>
+          <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
+            {leads?.map((visit) => (
+              <div
+                key={visit._id}
+                className={`${styles.visitCard} ${selectedVisit?._id === visit._id ? styles.selectedCard : ""
+                  }`}
+                onClick={() => {
+                  setSelectedVisit(visit);
+                  router.push(`/lead-details?id=${visit._id}`, {
+                    scroll: false,
+                  });
+                }}
+              >
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.clientName}>
+                    {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
+                    {visit?.lastName ?? ""}
+                  </h3>
+                </div>
+                <div className={styles.cardDetails}>
+                  <div className={styles.detailRow}>
+                    <Phone className={styles.icon} />
+                    <span>
+                      {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
+                    </span>
+                    <MdAddCall
+                      size={25}
+                      color="dodgerblue"
+                      style={{ cursor: "pointer", marginLeft: "auto" }}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card selection
+                        handleCall(visit);
+                      }}
+                    />
+                  </div>
+                  <div className={styles.detailRow}>
+                    <Calendar className={styles.icon} />
+                    Tagging Date:
+                    {visit.cycle?.startDate ? (
+                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </div>
+                  <div className={styles.detailRow}>
+                    <Calendar className={styles.icon} />
+                    Valid Till:
+                    {visit.cycle?.validTill ? (
+                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </div>
+                  <div className={styles.detailRow}>
+                    <Calendar className={styles.icon} />
+                    Team Leader:
+                    {visit.teamLeader ? (
+                      <span>
+                        {visit.teamLeader.firstName ?? ""}{" "}
+                        {visit.teamLeader.lastName ?? ""}
+                      </span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </div>
+                  <div className={styles.detailRow}>
+                    <PersonStanding className={styles.icon} />
+                    Client Status:
+                    <span>{visit.clientInterestedStatus}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {hasMoreRef.current && (
+              <div className={styles.loadMoreContainer}>
+                <button
+                  className={styles.loadMoreBtn}
+                  onClick={() => loadMoreLeads(false)}
+                  disabled={loadingRef.current}
+                >
+                  {loadingRef.current ? "Loading..." : "Load More"}
+                </button>
+              </div>
+            )}
+          </div>
+           {/* Filter Dialog */}
+        <LeadFilterDialog
+          open={showFilterDialog}
+          onClose={() => setShowFilterDialog(false)}
+          onOpenChange={setShowFilterDialog}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={() => {
+            const cleared = {
+              visitType: "",
+              leadFilter: "",
+              statusFilter: "",
+              feedbackFilter: "",
+              clientStatus: "",
+              leadStatus: "",
+              cycleStatus: 0,
+              dateFrom: "",
+              dateTo: "",
+            };
+            setFilters(cleared);
+            fetchTeamLeaderReportingToLeads({
+              id: user?._id,
+              page: 1,
+            });
+          }}
+          visits={leads || []}
+          resultCount={leads?.length || 0}
+        />
+
+
+        {/* Edit Dialog */}
+        {showEditDialog && (
+          <EditDialog
+            visit={editFormData}
+            onClose={() => setShowEditDialog(false)}
+            onSave={(updatedVisit: any) => {
+              console.log("Saving visit:", updatedVisit);
+              setSelectedVisit(updatedVisit);
+              setShowEditDialog(false);
+            }}
+          />
+        )}
+        </div>
+
     );
   }
 
@@ -593,7 +738,10 @@ const fetchLeads = () => {
     <div className={styles.container}>
       {/* Mobile Header */}
       <div className={styles.mobileHeader}>
-        <button className={styles.backBtn} onClick={handleBackToList}>
+        <button className={styles.backBtn} onClick={()=>{
+          setSelectedVisit(null);
+           router.push("/lead-details", { scroll: false });
+        }}>
           <ArrowLeft className={styles.backIcon} />
         </button>
         <h1 className={styles.headerTitle}>
@@ -607,7 +755,10 @@ const fetchLeads = () => {
 
       {/* Action Buttons */}
       <div className={styles.actionBar}>
-        <button className={styles.editBtn}>
+        <button className={styles.editBtn} onClick={() => {
+                      setEditFormData(selectedVisit);
+                      setShowEditDialog(true);
+                    }}>
           <Edit className={styles.btnIcon} />
           Edit
         </button>
@@ -620,6 +771,17 @@ const fetchLeads = () => {
             <Check className={styles.btnIcon} />
             Approve
           </button>
+        )}
+        {showEditDialog && (
+          <EditDialog
+            visit={editFormData}
+            onClose={() => setShowEditDialog(false)}
+            onSave={(updatedVisit: any) => {
+              console.log("Saving visit:", updatedVisit);
+              setSelectedVisit(updatedVisit);
+              setShowEditDialog(false);
+            }}
+          />
         )}
       </div>
 
@@ -874,6 +1036,7 @@ const VisitDetailsContent = ({
               </div>
             </div>
           </div>
+          
         </div>
       )}
     </>
