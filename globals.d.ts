@@ -169,7 +169,7 @@ interface ChannelPartnerHistory {
 }
 
 interface Lead {
-  _id?: string; // optional if client-side
+  _id: string | null;
   email?: string | null;
   project: OurProject[];
   requirement: string[];
