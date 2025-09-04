@@ -33,6 +33,8 @@ const Hero = () => {
           priority
           quality={75}
           className={styles.image}
+          placeholder="blur"
+          blurDataURL={imageSrc}
         />
       )}
 
