@@ -69,7 +69,7 @@ const HomeNavbar = () => {
               !activeSection || activeSection === "home" ? styles.active : ""
             }
           >
-            <Link href="#home" className={styles.navLink}>
+            <Link href="/" className={styles.navLink}>
               <span>Home</span>
             </Link>
           </li>
