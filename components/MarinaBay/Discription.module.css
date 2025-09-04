@@ -465,9 +465,20 @@ text-align: center;
 .PrimeText{
   width: 100%;
  font-size: 0.9rem;
+ 
 }
+.PrimeTextOne{
+  margin-left: 15rem;
+}
+.PrimeTextTwo{
+    margin-left: 7rem;
+}
+
 .FirstPrime{
   padding-left: 0vw;
+}
+.PrimeTextFour{
+  padding-right: 35vw;
 }
 .primeImagesContainer{
   padding: 2vh ovw;

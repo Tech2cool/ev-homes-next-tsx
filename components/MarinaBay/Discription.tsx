@@ -167,7 +167,7 @@ const Discription = () => {
                       src="/images/marketIcon.webp"
                       className={styles.primeimg}
                     />
-                    <p className={styles.PrimeText}>
+                    <p className={`${styles.PrimeText} ${styles.PrimeTextOne}`}>
                       Local Market & D-Mart for daily essentials.
                     </p>
                   </div>
@@ -177,7 +177,7 @@ const Discription = () => {
                       src="/images/hospitalIcon.webp"
                       className={styles.primeimg}
                     />
-                    <p className={styles.PrimeText}>
+                    <p className={`${styles.PrimeText} ${styles.PrimeTextTwo}`}>
                       Hospitals for your healthcare needs.
                     </p>
                   </div>
@@ -186,7 +186,7 @@ const Discription = () => {
                       src="/images/academyIcon.webp"
                       className={styles.primeimg}
                     />
-                    <p className={styles.PrimeText}>
+                    <p className={`${styles.PrimeText} ${styles.PrimeTextThree}`}>
                       Christ Academy for quality education.
                     </p>
                   </div>
@@ -195,7 +195,7 @@ const Discription = () => {
                       src="/images/railwayIcon.webp"
                       className={styles.primeimg}
                     />
-                    <p className={styles.PrimeText}>
+                    <p className={`${styles.PrimeText} ${styles.PrimeTextFour}`}>    
                       Kopar Khairane Railway Station for seamless connectivity.
                     </p>
                   </div>
