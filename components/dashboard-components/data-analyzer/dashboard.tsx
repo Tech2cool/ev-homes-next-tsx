@@ -37,7 +37,6 @@ import { useUser } from "@/providers/userContext";
 import { MdOutlineCancel } from "react-icons/md";
 import { useRouter } from "next/navigation";
 
-
 // Dummy data for charts
 const overallLeadsData = [
   { name: "Jan", leads: 400, visits: 240, bookings: 100 },
@@ -85,18 +84,19 @@ export default function DataAnalyzerDashboardPage() {
   // Dummy value for admin check. In a real application, this would come from user authentication.
   const isAdmin = true;
   const { user, loading } = useUser();
-const router = useRouter();
+  const router = useRouter();
 
   const {
     fetchSearchLeads,
     searchLeadInfo,
     siteInfo,
+    closingManager,
     fetchDataAnalyzerVisits,
-  
-    fetchAssignFeedbackLeads,
+    fetchAssignFeedbackLeadsCount,
+    // fetchAssignFeedbackLeads,
     assignInfo,
     leadsTeamLeaderGraphForDT,
-    fetchTeamLeaderGraphForDA
+    fetchTeamLeaderGraphForDA,
   } = useData();
 
   useEffect(() => {
@@ -104,8 +104,9 @@ const router = useRouter();
       console.log("use effect dashboard");
       fetchSearchLeads({ query: "", page: 1, limit: 10 });
       fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
-      fetchAssignFeedbackLeads({ query: "", page: 1, limit: 10 });
-      fetchTeamLeaderGraphForDA({interval:"monthly"});
+      // fetchAssignFeedbackLeads({ query: "", page: 1, limit: 10 });
+      fetchTeamLeaderGraphForDA({ interval: "monthly" });
+      fetchAssignFeedbackLeadsCount({ query: "", page: 1, limit: 10 });
     }
   }, [user, loading]);
 
@@ -114,18 +115,18 @@ const router = useRouter();
   }
 
   return (
- <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-6">
-  <div className="flex items-center justify-between">
-    <h1 className="font-semibold text-lg md:text-2xl">
-      Dashboard Overview
-    </h1>
-      <button
+    <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="font-semibold text-lg md:text-2xl">
+          Dashboard Overview
+        </h1>
+        <button
           className="bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base font-medium px-4 py-2 rounded-md"
-          onClick={() => router.push('/tagging-form')}
+          onClick={() => router.push("/tagging-form")}
         >
           Client Tagging Form
         </button>
-  </div>
+      </div>
 
       {/* Leads Overview */}
       <section>
@@ -194,7 +195,7 @@ const router = useRouter();
           />
           <OverviewCard
             title="Approved"
-            value={siteInfo?.approvedCount?? 0}
+            value={siteInfo?.approvedCount ?? 0}
             // description="+8% from last month"
             linkHref="/dashboard/visits?status=virtual"
             linkText="View approved visits"
@@ -227,46 +228,29 @@ const router = useRouter();
         <section>
           <h2 className="text-xl font-semibold mb-4">Attention Required</h2>
           <div className="grid gap-4 md:grid-cols-2">
-            <Card className="bg-card text-card-foreground">
-              <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-base text-wrap">
-                  Feedback Pending
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-4xl font-bold text-red-500">
-                  {assignInfo?.notFollowUpCount}
-                </p>
-                <Link
-                  href="/dashboard/feedback"
-                  className="text-sm text-primary hover:underline mt-2 block"
-                >
-                  Review feedback
-                </Link>
-              </CardContent>
-            </Card>
-            <Card className="bg-card text-card-foreground">
-              <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-base text-wrap">
-                  Assign Pending
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-4xl font-bold text-orange-500">
-                  {assignInfo?.notAssignedCount}
-                </p>
-                <Link
-                  href="/dashboard/assignments"
-                  className="text-sm text-primary hover:underline mt-2 block"
-                >
-                  View assignments
-                </Link>
-              </CardContent>
-            </Card>
+           {closingManager.map((leader) => (
+  <Card key={leader.data} className="bg-card text-card-foreground">
+    <CardHeader className="p-4 pb-2">
+      {/* <CardTitle className="text-base text-wrap">
+        {leader.teamLeader.firstName} {leader.teamLeader.lastName}
+      </CardTitle> */}
+    </CardHeader>
+    <CardContent className="p-4 pt-0">
+      <p className="text-sm">Feedback Pending:</p>
+      <p className="text-2xl font-bold text-red-500">
+        {leader.notFollowUpCount}
+      </p>
+      <p className="text-sm mt-2">Assign Pending:</p>
+      <p className="text-2xl font-bold text-orange-500">
+        {leader.notAssignedCount}
+      </p>
+    </CardContent>
+  </Card>
+))}
+
           </div>
         </section>
       )}
-
 
       {/* Graphs Section */}
       <section>
@@ -276,11 +260,7 @@ const router = useRouter();
             title="Overall Leads Performance"
             description="Total Leads, Visits, and Bookings over time."
             chartComponent={
-              <LineChart data={
-
-    leadsTeamLeaderGraphForDT
-
-              }>
+              <LineChart data={leadsTeamLeaderGraphForDT}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="teamLeader"

@@ -181,6 +181,7 @@ type DataProviderState = {
   requirements: string[];
   leadInfo: PaginationProps | null;
   assignInfo: PaginationProps | null;
+  closingManager:PaginationProps[];
   leads: Lead[] | null;
   dashCount: DashboardCount | null;
   siteInfo: PaginationProps | null;
@@ -259,6 +260,7 @@ const initialState: DataProviderState = {
   assignInfo: null,
   channelPartners: [],
   leadsTeamLeaderGraphForDT: [],
+  closingManager:[],
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getTestimonals: async () => ({ success: false, message: "Not initialized" }),
@@ -309,6 +311,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   );
 
   const [assignInfo, setAssignInfo] = useState<PaginationProps | null>(null);
+
+  const [closingManager,setTeamLeaders]= useState<PaginationProps[]|[]>([]);
 
   const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
 
@@ -841,44 +845,45 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   };
 
   // asign/feedback lead list count
-  const fetchAssignFeedbackLeadsCount = async ({
-    query = "",
-    page = 1,
-    limit = 10,
-    teamLeader = null,
-  }: {
-    query?: string | null;
-    page?: number | null;
-    limit?: number | null;
-    teamLeader?: string | null;
-  }): Promise<{ success: boolean; message?: string }> => {
-    setError("");
+    const fetchAssignFeedbackLeadsCount = async ({
+      query = "",
+      page = 1,
+      limit = 10,
+      teamLeader = null,
+    }: {
+      query?: string | null;
+      page?: number | null;
+      limit?: number | null;
+      teamLeader?: string | null;
+    }): Promise<{ success: boolean; message?: string }> => {
+      setError("");
 
-    try {
-      const url = `/api/leads-assign-count?query=${query}&page=${page}&limit=${limit}`;
-      console.log("Fetching dashboard count from:", url);
+      try {
+        const url = `/api/leads-assign-count?query=${query}&page=${page}&limit=${limit}`;
+        console.log("Fetching dashboard count from:", url);
 
-      const res = await fetchAdapter(url, {
-        method: "GET",
-      });
+        const res = await fetchAdapter(url, {
+          method: "GET",
+        });
 
-      const { data, ...withoutData } = res;
+        const { data, ...withoutData } = res;
 
-      setAssignInfo(withoutData);
-      if (page! > 1) {
-        setleads((prev) => [...prev, ...res?.data]);
-      } else {
-        setleads(res?.data ?? []);
+        setAssignInfo(withoutData);
+    setTeamLeaders(data ?? []); 
+        if (page! > 1) {
+          setleads((prev) => [...prev, ...res?.data]);
+        } else {
+          setleads(res?.data ?? []);
+        }
+        setFetchingMoreLeads(false);
+        setLoadingLeads(false);
+
+        return { success: true };
+      } catch (err: any) {
+        setError(err.message || "Something went wrong");
+        return { success: false, message: err.message };
       }
-      setFetchingMoreLeads(false);
-      setLoadingLeads(false);
-
-      return { success: true };
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-      return { success: false, message: err.message };
-    }
-  };
+    };
 
   const fetchSearchLeads = async ({
     query = "",
@@ -1042,6 +1047,7 @@ const fetchTeamLeaderGraphForDA = async ({
     requirements: requirements,
     channelPartners: channelPartners,
     leadsTeamLeaderGraphForDT: leadsTeamLeaderGraphForDT,
+    closingManager:closingManager,
     getProjects: getProjects,
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
