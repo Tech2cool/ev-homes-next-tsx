@@ -14,9 +14,10 @@ const Hero = () => {
 
   // Prevent hydration mismatch by skipping image rendering until mounted
   const imageSrc =
-    theme === "dark"
+    "https://cdn.evhomes.tech/05e35771-5741-4918-ad11-86b4a731a466-malibu_west.jpg";
+  /*theme === "dark"
       ? "/images/hero_bg_image_transparent.png"
-      : "/images/Homewhitetheme.png";
+      : "/images/Homewhitetheme.png";*/
 
   return (
     <div id="home" className={styles.heroBackground}>
@@ -32,6 +33,8 @@ const Hero = () => {
           priority
           quality={75}
           className={styles.image}
+          placeholder="blur"
+          blurDataURL={imageSrc}
         />
       )}
 

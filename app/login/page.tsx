@@ -6,18 +6,14 @@ import {
   Mail,
   Lock,
   ArrowRight,
-  ChromeIcon as Google,
-  Github,
+ 
+
   Phone,
   MessageSquareText,
-  CalendarCheck,
-  CalendarPlus,
-  Home,
+ 
 } from "lucide-react"; // Using Lucide React icons
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { redirect } from "next/navigation";
 import { useUser } from "@/providers/userContext";
-import router from "next/router";
 import Navbar from "../../components/home-components/HomeNavbar"
 import { MdOutlineEmail, MdPassword } from "react-icons/md";
 
@@ -26,7 +22,7 @@ const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
     "email"
   );
-  const { login, loading, error, user } = useUser();
+  const { login } = useUser();
 
   const [emailFormData, setEmailFormData] = useState({
     email: "",

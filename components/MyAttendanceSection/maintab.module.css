@@ -55,6 +55,11 @@
   font-weight: 500;
   margin-bottom: 0.5vh;
 }
+
+:global(html.light) .name {
+  color: black;
+}
+
 .desgination,
 .empid {
   display: flex;
@@ -67,13 +72,21 @@
   margin-left: 2vw;
 }
 
+:global(html.light) .empid {
+  color: black;
+}
+
+:global(html.light) .desgination {
+  color: black;
+}
+
 .desgination {
   font-size: 2vh;
   font-weight: 400;
 }
 
 .status {
-  padding: 0.3vh 0.7vw;
+  padding: 0.2vh 2vw;
   border-radius: 12px;
   font-size: 1.8vh;
   font-weight: 500;
@@ -104,10 +117,20 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+:global(html.light) .navbar {
+  background-color: rgba(138, 137, 137, 0.132);
+    border-bottom: 1px solid rgba(24, 23, 23, 0.2);
+
+}
+
 .activeTab {
   color: white !important;
   border-bottom: 2px solid white;
   padding-bottom: 0.5vh;
+}
+:global(html.light) .activeTab {
+  color: blue !important;
+    border-bottom: 2px solid blue;
 }
 
 .links {
@@ -124,9 +147,14 @@
   color: #aaa;
   transition: color 0.2s ease;
 }
-
+:global(html.light) .links span{
+  color: black;
+}
 .links span:hover {
   color: #fff;
+}
+:global(html.light) .links span:hover{
+  color:blue;
 }
 
 .rightAligned {
@@ -194,6 +222,11 @@
   overflow: hidden;
 }
 
+:global(html.light) .btn {
+  background-color: white;
+  color: black;
+}
+
 .btn:disabled {
   cursor: default;
 }
@@ -251,6 +284,7 @@
 }
 
 @media screen and (max-width: 615px) {
+
   .desgination,
   .empid {
     display: none;
@@ -262,6 +296,7 @@
     scrollbar-width: none;
     padding: 1vh 1vw;
   }
+
   .links {
     gap: 5vw;
   }
@@ -277,8 +312,8 @@
   }
 
   .profileImage {
-    width: 7vw;
-    height: 7vw;
+    width: 8vw;
+    height: 8vw;
   }
 
   .name {
@@ -292,16 +327,21 @@
 }
 
 @media screen and (max-width: 1024px) and (min-width: 616px) {
- 
- .navbar {
+
+  .navbar {
     overflow-x: auto;
     scrollbar-width: none;
     padding: 1vh 1vw;
   }
+
   .links span {
     margin-left: 2vw;
     font-size: 1.6vh;
     white-space: nowrap;
   }
-  
+
+  .profileImage {
+    width: 6vw;
+    height: 6vw;
+  }
 }

@@ -28,6 +28,13 @@
   scrollbar-color: #c0c0c0 transparent;
 }
 
+:global(html.dark) .dialog {
+  background: #000000;
+  color: #dbdbdb;
+  scrollbar-color: #383838 transparent;
+  box-shadow: 0 10px 40px rgba(18, 18, 18, 0.2);
+}
+
 .dialog::-webkit-scrollbar {
   width: 8px;
 }
@@ -60,24 +67,28 @@
   color: #666;
   transition: color 0.2s ease;
 }
-
+:global(html.dark) .closeBtn {
+  color: rgb(255, 255, 255);
+}
 .closeBtn:hover {
   color: #000;
 }
 
 .fieldGroup {
   display: grid;
-  gap: 14px;
 }
 
 .fieldGroup label {
   font-weight: 600;
   font-size: 14px;
   color: #444;
-  margin-bottom: 4px;
+  margin-top: 12px;
+
   display: block;
 }
-
+:global(html.dark) .fieldGroup label {
+  color: rgb(199, 199, 199);
+}
 .fieldGroup select,
 .fieldGroup input[type="date"] {
   width: 100%;
@@ -88,7 +99,11 @@
   background-color: #f9f9f9;
   transition: border-color 0.2s ease;
 }
+:global(html.dark) .fieldGroup select {
+  background-color: #141414;
+    border: 1px solid #1d1d1d;
 
+}
 .fieldGroup select:focus,
 .fieldGroup input[type="date"]:focus {
   border-color: #6c5ce7;

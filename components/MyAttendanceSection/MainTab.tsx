@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import styles from "./maintab.module.css";
 import { MdBadge } from "react-icons/md";
@@ -33,41 +33,6 @@ const MainTab = () => {
     permissions: [],
   };
 
-  // Dummy attendance
-  const attendanceList = [
-    { status: "present" },
-    { status: "absent" },
-    { status: "present", wlStatus: "holiday" },
-    { status: "holiday" },
-    { status: "weekoff" },
-    { status: "on-paid-leave" },
-    { status: "half-day" },
-    { status: "active" },
-  ];
-
-  const attendanceCounts = useMemo(() => {
-    const presentCount = attendanceList.filter((i) => i.status === "present").length;
-    const absentCount = attendanceList.filter((i) => i.status === "absent").length;
-    const onLeave = attendanceList.filter((i) => i.status?.includes("leave")).length;
-    const weekOffCount = attendanceList.filter((i) => i.status === "weekoff").length;
-    const halfDayCount = attendanceList.filter((i) => i.status === "half-day").length;
-    const pendingCount = attendanceList.filter((i) => i.status === "active").length;
-    const PresentOnWeekOffCount = 1;
-    const PresentOnHolidayCount = 1;
-    const holidayCount = attendanceList.filter((i) => i.status === "holiday").length;
-
-    return [
-      { title: "Present", value: presentCount },
-      { title: "Absent", value: absentCount },
-      { title: "On Leave", value: onLeave },
-      { title: "Week Off", value: weekOffCount },
-      { title: "Half Day", value: halfDayCount },
-      { title: "Pending", value: pendingCount },
-      { title: "Present On WeekOff", value: PresentOnWeekOffCount },
-      { title: "Present On Holiday", value: PresentOnHolidayCount },
-      { title: "Holiday", value: holidayCount },
-    ];
-  }, [attendanceList]);
 
   const renderSection = () => {
     switch (selectedTab) {
@@ -136,7 +101,7 @@ const MainTab = () => {
         </div>
         <button
           className={styles.btn}
-          onClick={() => router.push("./attendance/attendanceinsight")}
+          onClick={() => router.push("./attandance/attendanceinsight")}
         >
           Attendance Insight
           <svg>

@@ -283,7 +283,7 @@
 }
 
 /* Custom styles for react-select to match the dark theme */
-:global(.react-select__control) {
+.formControl :global(.react-select__control) {
   border: 1px solid #444444f5 !important;
   border-radius: 8px !important;
   padding: 0.2rem !important;
@@ -292,67 +292,67 @@
   background: transparent !important;
 }
 
-:global(.react-select__control:hover) {
+.formControl:global(.react-select__control:hover) {
   border-color: #666 !important;
 }
 
-:global(.react-select__control--is-focused) {
+.formControl:global(.react-select__control--is-focused) {
   border-color: #68a7e5f5 !important;
   box-shadow: 0 0 0 2px rgba(104, 167, 229, 0.2) !important;
 }
 
-:global(.react-select__placeholder) {
+.formControl:global(.react-select__placeholder) {
   color: #666 !important;
   font-size: 1vw !important;
 }
 
-:global(.react-select__single-value) {
+.formControl:global(.react-select__single-value) {
   color: #fff !important;
   font-size: 1vw !important;
 }
 
-:global(.react-select__multi-value) {
+.formControl:global(.react-select__multi-value) {
   background: #444444f5 !important;
   border-radius: 4px !important;
 }
 
-:global(.react-select__multi-value__label) {
+.formControl:global(.react-select__multi-value__label) {
   color: white !important;
   font-weight: 400 !important;
 }
 
-:global(.react-select__multi-value__remove) {
+.formControl:global(.react-select__multi-value__remove) {
   color: white !important;
   border-radius: 0 4px 4px 0 !important;
 }
 
-:global(.react-select__multi-value__remove:hover) {
+.formControl:global(.react-select__multi-value__remove:hover) {
   background: rgba(255, 255, 255, 0.2) !important;
 }
 
-:global(.react-select__option) {
+.formControl:global(.react-select__option) {
   padding: 8px 12px !important;
   font-size: 1vw !important;
   color: #333 !important;
   background: white !important;
 }
 
-:global(.react-select__option--is-selected) {
+.formControl:global(.react-select__option--is-selected) {
   background: #4caf50 !important;
   color: white !important;
 }
 
-:global(.react-select__option--is-focused) {
+.formControl:global(.react-select__option--is-focused) {
   background: #f0f0f0 !important;
   color: #333 !important;
 }
 
-:global(.react-select__option:hover) {
+.formControl:global(.react-select__option:hover) {
   background: #f0f0f0 !important;
   color: #333 !important;
 }
 
-:global(.react-select__menu) {
+.formControl:global(.react-select__menu) {
   border-radius: 8px !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
   border: 1px solid #444444f5 !important;
@@ -360,40 +360,40 @@
   z-index: 9999 !important;
 }
 
-:global(.react-select__menu-list) {
+.formControl:global(.react-select__menu-list) {
   background: white !important;
   border-radius: 8px !important;
 }
 
-:global(.react-select__input-container) {
+.formControl:global(.react-select__input-container) {
   color: #fff !important;
 }
 
-:global(.react-select__value-container) {
+.formControl:global(.react-select__value-container) {
   color: #fff !important;
 }
 
-:global(.react-select__dropdown-indicator) {
+.formControl:global(.react-select__dropdown-indicator) {
   color: #666 !important;
 }
 
-:global(.react-select__dropdown-indicator:hover) {
+.formControl:global(.react-select__dropdown-indicator:hover) {
   color: #68a7e5f5 !important;
 }
 
-:global(.react-select__clear-indicator) {
+.formControl:global(.react-select__clear-indicator) {
   color: #666 !important;
 }
 
-:global(.react-select__clear-indicator:hover) {
+.formControl:global(.react-select__clear-indicator:hover) {
   color: #ef4444 !important;
 }
 
-:global(.react-select__loading-indicator) {
+.formControl:global(.react-select__loading-indicator) {
   color: #68a7e5f5 !important;
 }
 
-:global(.react-select__no-options-message) {
+.formControl:global(.react-select__no-options-message) {
   color: #666 !important;
 }
 

@@ -24,6 +24,9 @@
   padding: 1vh;
   border-radius: 8px;
 }
+:global(html.light) .profilesection {
+  background-color: rgba(217, 209, 209, 0.244);
+}
 
 .imagesection {
   display: flex;
@@ -31,8 +34,8 @@
   justify-content: center;
   align-items: center;
   gap: 1vh;
-      padding-top: 5vh;
-      padding-bottom: 2vh;
+  padding-top: 5vh;
+  padding-bottom: 2vh;
 
 }
 
@@ -47,6 +50,10 @@
   font-size: 2.5vh;
   font-weight: 400;
 }
+:global(html.light) .profilesection h6 {
+  color: black;
+}
+
 
 .employeebutton {
   display: flex;
@@ -58,6 +65,12 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.3rem;
+
+}
+:global(html.light) .employeebutton{
+    background-color: #cecccc52;
+    color: black;
+
 }
 
 /* ******************************Contact Section************************* */
@@ -75,20 +88,26 @@
   height: 8vh;
   width: 100%;
   background-color: #34333336;
-  /* padding: 0.4rem 0rem 0.4rem 0.6rem; */
   padding: 1vh 0vw 1vh 1vw;
   margin-top: 0.5rem;
   border-radius: 0.3rem;
 }
-
+:global(html.light) .container {
+    background-color: rgba(206, 204, 204, 0.32);
+}
 .container h5 {
   color: grey;
   font-size: 1.7vh;
 }
-
+:global(html.light) .container h5{
+color: rgb(37, 37, 37);
+}
 .container p {
   color: #c5c1c1;
   font-size: 2vh;
+}
+:global(html.light) .container p{
+  color: #060505;
 }
 
 .joincontainer {
@@ -106,7 +125,9 @@
   font-size: 2.5vh;
   font-weight: 500;
 }
+:global(html.light) .personalInfo {
 
+    background-color: rgba(217, 209, 209, 0.243);}
 .containerrow {
   display: flex;
   flex-direction: row;
@@ -127,7 +148,9 @@
   font-size: 2.5vh;
   font-weight: 500;
 }
-
+:global(html.light) .proInfo {
+    background-color: rgba(217, 209, 209, 0.243);
+  }
 /* *******************************LEAVE AND REPORTING******************** */
 .leaverepoting {
   flex-direction: row;
@@ -216,11 +239,13 @@
   flex-direction: column;
   gap: 1vh;
 }
+
 .reportingContair p {
   font-size: 2.5vh;
   font-weight: 500;
   color: rgb(58, 58, 204);
 }
+
 .imagecontainer {
   display: flex;
   flex-direction: column;
@@ -232,45 +257,280 @@
   width: 19vw;
   height: 28vh;
 }
+:global(html.light) .imagecontainer {
+    background-color: rgba(206, 204, 204, 0.32);  }
 .repotingImage {
   width: 15vh;
   height: 15vh;
   object-fit: cover;
   border-radius: 50%;
 }
+
 .imagecontainer h6 {
   font-size: 1vw;
   font-weight: 600;
   padding-top: 0.5vh;
 }
+:global(html.light) .imagecontainer h6 {
+  color: black;
+}
+
 .imagecontainer p {
   font-size: 1.1vw;
   font-weight: 400;
   color: #bfbebe;
 }
+:global(html.light) .imagecontainer p {
+color: #3c3c3c;
+}
 
-@media screen and (max-width: 1024px) and (min-width: 616px) {
-  .profileImage {
-    width: 18vh;
-    height: 18vh;
+/* ================== Mobile View ================== */
+@media (max-width: 480px) {
+  .maincontainer {
+  margin-top: 1svh;
+}
+.imagesection {
+  padding-top: 1vh;
+}
+  .headsection {
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+    padding: 1vh;
   }
-  .contact {
-    padding: 8vh 2vw 5vh 1vw;
+
+  .profilesection {
+    width: 100%;
+  }
+
+  .profileImage {
+    width: 15vh;
+    height: 15vh;
+  }
+
+  .employeebutton {
+    width: auto;
+    padding: 0 1rem;
+    font-size: 1.6vh;
+  }
+
+  .joincontainer {
+    width: 100%;
+  }
+
+  .containerrow {
+    flex-direction: column;
+    gap: 1vh;
+  }
+
+  .leaverepoting {
+    flex-direction: column;
+    justify-content: center;
+    
+    gap: 2vh;
+    align-items: center;
+  }
+
+  .progressGroup {
+    gap: 3vw;
+  }
+
+  .progressBar {
+    width: 50vw;
+  }
+
+  .proInfo {
+    width: 100%;
+    padding: 2vh 1vw;
+  }
+
+  .imagecontainer {
+    width: 100%;
+    height: auto;
+    padding: 2vh;
+  }
+
+  .imagecontainer h6 {
+    font-size: 3.5vw;
+  }
+
+  .imagecontainer p {
+    font-size: 3vw;
+  }
+
+  /* Reduce general text sizes for mobile */
+  .profilesection h6,
+  .contact p,
+  .personalInfo p,
+  .leaveHeadline,
+  .reportingContair p,
+  .proInfo p {
+    font-size: 2vh;
   }
 
   .container h5 {
-    color: grey;
     font-size: 1.5vh;
   }
 
   .container p {
-    color: #c5c1c1;
     font-size: 1.8vh;
+  }
+  .container {
+  height: 7vh;
+  width: 100%;
+  background-color: #34333336;
+  padding: 1vh 0vw 1vh 2vw;
+  margin-top: 0.5rem;
+  border-radius: 0.3rem;
+}
+}
+/* ================== Tablet View ================== */
+@media (min-width: 481px) and (max-width: 600px) {
+  .maincontainer {
+    margin-top: 3vh;
   }
 
   .headsection {
-    width: 95%;
-    gap: 2vw;
-    padding: 1vh;
+    flex-direction: column; 
+    align-items: center;
+    gap: 2vh;
+    padding: 2vh 2vw;
   }
+
+  .profilesection {
+    width: 80%;
+  }
+
+  .profileImage {
+    width: 18vh;
+    height: 18vh;
+  }
+
+  .employeebutton {
+    width: auto;
+    padding: 0.5rem 1.5rem;
+    font-size: 1.8vh;
+  }
+
+  .joincontainer {
+    width: 90%;
+  }
+
+  .containerrow {
+    flex-direction: row; /* still side-by-side on tablets */
+    gap: 2vw;
+  }
+
+  .container {
+    height: auto;
+    padding: 1.2vh 1vw;
+  }
+
+  .leaverepoting {
+    flex-direction: row; /* show leave info and reporting side-by-side */
+    justify-content: center;
+    align-items: center;
+    gap: 4vw;
+  }
+
+  .progressBar {
+    width: 30vw;
+  }
+
+  .proInfo {
+    width: 80%;
+    padding: 3vh 2vw;
+  }
+
+  .imagecontainer {
+    width: 30vw;
+    height: auto;
+    padding: 2vh;
+  }
+
+  .imagecontainer h6 {
+    font-size: 2vh;
+  }
+
+  .imagecontainer p {
+    font-size: 1.8vh;
+  }
+
+  .profilesection h6,
+  .contact p,
+  .personalInfo p,
+  .leaveHeadline,
+  .reportingContair p,
+  .proInfo p {
+    font-size: 2.2vh;
+  }
+
+  .container h5 {
+    font-size: 1.6vh;
+  }
+
+  .container p {
+    font-size: 1.9vh;
+  }
+}
+@media (min-width: 601px) and (max-width: 935px) {
+  .container {
+  min-height: 8vh; 
+  height: auto;    
+  width: 100%;
+  background-color: #34333336;
+  padding: 1vh 0vw 1vh 1vw;
+  margin-top: 0.5rem;
+  border-radius: 0.3rem;
+  box-sizing: border-box; 
+  word-wrap: break-word;  
+}
+
+.maincontainer {
+    margin-top: 1vh;
+}
+.profileImage {
+    width: 15vh;
+    height: 15vh;
+}
+.imagesection {
+    padding-top: 5vh;
+    padding-bottom: 2vh;
+;
+}
+.employeebutton {
+    background-color: #504f4f52;
+    border-radius: .3rem;
+    justify-content: center;
+    align-items: center;
+    width: 9vw;
+    height: 4vh;
+    font-size: 1.9vh;
+    font-weight: 300;
+    display: flex
+;
+}
+.contact {
+    padding: 0rem;
+}
+.profilesection {
+  padding: 4vh 1vh;
+
+}
+.proInfo {
+    padding: 1vh 2vw;
+;
+}
+.imagecontainer h6 {
+    font-size: 1.5vw;
+}
+.repotingImage {
+    width: 10vh;
+    height: 10vh;
+}
+.imagecontainer {
+    width: 15vw;
+    height: 22vh;
+;
+}
 }
