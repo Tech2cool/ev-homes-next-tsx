@@ -2,21 +2,11 @@
 import type React from "react";
 import { useState } from "react";
 import styles from "./login.module.css";
-import {
-  Mail,
-  Lock,
-  ArrowRight,
- 
-
-  Phone,
-  MessageSquareText,
- 
-} from "lucide-react"; // Using Lucide React icons
+import { Mail, Lock, ArrowRight, Phone, MessageSquareText } from "lucide-react"; // Using Lucide React icons
 import { redirect } from "next/navigation";
 import { useUser } from "@/providers/userContext";
-import Navbar from "../../components/home-components/HomeNavbar"
+import Navbar from "../../components/home-components/HomeNavbar";
 import { MdOutlineEmail, MdPassword } from "react-icons/md";
-
 
 const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
@@ -107,31 +97,37 @@ const LoginPage = () => {
   };
 
   return (
-
     <div className={styles.loginContainer}>
       <Navbar />
-      {/* <div className={styles.themeToggleWrapper}>
-        <ThemeToggle />
-      </div> */}
 
-      <div className={styles.mainContentArea}>
-        {/* Visual Showcase Section (Left Side - Blending Background) */}
-        <div
-          className={styles.visualShowcaseSection}
-          style={{
-            backgroundImage:
-              "url('https://cdn.evhomes.tech/9e777ccb-8f63-4c1f-a939-ba279aff71aa-first.jpg')",
-          }}
-        >
-          <h2 className={styles.visualShowcaseTitle}>Your Dream Home Awaits</h2>
+      <div
+        className={styles.singleContainer}
+        style={{
+          // backgroundImage: "url('https://cdn.evhomes.tech/9e777ccb-8f63-4c1f-a939-ba279aff71aa-first.jpg')",
+          // backgroundImage: "images/bglogin.png",
+        }}
+      >
+        {/* Background overlay for text readability */}
+        {/* <div className={styles.backgroundOverlay}></div> */}
+
+        {/* Testimonial content positioned over background */}
+        
+        <div className={styles.testimonialContent}>
+          <h2 className={styles.visualShowcaseTitle}>
+            Your Dream Home Awaits!
+          </h2>
           <p className={styles.visualShowcaseSubtitle}>
             Explore exclusive properties and seamless services.
           </p>
           <div className={styles.testimonialCard}>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
             <p className={styles.testimonialQuote}>
-              {
-                '"Finding our dream home was effortless with their platform. The team was incredibly supportive and made the entire process a joy!"'
-              }
+              "Finding our dream home was effortless with their platform. The
+              team was incredibly supportive and made the entire process a joy!"
             </p>
             <p className={styles.testimonialAuthor}>
               - Sarah & John D., Happy Homeowners
@@ -139,96 +135,207 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Right Column for Stacked Cards */}
-        <div className={styles.rightColumnCards}>
-          {/* Login Card (Top Right) */}
-          <div className={styles.loginCard}>
-            <div className={styles.loginHeading}>Login</div>
-            {/* <p className={styles.loginSubtitle}>
-                Sign in to your account to continue.
-              </p> */}
+        {/* Login form positioned over background */}
+        <div className={styles.loginCard}>
+          <div className={styles.loginHeading}>LOGIN</div>
 
-            <div className={styles.loginTabs}>
-              <button
-                className={`${styles.tabButton} ${activeLoginTab === "email" ? styles.activeTab : ""
-                  }`}
-                onClick={() => {
-                  setActiveLoginTab("email");
-                  setLoginMessage(null);
-                  setOtpSent(false);
-                }}
-              >
-                <Mail className={styles.tabIcon} color="#c49b66" /> Email & Password
-              </button>
-              <button
-                className={`${styles.tabButton} ${activeLoginTab === "phone" ? styles.activeTab : ""
-                  }`}
-                onClick={() => {
-                  setActiveLoginTab("phone");
-                  setLoginMessage(null);
-                  setOtpSent(false);
-                }}
-              >
-                <Phone className={styles.tabIcon} color="#c49b66" /> Phone & OTP
-              </button>
-            </div>
+          {/* <div className={styles.loginTabs}> */}
+            {/* <button
+              className={`${styles.tabButton} ${
+                activeLoginTab === "email" ? styles.activeTab : ""
+              }`}
+              onClick={() => {
+                setActiveLoginTab("email");
+                setLoginMessage(null);
+                setOtpSent(false);
+              }}
+            >
+              <Mail className={styles.tabIcon} color="#c49b66" /> Email &
+              Password
+            </button> */}
+            {/* <button
+              className={`${styles.tabButton} ${
+                activeLoginTab === "phone" ? styles.activeTab : ""
+              }`}
+              onClick={() => {
+                setActiveLoginTab("phone");
+                setLoginMessage(null);
+                setOtpSent(false);
+              }}
+            >
+              <Phone className={styles.tabIcon} color="#c49b66" /> Phone & OTP
+            </button> */}
+          {/* </div> */}
 
-            {activeLoginTab === "email" && (
-              <form className={styles.loginForm} onSubmit={handleEmailSubmit}>
-                <div className={styles.inputGroup}>
-                  <label htmlFor="email" className={styles.label}>
-                    <MdOutlineEmail className={styles.allIcons} />
-                    Enter your email :
-                  </label>
-                  <div className={styles.inputWithIcon}>
-                    <Mail className={styles.inputIcon} />
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={emailFormData.email}
-                      onChange={handleEmailInputChange}
-                      className={styles.input}
-                      placeholder="user@example.com"
-                      required
-                    />
-                  </div>
+          {activeLoginTab === "email" && (
+            <form className={styles.loginForm} onSubmit={handleEmailSubmit}>
+              <div className={styles.inputGroup}>
+                <label htmlFor="email" className={styles.label}>
+                  <MdOutlineEmail className={styles.allIcons} />
+                  Enter your email :
+                </label>
+                <div className={styles.inputWithIcon}>
+                  <Mail className={styles.inputIcon} />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={emailFormData.email}
+                    onChange={handleEmailInputChange}
+                    className={styles.input}
+                    placeholder="user@example.com"
+                    required
+                  />
                 </div>
+              </div>
 
+              <div className={styles.inputGroup}>
+                <label htmlFor="password" className={styles.label}>
+                  <MdPassword className={styles.allIcons} />
+                  Enter your password :
+                </label>
+                <div className={styles.inputWithIcon}>
+                  <Lock className={styles.inputIcon} />
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={emailFormData.password}
+                    onChange={handleEmailInputChange}
+                    className={styles.input}
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+                <a href="#" className={styles.forgotPasswordLink}>
+                  Forgot Password?
+                </a>
+              </div>
+
+              {loginMessage && (
+                <p
+                  className={`${styles.loginMessage} ${
+                    loginMessage.includes("successful")
+                      ? styles.success
+                      : styles.error
+                  }`}
+                >
+                  {loginMessage}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className={styles.loginButton}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <span className={styles.loadingText}>
+                    <span className={styles.spinner}></span>
+                    Logging in...
+                  </span>
+                ) : (
+                  <>
+                    <span className={styles.text}>Login</span>
+                    <span className={styles.circle}></span>
+                    <ArrowRight
+                      className={`${styles.buttonIcon} ${styles.arr1}`}
+                    />
+                    <ArrowRight
+                      className={`${styles.buttonIcon} ${styles.arr2}`}
+                    />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {activeLoginTab === "phone" && (
+            <form className={styles.loginForm} onSubmit={handlePhoneLogin}>
+              <div className={styles.inputGroup}>
+                <label htmlFor="phone" className={styles.label}>
+                  Phone Number
+                </label>
+                <div className={styles.inputWithIcon}>
+                  <Phone className={styles.inputIcon} />
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={phoneFormData.phone}
+                    onChange={handlePhoneInputChange}
+                    className={styles.input}
+                    placeholder="+1 (555) 123-4567"
+                    required
+                  />
+                </div>
+              </div>
+
+              {!otpSent ? (
+                <button
+                  type="button"
+                  className={styles.loginButton}
+                  onClick={handleSendOtp}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <span className={styles.loadingText}>
+                      <span className={styles.spinner}></span>
+                      Sending OTP...
+                    </span>
+                  ) : (
+                    <>
+                       <span className={styles.text}>Send OTP</span>
+                    <span className={styles.circle}></span>
+                      <MessageSquareText
+                      className={`${styles.buttonIcon} ${styles.arr1}`}
+                    />
+                    <MessageSquareText
+                      className={`${styles.buttonIcon} ${styles.arr2}`}
+                    />
+                  </>
+                  )}
+                </button>
+              ) : (
                 <div className={styles.inputGroup}>
-                  <label htmlFor="password" className={styles.label}>
-                    <MdPassword className={styles.allIcons} />
-                    Enter your password :
+                  <label htmlFor="otp" className={styles.label}>
+                    Enter OTP
                   </label>
                   <div className={styles.inputWithIcon}>
                     <Lock className={styles.inputIcon} />
                     <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={emailFormData.password}
-                      onChange={handleEmailInputChange}
+                      type="text"
+                      id="otp"
+                      name="otp"
+                      value={phoneFormData.otp}
+                      onChange={handlePhoneInputChange}
                       className={styles.input}
-                      placeholder="••••••••"
+                      placeholder="••••••"
+                      maxLength={6}
                       required
                     />
                   </div>
                   <a href="#" className={styles.forgotPasswordLink}>
-                    Forgot Password?
+                    Resend OTP?
                   </a>
                 </div>
+              )}
 
-                {loginMessage && (
-                  <p
-                    className={`${styles.loginMessage} ${loginMessage.includes("successful")
+              {loginMessage && (
+                <p
+                  className={`${styles.loginMessage} ${
+                    loginMessage.includes("successful")
                       ? styles.success
+                      : loginMessage.includes("sent")
+                      ? styles.info
                       : styles.error
-                      }`}
-                  >
-                    {loginMessage}
-                  </p>
-                )}
+                  }`}
+                >
+                  {loginMessage}
+                </p>
+              )}
 
+              {otpSent && (
                 <button
                   type="submit"
                   className={styles.loginButton}
@@ -237,182 +344,29 @@ const LoginPage = () => {
                   {isSubmitting ? (
                     <span className={styles.loadingText}>
                       <span className={styles.spinner}></span>
-                      Logging in...
+                      Verifying...
                     </span>
                   ) : (
                     <>
-                      Login <ArrowRight className={styles.buttonIcon} />
+                      Verify & Login{" "}
+                      <ArrowRight className={styles.buttonIcon} />
                     </>
                   )}
                 </button>
-              </form>
-            )}
+              )}
+            </form>
+          )}
 
-            {activeLoginTab === "phone" && (
-              <form className={styles.loginForm} onSubmit={handlePhoneLogin}>
-                <div className={styles.inputGroup}>
-                  <label htmlFor="phone" className={styles.label}>
-                    Phone Number
-                  </label>
-                  <div className={styles.inputWithIcon}>
-                    <Phone className={styles.inputIcon} />
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={phoneFormData.phone}
-                      onChange={handlePhoneInputChange}
-                      className={styles.input}
-                      placeholder="+1 (555) 123-4567"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {!otpSent ? (
-                  <button
-                    type="button"
-                    className={styles.loginButton}
-                    onClick={handleSendOtp}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <span className={styles.loadingText}>
-                        <span className={styles.spinner}></span>
-                        Sending OTP...
-                      </span>
-                    ) : (
-                      <>
-                        Send OTP{" "}
-                        <MessageSquareText className={styles.buttonIcon} />
-                      </>
-                    )}
-                  </button>
-                ) : (
-                  <div className={styles.inputGroup}>
-                    <label htmlFor="otp" className={styles.label}>
-                      Enter OTP
-                    </label>
-                    <div className={styles.inputWithIcon}>
-                      <Lock className={styles.inputIcon} />
-                      <input
-                        type="text"
-                        id="otp"
-                        name="otp"
-                        value={phoneFormData.otp}
-                        onChange={handlePhoneInputChange}
-                        className={styles.input}
-                        placeholder="••••••"
-                        maxLength={6}
-                        required
-                      />
-                    </div>
-                    <a href="#" className={styles.forgotPasswordLink}>
-                      Resend OTP?
-                    </a>
-                  </div>
-                )}
-
-                {loginMessage && (
-                  <p
-                    className={`${styles.loginMessage} ${loginMessage.includes("successful")
-                      ? styles.success
-                      : loginMessage.includes("sent")
-                        ? styles.info
-                        : styles.error
-                      }`}
-                  >
-                    {loginMessage}
-                  </p>
-                )}
-
-                {otpSent && (
-                  <button
-                    type="submit"
-                    className={styles.loginButton}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <span className={styles.loadingText}>
-                        <span className={styles.spinner}></span>
-                        Verifying...
-                      </span>
-                    ) : (
-                      <>
-                        Verify & Login{" "}
-                        <ArrowRight className={styles.buttonIcon} />
-                      </>
-                    )}
-                  </button>
-                )}
-              </form>
-            )}
-
-            <div className={styles.divider}>
-              <span>OR</span>
-            </div>
-{/* 
-            <div className={styles.socialLogin}>
-              <button className={styles.socialButton}>
-                <Google className={styles.socialIcon} />
-                Sign in with Google
-              </button>
-              <button className={styles.socialButton}>
-                <Github className={styles.socialIcon} />
-                Sign in with GitHub
-              </button>
-            </div> */}
-
-            <p className={styles.signupText}>
-              Don&apos;t have an account?{" "}
-              <a href="#" className={styles.signupLink}>
-                Sign Up
-              </a>
-            </p>
+          <div className={styles.divider}>
+            {/* <span>OR</span> */}
           </div>
 
-          {/* Reliability Section (Bottom Right) */}
-          {/* <div className={styles.reliabilitySection}>
-            <h2 className={styles.reliabilityTitle}>
-              Your Journey Starts Here
-            </h2>
-            <p className={styles.reliabilitySubtitle}>
-              Unlock exclusive features and find your perfect property with
-              ease.
-            </p>
-            <div className={styles.reliabilityGrid}>
-              <div className={styles.reliabilityItem}>
-                <CalendarCheck className={styles.reliabilityIcon} />
-                <h3 className={styles.reliabilityItemTitle}>
-                  Instant Site Visit
-                </h3>
-                <p className={styles.reliabilityItemDescription}>
-                  Schedule a personalized visit to your dream property with just
-                  a few clicks.
-                </p>
-              </div>
-              <div className={styles.reliabilityItem}>
-                <CalendarPlus className={styles.reliabilityIcon} />
-                <h3 className={styles.reliabilityItemTitle}>
-                  Easy Appointment Booking
-                </h3>
-                <p className={styles.reliabilityItemDescription}>
-                  Book a meeting with our experts to discuss your needs at your
-                  convenience.
-                </p>
-              </div>
-              <div className={styles.reliabilityItem}>
-                <Home className={styles.reliabilityIcon} />
-                <h3 className={styles.reliabilityItemTitle}>
-                  Book Your Dream Home
-                </h3>
-                <p className={styles.reliabilityItemDescription}>
-                  Secure your ideal property quickly and effortlessly through
-                  our platform.
-                </p>
-              </div>
-            </div>
-          </div> */}
+          <p className={styles.signupText}>
+            Don&apos;t have an account?{" "}
+            <a href="#" className={styles.signupLink}>
+              Sign Up
+            </a>
+          </p>
         </div>
       </div>
     </div>
