@@ -1,0 +1,294 @@
+/* Dashboard Header Styles */
+.container {
+  width: 100%;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem; /* space between all items */
+  padding: 1rem 1.5rem;
+  background-color: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+  width: 100%;
+}
+
+
+
+.headerTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.dateRangeContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: hsl(var(--muted));
+  border-radius: 0.5rem;
+}
+
+.metricCardWrapper {
+  height: 25vh;           /* fixed height for all cards */
+  display: flex;
+}
+
+.metricCardContent {
+  flex: 1;
+  padding: 8px;            /* reduce padding for compact design */
+  display: flex;
+  flex-direction: column;
+ 
+}
+
+
+.metricTitle {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.2rem;
+  overflow: hidden;        /* still hide extra text */
+  display: -webkit-box;    /* for multiline ellipsis */
+  -webkit-line-clamp: 2;   /* max 2 lines */
+  -webkit-box-orient: vertical;
+  word-break: break-word;  /* break long words if needed */
+}
+
+
+
+.calendarIcon {
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.dateRangeText {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+
+.metricCardContent {
+  flex: 1;
+  padding: 0.5rem !important; /* override any py-6 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto; /* pushes user profile to the far right */
+}
+
+.userAvatar {
+  width: 2rem;
+  height: 2rem;
+}
+
+.userAvatarFallback {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.userName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.Monthlytarget {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+}
+.Monthlytarget {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.cardWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.cardtarget {
+  background: #ffffff; /* white background */
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  height: 60px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 1;
+  border: 1px solid #5c36e4c1;
+}
+
+.cardtarget:hover {
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  background: #f9f9f9; /* light hover effect */
+}
+
+
+/* Remove bottom border radius when sheet visible */
+.cardActive,
+.cardWrapper:hover .cardtarget {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.bottomSheet {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+    /* background: linear-gradient(135deg, #1a1a1a, #262626); */
+  display: flex;
+    border: 1px solid #5c36e4c1;
+  justify-content: space-between;
+align-items: stretch;
+  box-shadow: 0 5px 15px #0009;
+  transform: translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 0 0 16px 16px;
+  transition: all 0.3s ease;
+  z-index: 0;
+  padding: 1rem 1.2rem;
+  gap: 12px;
+}
+
+.headerRight {
+  display: flex;
+  flex-direction: column; /* stack user profile and date range */
+  align-items: flex-end;  /* align both to the right edge */
+  gap: 0.5rem;
+}
+
+/* Show on hover or click */
+.cardWrapper:hover .bottomSheet,
+.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheetItem {
+  flex: 1; /* ⬅️ ensures equal width distribution */
+  display: flex; /* so text inside can still align */
+  justify-content: center;
+  align-items: center;
+  background: #eb5f5f57;
+  border: 1px solid #ff6b6b;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 0px #0006;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.sheetItem:hover {
+  background: #3a3a5a; 
+  transform: translateY(-2px);
+}
+
+.sheetLabel {
+  font-size: 14px;
+  color: black;
+  margin: 0;
+  font-weight: 500;
+}
+
+.sheetValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 4px 0 0 0;
+}
+
+.cardtarget h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 12px;
+  align-items: center; /* vertical alignment */
+}
+
+.feedbackpendibg, .assignpendibg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* icon and number spacing */
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 55px;
+  text-align: center;
+  background: #fff;
+  color: black;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.feedbackpendibg {
+  border-left-color: #ff6b6b;
+}
+
+.assignpendibg {
+  border-left-color: #1dd1a1;
+}
+
+
+.feedbackpendibg:hover {
+  background: #ff6b6b;
+  transform: translateY(-2px);
+}
+
+.assignpendibg:hover {
+  background: #2fc18c;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboardHeader {
+    padding: 0.75rem 1rem;
+  }
+
+  .headerLeft {
+    gap: 1rem;
+  }
+
+  .headerTitle {
+    font-size: 1.25rem;
+  }
+
+  .headerRight {
+    gap: 0.75rem;
+  }
+
+  .userName {
+    display: none;
+  }
+}
