@@ -154,9 +154,9 @@
   top: 100%;
   left: 0;
   width: 100%;
-    /* background: linear-gradient(135deg, #1a1a1a, #262626); */
+    background: linear-gradient(135deg, #f5f3f3, #faf8f8);
   display: flex;
-    border: 1px solid #5c36e4c1;
+    /* border: 1px solid #5c36e4c1; */
   justify-content: space-between;
 align-items: stretch;
   box-shadow: 0 5px 15px #0009;
@@ -266,9 +266,263 @@ align-items: stretch;
 }
 
 .assignpendibg:hover {
-  background: #2fc18c;
+  background: var(--hover-color);
+  color: #fff; /* optional: ensures text stays visible */
   transform: translateY(-2px);
 }
+
+.Monthtarget {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.Monthtarget {
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+.cardWrap {
+  position: relative;
+  flex: 1;
+   min-width: 350px;
+}
+
+.cardassignFeedback {
+  background: #ffffff; /* white background */
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  height: 60px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 1;
+  border: 1px solid #5c36e4c1;
+}
+
+:global(html.light) .cardassignFeedback {
+  /* background: linear-gradient(135deg, #5c36e4c1, #b028efdc); */
+  /* border-bottom: 2px solid rgba(194, 137, 255, 0.2); */
+  border: none;
+
+}
+
+.cardassignFeedback:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+.cardActive,
+.cardWrap:hover .cardassignFeedback {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.bottomSheet2 {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, #f5f3f3, #faf8f8);
+  display: flex;
+  /* border: 1px solid #5c36e4c1; */
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 5px 15px #0009;
+  transform: translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 0 0 16px 16px;
+  transition: all 0.3s ease;
+  z-index: 0;
+  padding: 1rem 1.2rem;
+  gap: 12px;
+}
+
+:global(html.light) .bottomSheet2 {
+  /* background: linear-gradient(135deg, #5c36e4, #b028ef); */
+  /* border-bottom: 2px solid rgba(194, 137, 255, 0.2); */
+  /* border: none;
+  box-shadow: none; */
+}
+
+.cardWrap:hover .bottomSheet2,
+.show2 {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheetItem2 {
+  flex: 1;
+  background: #eb5f5f57;
+  border: 1px solid #ff6b6b;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+:global(html.light) .sheetItem2 {
+  background: white;
+
+}
+
+.sheetgreen {
+  background: #2fb7c16e;
+  border: 1px solid #2fc18c;
+}
+
+:global(html.light) .sheetgreen {
+  background: white;
+}
+
+.sheetItem2:hover {
+  background: #3a3a5a;
+  transform: translateY(-2px);
+}
+
+.sheetLabel2 {
+  font-size: 14px;
+  color: #fff;
+  margin: 0;
+  font-weight: 500;
+}
+
+:global(html.light) .sheetLabel2 {
+  color: #252323;
+}
+
+.sheetValue2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 4px 0 0 0;
+}
+
+.blue {
+  color: #fff;
+}
+
+.red {
+  color: #fff;
+}
+
+:global(html.light) .blue {
+  color: #2f47c1;
+}
+
+:global(html.light) .red {
+  color: red;
+}
+
+.cardassignFeedback h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  /* vertical alignment */
+}
+
+.feedbackpending,
+.assignpending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  /* icon and number spacing */
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 55px;
+  text-align: center;
+ background: #fff;
+ color: black;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.feedbackpending {
+  border-left-color: #ff6b6b;
+}
+
+.assignpending {
+  border-left-color: #1dd1a1;
+}
+
+.feedbackpending:hover {
+  background: #ff6b6b;
+  transform: translateY(-2px);
+}
+
+.assignpending:hover {
+  background: #1dd1a1;
+ 
+  transform: translateY(-2px);
+}
+
+
+
+
+.label {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #ececec;
+  font-weight: 500;
+}
+
+.taricon {
+  color: rgba(255, 167, 4, 0.13);
+  position: absolute;
+  z-index: 3;
+}
+
+@media (max-width: 768px) {
+  .Monthlytarget {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .cardWrapper {
+    width: 100%;
+  }
+
+  .bottomSheet {
+    top: auto;
+    z-index: 100;
+    border-radius: 0 0 16px 16px;
+  }
+
+  .cardtarget h3 {
+    font-size: 14px; 
+  }
+
+  .btnGroup {
+    gap: 8px;
+  }
+
+  .feedbackpendibg,
+  .assignpendibg {
+    font-size: 12px; 
+    padding: 6px 10px; 
+  }
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
