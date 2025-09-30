@@ -14,11 +14,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useRef, useState } from "react";
 import styles from "./dashboard.module.css";
+import target from "./target-section.module.css";
 import { MetricCard } from "./metric-card";
 import { FaCommentDots } from "react-icons/fa6";
 import { FaTasks } from "react-icons/fa";
 import { Conversion } from "./conversion";
 import { CircularProgress } from "./circular-progress";
+import TargetSection from "./target-section";
+import { GrGroup } from "react-icons/gr";
+import { PiChartLineUpLight } from "react-icons/pi";
+import { BsCardChecklist } from "react-icons/bs";
 
 interface ClosingManagerDashboardHeaderProps {
   title?: string;
@@ -289,7 +294,9 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
-      <div className="p-6 pt-0">
+      <div className={styles.mainContainer}> 
+
+<div className="p-6 pt-0">
         <h2 className="text-xl font-semibold text-foreground mb-6">
           Team Overview
         </h2>
@@ -341,8 +348,10 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
-      <div className="p-6 pt-6">
-        <h2 className="text-xl font-semibold text-foreground mb-8">
+
+{/* assign */}
+      <div className="p-6 pt-0">
+        <h2 className="text-xl font-semibold text-foreground mb-6">
           Assign/Feedback Pending
         </h2>
         <div className={styles.Monthtarget} ref={containerRef}>
@@ -352,7 +361,7 @@ export function ClosingManagerDashboardHeader({
                 className={`${styles.cardassignFeedback} ${
                   activeCard2 === index ? styles.cardActive : ""
                 }`}
-                style={{ border: "1px solid purple" }}
+                
 
                 onClick={() => toggleBottomSheet2(index)}
               >
@@ -386,6 +395,49 @@ export function ClosingManagerDashboardHeader({
           ))}
         </div>
       </div>
+
+{/* overview */}
+ <div className="p-6 pt-0">
+        <h2 className="text-xl font-semibold text-foreground mb-6">
+          Quick Actions
+        </h2>
+        <div className={styles.overviewContainer}>
+  <div className={target.quickRow}>
+    <div className={target.quickCard}>
+      <div className={`${target.quickCircle} ${target.blue}`}>
+        {/* <span className={target.quickBadge}>1377</span> */}
+        {/* icon */}
+        <BsCardChecklist className={target.firstIcon} />
+      </div>
+      <span className={target.quickLabel}>Follow Up</span>
+    </div>
+
+    <div className={target.quickCard}>
+      <div className={`${target.quickCircle} ${target.amber}`}>
+        {/* <span className={target.quickBadge}>17</span> */}
+        <PiChartLineUpLight  className={target.secIcon} />
+      </div>
+      <span className={target.quickLabeltwo}>Line Up</span>
+    </div>
+
+    <div className={target.quickCard}>
+      <div className={`${target.quickCircle} ${target.green}`}>
+        {/* no badge */}
+        <GrGroup className={target.thirdIcon} />
+      </div>
+      <span className={target.quickLabelthree}>Team  Performance</span>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+
+      </div>
+
+ 
+
+
 
       <div className="p-6 pt-0">
         <div className="flex flex-col lg:flex-row gap-5">
@@ -549,8 +601,12 @@ export function ClosingManagerDashboardHeader({
               </div>
             </div>
           </div>
+
+     
         </div>
       </div>
+
+           <TargetSection />
     </div>
   );
 }
