@@ -440,6 +440,8 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
+            <TargetSection />
+
       <div className="p-6 pt-0">
         <div className="flex flex-col lg:flex-row gap-5">
           {/* Left - Conversion Metrics */}
@@ -475,7 +477,7 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
-  
+
     </div>
   );
 }
