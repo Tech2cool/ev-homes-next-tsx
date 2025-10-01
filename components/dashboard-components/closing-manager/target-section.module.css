@@ -3,7 +3,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  
+
   grid-template-columns: 1fr;
   /* gap: 12px; */
   padding: 12px;
@@ -14,10 +14,76 @@
   width: 100%;
   /* margin-left: 1.5vw; */
 }
-.centeredContent{
+.centeredContent {
   display: flex;
   /* width: fit-content; */
   /* width: 100vw; */
+}
+
+.quick {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Base row styling */
+.rowItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: #eef1f4;
+  border-radius: 16px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* Specific hover colors */
+.blue:hover {
+  background: #e6f4f4; /* very light teal/blue matching #93C5C7 */
+  border-color: #93c5c7;
+}
+
+.amber:hover {
+  background: #ffeded; /* very light red/pink matching #FF6B6B */
+  border-color: #ff6b6b;
+}
+
+.green:hover {
+  background: #e6eeef; /* very light grayish green/blue matching #546E86 */
+  border-color: #546e86;
+}
+
+/* Icon colors */
+.iconblue {
+  color: #4A90E2;
+  width: 20px;
+  height: 20px;
+}
+.iconamber {
+  color: #ff6b6b;
+  width: 20px;
+  height: 20px;
+}
+.icongreen {
+  color: #546e86;
+  width: 20px;
+  height: 20px;
+}
+
+.labelblue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4A90E2;
+}
+.labelamber {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6b6b;
+}
+.labelgreen {
+  font-size: 14px;
+  font-weight: 600;
+  color: #546e86;
 }
 
 /* .page-main{
@@ -34,16 +100,18 @@
 } */
 
 /* Transparent container with spacing from corners */
-.transparentContainer {
+/* .transparentContainer {
   background: transparent;
   border-radius: 10px;
+  border: 1px solid red;
+  width: 100%;
   padding: 20px;
   margin: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-}
+height: 100%;
+} */
 
 /* Centered content */
 .centeredContent {
@@ -53,7 +121,11 @@
   justify-content: center;
   gap: 16px;
   width: 100%;
-  max-width: 400px;
+  background: #fff;
+  border: 1px solid #eef1f4;
+  border-radius: 10px;
+  padding: 14px;
+  /* max-width: 400px; */
 }
 
 /* Left panel - removed old styles since we're using the new structure */
@@ -84,14 +156,14 @@
 }
 
 .overviewTitle {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 1.5vw;
+  font-weight: 500;
   color: #111827;
   text-transform: uppercase;
 }
 
 .progressText {
-  font-size: 12px;
+  font-size: 1vw;
   color: #6b7280;
 }
 
@@ -99,9 +171,12 @@
   display: flex;
   justify-content: center; /* center across */
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  /* height: fit-content; */
   margin-bottom: 16px;
+  /* margin-left: 15vw; */
   width: 100%;
+  /* height: 30vh; */
 }
 
 .metricPill {
@@ -111,9 +186,8 @@
   justify-content: center;
   gap: 0.5vh;
 
-  
   border-radius: 16px;
-  min-width: 100px;
+  /* min-width: 10vw; */
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease;
@@ -125,53 +199,61 @@
 
 /* Label inside small white pill */
 .metricLabel {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 1vw;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #111827;
-/* position: absolute; */
-display: flex;
-justify-items: center;
-align-items: center;
-justify-content: center;
-    
+  /* position: absolute; */
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+
   background: #fff;
-  width: 9vw;
+  width: 18vw;
   /* padding: 4px 14px; */
   border-radius: 999px;
   border: 1px solid rgba(17, 24, 39, 0.1);
-  
-  
 }
 .metricIcon {
-    display: flex;
-justify-items: center;
-align-items: center;
-justify-content: center;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .metricValue {
   font-size: 18px;
   font-weight: 800;
   color: #111827;
-  
 }
 
 /* Color tones (background + border) */
 .tone-blue {
   background: #dbeafe; /* light blue */
   border: 1px solid #bfdbfe;
+  display: flex;
+  flex-direction: column;
+  height: 20vh;
+  justify-content: space-evenly;
 }
 .tone-rose {
   background: #fecaca; /* light rose */
   border: 1px solid #fca5a5;
+  display: flex;
+  flex-direction: column;
+  height: 20vh;
+  justify-content: space-evenly;
 }
 .tone-amber {
   background: #fde68a; /* light amber */
   border: 1px solid #fcd34d;
+  display: flex;
+  flex-direction: column;
+  height: 20vh;
+  justify-content: space-evenly;
 }
-
 
 /* Progress bar */
 .progressTrack {
@@ -194,8 +276,13 @@ justify-content: center;
   border: 1px solid #eef1f4;
   background: #ffffff;
   border-radius: 10px;
-  padding: 14px;
-  /* width: 40%; */
+  padding: 12px 30px;
+  width: 35%;
+  height: 100%;
+
+  /* margin-left: 2vw; */
+  /* width: 50%; */
+  /* height: 50%; */
 }
 
 .rightHeader {
@@ -218,6 +305,9 @@ justify-content: center;
 
 /* Project switcher */
 .projectSwitcher {
+  /* width: 70%; */
+  display: flex;
+  justify-content: center;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -248,8 +338,8 @@ justify-content: center;
   gap: 8px;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
+  /* border: 1px solid #e5e7eb;
+  background: #f9fafb; */
 }
 
 .projectIcon {
@@ -275,16 +365,13 @@ justify-content: center;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  width: 100%;
 
   padding: 10px 14px;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
   box-shadow: 0 1px 2px rgba(17, 24, 39, 0.05);
-
-  width: auto;         /* 👈 don’t stretch full */
-  min-width: 160px;    /* 👈 consistent card size */
-  max-width: 200px;    /* optional cap */
 }
 
 .projectRowLabel {
@@ -305,7 +392,7 @@ justify-content: center;
 }
 
 .quickActions {
-  background: transparent; /* 👈 Transparent as you want */
+  background: transparent;
   border-radius: 10px;
   padding: 16px;
   display: flex;
@@ -313,91 +400,66 @@ justify-content: center;
   align-items: center;
 }
 
-.quickActionsTitle {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: #111827;
-  text-transform: uppercase;
-}
-
-.quickRow {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.quickCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.quickCircle {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: #f9fafb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.quickBadge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-
-.quickLabel {
-  font-size: 12px;
-  font-weight: 600;
-  color: #60a5fa;
-}
-.quickLabeltwo {
-  font-size: 12px;
-  font-weight: 600;
-  color: #fbbf24;
-}
-.quickLabelthree {
-  font-size: 12px;
-  font-weight: 600;
-  color: #34d399;
-}
-
-
 /* Colors */
 .blue {
-  border: 3px solid #60a5fa;
+  border: 1px solid #4a90e2;
 }
 .amber {
-  border: 3px solid #fbbf24;
+  border: 1px solid #ff6b6b;
 }
 .green {
-  border: 3px solid #34d399;
+  border: 1px solid #546e86;
 }
 
 
-.firstIcon{
-    height: 5vh;
-    width: 5vw;
-    color:  #60a5fa;
+/* responsive */
+@media screen and (max-width:768px){
+  .wrap{
+    display: flex;
+    flex-direction: column;
+  }
+  .overviewTitle{
+    font-size: 4vw;
+    font-weight:500 ;
+
+  }
+  .progressText{
+    font-size: 3vw;
+  }
+  .metricLabel{
+    width: 100%;
+      font-size: 3vw;
+
+  }
+  .metricPill{
+    width: 100%;
+    height: 12vh;
+  }
+  .centeredContent{
+    /* background-color: red; */
+  }
+  .transparentContainer{
+     display: flex;
+     flex-direction: column;
+     width: 100%;
+     justify-content: space-evenly;
+     
+  }
+  .right {
+  border: 1px solid #eef1f4;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 12px 30px;
+  width: 100%;
+  height: 100%;
+  
+
+  /* margin-left: 2vw; */
+  /* width: 50%; */
+  /* height: 50%; */
 }
-.secIcon{
- height: 5vh;
-    width: 5vw;
-    color:  #fbbf24;
-}
-.thirdIcon{
- height: 5vh;
-    width: 5vw;
-    color:  #34d399;
+
+
+  
+                        
 }

@@ -94,6 +94,7 @@ export function TargetSection({
 
           <div className={styles.transparentContainer}>
             <div className={styles.centeredContent}>
+              
               <div className={styles.overviewHead}>
                 <span className={styles.overviewTitle}>Target Overview</span>
               </div>

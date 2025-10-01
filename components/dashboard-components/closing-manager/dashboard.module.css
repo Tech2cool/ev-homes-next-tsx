@@ -3,7 +3,6 @@
   width: 100%;
 }
 
-
 .dashboardHeader {
   display: flex;
   justify-content: space-between;
@@ -14,19 +13,13 @@
   border-bottom: 1px solid hsl(var(--border));
   width: 100%;
 }
-.overviewContainer{
+.overviewContainer {
   /* border:  1px solid black; */
-  
+
   /* height: 100%; */
   display: flex;
-align-items: center;
-justify-content: center;
-
-}
-.quickLabelthree{
- white-space: normal;
- word-break: break-word;
- width: 80px;
+  align-items: center;
+  justify-content: center;
 }
 
 .headerTitle {
@@ -45,38 +38,31 @@ justify-content: center;
   border-radius: 0.5rem;
 }
 
-.metricCardWrapper {
-  height: 25vh;           /* fixed height for all cards */
-  display: flex;
-}
+
 
 .metricCardContent {
   flex: 1;
-  padding: 8px;            /* reduce padding for compact design */
+  padding: 8px; /* reduce padding for compact design */
   display: flex;
   flex-direction: column;
- 
 }
 
 .metricTitle {
   font-size: 0.85rem;
   font-weight: 500;
   line-height: 1.2rem;
-  overflow: hidden;        /* still hide extra text */
-  display: -webkit-box;    /* for multiline ellipsis */
-  -webkit-line-clamp: 2;   /* max 2 lines */
+  overflow: hidden; /* still hide extra text */
+  display: -webkit-box; /* for multiline ellipsis */
+  -webkit-line-clamp: 2; /* max 2 lines */
   -webkit-box-orient: vertical;
-  word-break: break-word;  /* break long words if needed */
+  word-break: break-word; /* break long words if needed */
 }
-
-
 
 .calendarIcon {
   width: 1rem;
   height: 1rem;
   color: hsl(var(--muted-foreground));
 }
-
 
 .dateRangeText {
   font-size: 0.875rem;
@@ -91,8 +77,6 @@ justify-content: center;
   flex-direction: column;
   justify-content: center;
 }
-
-
 
 .userProfile {
   display: flex;
@@ -118,24 +102,22 @@ justify-content: center;
 }
 
 .Monthlytarget {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    /* justify-content: space-between; */
-    /* gap: 10px; */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* justify-content: space-between; */
+  /* gap: 10px; */
 }
 .Monthlytarget {
   display: flex;
   gap: 20px;
   width: fit-content;
-
 }
 /* 
 .cardWrapper {
   position: relative;
   flex: 1;
 } */
-
 
 .cardtarget {
   background: #ffffff; /* white background */
@@ -145,7 +127,7 @@ justify-content: center;
   justify-content: space-between;
   padding: 0 25px;
   height: 60px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  /* box-shadow: 0 8px 20px rgba(0,0,0,0.2); */
   transition: all 0.3s ease;
   cursor: pointer;
   z-index: 1;
@@ -153,10 +135,9 @@ justify-content: center;
 }
 
 .cardtarget:hover {
-  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  /* box-shadow: 0 12px 30px rgba(0,0,0,0.3); */
   background: #f9f9f9; /* light hover effect */
 }
-
 
 /* Remove bottom border radius when sheet visible */
 .cardActive,
@@ -168,14 +149,15 @@ justify-content: center;
 .bottomSheet {
   position: relative;
   width: 100%;
-  background: linear-gradient(135deg, #f5f3f3, #faf8f8);
+  /* background: linear-gradient(135deg, #f5f3f3, #faf8f8); */
   display: flex;
   justify-content: space-between;
+  border: 1px solid #4a90e2;
   align-items: stretch;
-  box-shadow: 0 5px 15px #0009;
+  /* box-shadow: 0 5px 15px #0009; */
   border-radius: 0 0 16px 16px;
   overflow: hidden;
-  max-height: 0;                  /* collapsed */
+  max-height: 0; /* collapsed */
   opacity: 0;
   padding: 0;
   gap: 12px;
@@ -185,16 +167,16 @@ justify-content: center;
 .headerRight {
   display: flex;
   flex-direction: column; /* stack user profile and date range */
-  align-items: flex-end;  /* align both to the right edge */
+  align-items: flex-end; /* align both to the right edge */
   gap: 0.5rem;
 }
 
 /* Show on hover or click */
 .cardWrapper:hover .bottomSheet,
 .show {
-  max-height: 300px;           /* adjust based on content height */
+  max-height: 300px; /* adjust based on content height */
   opacity: 1;
-  padding: 1rem 1.2rem;        /* restore padding */
+  padding: 1rem 1.2rem; /* restore padding */
 }
 
 .sheetItem {
@@ -202,7 +184,7 @@ justify-content: center;
   display: flex; /* so text inside can still align */
   justify-content: center;
   align-items: center;
-  background: #eb5f5f57;
+  /* background: #eb5f5f57; */
   border: 1px solid #ff6b6b;
   padding: 0.8rem 1rem;
   border-radius: 12px;
@@ -213,7 +195,7 @@ justify-content: center;
 }
 
 .sheetItem:hover {
-  background: #3a3a5a; 
+  background: #3a3a5a;
   transform: translateY(-2px);
 }
 
@@ -246,7 +228,8 @@ justify-content: center;
   align-items: center; /* vertical alignment */
 }
 
-.feedbackpendibg, .assignpendibg {
+.feedbackpendibg,
+.assignpendibg {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,7 +254,6 @@ justify-content: center;
   border-left-color: #1dd1a1;
 }
 
-
 .feedbackpendibg:hover {
   background: #ff6b6b;
   transform: translateY(-2px);
@@ -288,7 +270,6 @@ justify-content: center;
   flex-direction: column;
   width: fit-content;
   justify-content: space-between;
-  
 }
 
 .Monthtarget {
@@ -300,14 +281,12 @@ justify-content: center;
 .cardWrap {
   position: relative;
   flex: 1;
-   min-width: 350px;
+  min-width: 350px;
 }
-.mainContainer{
+.mainContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  
-  
 }
 
 .cardassignFeedback {
@@ -318,22 +297,21 @@ justify-content: center;
   justify-content: space-between;
   padding: 0 25px;
   height: 60px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); */
   transition: all 0.3s ease;
   cursor: pointer;
   z-index: 1;
-  border: 1px solid rgb(204, 202, 202);
+  /* border: 1px solid rgb(204, 202, 202); */
 }
 
 :global(html.light) .cardassignFeedback {
   /* background: linear-gradient(135deg, #5c36e4c1, #b028efdc); */
   /* border-bottom: 2px solid rgba(194, 137, 255, 0.2); */
   /* border: none; */
-
 }
 
 .cardassignFeedback:hover {
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  /* box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6); */
 }
 
 .cardActive,
@@ -345,11 +323,11 @@ justify-content: center;
 .bottomSheet2 {
   position: relative;
   width: 100%;
-  background: linear-gradient(135deg, #f5f3f3, #faf8f8);
+  /* background: linear-gradient(135deg, #f5f3f3, #faf8f8); */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 5px 15px #0009;
+  /* box-shadow: 0 5px 15px #0009; */
   border-radius: 0 0 16px 16px;
   overflow: hidden;
   max-height: 0;
@@ -368,7 +346,7 @@ justify-content: center;
 
 .cardWrap:hover .bottomSheet2,
 .show2 {
-  max-height: 300px;      /* adjust as needed */
+  max-height: 300px; /* adjust as needed */
   opacity: 1;
   padding: 1rem 1.2rem;
 }
@@ -380,14 +358,13 @@ justify-content: center;
   padding: 0.8rem 1rem;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); */
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 :global(html.light) .sheetItem2 {
   background: white;
-
 }
 
 .sheetgreen {
@@ -406,6 +383,7 @@ justify-content: center;
 
 .sheetLabel2 {
   font-size: 14px;
+  white-space: nowrap;
   color: #fff;
   margin: 0;
   font-weight: 500;
@@ -466,8 +444,8 @@ justify-content: center;
   font-weight: 600;
   min-width: 55px;
   text-align: center;
- background: #fff;
- color: black;
+  background: #fff;
+  color: black;
   border-left: 4px solid transparent;
   transition: all 0.3s ease;
 }
@@ -487,12 +465,9 @@ justify-content: center;
 
 .assignpending:hover {
   background: #1dd1a1;
- 
+
   transform: translateY(-2px);
 }
-
-
-
 
 .label {
   margin-top: 8px;
@@ -524,7 +499,7 @@ justify-content: center;
   }
 
   .cardtarget h3 {
-    font-size: 14px; 
+    font-size: 14px;
   }
 
   .btnGroup {
@@ -533,16 +508,22 @@ justify-content: center;
 
   .feedbackpendibg,
   .assignpendibg {
-    font-size: 12px; 
-    padding: 6px 10px; 
+    font-size: 12px;
+    padding: 6px 10px;
   }
 }
-
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .dashboardHeader {
     padding: 0.75rem 1rem;
+  }
+  .calendarIcon {
+    height: 7vh;
+    width: 7vw;
+  }
+  .dateRangeText {
+    font-size: 3vw;
   }
 
   .headerLeft {
@@ -558,6 +539,13 @@ justify-content: center;
   }
 
   .userName {
-    display: none;
+    /* display: none; */
+    font-size: 3vw;
   }
+  .mainContainer{
+    display: flex;
+    flex-direction: column;
+  }
+
+
 }

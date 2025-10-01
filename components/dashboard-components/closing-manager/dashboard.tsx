@@ -24,6 +24,7 @@ import TargetSection from "./target-section";
 import { GrGroup } from "react-icons/gr";
 import { PiChartLineUpLight } from "react-icons/pi";
 import { BsCardChecklist } from "react-icons/bs";
+import ConversionOverview from "./conversion-overview";
 
 interface ClosingManagerDashboardHeaderProps {
   title?: string;
@@ -112,35 +113,53 @@ export function ClosingManagerDashboardHeader({
   ];
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
-   const [activeCard2, setActiveCard2] = useState<number | null>(null);
+  const [activeCard2, setActiveCard2] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const assignPendingRef = useRef<HTMLDivElement>(null);
+
+  type QuickAction = {
+    label: string;
+    color: "blue" | "amber" | "green";
+    Icon: React.ElementType;
+  };
+
+  const quickActions: QuickAction[] = [
+    { label: "Follow Up", color: "blue", Icon: BsCardChecklist },
+    { label: "Line Up", color: "amber", Icon: PiChartLineUpLight },
+    { label: "Team Performance", color: "green", Icon: GrGroup },
+  ];
+
+  const leads = 11608;
+  const bookings = 59;
+  const visits = 432;
 
   const cards = [
     {
       name: "Closing Crew",
       tasks: "3890 tasks",
-      borderColor: "#6a5acd", // purple
+      borderColor: " #4A90E2",
       members: ["Deepak", "Muthuswami Venugopal Iyer", "Priya"],
     },
     {
       name: "Shree Ganesh",
       tasks: "2634 tasks",
-      borderColor: "#2fc18c", // green
+      borderColor: " #91082A",
+
       members: ["Rahul", "Sneha", "Kiran"],
     },
     {
       name: "Deal Maker",
       tasks: "3724 tasks",
-      borderColor: "#ff6b6b", // red
+      borderColor: "#1F1F1F",
+
       members: ["Suresh", "Anita", "Manoj"],
     },
   ];
 
-  const card = [
-    { name: "Deepak Karki", feedback: 100, tasks: 300 },
-    { name: "Jaspreet Arora", feedback: 210, tasks: 320 },
-    { name: "Ranjna Gupta", feedback: 150, tasks: 310 },
+  const assignFeedbackcard = [
+    { name: "Deepak Karki", feedback: 100, tasks: 300, border: "#87CEEB" },
+    { name: "Jaspreet Arora", feedback: 210, tasks: 320, border: "#BA1A42" },
+    { name: "Ranjna Gupta", feedback: 150, tasks: 310, border: "#546E86" },
   ];
 
   const metrics = [
@@ -216,7 +235,7 @@ export function ClosingManagerDashboardHeader({
     setActiveCard(activeCard === index ? null : index);
   };
 
-   const toggleBottomSheet2 = (index: number) => {
+  const toggleBottomSheet2 = (index: number) => {
     setActiveCard2(activeCard2 === index ? null : index);
   };
 
@@ -294,150 +313,132 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
-      <div className={styles.mainContainer}> 
+      <div className={styles.mainContainer}>
+        <div className="p-6 pt-0">
+          <h2 className="text-xl font-semibold text-foreground mb-6">
+            Team Overview
+          </h2>
 
-<div className="p-6 pt-0">
-        <h2 className="text-xl font-semibold text-foreground mb-6">
-          Team Overview
-        </h2>
-
-        <div className={styles.Monthlytarget} ref={containerRef}>
-          {cards.map((card, index) => (
-            <div key={index} className={styles.cardWrapper}>
-              <div
-                className={`${styles.cardtarget} ${
-                  activeCard === index ? styles.cardActive : ""
-                }`}
-                style={{ border: `2px solid ${card.borderColor}` }}
-                onClick={() => toggleBottomSheet(index)}
-              >
-                <h3 className="teamName">{card.name}</h3>
+          <div className={styles.Monthlytarget} ref={containerRef}>
+            {cards.map((card, index) => (
+              <div key={index} className={styles.cardWrapper}>
                 <div
-                  className={styles.assignpendibg}
-                  style={
-                    {
-                      borderLeftColor: card.borderColor,
-                      "--hover-color": card.borderColor, // ✅ plain string works
-                    } as React.CSSProperties
-                  } // cast entire style object
+                  className={`${styles.cardtarget} ${
+                    activeCard === index ? styles.cardActive : ""
+                  }`}
+                  style={{ border: `2px solid ${card.borderColor}` }}
+                  onClick={() => toggleBottomSheet(index)}
                 >
-                  <FaTasks style={{ marginRight: "6px" }} /> {card.tasks}
-                </div>
-              </div>
-
-              <div
-                className={`${styles.bottomSheet} ${
-                  activeCard === index ? styles.show : ""
-                }`}
-              >
-                {card.members.map((member, mIndex) => (
+                  <h3 className="teamName">{card.name}</h3>
                   <div
-                    key={mIndex}
-                    className={styles.sheetItem}
-                    style={{
-                      border: `0.5px solid ${card.borderColor}`,
-                      background: `${card.borderColor}10`,
-                    }}
+                    className={styles.assignpendibg}
+                    style={
+                      {
+                        borderLeftColor: card.borderColor,
+                        "--hover-color": card.borderColor, // ✅ plain string works
+                      } as React.CSSProperties
+                    } // cast entire style object
                   >
-                    <p className={styles.sheetLabel}>{member}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-
-{/* assign */}
-      <div className="p-6 pt-0">
-        <h2 className="text-xl font-semibold text-foreground mb-6">
-          Assign/Feedback Pending
-        </h2>
-        <div className={styles.Monthtarget} ref={containerRef}>
-          {card.map((card, index) => (
-            <div key={index} className={styles.cardWrap}>
-              <div
-                className={`${styles.cardassignFeedback} ${
-                  activeCard2 === index ? styles.cardActive : ""
-                }`}
-                
-
-                onClick={() => toggleBottomSheet2(index)}
-              >
-                <h3>{card.name}</h3>
-                <div className={styles.btnGroup}>
-                  <div className={styles.feedbackpending}>
-                    <FaCommentDots style={{ marginRight: "6px" }} />{" "}
-                    {card.feedback}
-                  </div>
-                  <div className={styles.assignpending}>
                     <FaTasks style={{ marginRight: "6px" }} /> {card.tasks}
                   </div>
                 </div>
-              </div>
 
-              <div
-                className={`${styles.bottomSheet2} ${
-                  activeCard2 === index ? styles.show2 : ""
-                }`}
-              >
-                <div className={styles.sheetItem2}>
-                  <p className={styles.sheetLabel2}>Feedback Pending</p>
-                  <p className={`${styles.sheetValue2} ${styles.red}`}>1000</p>
-                </div>
-                <div className={`${styles.sheetItem2} ${styles.sheetgreen} `}>
-                  <p className={styles.sheetLabel2}>Assign Pending</p>
-                  <p className={`${styles.sheetValue2} ${styles.blue}`}>200</p>
+                <div
+                  className={`${styles.bottomSheet} ${
+                    activeCard === index ? styles.show : ""
+                  }`}
+                  style={{ border: `2px solid ${card.borderColor}` }}
+                >
+                  {card.members.map((member, mIndex) => (
+                    <div
+                      key={mIndex}
+                      className={styles.sheetItem}
+                      style={{
+                        border: `0.5px solid ${card.borderColor}`,
+                        background: `${card.borderColor}10`,
+                      }}
+                    >
+                      <p className={styles.sheetLabel}>{member}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+
+        {/* assign */}
+        <div className="p-6 pt-0">
+          <h2 className="text-xl font-semibold text-foreground mb-6">
+            Assign/Feedback Pending
+          </h2>
+          <div className={styles.Monthtarget} ref={containerRef}>
+            {assignFeedbackcard.map((card, index) => (
+              <div key={index} className={styles.cardWrap}>
+                <div
+                  className={`${styles.cardassignFeedback} ${
+                    activeCard2 === index ? styles.cardActive : ""
+                  }`}
+                  style={{ border: `2px solid ${card.border}` }}
+                  onClick={() => toggleBottomSheet2(index)}
+                >
+                  <h3>{card.name}</h3>
+                  <div className={styles.btnGroup}>
+                    <div className={styles.feedbackpending}>
+                      <FaCommentDots style={{ marginRight: "6px" }} />{" "}
+                      {card.feedback}
+                    </div>
+                    <div className={styles.assignpending}>
+                      <FaTasks style={{ marginRight: "6px" }} /> {card.tasks}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className={`${styles.bottomSheet2} ${
+                    activeCard2 === index ? styles.show2 : ""
+                  }`}
+                  style={{ border: `2px solid  ${card.border}` }}
+                >
+                  <div className={styles.sheetItem2}>
+                    <p className={styles.sheetLabel2}>Feedback Pending</p>
+                    <p className={`${styles.sheetValue2} ${styles.red}`}>
+                      1000
+                    </p>
+                  </div>
+                  <div className={`${styles.sheetItem2} ${styles.sheetgreen} `}>
+                    <p className={styles.sheetLabel2}>Assign Pending</p>
+                    <p className={`${styles.sheetValue2} ${styles.blue}`}>
+                      200
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* overview */}
+        <div className="p-6 pt-0">
+          <h2 className="text-xl font-semibold text-foreground mb-6">
+            Quick Actions
+          </h2>
+
+          <div className={target.quick}>
+            {quickActions.map((action, idx) => (
+              <div
+                key={idx}
+                className={`${target.rowItem} ${target[action.color]}`}
+              >
+                <action.Icon className={target[`icon${action.color}`]} />
+                <span className={target[`label${action.color}`]}>
+                  {action.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-{/* overview */}
- <div className="p-6 pt-0">
-        <h2 className="text-xl font-semibold text-foreground mb-6">
-          Quick Actions
-        </h2>
-        <div className={styles.overviewContainer}>
-  <div className={target.quickRow}>
-    <div className={target.quickCard}>
-      <div className={`${target.quickCircle} ${target.blue}`}>
-        {/* <span className={target.quickBadge}>1377</span> */}
-        {/* icon */}
-        <BsCardChecklist className={target.firstIcon} />
-      </div>
-      <span className={target.quickLabel}>Follow Up</span>
-    </div>
-
-    <div className={target.quickCard}>
-      <div className={`${target.quickCircle} ${target.amber}`}>
-        {/* <span className={target.quickBadge}>17</span> */}
-        <PiChartLineUpLight  className={target.secIcon} />
-      </div>
-      <span className={target.quickLabeltwo}>Line Up</span>
-    </div>
-
-    <div className={target.quickCard}>
-      <div className={`${target.quickCircle} ${target.green}`}>
-        {/* no badge */}
-        <GrGroup className={target.thirdIcon} />
-      </div>
-      <span className={target.quickLabelthree}>Team  Performance</span>
-    </div>
-  </div>
-  </div>
-</div>
-
-
-
-      </div>
-
- 
-
-
 
       <div className="p-6 pt-0">
         <div className="flex flex-col lg:flex-row gap-5">
@@ -466,147 +467,15 @@ export function ClosingManagerDashboardHeader({
             </div>
           </div>
 
-          {/* Right - Conversion Overview */}
-          <div className="">
-            {/* Title for right */}
-            <h2 className="text-xl font-semibold text-foreground mb-6">
-              Conversion Overview
-            </h2>
-
-            <div className="bg-white rounded-xl p-2 shadow-sm border border-gray-100">
-              <div className="flex flex-col lg:flex-row items-center gap-4">
-                {/* Chart */}
-                <div className="relative flex-shrink-0">
-                  <div className="relative w-80 h-80">
-                    {" "}
-                    {/* Smaller size */}
-                    <svg
-                      className="absolute inset-0 w-full h-full transform -rotate-90"
-                      viewBox="0 0 224 224"
-                    >
-                      {/* Rings */}
-                      <circle
-                        cx="112"
-                        cy="112"
-                        r="95"
-                        stroke="#e5e7eb"
-                        strokeWidth="10"
-                        fill="transparent"
-                      />
-                      <circle
-                        cx="112"
-                        cy="112"
-                        r="95"
-                        stroke="#3b82f6"
-                        strokeWidth="10"
-                        fill="transparent"
-                        strokeDasharray={`${2 * Math.PI * 95}`}
-                        strokeDashoffset={`${2 * Math.PI * 95 * (1 - 0.059)}`}
-                        strokeLinecap="round"
-                        className="transition-all duration-1000 ease-out"
-                      />
-                      <circle
-                        cx="112"
-                        cy="112"
-                        r="75"
-                        stroke="#e5e7eb"
-                        strokeWidth="10"
-                        fill="transparent"
-                      />
-                      <circle
-                        cx="112"
-                        cy="112"
-                        r="75"
-                        stroke="#8b5cf6"
-                        strokeWidth="10"
-                        fill="transparent"
-                        strokeDasharray={`${2 * Math.PI * 75}`}
-                        strokeDashoffset={`${2 * Math.PI * 75 * (1 - 0.059)}`}
-                        strokeLinecap="round"
-                        className="transition-all duration-1000 ease-out"
-                      />
-                      <circle
-                        cx="112"
-                        cy="112"
-                        r="55"
-                        stroke="#e5e7eb"
-                        strokeWidth="10"
-                        fill="transparent"
-                      />
-                      <circle
-                        cx="112"
-                        cy="112"
-                        r="55"
-                        stroke="#06b6d4"
-                        strokeWidth="10"
-                        fill="transparent"
-                        strokeDasharray={`${2 * Math.PI * 55}`}
-                        strokeDashoffset={`${2 * Math.PI * 55 * (1 - 0.059)}`}
-                        strokeLinecap="round"
-                        className="transition-all duration-1000 ease-out"
-                      />
-                    </svg>
-                    {/* Center text */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-gray-900">
-                          12175
-                        </div>
-                        <div className="text-xs font-medium text-gray-600 mt-1">
-                          TOTAL LEADS
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Metrics beside chart */}
-                <div className="flex-1 space-y-4">
-                  {overview.map((kpi, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between py-2"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: kpi.color }}
-                        />
-                        <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                          {kpi.title}
-                        </span>
-                      </div>
-                      <span className="text-base font-bold text-gray-900">
-                        {kpi.percentage}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Bottom badges */}
-              <div className="flex flex-wrap gap-3  border-t border-gray-100">
-                <div className="flex items-center gap-1 bg-blue-500 text-white px-3 py-1 rounded-md text-sm">
-                  <span className="font-bold">12175</span>
-                  <span>Leads</span>
-                </div>
-                <div className="flex items-center gap-1 bg-purple-600 text-white px-3 py-1 rounded-md text-sm">
-                  <span className="font-bold">235</span>
-                  <span>Bookings</span>
-                </div>
-                <div className="flex items-center gap-1 bg-cyan-500 text-white px-3 py-1 rounded-md text-sm">
-                  <span className="font-bold">4588</span>
-                  <span>Visits</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-     
+          <ConversionOverview
+            leads={leads}
+            bookings={bookings}
+            visits={visits}
+          />
         </div>
       </div>
 
-           <TargetSection />
+  
     </div>
   );
 }
