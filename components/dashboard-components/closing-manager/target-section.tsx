@@ -41,35 +41,43 @@ const ICONS: Record<Metric["icon"], JSX.Element> = {
 };
 
 export function TargetSection({
-  progressPercent = 60,
+  progressPercent = 0,
   metrics = [
     { label: "Target", value: 22, tone: "blue", icon: "flag" },
-    { label: "Booking", value: 789, tone: "rose", icon: "home" },
-    { label: "Registration", value: 2, tone: "amber", icon: "trophy" },
+    { label: "Booking", value: 0, tone: "rose", icon: "home" },
+    { label: "Registration", value: 0, tone: "amber", icon: "trophy" },
   ],
   projects = [
     {
-      projectName: "EV 9 SQUARE",
+      projectName: "EV 23 Malibu West",
       items: [
-        { label: "Target", value: 789 },
-        { label: "Booking", value: 789 },
-        { label: "Registration", value: 789 },
+        { label: "Target", value: 6 },
+        { label: "Booking", value: 0 },
+        { label: "Registration", value: 0 },
       ],
     },
     {
-      projectName: "SUNRISE PARK",
+      projectName: "EV 10 Marina Bay",
       items: [
-        { label: "Target", value: 320 },
-        { label: "Booking", value: 154 },
-        { label: "Registration", value: 45 },
+        { label: "Target", value: 9 },
+        { label: "Booking", value: 0 },
+        { label: "Registration", value: 0 },
       ],
     },
     {
-      projectName: "LAKEVIEW RESIDENCE",
+      projectName: "EV Heart City",
       items: [
-        { label: "Target", value: 560 },
-        { label: "Booking", value: 210 },
-        { label: "Registration", value: 70 },
+        { label: "Target", value: 7 },
+        { label: "Booking", value: 0 },
+        { label: "Registration", value: 0 },
+      ],
+    },
+    {
+      projectName: "EV 9 Square",
+      items: [
+        { label: "Target", value: 1 },
+        { label: "Booking", value: 0 },
+        { label: "Registration", value: 0 },
       ],
     },
   ],
