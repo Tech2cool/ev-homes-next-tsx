@@ -18,13 +18,13 @@ import target from "./target-section.module.css";
 import { MetricCard } from "./metric-card";
 import { FaCommentDots } from "react-icons/fa6";
 import { FaTasks } from "react-icons/fa";
-import { Conversion } from "./conversion";
 import { CircularProgress } from "./circular-progress";
 import TargetSection from "./target-section";
 import { GrGroup } from "react-icons/gr";
 import { PiChartLineUpLight } from "react-icons/pi";
 import { BsCardChecklist } from "react-icons/bs";
 import ConversionOverview from "./conversion-overview";
+import { cn } from "@/lib/utils";
 
 interface ClosingManagerDashboardHeaderProps {
   title?: string;
@@ -116,6 +116,8 @@ export function ClosingManagerDashboardHeader({
   const [activeCard2, setActiveCard2] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const assignPendingRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   type QuickAction = {
     label: string;
@@ -165,69 +167,39 @@ export function ClosingManagerDashboardHeader({
   const metrics = [
     {
       title: "Lead to CP",
-      percentage: 2.3,
-      count1: 11534,
-      count2: 267,
+      percentage: 2.4,
+      count1: 11708,
+      count2: 280,
       label1: "Lead",
       label2: "CP",
-      color: "#ec4899", // pink
+      color: "#ec4899",
     },
     {
       title: "Lead to Walk In",
-      percentage: 1.3,
-      count1: 11534,
-      count2: 154,
+      percentage: 1.4,
+      count1: 11708,
+      count2: 161,
       label1: "Lead",
-      label2: "Walk In",
-      color: "#10b981", // green
+      label2: "Visit",
+      color: "#10b981",
     },
     {
-      title: "Lead to Booking",
-      percentage: 17.2,
-      count1: 267,
-      count2: 46,
+      title: "CP to Booking",
+      percentage: 17.1,
+      count1: 280,
+      count2: 48,
       label1: "Visit",
       label2: "Booking",
-      color: "#3b82f6", // blue
+      color: "#3b82f6",
     },
     {
-      title: "Walk-in to Booking",
-      percentage: 6.5,
-      count1: 154,
-      count2: 10,
+      title: "Walk In to Booking",
+      percentage: 7.5,
+      count1: 161,
+      count2: 12,
       label1: "Visit",
       label2: "Booking",
-      color: "#f97316", // orange
-    },
-  ];
-
-  const overview = [
-    {
-      title: "VISIT RATE",
-      percentage: 5.9,
-      count1: 4588,
-      count2: 12175,
-      label1: "Visits",
-      label2: "Total Leads",
-      color: "#3b82f6", // Blue
-    },
-    {
-      title: "BOOKING RATE",
-      percentage: 5.9,
-      count1: 235,
-      count2: 12175,
-      label1: "Bookings",
-      label2: "Total Leads",
-      color: "#8b5cf6", // Purple
-    },
-    {
-      title: "OVERALL CONVERSION",
-      percentage: 5.9,
-      count1: 235,
-      count2: 4588,
-      label1: "Bookings",
-      label2: "Visits",
-      color: "#06b6d4", // Cyan
+      color: "#f97316",
     },
   ];
 
@@ -238,6 +210,20 @@ export function ClosingManagerDashboardHeader({
   const toggleBottomSheet2 = (index: number) => {
     setActiveCard2(activeCard2 === index ? null : index);
   };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const cardWidth = 150 + 16; // minWidth + gap (adjust if needed)
+      const index = Math.round(el.scrollLeft / cardWidth);
+      setActiveIndex(index);
+    };
+
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -302,13 +288,45 @@ export function ClosingManagerDashboardHeader({
           Sales Overview
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-7 md:grid-cols-5 lg:grid-cols-7 gap-4">
+        {/* Desktop & Tablet ≥768px → Grid */}
+        <div className="hidden md:grid md:grid-cols-5 lg:grid-cols-7 gap-4 no-scrollbar">
           {salesoverview.map((metric, index) => (
             <div key={index} className={styles.metricCardWrapper}>
               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Mobile <768px → Horizontal Scroll */}
+        <div
+          ref={scrollRef}
+          className="flex md:hidden overflow-x-auto gap-4 no-scrollbar scroll-smooth snap-x snap-mandatory"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {salesoverview.map((metric, index) => (
+            <div
+              key={index}
+              className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
+              style={{ minWidth: "150px" }}
+            >
+              <div className={styles.metricCardContent}>
+                <MetricCard {...metric} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Dots */}
+        <div className="flex justify-center mt-3 gap-2 md:hidden">
+          {salesoverview.map((_, idx) => (
+            <span
+              key={idx}
+              className={`h-2 w-2 rounded-full transition-all ${
+                activeIndex === idx ? "bg-blue-600 w-2" : "bg-gray-300"
+              }`}
+            />
           ))}
         </div>
       </div>
@@ -323,9 +341,12 @@ export function ClosingManagerDashboardHeader({
             {cards.map((card, index) => (
               <div key={index} className={styles.cardWrapper}>
                 <div
-                  className={`${styles.cardtarget} ${
-                    activeCard === index ? styles.cardActive : ""
-                  }`}
+                  className={cn(
+                    `${styles.cardtarget} ${
+                      activeCard === index ? styles.cardActive : ""
+                    }`,
+                    "bg-card text-card-foreground rounded-xl shadow-sm"
+                  )}
                   style={{ border: `2px solid ${card.borderColor}` }}
                   onClick={() => toggleBottomSheet(index)}
                 >
@@ -372,13 +393,16 @@ export function ClosingManagerDashboardHeader({
           <h2 className="text-xl font-semibold text-foreground mb-6">
             Assign/Feedback Pending
           </h2>
-          <div className={styles.Monthtarget} ref={containerRef}>
+          <div className={styles.Monthtarget} ref={assignPendingRef}>
             {assignFeedbackcard.map((card, index) => (
               <div key={index} className={styles.cardWrap}>
                 <div
-                  className={`${styles.cardassignFeedback} ${
-                    activeCard2 === index ? styles.cardActive : ""
-                  }`}
+                  className={cn(
+                    `${styles.cardassignFeedback} ${
+                      activeCard2 === index ? styles.cardActive : ""
+                    }`,
+                    "bg-card text-card-foreground rounded-xl shadow-sm" // ✅ same look as others
+                  )}
                   style={{ border: `2px solid ${card.border}` }}
                   onClick={() => toggleBottomSheet2(index)}
                 >
@@ -440,19 +464,19 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
-            <TargetSection />
+      <TargetSection />
 
-      <div className="p-6 pt-0">
-        <div className="flex flex-col lg:flex-row gap-5">
+      <div className="p-4 sm:p-6 pt-0">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Left - Conversion Metrics */}
-          <div className="">
+          <div className="flex-1">
             {/* Title for left */}
-            <h2 className="text-xl font-semibold text-foreground mb-6">
+            <h2 className="text-xl sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">
               Conversion Metrics
             </h2>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-              <div className="grid grid-cols-3 md:grid-cols-4 gap-5">
+            <div className="bg-card rounded-xl p-4 sm:p-6 shadow-sm border text-card-foreground">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {metrics.map((kpi, index) => (
                   <CircularProgress
                     key={index}
@@ -463,6 +487,7 @@ export function ClosingManagerDashboardHeader({
                     label1={kpi.label1}
                     label2={kpi.label2}
                     color={kpi.color}
+                    size={100}
                   />
                 ))}
               </div>
@@ -476,8 +501,6 @@ export function ClosingManagerDashboardHeader({
           />
         </div>
       </div>
-
-
     </div>
   );
 }

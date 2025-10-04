@@ -38,8 +38,6 @@
   border-radius: 0.5rem;
 }
 
-
-
 .metricCardContent {
   flex: 1;
   padding: 8px; /* reduce padding for compact design */
@@ -120,7 +118,7 @@
 } */
 
 .cardtarget {
-  background: #ffffff; /* white background */
+
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -134,10 +132,12 @@
   border: 1px solid #5c36e4c1;
 }
 
-.cardtarget:hover {
-  /* box-shadow: 0 12px 30px rgba(0,0,0,0.3); */
-  background: #f9f9f9; /* light hover effect */
+:global(html.light) .cardtarget {
+
+  /* background: rgba(253, 253, 253, 0.7); */
 }
+
+
 
 /* Remove bottom border radius when sheet visible */
 .cardActive,
@@ -201,7 +201,6 @@
 
 .sheetLabel {
   font-size: 14px;
-  color: black;
   margin: 0;
   font-weight: 500;
 }
@@ -217,7 +216,7 @@
   margin: 0;
   font-size: 17px;
   font-weight: 600;
-  color: black;
+
   display: flex;
   align-items: center;
 }
@@ -240,8 +239,8 @@
   font-weight: 600;
   min-width: 55px;
   text-align: center;
-  background: #fff;
-  color: black;
+  /* background: #fff; */
+  /* color: black; */
   border-left: 4px solid transparent;
   transition: all 0.3s ease;
 }
@@ -290,7 +289,6 @@
 }
 
 .cardassignFeedback {
-  background: #ffffff; /* white background */
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -419,7 +417,6 @@
   margin: 0;
   font-size: 17px;
   font-weight: 600;
-  color: black;
   display: flex;
   align-items: center;
 }
@@ -444,8 +441,8 @@
   font-weight: 600;
   min-width: 55px;
   text-align: center;
-  background: #fff;
-  color: black;
+  /* background: #fff;
+  color: black; */
   border-left: 4px solid transparent;
   transition: all 0.3s ease;
 }
@@ -480,6 +477,22 @@
   color: rgba(255, 167, 4, 0.13);
   position: absolute;
   z-index: 3;
+}
+
+/* Hide scrollbar everywhere but keep scroll working */
+/* Hide scrollbar everywhere but keep scroll working */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* 🔑 removes the faint line */
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+  scrollbar-gutter: stable; /* prevents extra gutter space */
 }
 
 @media (max-width: 768px) {
@@ -542,10 +555,8 @@
     /* display: none; */
     font-size: 3vw;
   }
-  .mainContainer{
+  .mainContainer {
     display: flex;
     flex-direction: column;
   }
-
-
 }

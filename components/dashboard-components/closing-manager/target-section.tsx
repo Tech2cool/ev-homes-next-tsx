@@ -94,10 +94,10 @@ export function TargetSection({
     <>
       <div className="p-6 pt-0">
         <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
-        <section
-          className={styles.wrap}
-          aria-labelledby="target-section-heading"
-        >
+       <section
+  className={`${styles.wrap} bg-card text-card-foreground rounded-xl shadow-sm p-2 border`}
+  aria-labelledby="target-section-heading"
+>
           {/* Transparent container with spacing from corners */}
 
           <div className={styles.transparentContainer}>

@@ -29,32 +29,42 @@ export function CircularProgress({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-   <div className="flex flex-col items-center justify-center p-10 bg-white rounded-xl shadow-sm border border-gray-100 ">
-
+    <div className="flex flex-col items-center justify-center p-4 bg-card rounded-xl shadow-sm border text-card-foreground">
       {/* Title above the circle */}
-      <h3 className="text-sm font-medium text-gray-600 text-center mb-4">
+      <h3 className="text-sm font-medium text-muted-foreground text-center mb-3">
         {title}
       </h3>
 
-      {/* Counts with headings above the circle */}
-      <div className="flex justify-between items-center w-full mb-4 px-2">
-        <div className="flex flex-col items-center">
-          <span className="text-xs font-medium text-gray-500 mb-1">{label1}</span>
-          <div className="text-lg font-semibold text-gray-800">{count1.toLocaleString()}</div>
+      {/* Counts with headings - IMPROVED MOBILE LAYOUT */}
+      <div className="flex justify-between items-center w-full mb-4 px-1">
+        {/* First count with label */}
+        <div className="flex flex-col items-center flex-1 min-w-0">
+          <span className="text-xs font-medium text-muted-foreground mb-1 text-center leading-tight">
+            {label1}
+          </span>
+          <div className="text-base sm:text-lg font-semibold text-foreground text-center">
+            {count1.toLocaleString()}
+          </div>
         </div>
         
-        <div className="flex flex-col items-center mx-4">
-          <span className="text-xs font-medium text-gray-500 mb-1">→</span>
-          <div className="text-lg font-semibold text-gray-800 opacity-0">-</div> {/* Spacer for alignment */}
+        {/* Center arrow - PROPERLY CENTERED */}
+        <div className="flex flex-col items-center justify-center flex-1 min-w-0">
+          <div className="text-xs font-medium text-muted-foreground mb-1">→</div>
+          <div className="text-base sm:text-lg font-semibold text-foreground opacity-0">0</div>
         </div>
         
-        <div className="flex flex-col items-center">
-          <span className="text-xs font-medium text-gray-500 mb-1">{label2}</span>
-          <div className="text-lg font-semibold text-gray-800">{count2.toLocaleString()}</div>
+        {/* Second count with label */}
+        <div className="flex flex-col items-center flex-1 min-w-0">
+          <span className="text-xs font-medium text-muted-foreground mb-1 text-center leading-tight">
+            {label2}
+          </span>
+          <div className="text-base sm:text-lg font-semibold text-foreground text-center">
+            {count2.toLocaleString()}
+          </div>
         </div>
       </div>
 
-      {/* Circular progress */}
+      {/* Circular progress with responsive sizing */}
       <div className="relative" style={{ width: size, height: size }}>
         <svg
           className="transform -rotate-90"
@@ -67,7 +77,7 @@ export function CircularProgress({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="#f3f4f6"
+            stroke="hsl(var(--muted))"
             strokeWidth={strokeWidth}
             fill="transparent"
           />
@@ -87,7 +97,7 @@ export function CircularProgress({
         </svg>
         {/* Percentage text */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold text-gray-800">
+          <span className="text-xl sm:text-2xl font-bold text-foreground">
             {percentage}%
           </span>
         </div>
