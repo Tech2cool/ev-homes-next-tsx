@@ -25,7 +25,7 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <Card
-      className={`border-border`}
+      className={styles.cardmain}
       style={{
         background: `linear-gradient(to bottom right, ${iconBg.replace(
           "bg-",

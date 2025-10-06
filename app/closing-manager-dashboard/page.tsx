@@ -10,4 +10,4 @@ const ClosingManagerPage = () => {
   );
 };
 
-export default ClosingManagerPage;0
+export default ClosingManagerPage;

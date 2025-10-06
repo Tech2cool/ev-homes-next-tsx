@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Calendar,
   Sun,
@@ -14,17 +12,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useRef, useState } from "react";
 import styles from "./dashboard.module.css";
-import target from "./target-section.module.css";
-import { MetricCard } from "./metric-card";
+import target from "../closing-manager/target-section.module.css";
+
 import { FaCommentDots } from "react-icons/fa6";
 import { FaTasks } from "react-icons/fa";
-import { CircularProgress } from "./circular-progress";
-import TargetSection from "./target-section";
+import { CircularProgress } from "../closing-manager/circular-progress";
+import TargetSection from "../closing-manager/target-section.module.css";
 import { GrGroup } from "react-icons/gr";
 import { PiChartLineUpLight } from "react-icons/pi";
 import { BsCardChecklist } from "react-icons/bs";
-import ConversionOverview from "./conversion-overview";
+import ConversionOverview from "../closing-manager/conversion-overview";
 import { cn } from "@/lib/utils";
+import { MetricCard } from "../closing-manager/metric-card";
+
 
 interface ClosingManagerDashboardHeaderProps {
   title?: string;
@@ -33,16 +33,16 @@ interface ClosingManagerDashboardHeaderProps {
   userAvatar?: string;
 }
 
-export function ClosingManagerDashboardHeader({
+export function SalesManagerDashboard({
   title = "Dashboard",
-  dateRange = "You have 369 pending tasks",
-  userName = "Deepak Karki",
+  dateRange = "You have 37 pending tasks",
+  userName = "Vicky Mane",
   userAvatar,
 }: ClosingManagerDashboardHeaderProps) {
   const salesoverview = [
     {
       title: "Leads",
-      value: "12065",
+      value: "11767",
       isPositive: true,
       icon: <Users className="h-6 w-6" />,
       iconColor: "text-blue-600",
@@ -52,7 +52,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "CP Visits",
-      value: "347",
+      value: "375",
       isPositive: true,
       icon: <Calendar className="h-6 w-6" />,
       iconColor: "text-green-600",
@@ -62,7 +62,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Walk In Visits",
-      value: "162",
+      value: "172",
       isPositive: true,
       icon: <Truck className="h-6 w-6" />,
       iconColor: "text-purple-600",
@@ -72,7 +72,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Booking",
-      value: "31",
+      value: "35",
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-orange-600",
@@ -82,7 +82,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Internal Leads",
-      value: "209",
+      value: "217",
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-teal-600",
@@ -102,7 +102,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Pending",
-      value: "11779",
+      value: "11482",
       isPositive: false,
       icon: <TrendingDown className="h-6 w-6" />,
       iconColor: "text-red-600",
@@ -159,9 +159,7 @@ export function ClosingManagerDashboardHeader({
   ];
 
   const assignFeedbackcard = [
-    { name: "Deepak Karki", feedback: 100, tasks: 300, border: "#87CEEB" },
-    { name: "Jaspreet Arora", feedback: 210, tasks: 320, border: "#BA1A42" },
-    { name: "Ranjna Gupta", feedback: 150, tasks: 310, border: "#546E86" },
+    { name: "Vicky Mane", feedback: 100, tasks: 300, border: "#87CEEB" },
   ];
 
   const metrics = [
@@ -274,115 +272,34 @@ export function ClosingManagerDashboardHeader({
                   .join("")}
               </AvatarFallback>
             </Avatar>
-            <span className={styles.userName}>{userName}</span>
+            <span className={styles.userName}>Vicky Mane</span>
             <div className={styles.dateRangeContainer}>
               <Calendar className={styles.calendarIcon} />
               <span className={styles.dateRangeText}>{dateRange}</span>
             </div>
           </div>
         </div>
+
+        {/* Sales card */}
       </div>
-
-      <div className="p-6">
-        <h2 className="text-xl font-semibold text-foreground">
-          Sales Overview
-        </h2>
-
-        {/* Desktop & Tablet ≥768px → Grid */}
-        <div
-          ref={scrollRef}
-          className="flex overflow-x-auto gap-0 no-scrollbar scroll-smooth snap-x snap-mandatory"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          {salesoverview.map((metric, index) => (
-            <div
-              key={index}
-              className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
-              style={{
-                minWidth: "180px", // adjust card width as needed
-              }}
-            >
-              <div className={styles.metricCardContent}>
-                <MetricCard {...metric} />
-              </div>
+      <div className={styles.SalesCard}>
+        {salesoverview.map((sales, index) => (
+          <div
+            key={index}
+            className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
+            style={{
+              minWidth: "180px", // adjust card width as needed
+            }}
+          >
+            <div className={styles.metricCardContent}>
+              <MetricCard {...sales} />
             </div>
-          ))}
-        </div>
-
-        {/* Dots */}
-        <div className="flex justify-center mt-3 gap-2">
-          {salesoverview.map((_, idx) => (
-            <span
-              key={idx}
-              className={`h-2 w-2 rounded-full transition-all ${
-                activeIndex === idx ? "bg-blue-600 w-2" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      <div className={styles.mainContainer}>
-        <div className="p-6 pt-0">
-          <h2 className="text-xl font-semibold text-foreground mb-6">
-            Team Overview
-          </h2>
-
-          <div className={styles.Monthlytarget} ref={containerRef}>
-            {cards.map((card, index) => (
-              <div key={index} className={styles.cardWrapper}>
-                <div
-                  className={cn(
-                    `${styles.cardtarget} ${
-                      activeCard === index ? styles.cardActive : ""
-                    }`,
-                    "bg-card text-card-foreground rounded-xl shadow-sm"
-                  )}
-                  style={{ border: `2px solid ${card.borderColor}` }}
-                  onClick={() => toggleBottomSheet(index)}
-                >
-                  <h3 className="teamName">{card.name}</h3>
-                  <div
-                    className={styles.assignpendibg}
-                    style={
-                      {
-                        borderLeftColor: card.borderColor,
-                        "--hover-color": card.borderColor, // ✅ plain string works
-                      } as React.CSSProperties
-                    } // cast entire style object
-                  >
-                    <FaTasks style={{ marginRight: "6px" }} /> {card.tasks}
-                  </div>
-                </div>
-
-                <div
-                  className={`${styles.bottomSheet} ${
-                    activeCard === index ? styles.show : ""
-                  }`}
-                  style={{ border: `2px solid ${card.borderColor}` }}
-                >
-                  {card.members.map((member, mIndex) => (
-                    <div
-                      key={mIndex}
-                      className={styles.sheetItem}
-                      style={{
-                        border: `0.5px solid ${card.borderColor}`,
-                        background: `${card.borderColor}10`,
-                      }}
-                    >
-                      <p className={styles.sheetLabel}>{member}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* assign */}
+      {/* assign and feedback pending */}
+      <div className="flex flex-row justify-center mt-5">
         <div className="p-6 pt-0">
           <h2 className="text-xl font-semibold text-foreground mb-6">
             Assign/Feedback Pending
@@ -436,7 +353,7 @@ export function ClosingManagerDashboardHeader({
           </div>
         </div>
 
-        {/* overview */}
+        {/* quick links */}
         <div className="p-6 pt-0">
           <h2 className="text-xl font-semibold text-foreground mb-6">
             Quick Actions
@@ -457,44 +374,44 @@ export function ClosingManagerDashboardHeader({
           </div>
         </div>
       </div>
+      {/* conversion metrics */}
 
-      <TargetSection />
-
-      <div className="p-4 sm:p-6 pt-0">
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Left - Conversion Metrics */}
-          <div className="flex-1">
-            {/* Title for left */}
-            <h2 className="text-xl sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">
-              Conversion Metrics
-            </h2>
-
-            <div className="bg-card rounded-xl p-4 sm:p-6 shadow-sm border text-card-foreground">
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {metrics.map((kpi, index) => (
-                  <CircularProgress
-                    key={index}
-                    title={kpi.title}
-                    percentage={kpi.percentage}
-                    count1={kpi.count1}
-                    count2={kpi.count2}
-                    label1={kpi.label1}
-                    label2={kpi.label2}
-                    color={kpi.color}
-                    size={100}
-                  />
-                ))}
+<div  className="flex flex-row gap-5 p-5">
+  <div className="flex-1">
+              {/* Title for left */}
+              <h2 className="text-xl sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">
+                Conversion Metrics
+              </h2>
+  
+              <div className="bg-card rounded-xl p-4 sm:p-6 shadow-sm border text-card-foreground">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {metrics.map((kpi, index) => (
+                    <CircularProgress
+                      key={index}
+                      title={kpi.title}
+                      percentage={kpi.percentage}
+                      count1={kpi.count1}
+                      count2={kpi.count2}
+                      label1={kpi.label1}
+                      label2={kpi.label2}
+                      color={kpi.color}
+                      size={100}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <ConversionOverview
-            leads={leads}
-            bookings={bookings}
-            visits={visits}
-          />
-        </div>
+
+  {/* conversion overview */}
+   <div>
+        <ConversionOverview leads={0} bookings={0} visits={0} />
       </div>
+
+</div>
+     
+      
     </div>
+
   );
 }

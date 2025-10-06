@@ -1,6 +1,8 @@
 /* Dashboard Header Styles */
+
 .container {
   width: 100%;
+ 
 }
 
 .dashboardHeader {
@@ -115,11 +117,15 @@
   gap: 20px;
   width: fit-content;
 }
-/* 
+
 .cardWrapper {
   position: relative;
   flex: 1;
-} */
+} 
+.SalesCard{
+    display: flex;
+    flex-direction: row;
+}
 
 .cardtarget {
 
