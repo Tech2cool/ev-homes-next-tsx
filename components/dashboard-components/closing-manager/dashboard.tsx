@@ -34,6 +34,10 @@ import React from "react";
 import { MdOutlinePendingActions } from "react-icons/md";
 import ProjectTargetsCarousel from "./project-targets-carousel";
 
+
+
+
+
 interface ClosingManagerDashboardHeaderProps {
   userName: string;
   pendingText?: string; // e.g., "You have 369 pending tasks"
@@ -323,6 +327,7 @@ export function ClosingManagerDashboardHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  const [showDate,setshowDate] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -632,8 +637,10 @@ export function ClosingManagerDashboardHeader({
       />
             </div>
           </div>
-
-          <div className={styles.filter}>
+          
+{
+  !showDate && 
+     <div className={styles.filter} >
             <div className={styles.yearSelector}>
               <select  value={year} onChange={(e) => setYear(Number(e.target.value))}>
                 {years.map((y) => (
@@ -652,6 +659,8 @@ export function ClosingManagerDashboardHeader({
               ))}
             </div>
           </div>
+}
+       
         </div>
       </div>
       <div className={styles.grafMobile}>

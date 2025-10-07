@@ -1,49 +1,54 @@
-"use client"
+"use client";
 
-import React from "react"
-import useEmblaCarousel from "embla-carousel-react"
-import ProjectTargets from "./project-targets"
+import React from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import ProjectTargets from "./project-targets";
 
 type Metric = {
-  label: "Target" | "Booking" | "Registration" | (string & {})
-  count: number | string
-}
+  label: "Target" | "Booking" | "Registration" | (string & {});
+  count: number | string;
+};
 
 type ProjectCard = {
-  projectName: string
-  metrics: Metric[]
-}
+  projectName: string;
+  metrics: Metric[];
+};
 
 export function ProjectTargetsCarousel({
   projects,
   className = "",
 }: {
-  projects: ProjectCard[]
-  className?: string
+  projects: ProjectCard[];
+  className?: string;
 }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: false })
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    loop: false,
+  });
 
   const scrollPrev = React.useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev()
-  }, [emblaApi])
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
 
   const scrollNext = React.useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext()
-  }, [emblaApi])
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   return (
-    <section className={["relative w-90" , className].join(" ")}>
+    <section className={["relative w-90", className].join(" ")}>
       <div className="mb-3 flex flex-row justify-between w-full">
         <h2 className="text-sm font-medium text-foreground/90 md:text-base">
           Project Targets
         </h2>
-              <button  className="text-blue-600 hover:underline font-medium text-sm">
-        Select Date
-      </button>
-        
-      </div>
-      
+        <button className="text-blue-600 border border-blue-600 px-4 py-2 rounded-md font-medium text-sm hover:bg-blue-50 transition-all duration-200"
 
+        // onClick={ () => setshowDate(true)}
+        
+    
+        >
+          Select Date
+        </button>
+      </div>
 
       <div className="relative">
         {/* Carousel viewport */}
@@ -51,10 +56,7 @@ export function ProjectTargetsCarousel({
           {/* Carousel container */}
           <div className="flex gap-4">
             {projects.map((p) => (
-              <div
-                key={p.projectName}
-                className="min-w-[50%] flex-shrink-0"
-              >
+              <div key={p.projectName} className="min-w-[50%] flex-shrink-0">
                 <ProjectTargets
                   projectName={p.projectName}
                   metrics={p.metrics}
@@ -81,7 +83,7 @@ export function ProjectTargetsCarousel({
         </button>
       </div>
     </section>
-  )
+  );
 }
 
-export default ProjectTargetsCarousel
+export default ProjectTargetsCarousel;
