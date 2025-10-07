@@ -9,6 +9,10 @@ import {
   TrendingUp,
   Users,
   TrendingDown,
+  Funnel,
+  Flag,
+  Home,
+  Trophy,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
@@ -16,7 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./dashboard.module.css";
 import target from "./target-section.module.css";
 import { MetricCard } from "./metric-card";
-import { FaCommentDots } from "react-icons/fa6";
+import { FaCheck, FaCommentDots, FaFlag } from "react-icons/fa6";
 import { FaTasks } from "react-icons/fa";
 import { CircularProgress } from "./circular-progress";
 import TargetSection from "./target-section";
@@ -25,20 +29,39 @@ import { PiChartLineUpLight } from "react-icons/pi";
 import { BsCardChecklist } from "react-icons/bs";
 import ConversionOverview from "./conversion-overview";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import React from "react";
+import { MdOutlinePendingActions } from "react-icons/md";
+import ProjectTargetsCarousel from "./project-targets-carousel";
 
 interface ClosingManagerDashboardHeaderProps {
-  title?: string;
-  dateRange?: string;
-  userName?: string;
-  userAvatar?: string;
+  userName: string;
+  pendingText?: string; // e.g., "You have 369 pending tasks"
+  lastSyncText?: string; // e.g., "24 Sep 25 10:45 pm"
+  avatarUrl?: string;
+  className?: string;
+  onSyncNow?: () => void;
 }
 
 export function ClosingManagerDashboardHeader({
-  title = "Dashboard",
-  dateRange = "You have 369 pending tasks",
   userName = "Deepak Karki",
-  userAvatar,
+  pendingText = "You have 369 pending tasks",
+  lastSyncText = "07 Oct 25",
+  avatarUrl,
+  className,
+  onSyncNow,
 }: ClosingManagerDashboardHeaderProps) {
+  const displayName = (userName ?? "").trim() || "User";
+  const initials = React.useMemo(() => {
+    const parts = displayName.split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "U";
+    return parts
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  }, [displayName]);
+
   const salesoverview = [
     {
       title: "Leads",
@@ -118,6 +141,12 @@ export function ClosingManagerDashboardHeader({
   const assignPendingRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const months = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"];
+  const [showMonths, setShowMonths] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const [selectedMonth, setSelectedMonth] = useState("");
+  
 
   type QuickAction = {
     label: string;
@@ -134,6 +163,33 @@ export function ClosingManagerDashboardHeader({
   const leads = 11608;
   const bookings = 59;
   const visits = 432;
+
+  const data = [
+    {
+      label: "Target",
+      value: 22,
+      color1: "#ff7e5f",
+      color2: "#feb47b",
+      icon: Flag,
+      iconColor: "#ff7e5f",
+    },
+    {
+      label: "Booking",
+      value: 1,
+      color1: "#00b09b",
+      color2: "#96c93d",
+      icon: Home,
+      iconColor: "#00b09b",
+    },
+    {
+      label: "Registration",
+      value: 0,
+      color1: "#4facfe",
+      color2: "#00f2fe",
+      icon: Trophy,
+      iconColor: "#4facfe",
+    },
+  ];
 
   const cards = [
     {
@@ -211,6 +267,23 @@ export function ClosingManagerDashboardHeader({
     setActiveCard2(activeCard2 === index ? null : index);
   };
 
+  const handleMonthSelect = (month: string) => {
+    setSelectedMonth(month);
+    setShowMonths(false);
+  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowMonths(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [filterRef]);
+  const years = Array.from({ length: 10 }, (_, i) => year - 5 + i);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -253,35 +326,62 @@ export function ClosingManagerDashboardHeader({
 
   return (
     <div className={styles.container}>
-      <div className={styles.dashboardHeader}>
-        {/* Title */}
-        <h1 className={styles.headerTitle}>{title}</h1>
+      <header
+        role="banner"
+        className={cn(
+          "w-full border-b bg-gradient-to-b from-background to-secondary/50 backdrop-blur supports-[backdrop-filter]:to-secondary/40",
+          className
+        )}
+      >
+        <div className="mx-auto max-w-screen-2xl px-4">
+          <div className="flex items-center justify-between py-2">
+            {/* Left Side - Avatar & Info */}
+            <div className="flex items-center gap-3">
+              <Avatar className="h-8 w-8 ring-2 ring-border">
+                <AvatarImage
+                  src={
+                    avatarUrl ||
+                    "/placeholder.svg?height=32&width=32&query=user%20avatar"
+                  }
+                  alt={`${displayName} avatar`}
+                />
+                <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+              </Avatar>
 
-        {/* Date Range */}
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
+                  {displayName}
+                </span>
+                <span className="text-[11px] leading-4 text-muted-foreground">
+                  {pendingText}
+                </span>
+              </div>
+            </div>
 
-        {/* User Profile */}
-        <div className={styles.headerRight}>
-          <div className={styles.userProfile}>
-            <Avatar className={styles.userAvatar}>
-              <AvatarImage
-                src={userAvatar || "/placeholder.svg"}
-                alt={userName}
-              />
-              <AvatarFallback className={styles.userAvatarFallback}>
-                {userName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <span className={styles.userName}>{userName}</span>
-            <div className={styles.dateRangeContainer}>
-              <Calendar className={styles.calendarIcon} />
-              <span className={styles.dateRangeText}>{dateRange}</span>
+            {/* Right Side - Sync Info */}
+            <div className="flex flex-col items-end">
+              <p className="text-[11px] leading-4 text-muted-foreground mb-1">
+                Last sync was:{" "}
+                <span className="font-small text-foreground">
+                  {lastSyncText}
+                </span>
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-full px-2 py-1 text-xs bg-transparent"
+                  onClick={onSyncNow}
+                  aria-label="Sync now"
+                >
+                  Sync now
+                </Button>
+                <span className="text-[11px] text-muted-foreground">19:00</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="p-6">
         <h2 className="text-xl font-semibold text-foreground">
@@ -302,7 +402,7 @@ export function ClosingManagerDashboardHeader({
               key={index}
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
               style={{
-                minWidth: "180px", // adjust card width as needed
+                // minWidth: "150px", // adjust card width as needed
               }}
             >
               <div className={styles.metricCardContent}>
@@ -313,7 +413,7 @@ export function ClosingManagerDashboardHeader({
         </div>
 
         {/* Dots */}
-        <div className="flex justify-center mt-3 gap-2">
+        <div className="flex justify-center mt-3 gap-2 max-[1300px]:flex hidden">
           {salesoverview.map((_, idx) => (
             <span
               key={idx}
@@ -458,7 +558,176 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
 
-      <TargetSection />
+      {/* <TargetSection /> */}
+            <div className="p-6 pt-0">
+      <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
+      <div className={styles.graf}>
+        <div className={styles.grafcontainer}>
+          {data.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <div className={styles.mytr} key={index}>
+                <div
+                  className={styles.donut}
+                  style={{
+                    background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
+                  }}
+                >
+                  <div
+                    className={styles.iconBg}
+                    style={{ color: item.iconColor }}
+                  >
+                    <IconComponent size={40} />
+                  </div>
+                  <div className={styles.centerNumber}>{item.value}</div>
+                </div>
+                <div className={styles.label}>{item.label}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.targetcontainer}>
+          <div className={styles.texttarget}>
+            <div className={styles.progressHeader}>
+              <p className={styles.title}>Progress</p>
+              <span className={styles.percentage}>0% Completed</span>
+            </div>
+            <div className={styles.description}>
+              <ProjectTargetsCarousel
+        projects={[
+          {
+            projectName: "EV 9 SQUARE",
+            metrics: [
+              { label: "Target", count: 120 },
+              { label: "Booking", count: 75 },
+              { label: "Registration", count: 58 },
+            ],
+          },
+          {
+            projectName: "EV10 Marina Bay",
+            metrics: [
+              { label: "Target", count: 9 },
+              { label: "Booking", count: 0 },
+              { label: "Registration", count: 0 },
+            ],
+          },
+          {
+            projectName: "EV 23 Malibu West",
+            metrics: [
+              { label: "Target", count: 6 },
+              { label: "Booking", count: 0 },
+              { label: "Registration", count: 0 },
+            ],
+          },
+          {
+            projectName: "Heart City",
+            metrics: [
+              { label: "Target", count: 7 },
+              { label: "Booking", count: 0 },
+              { label: "Registration", count: 0 },
+            ],
+          },
+        ]}
+      />
+            </div>
+          </div>
+
+          <div className={styles.filter}>
+            <div className={styles.yearSelector}>
+              <select  value={year} onChange={(e) => setYear(Number(e.target.value))}>
+                {years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.monthGrid}>
+              {months.map((month, index) => (
+                <div key={index} className={styles.monthItem}>
+                  {month}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={styles.grafMobile}>
+        <div className={styles.progressCard}>
+
+          <div className={styles.targetsWrapper}>
+            {[
+              { label: "Target", value: 10, color: "#ffb347" },
+              { label: "Achieved", value: 5, color: "#4caf50" },
+              { label: "Pending", value: 5, color: "#ef5350" },
+            ].map((item, index) => (
+              <div className={styles.targetCard} key={index}>
+                <div
+                  className={styles.targetNumber}
+                  style={{ backgroundColor: item.color }}
+                >
+                  {item.value}
+                </div>
+                <div className={styles.targetLabel}>{item.label}</div>
+              </div>
+            ))}
+          </div>
+          <div className={styles.texttarget}>
+            <div className={styles.filterIconContainer} ref={filterRef}>
+              <button
+                className={styles.filterButton}
+                onClick={() => setShowMonths(!showMonths)}
+              >
+                {selectedMonth ? selectedMonth : ""} <Funnel size={15} />
+              </button>
+
+              {showMonths && (
+                <div className={styles.monthDropdown}>
+
+                  <div className={styles.yearSelector}>
+                    <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+                      {years.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={styles.monthGrid}>
+                    {months.map((month, index) => (
+                      <div
+                        key={index}
+                        className={styles.monthItemMobile}
+                        onClick={() => handleMonthSelect(month)}
+                      >
+                        {month}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className={styles.progressHeader}>
+
+              <p className={styles.title}>Progress</p>
+              <span className={styles.percentage}>0% Completed</span>
+
+            </div>
+            <div className={styles.description}>
+              You have <strong>2 days</strong> remaining to complete{" "}
+              <strong>5 more CP's Onboarding</strong>.
+
+            </div>
+          </div>
+
+          {/* Month Filter Icon */}
+
+        </div>
+      </div>
+      </div>
+      
 
       <div className="p-4 sm:p-6 pt-0">
         <div className="flex flex-col lg:flex-row gap-4">

@@ -40,8 +40,36 @@ const ICONS: Record<Metric["icon"], JSX.Element> = {
   trophy: <Trophy size={18} strokeWidth={2} className="icons" />,
 };
 
+ const data = [
+    {
+      label: "Target",
+      value: 22,
+      color1: "#ff7e5f",
+      color2: "#feb47b",
+      icon: Flag,
+      iconColor: "#ff7e5f",
+    },
+    {
+      label: "Booking",
+      value: 1,
+      color1: "#00b09b",
+      color2: "#96c93d",
+      icon: Home,
+      iconColor: "#00b09b",
+    },
+    {
+      label: "Registration",
+      value: 0,
+      color1: "#4facfe",
+      color2: "#00f2fe",
+      icon: Trophy,
+      iconColor: "#4facfe",
+    },
+  ];
+
 export function TargetSection({
   progressPercent = 0,
+  
   metrics = [
     { label: "Target", value: 22, tone: "blue", icon: "flag" },
     { label: "Booking", value: 0, tone: "rose", icon: "home" },
@@ -113,30 +141,31 @@ export function TargetSection({
                 </span>
               </div>
 
-              <div
-                className={styles.metricsRow}
-                role="list"
-                aria-label="Target metrics"
-              >
-                {metrics.map((m, idx) => (
+               <div className={styles.grafcontainer}>
+          {data.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <div className={styles.mytr} key={index}>
+                <div
+                  className={styles.donut}
+                  style={{
+                    background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
+                  }}
+                >
                   <div
-                    key={idx}
-                    role="listitem"
-                    className={`${styles.metricPill} ${
-                      styles[`tone-${m.tone}`]
-                    }`}
-                    aria-label={`${m.label}: ${m.value}`}
+                    className={styles.iconBg}
+                    style={{ color: item.iconColor }}
                   >
-                    <div className={styles.metricIconLabel}>
-                      <span className={styles.metricIcon} aria-hidden="true">
-                        {ICONS[m.icon]}
-                      </span>
-                    </div>
-                    <span className={styles.metricLabel}>{m.label}</span>
-                    <div className={styles.metricValue}>{m.value}</div>
+                    <IconComponent size={40} />
                   </div>
-                ))}
+                  <div className={styles.centerNumber}>{item.value}</div>
+                </div>
+                <div className={styles.label}>{item.label}</div>
               </div>
+            );
+          })}
+        </div>
+
             </div>
           </div>
 
