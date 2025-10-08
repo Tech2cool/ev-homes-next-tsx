@@ -10,7 +10,7 @@ import {
   Users,
   TrendingDown,
   Funnel,
-  Flag,
+  Flag,                       
   Home,
   Trophy,
 } from "lucide-react";
@@ -33,6 +33,10 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { MdOutlinePendingActions } from "react-icons/md";
 import ProjectTargetsCarousel from "./project-targets-carousel";
+import { createContext } from "vm";
+import { motion, AnimatePresence } from "framer-motion";
+
+
 
 
 
@@ -45,6 +49,8 @@ interface ClosingManagerDashboardHeaderProps {
   avatarUrl?: string;
   className?: string;
   onSyncNow?: () => void;
+
+ 
 }
 
 export function ClosingManagerDashboardHeader({
@@ -54,6 +60,7 @@ export function ClosingManagerDashboardHeader({
   avatarUrl,
   className,
   onSyncNow,
+  
 }: ClosingManagerDashboardHeaderProps) {
   const displayName = (userName ?? "").trim() || "User";
   const initials = React.useMemo(() => {
@@ -65,6 +72,8 @@ export function ClosingManagerDashboardHeader({
       .slice(0, 2)
       .toUpperCase();
   }, [displayName]);
+  
+   const [showDate,setshowDate] = useState(false);
 
   const salesoverview = [
     {
@@ -327,7 +336,7 @@ export function ClosingManagerDashboardHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  const [showDate,setshowDate] = useState(false);
+ 
 
   return (
     <div className={styles.container}>
@@ -591,7 +600,6 @@ export function ClosingManagerDashboardHeader({
             );
           })}
         </div>
-
         <div className={styles.targetcontainer}>
           <div className={styles.texttarget}>
             <div className={styles.progressHeader}>
@@ -600,6 +608,8 @@ export function ClosingManagerDashboardHeader({
             </div>
             <div className={styles.description}>
               <ProjectTargetsCarousel
+                showDate={showDate}
+  setShowDate={setshowDate}
         projects={[
           {
             projectName: "EV 9 SQUARE",
@@ -637,29 +647,47 @@ export function ClosingManagerDashboardHeader({
       />
             </div>
           </div>
-          
-{
-  !showDate && 
-     <div className={styles.filter} >
-            <div className={styles.yearSelector}>
-              <select  value={year} onChange={(e) => setYear(Number(e.target.value))}>
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* calender */}
 
-            <div className={styles.monthGrid}>
-              {months.map((month, index) => (
-                <div key={index} className={styles.monthItem}>
-                  {month}
-                </div>
-              ))}
-            </div>
+<AnimatePresence>
+  {!showDate && (
+    <motion.div
+      key="calendar"
+      initial={{ opacity: 0, x: -50, scale: 0.95 }}   // start 50px left
+      animate={{ opacity: 1, x: 0, scale: 1 }}       // move to normal position
+      exit={{ opacity: 0, x: -50, scale: 0.95 }}     // slide back to left when disappearing
+      transition={{ duration: 0.5,
+            ease: "easeInOut"  // smooth ease-in-out
+ }}
+      className={styles.filter}
+    >
+      <div className={styles.yearSelector}>
+        <select
+     
+    // style={{backgroundColor:"black"}}
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+        >
+          {years.map((y) => (
+            <option key={y} value={y} className={styles.optionMain}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className={styles.monthGrid}>
+        {months.map((month, index) => (
+          <div key={index} className={styles.monthItem}>
+            {month}
           </div>
-}
+        ))}
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+
        
         </div>
       </div>
@@ -736,6 +764,9 @@ export function ClosingManagerDashboardHeader({
         </div>
       </div>
       </div>
+
+      
+
       
 
       <div className="p-4 sm:p-6 pt-0">
