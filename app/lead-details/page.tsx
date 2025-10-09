@@ -3,6 +3,9 @@ import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdAddCall } from "react-icons/md";
 import styles from "./lead-details.module.css";
+import { FaPhoneAlt } from "react-icons/fa";
+import { IoPersonSharp } from "react-icons/io5";
+
 import {
   ArrowLeft,
   Calendar,
@@ -26,6 +29,18 @@ import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
 import EditDialog from "@/components/lead-details-components/edit-dialog";
 import { LeadFilterDialog } from "@/components/lead-details-components/filter-dialog";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { MdEmail } from "react-icons/md";
+import { BsFillBuildingFill } from "react-icons/bs";
+import { PiBuildingApartmentBold } from "react-icons/pi";
+import { FaSourcetree } from "react-icons/fa6";
+import { IoIosPerson } from "react-icons/io";
+import { BiSolidCalendarEdit } from "react-icons/bi";
+import { BsFillClockFill } from "react-icons/bs";
+import { MdAssignment } from "react-icons/md";
+import { SiGoogletasks } from "react-icons/si";
+import { FaAddressBook } from "react-icons/fa";
+
 const VisitDetailWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -328,17 +343,20 @@ const LeadDetailsPage = () => {
         {/* Left Sidebar - Visits List with Filters */}
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
-            <h1 className={styles.title}>Leads</h1>
-            <div className={styles.searchContainer}>
-              <Search className={styles.searchIcon} />
-              <input
-                type="text"
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchInput}
-              />
+            <div className={styles.serchlable}>
+              <h1 className={styles.title}>Leads</h1>
+              <div className={styles.searchContainer}>
+                <Search className={styles.searchIcon} />
+                <input
+                  type="text"
+                  placeholder="Search leads..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={styles.searchInput}
+                />
+              </div>
             </div>
+
             <button
               className={styles.filterBtn}
               onClick={() => setShowFilterDialog(true)}
@@ -350,9 +368,8 @@ const LeadDetailsPage = () => {
             {leads?.map((visit) => (
               <div
                 key={visit._id}
-                className={`${styles.visitCard} ${
-                  SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                }`}
+                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                  }`}
                 onClick={() => {
                   setSelectedLead(visit);
                   router.push(`/lead-details?id=${visit._id}`, {
@@ -360,6 +377,19 @@ const LeadDetailsPage = () => {
                   });
                 }}
               >
+                <div
+                  className={`${styles.statusTag} ${visit.clientInterestedStatus?.toLowerCase().replace(/\s+/g, "") === "moderate"
+                    ? styles.approved
+                    : visit.clientInterestedStatus?.toLowerCase().replace(/\s+/g, "") === "unknown"
+                      ? styles.inprogress
+                      : visit.clientInterestedStatus?.toLowerCase().replace(/\s+/g, "") === "not-interested"
+                        ? styles.rejected
+                        : ""
+                    }`}
+                >
+                  {visit.clientInterestedStatus ?? "Unknown"}
+                </div>
+
                 <div className={styles.cardHeader}>
                   <h3 className={styles.clientName}>
                     {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
@@ -367,7 +397,7 @@ const LeadDetailsPage = () => {
                   </h3>
                 </div>
                 <div className={styles.cardDetails}>
-                  <div className={styles.detailRow}>
+                  {/* <div className={styles.detailRow}>
                     <Phone className={styles.icon} />
                     <span>
                       {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
@@ -381,42 +411,69 @@ const LeadDetailsPage = () => {
                         handleCall(visit);
                       }}
                     />
-                  </div>
-                  <div className={styles.detailRow}>
-                    <Calendar className={styles.icon} />
-                    Tagging Date:
-                    {visit.cycle?.startDate ? (
-                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
-                    ) : (
-                      <span>Not available</span>
-                    )}
-                  </div>
-                  <div className={styles.detailRow}>
-                    <Calendar className={styles.icon} />
-                    Valid Till:
-                    {visit.cycle?.validTill ? (
-                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
-                    ) : (
-                      <span>Not available</span>
-                    )}
-                  </div>
-                  <div className={styles.detailRow}>
-                    <Calendar className={styles.icon} />
-                    Team Leader:
-                    {visit.teamLeader ? (
-                      <span>
-                        {visit.teamLeader.firstName ?? ""}{" "}
-                        {visit.teamLeader.lastName ?? ""}
+                    
+                  </div> */}
+                  <div className={styles.firstrow}>
+                    <div className={styles.detailRow}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <Phone className={styles.icon} />
+                        Number:
                       </span>
-                    ) : (
-                      <span>Not available</span>
-                    )}
+
+                      <span>
+                        {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
+                      </span>
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <User className={styles.icon} />
+                        Team Leader:
+                      </span>
+
+                      {visit.teamLeader ? (
+                        <span>
+                          {visit.teamLeader.firstName ?? ""}{" "}
+                          {visit.teamLeader.lastName ?? ""}
+                        </span>
+                      ) : (
+                        <span>Not available</span>
+                      )}
+                    </div>
+                    {/* <div className={styles.detailRow}>
+                      <PersonStanding className={styles.icon} />
+                      Client Status:
+                      <span>{visit.clientInterestedStatus}</span>
+                    </div> */}
+
                   </div>
-                  <div className={styles.detailRow}>
-                    <PersonStanding className={styles.icon} />
-                    Client Status:
-                    <span>{visit.clientInterestedStatus}</span>
+                  <div className={styles.firstrow}>
+                    <div className={styles.detailRow}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <Calendar className={styles.icon} />
+                        Tagging Date:
+                      </span>
+
+                      {visit.cycle?.startDate ? (
+                        <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                      ) : (
+                        <span>Not available</span>
+                      )}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <Calendar className={styles.icon} />
+                        Valid Till:
+                      </span>
+
+                      {visit.cycle?.validTill ? (
+                        <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                      ) : (
+                        <span>Not available</span>
+                      )}
+                    </div>
                   </div>
+
+
                 </div>
               </div>
             ))}
@@ -438,14 +495,23 @@ const LeadDetailsPage = () => {
         <div className={styles.rightPanel}>
           {SelectedLead ? (
             <>
-              {/* Header with Actions */}
               <div className={styles.detailsHeader}>
+                <div className={styles.detailstab}>
+                  <div className={styles.navbar}>
+                    <button className={styles.navItem}>Client Overview</button>
+                    <button className={styles.navItem}>Quick Access</button>
+                    <button className={styles.navItem}>Task Overview</button>
+                    <button className={styles.navItem}>Task Details</button>
+                    <button className={styles.navItem}>Follow-up History</button>
+                    <button className={styles.navItem}>Site Visit History</button>
+                    <button className={styles.navItem}>Transfer History</button>
+                    <button className={styles.navItem}>Booking Overview</button>
+                  </div>
+                </div>
                 <div className={styles.headerInfo}>
                   <h2 className={styles.detailsTitle}>
                     {SelectedLead.prefix} {SelectedLead.firstName}{" "}
                     {SelectedLead.lastName}
-                  </h2>
-                  <div className={styles.badgeContainer}>
                     <span
                       className={`${styles.statusBadge} ${getStatusColor(
                         SelectedLead.approvalStatus ?? ""
@@ -453,43 +519,37 @@ const LeadDetailsPage = () => {
                     >
                       {SelectedLead.approvalStatus}
                     </span>
-                    <span
-                      className={`${styles.sourceBadge} ${getSourceColor(
-                        SelectedLead.leadType ?? ""
-                      )}`}
-                    >
-                      {SelectedLead.leadType}
-                    </span>
-                    <span className={styles.visitTypeBadge}>
-                      {SelectedLead.leadType}
-                    </span>
+                  </h2>
+                  <div className={styles.actionButtons}>
+
+
                     {SelectedLead.approvalStatus && (
-                      <span className={styles.verifiedBadge}>✓ Verified</span>
+                      <span className={styles.verifiedBadge}>✓</span>
+                    )}
+                    <button
+                      className={styles.editb}
+                      onClick={() => {
+                        setEditFormData(SelectedLead);
+                        setShowEditDialog(true);
+                      }}
+                    >
+                      {/* <Edit className={styles.btnIcon} /> */}
+                      <Edit size={15} />
+                    </button>
+                    <ThemeToggle />
+                    {SelectedLead.approvalStatus === "pending" && (
+                      <button
+                        className={styles.approveBtn}
+                        onClick={() => setShowApprovalDialog(true)}
+                      >
+                        <Check className={styles.btnIcon} />
+                        Approve/Reject
+                      </button>
                     )}
                   </div>
                 </div>
                 {/* Action buttons */}
-                <div className={styles.actionButtons}>
-                  <button
-                    className={styles.editBtn}
-                    onClick={() => {
-                      setEditFormData(SelectedLead);
-                      setShowEditDialog(true);
-                    }}
-                  >
-                    <Edit className={styles.btnIcon} />
-                    Edit
-                  </button>
-                  {SelectedLead.approvalStatus === "pending" && (
-                    <button
-                      className={styles.approveBtn}
-                      onClick={() => setShowApprovalDialog(true)}
-                    >
-                      <Check className={styles.btnIcon} />
-                      Approve/Reject
-                    </button>
-                  )}
-                </div>
+
               </div>
               {/* Visit Details Content - Pass handleCall function */}
               <div className={styles.detailsContent}>
@@ -612,6 +672,8 @@ const LeadDetailsPage = () => {
                 });
               }}
             >
+
+
               <div className={styles.cardHeader}>
                 <h3 className={styles.clientName}>
                   {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
@@ -852,192 +914,216 @@ const VisitDetailsContent = ({
   return (
     <>
       {/* Personal Information */}
-      <div className={styles.detailsCard}>
-        <div className={styles.cardTitle}>
-          <User className={styles.titleIcon} />
-          Personal Information
+      <div className={styles.infobutton}>
+        <div className={styles.statusCard} style={{ border: "1px solid blue" }}>
+          <div className={styles.statusIcon}>📅</div>
+          <span className={styles.statusLabel}>Status</span>
+          <span className={styles.statusValue}>Visit Pending</span>
         </div>
-        <div className={styles.cardContent}>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Full Name</label>
-              <p className={styles.infoValue}>
-                {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
-                {visit?.lastName ?? ""}
-              </p>
-            </div>
-
-            {/* Phone with Call Button */}
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Phone</label>
-              <div className={styles.phoneContainer}>
-                <div className={styles.detailRow}>
-                  <MdAddCall
-                    size={25}
-                    color="dodgerblue"
-                    style={{ cursor: "pointer", marginLeft: "10px" }}
-                    onClick={() => onCall(visit)}
-                    title="Make a call"
-                  />{" "}
-                  <span>{visit?.phoneNumber ?? "NA"}</span>
-                </div>
-              </div>
-            </div>
-
-            {visit?.altPhoneNumber && (
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Alt Phone</label>
-                <div className={styles.phoneContainer}>
-                  <p className={styles.infoValue}>
-                    <Phone className={styles.infoIcon} />
-                    {visit.countryCode} {visit.altPhoneNumber}
-                  </p>
-                  <MdAddCall
-                    size={25}
-                    color="dodgerblue"
-                    style={{ cursor: "pointer", marginLeft: "10px" }}
-                    onClick={() =>
-                      onCall({
-                        ...visit,
-                        phoneNumber: visit.altPhoneNumber,
-                      })
-                    }
-                    title="Make a call to alternate number"
-                  />
-                </div>
-              </div>
-            )}
-
-            {visit?.email && (
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Email</label>
-                <p className={styles.infoValue}>
-                  <Mail className={styles.infoIcon} />
-                  {visit.email}
-                </p>
-              </div>
-            )}
-          </div>
+        <div className={styles.statusCard} style={{ border: "1px solid red" }}>
+          <div className={styles.statusIcon}>⏰</div>
+          <span className={styles.statusLabel}>Visit Deadline</span>
+          <span className={styles.statusValue}>06 Nov 25</span>
+        </div>
+        <div className={styles.statusCard} style={{ border: "1px solid purple" }}>
+          <div className={styles.statusIcon}>👤</div>
+          <span className={styles.statusLabel}>Client Status</span>
+          <span className={styles.statusValue}>NA</span>
+        </div>
+        <div className={styles.statusCard} style={{ border: "1px solid yellow" }}>
+          <div className={styles.statusIcon} >💡</div>
+          <span className={styles.statusLabel}>Lead Status</span>
+          <span className={styles.statusValue}>Just-curious</span>
         </div>
       </div>
 
-      {/* Lead Information */}
-      <div className={styles.detailsCard}>
-        <div className={styles.cardTitle}>
-          <Calendar className={styles.titleIcon} />
-          Lead Information
-        </div>
-        <div className={styles.cardContent}>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Tagging Date</label>
-              <p className={styles.infoValue}>
-                <Calendar className={styles.infoIcon} />
-                {formatDate(visit?.cycle?.startDate ?? "")}
-              </p>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Valid Till</label>
-              <p className={styles.infoValue}>
-                <Calendar className={styles.infoIcon} />
-                {formatDate(visit?.cycle?.validTill ?? "")}
-              </p>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Source</label>
-              <p className={styles.infoValue}>{renderValue(visit.leadType)}</p>
-            </div>
-            {visit?.channelPartner != null && (
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Channel Partner</label>
-                <p className={styles.infoValue}>
-                  {visit?.channelPartner?.firmName ?? ""}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* Project Information */}
-      <div className={styles.detailsCard}>
-        <div className={styles.cardTitle}>
-          <Building className={styles.titleIcon} />
-          Project Information
-        </div>
-        <div className={styles.cardContent}>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Projects</label>
-              <div className={styles.projectsList}>
-                {visit.project?.map((project: any, index: number) => (
-                  <span key={index} className={styles.projectBadge}>
-                    {project?.name ?? ""}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className={styles.infoItem}>
-              <label className={styles.infoLabel}>Apartment Choices</label>
-              <div className={styles.choicesList}>
-                {visit.requirement?.map((choice: any, index: number) => (
-                  <span key={choice} className={styles.choiceBadge}>
-                    {choice}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Team Information */}
-      {visit.taskRef && (
+      <div className={styles.cardrow}>
         <div className={styles.detailsCard}>
           <div className={styles.cardTitle}>
             <User className={styles.titleIcon} />
-            Task Details
+            Personal Information
           </div>
           <div className={styles.cardContent}>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Assigned Date</label>
+                <label className={styles.infoLabel}><IoPersonSharp size={11} color="#4a84ff" /> Full Name</label>
                 <p className={styles.infoValue}>
-                  {formatDate(visit?.taskRef.assignDate)}
+                  {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
+                  {visit?.lastName ?? ""}
                 </p>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Deadline</label>
+                <label className={styles.infoLabel}><MdEmail size={11} color="#4a84ff" />Email</label>
                 <p className={styles.infoValue}>
-                  {formatDate(visit?.taskRef.deadline)}
+
+                  {visit.email ?? "NA"}
                 </p>
               </div>
-            </div>
-            <div className={styles.infoGrid}>
+              {/* Phone with Call Button */}
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Assigned By</label>
+                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Phone Number</label>
                 <p className={styles.infoValue}>
-                  {visit?.taskRef.assignBy?.firstName ?? ""}{" "}
-                  {visit?.taskRef.assignBy?.lastName ?? ""}
+                  {visit?.phoneNumber ?? "NA"}
                 </p>
+
               </div>
+
+
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}>Assigned To</label>
-                <p className={styles.infoValue}>
-                  {visit?.taskRef.assignTo?.firstName ?? ""}{" "}
-                  {visit?.taskRef.assignTo?.lastName ?? ""}
-                </p>
-              </div>
-            </div>
-            <div className={styles.infoGrid}>
-              <div className={styles.infoItem} style={{ gridColumn: "1 / -1" }}>
-                <label className={styles.infoLabel}>Task Details</label>
-                <p className={styles.infoValue}>{visit?.taskRef.details}</p>
+                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Alt Phone</label>
+                <div className={styles.phoneContainer}>
+                  <p className={styles.infoValue}>
+                    <MdAddCall
+                      size={15}
+                      color="dodgerblue"
+                      style={{ cursor: "pointer", }}
+                      onClick={() =>
+                        onCall({
+                          ...visit,
+                          phoneNumber: visit.altPhoneNumber,
+                        })
+                      }
+                      title="Make a call to alternate number"
+                    />
+                    {visit.countryCode} {visit.altPhoneNumber}
+                  </p>
+
+                </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+        {/* Project Information */}
+        <div className={styles.detailsCard}>
+          <div className={styles.cardTitle}>
+            <Building className={styles.titleIcon} />
+            Lead Information
+          </div>
+          <div className={styles.cardContent}>
+            <div className={styles.infoGrid}>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Property Type</label>
+                <p className={styles.infoValue}>
+                 NA
+                </p>
+              </div>
+               <div className={styles.infoItem}>
+                <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Channel Partner</label>
+                <p className={styles.infoValue}>
+                  {visit?.channelPartner?.firmName ?? ""}
+                </p>
+              </div>
+              <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
+                <label className={styles.infoLabel}><PiBuildingApartmentBold size={14} color="#4a84ff" />Apartment Choices</label>
+                <div className={styles.choicesList}>
+                  {visit.requirement?.map((choice: any, index: number) => (
+                    <span key={choice} className={styles.choiceBadge}>
+                      {choice}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}><BsFillBuildingFill size={12} color="#4a84ff" />Projects</label>
+                <div className={styles.projectsList}>
+                  {visit.project?.map((project: any, index: number) => (
+                    <span key={index} className={styles.projectBadge}>
+                      {project?.name ?? ""}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div className={styles.cardrow}>
+        {/* Lead Information */}
+        <div className={styles.detailsCard}>
+          <div className={styles.cardTitle}>
+            <Calendar className={styles.titleIcon} />
+            Work Information
+          </div>
+          <div className={styles.cardContent}>
+            <div className={styles.infoGridwork}>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Occupation</label>
+                <p className={styles.infoValue}>
+                  NA
+                </p>
+              </div>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Remark</label>
+                <p className={styles.infoValue}>
+                 NA
+                </p>
+              </div>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}><FaSourcetree size={14} color="#4a84ff" />LinkedIn</label>
+                 <div className={styles.buttonGroup}>
+    <button className={styles.infoButton}>Visit Profile</button>
+    <button className={styles.infoButton}>View Document</button>
+  </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        {/* Team Information */}
+        {/* {visit.taskRef && (
+          <div className={styles.detailsCard}>
+            <div className={styles.cardTitle}>
+              <User className={styles.titleIcon} />
+              Task Details
+            </div>
+            <div className={styles.cardContent}>
+              <div className={styles.infoGrid}>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}><BiSolidCalendarEdit size={14} color="#4a84ff" />
+                    Assigned Date</label>
+                  <p className={styles.infoValue}>
+                    {formatDate(visit?.taskRef.assignDate)}
+                  </p>
+                </div>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}><BsFillClockFill size={14} color="#4a84ff" />
+                    Deadline</label>
+                  <p className={styles.infoValue}>
+                    {formatDate(visit?.taskRef.deadline)}
+                  </p>
+                </div>
+              </div>
+              <div className={styles.infoGrid}>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}><MdAssignment size={14} color="#4a84ff" />Assigned By</label>
+                  <p className={styles.infoValue}>
+                    {visit?.taskRef.assignBy?.firstName ?? ""}{" "}
+                    {visit?.taskRef.assignBy?.lastName ?? ""}
+                  </p>
+                </div>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}>< SiGoogletasks size={14} color="#4a84ff" />Assigned To</label>
+                  <p className={styles.infoValue}>
+                    {visit?.taskRef.assignTo?.firstName ?? ""}{" "}
+                    {visit?.taskRef.assignTo?.lastName ?? ""}
+                  </p>
+                </div>
+              </div>
+              <div className={styles.infoGrid}>
+                <div className={styles.infoItem} style={{ gridColumn: "1 / -1" }}>
+                  <label className={styles.infoLabel}><FaAddressBook size={14} color="#4a84ff" />Task Details</label>
+                  <p className={styles.infoValue}>{visit?.taskRef.details}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )} */}
+      </div>
+
+
     </>
   );
 };

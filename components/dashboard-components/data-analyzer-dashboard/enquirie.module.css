@@ -1,0 +1,159 @@
+.maincontainer {
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+  width: 80%;
+  margin-top: 5rem;
+
+}
+
+.leaveSection {
+  background-color: #1e1e1e; 
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.topBar {
+  height: 5px;
+  width: 60px;
+  background: linear-gradient(90deg, #ff6a00, #ee0979);
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.leaveTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.leaveTable thead {
+  background-color: #272727;
+  color: #ffffff;
+}
+
+.leaveTable th,
+.leaveTable td {
+  text-align: left;
+  padding: 12px 15px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.leaveTable th {
+  font-weight: 600;
+}
+
+.leaveTable th span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.leaveTable th svg {
+  color: #ff6a00;
+  font-size: 16px;
+}
+
+.leaveTable tbody tr {
+  background-color: #1e1e1e;
+  transition: background-color 0.3s ease;
+}
+
+.leaveTable tbody tr:hover {
+  background-color: #2c2c2c;
+}
+
+.leaveTable tbody td {
+  border-bottom: 1px solid #333333;
+  color: #e0e0e0;
+}
+
+.leaveTable tbody tr:nth-child(even) {
+  background-color: #242424;
+}
+
+.leaveTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .leaveTable {
+    font-size: 13px;
+  }
+  .leaveTable th,
+  .leaveTable td {
+    padding: 10px;
+  }
+  .maincontainer{
+    width: 97%;
+     margin-top: 2rem;
+
+  }
+}
+    :global(html.light) .maincontainer {
+  background-color: #dde2f0;
+  color: #222222;
+}
+
+:global(html.light) .leaveSection {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e6ff; 
+}
+
+:global(html.light) .topBar {
+  background: linear-gradient(90deg, #ff6a00, #ee0979, #007bff);
+}
+
+/* Table */
+:global(html.light) .leaveTable {
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+:global(html.light) .leaveTable thead {
+  background: linear-gradient(90deg, #007bff, #00c6ff);
+  color: #ffffff;
+}
+
+:global(html.light) .leaveTable th {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+:global(html.light) .leaveTable th svg {
+  color: #ffeb3b; 
+}
+
+:global(html.light) .leaveTable tbody tr {
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+:global(html.light) .leaveTable tbody tr:nth-child(odd) {
+  background-color: #f9f9ff; 
+}
+
+:global(html.light) .leaveTable tbody tr:nth-child(even) {
+  background-color: #e0dff0; 
+}
+
+:global(html.light) .leaveTable tbody tr:hover {
+  background-color: #ebc64e; 
+}
+
+:global(html.light) .leaveTable tbody td {
+  border-bottom: 1px solid #e0e0e0;
+  color: #333333;
+}

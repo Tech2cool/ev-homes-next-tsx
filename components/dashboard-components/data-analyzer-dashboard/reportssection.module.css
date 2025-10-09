@@ -1,0 +1,322 @@
+.container {
+  display: flex;
+  gap: 2vw;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.channelPartner,
+.teamLeader,
+.leadsMonth {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 37vw;
+  height: 40vh;
+  border-radius: 8px;
+}
+:global(html.light) .channelPartner{
+  box-shadow: 0 2px 6px rgba(10, 18, 92, 0.308);
+}
+:global(html.light) .teamLeader{
+  box-shadow: 0 2px 6px rgba(10, 18, 92, 0.308);
+}
+:global(html.light) .leadsMonth{
+  box-shadow: 0 2px 6px rgba(10, 18, 92, 0.308);
+}
+.secondContainer,
+.firstContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+.leadsMonth {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 37vw;
+  height: 40vh;
+  border-radius: 8px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.chartAndLegend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2vw;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* max-height: 300px; */
+  overflow-y: auto;
+  scrollbar-width: none;
+  flex: 1;
+  /* min-width: 150px; */
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  font-size: 2vh;
+  gap: 1vw;
+}
+
+.colorDot {
+  width: 1vw;
+  height: 1vw;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legendText {
+  color: #7a7a7a;
+}
+:global(html.light) .legendText{
+     color: #0e0d0d;
+}
+.channelPartner {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartScrollWrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  overflow-x: hidden;
+  scrollbar-color: #888 transparent;
+}
+
+.channelPartnerheading,
+.teamLeaderheading {
+  font-size: 2.4vh;
+  font-weight: bold;
+  color: #8a8a8a;
+  padding: 3vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.channelPartnerheading {
+  padding: 0;
+  margin: 2vh 2vw 0 2vw;
+}
+
+.filterWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.filterDropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: #00070f;
+  border: 1px solid #bbbbbb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  border-radius: 8px;
+  width: 10vw;
+  font-size: 2vh;
+}
+:global(html.light) .filterDropdown{
+      background-color: #ffffff;
+
+}
+.filterOption {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.filterOption:hover {
+  background-color: #f0f0f028;
+}
+
+.total {
+  font-size: 2.6vh;
+  background-color: #5e5e5e28;
+  width: fit-content;
+  padding: 1vh 1vw;
+  border-radius: 8px;
+  color: rgb(216, 216, 216);
+}
+:global(html.light) .total{
+        background: linear-gradient(135deg, #5c36e4c1, #b028efdc);
+         color: rgb(255, 255, 255);
+}
+@media screen and (max-width: 615px) {
+  .total {
+  font-size: 1.8vh;
+  background-color: #5e5e5e28;
+  width: fit-content;
+  padding: 0.5vh 1vw;
+  border-radius: 8px;
+  color: rgb(216, 216, 216);
+}
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 1vw;
+    align-items: center;
+  }
+  .secondContainer,
+  .firstContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+  }
+  
+  .channelPartner,
+  .teamLeader,
+  .leadsMonth {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 90vw;
+    height: 40vh;
+    border-radius: 8px;
+  }
+.teamLeader{
+    height: auto;
+}
+  .filterDropdown {
+    width: 40vw;
+  }
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    flex: 1;
+  }
+
+  .colorDot {
+    width: 2vw;
+    height: 2vw;
+  }
+.legendItem {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  gap: 1.5vw;
+}
+.chartAndLegend{
+  padding: 1rem 0rem;
+}
+}
+@media screen and (max-width: 1024px) and (min-width: 616px) {
+  .filterDropdown {
+    width: 17vw;
+  }
+}
+.leadsFunnel {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 37vw;
+  height: 40vh;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #fff;
+}
+:global(html.light) .leadsFunnel{
+  box-shadow: 0 2px 6px rgba(10, 18, 92, 0.308);
+}
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+:global(html.light) .chartHeader{
+ color: #323539;
+}
+.filterWrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.filterDropdown {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.filterOption {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.filterOption:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.totalCount {
+  font-weight: 600;
+  font-size: 14px;
+}
+:global(html.light) .totalCount{
+    color: #323539;
+}
+.funnelContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.funnelStage {
+  height: 35px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.stageLabel {
+  white-space: nowrap;
+    color: #eaeaea;
+}
+:global(html.light) .stageLabel{
+    color: #3d3a3a;
+}
+@media screen and (max-width: 1024px) and (min-width: 616px) {
+   .leadsFunnel,
+     .channelPartner,
+  .teamLeader,
+  .leadsMonth {
+    width: 45vw;
+    
+  }
+}
+@media screen and (max-width: 615px) {
+    
+    .leadsFunnel{
+            border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 90vw;
+    height: 40vh;
+    border-radius: 8px;
+    }
+}
