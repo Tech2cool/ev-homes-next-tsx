@@ -10,7 +10,7 @@ import {
   Users,
   TrendingDown,
   Funnel,
-  Flag,                       
+  Flag,
   Home,
   Trophy,
 } from "lucide-react";
@@ -36,12 +36,6 @@ import ProjectTargetsCarousel from "./project-targets-carousel";
 import { createContext } from "vm";
 import { motion, AnimatePresence } from "framer-motion";
 
-
-
-
-
-
-
 interface ClosingManagerDashboardHeaderProps {
   userName: string;
   pendingText?: string; // e.g., "You have 369 pending tasks"
@@ -49,8 +43,6 @@ interface ClosingManagerDashboardHeaderProps {
   avatarUrl?: string;
   className?: string;
   onSyncNow?: () => void;
-
- 
 }
 
 export function ClosingManagerDashboardHeader({
@@ -60,7 +52,6 @@ export function ClosingManagerDashboardHeader({
   avatarUrl,
   className,
   onSyncNow,
-  
 }: ClosingManagerDashboardHeaderProps) {
   const displayName = (userName ?? "").trim() || "User";
   const initials = React.useMemo(() => {
@@ -72,8 +63,8 @@ export function ClosingManagerDashboardHeader({
       .slice(0, 2)
       .toUpperCase();
   }, [displayName]);
-  
-   const [showDate,setshowDate] = useState(false);
+
+  const [showDate, setshowDate] = useState(false);
 
   const salesoverview = [
     {
@@ -159,7 +150,7 @@ export function ClosingManagerDashboardHeader({
   const [showMonths, setShowMonths] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const [selectedMonth, setSelectedMonth] = useState("");
-  
+  const [open, setOpen] = useState(false);
 
   type QuickAction = {
     label: string;
@@ -286,7 +277,10 @@ export function ClosingManagerDashboardHeader({
   };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
         setShowMonths(false);
       }
     };
@@ -295,8 +289,8 @@ export function ClosingManagerDashboardHeader({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [filterRef]);
-  const years = Array.from({ length: 10 }, (_, i) => year - 5 + i);
-
+const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
+              
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -336,7 +330,6 @@ export function ClosingManagerDashboardHeader({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
- 
 
   return (
     <div className={styles.container}>
@@ -415,9 +408,11 @@ export function ClosingManagerDashboardHeader({
             <div
               key={index}
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
-              style={{
-                // minWidth: "150px", // adjust card width as needed
-              }}
+              style={
+                {
+                  // minWidth: "150px", // adjust card width as needed
+                }
+              }
             >
               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
@@ -573,109 +568,116 @@ export function ClosingManagerDashboardHeader({
       </div>
 
       {/* <TargetSection /> */}
-            <div className="p-6 pt-0">
-      <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
-      <div className={styles.graf}>
-        <div className={styles.grafcontainer}>
-          {data.map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <div className={styles.mytr} key={index}>
-                <div
-                  className={styles.donut}
-                  style={{
-                    background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
-                  }}
-                >
+      <div className="p-6 pt-0">
+        <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
+        <div className={styles.graf}>
+          <div className={styles.grafcontainer}>
+            {data.map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <div className={styles.mytr} key={index}>
                   <div
-                    className={styles.iconBg}
-                    style={{ color: item.iconColor }}
+                    className={styles.donut}
+                    style={{
+                      background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
+                    }}
                   >
-                    <IconComponent size={40} />
+                    <div
+                      className={styles.iconBg}
+                      style={{ color: item.iconColor }}
+                    >
+                      <IconComponent size={40} />
+                    </div>
+                    <div className={styles.centerNumber}>{item.value}</div>
                   </div>
-                  <div className={styles.centerNumber}>{item.value}</div>
+                  <div className={styles.label}>{item.label}</div>
                 </div>
-                <div className={styles.label}>{item.label}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div className={styles.targetcontainer}>
-          <div className={styles.texttarget}>
-            <div className={styles.progressHeader}>
-              <p className={styles.title}>Progress</p>
-              <span className={styles.percentage}>0% Completed</span>
-            </div>
-            <div className={styles.description}>
-              <ProjectTargetsCarousel
-                showDate={showDate}
-  setShowDate={setshowDate}
-        projects={[
-          {
-            projectName: "EV 9 SQUARE",
-            metrics: [
-              { label: "Target", count: 120 },
-              { label: "Booking", count: 75 },
-              { label: "Registration", count: 58 },
-            ],
-          },
-          {
-            projectName: "EV10 Marina Bay",
-            metrics: [
-              { label: "Target", count: 9 },
-              { label: "Booking", count: 0 },
-              { label: "Registration", count: 0 },
-            ],
-          },
-          {
-            projectName: "EV 23 Malibu West",
-            metrics: [
-              { label: "Target", count: 6 },
-              { label: "Booking", count: 0 },
-              { label: "Registration", count: 0 },
-            ],
-          },
-          {
-            projectName: "Heart City",
-            metrics: [
-              { label: "Target", count: 7 },
-              { label: "Booking", count: 0 },
-              { label: "Registration", count: 0 },
-            ],
-          },
-        ]}
-      />
-            </div>
+              );
+            })}
           </div>
-          {/* calender */}
-
+          <div className={styles.targetcontainer}>
+            <div className={styles.texttarget}>
+              <div className={styles.progressHeader}>
+                <p className={styles.title}>Progress</p>
+                <span className={styles.percentage}>0% Completed</span>
+              </div>
+              <div className={styles.description}>
+                <ProjectTargetsCarousel
+                  showDate={showDate}
+                  setShowDate={setshowDate}
+                  projects={[
+                    {
+                      projectName: "EV 9 SQUARE",
+                      metrics: [
+                        { label: "Target", count: 120 },
+                        { label: "Booking", count: 75 },
+                        { label: "Registration", count: 58 },
+                      ],
+                    },
+                    {
+                      projectName: "EV10 Marina Bay",
+                      metrics: [
+                        { label: "Target", count: 9 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                    {
+                      projectName: "EV 23 Malibu West",
+                      metrics: [
+                        { label: "Target", count: 6 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                    {
+                      projectName: "Heart City",
+                      metrics: [
+                        { label: "Target", count: 7 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+            {/* calender */}
 <AnimatePresence>
-  {!showDate && (
+  {showDate && ( // render when the button is clicked
     <motion.div
       key="calendar"
-      initial={{ opacity: 0, x: -50, scale: 0.95 }}   // start 50px left
-      animate={{ opacity: 1, x: 0, scale: 1 }}       // move to normal position
-      exit={{ opacity: 0, x: -50, scale: 0.95 }}     // slide back to left when disappearing
-      transition={{ duration: 0.5,
-            ease: "easeInOut"  // smooth ease-in-out
- }}
+      initial={{ opacity: 0, x: -50, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: -50, scale: 0.95 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       className={styles.filter}
     >
-      <div className={styles.yearSelector}>
-        <select
-     
-    // style={{backgroundColor:"black"}}
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-        >
-          {years.map((y) => (
-            <option key={y} value={y} className={styles.optionMain}>
-              {y}
-            </option>
-          ))}
-        </select>
+      {/* Year Selector */}
+      <div className={styles.customSelect}>
+        <div className={styles.selected} onClick={() => setOpen(!open)}>
+          {year}
+            <span className={styles.arrow}>{open ? "▲" : "▼"}</span>
+        </div>
+        {open && (
+          <div className={styles.optionsGrid}>
+            {years.map((y) => (
+              <div
+                key={y}
+                className={styles.optionMain}
+                onClick={() => {
+                  setYear(y);
+                  setOpen(false);
+                }}
+              >
+                {y}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* Month Grid */}
       <div className={styles.monthGrid}>
         {months.map((month, index) => (
           <div key={index} className={styles.monthItem}>
@@ -687,87 +689,119 @@ export function ClosingManagerDashboardHeader({
   )}
 </AnimatePresence>
 
-
-       
+          </div>
         </div>
-      </div>
-      <div className={styles.grafMobile}>
-        <div className={styles.progressCard}>
 
-          <div className={styles.targetsWrapper}>
-            {[
-              { label: "Target", value: 10, color: "#ffb347" },
-              { label: "Achieved", value: 5, color: "#4caf50" },
-              { label: "Pending", value: 5, color: "#ef5350" },
-            ].map((item, index) => (
-              <div className={styles.targetCard} key={index}>
-                <div
-                  className={styles.targetNumber}
-                  style={{ backgroundColor: item.color }}
+        <div className={styles.grafMobile}>
+          <div className={styles.progressCard}>
+            <div className={styles.targetsWrapper}>
+              {[
+                { label: "Target", value: 10, color: "#ffb347" },
+                { label: "Achieved", value: 5, color: "#4caf50" },
+                { label: "Pending", value: 5, color: "#ef5350" },
+              ].map((item, index) => (
+                <div className={styles.targetCard} key={index}>
+                  <div
+                    className={styles.targetNumber}
+                    style={{ backgroundColor: item.color }}
+                  >
+                    {item.value}
+                  </div>
+                  <div className={styles.targetLabel}>{item.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className={styles.texttarget}>
+              <div className={styles.filterIconContainer} ref={filterRef}>
+                <button
+                  className={styles.filterButton}
+                  onClick={() => setShowMonths(!showMonths)}
                 >
-                  {item.value}
-                </div>
-                <div className={styles.targetLabel}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className={styles.texttarget}>
-            <div className={styles.filterIconContainer} ref={filterRef}>
-              <button
-                className={styles.filterButton}
-                onClick={() => setShowMonths(!showMonths)}
-              >
-                {selectedMonth ? selectedMonth : ""} <Funnel size={15} />
-              </button>
+                  {selectedMonth ? selectedMonth : ""} <Funnel size={15} />
+                </button>
 
-              {showMonths && (
-                <div className={styles.monthDropdown}>
-
-                  <div className={styles.yearSelector}>
-                    <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-                      {years.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className={styles.monthGrid}>
-                    {months.map((month, index) => (
-                      <div
-                        key={index}
-                        className={styles.monthItemMobile}
-                        onClick={() => handleMonthSelect(month)}
+                {showMonths && (
+                  <div className={styles.monthDropdown}>
+                    <div className={styles.yearSelector}>
+                      <select
+                        value={year}
+                        onChange={(e) => setYear(Number(e.target.value))}
                       >
-                        {month}
-                      </div>
-                    ))}
+                        {years.map((y) => (
+                          <option key={y} value={y}>
+                            {y}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className={styles.monthGrid}>
+                      {months.map((month, index) => (
+                        <div
+                          key={index}
+                          className={styles.monthItemMobile}
+                          onClick={() => handleMonthSelect(month)}
+                        >
+                          {month}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+              <div className={styles.progressHeader}>
+                <p className={styles.title}>Progress</p>
+                <span className={styles.percentage}>0% Completed</span>
+              </div>
+                <div className={styles.description}>
+                <ProjectTargetsCarousel
+                  showDate={showDate}
+                  setShowDate={setshowDate}
+                  projects={[
+                    {
+                      projectName: "EV 9 SQUARE",
+                      metrics: [
+                        { label: "Target", count: 120 },
+                        { label: "Booking", count: 75 },
+                        { label: "Registration", count: 58 },
+                      ],
+                    },
+                    {
+                      projectName: "EV10 Marina Bay",
+                      metrics: [
+                        { label: "Target", count: 9 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                    {
+                      projectName: "EV 23 Malibu West",
+                      metrics: [
+                        { label: "Target", count: 6 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                    {
+                      projectName: "Heart City",
+                      metrics: [
+                        { label: "Target", count: 7 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                  ]}
+                />
+              </div>
+              {/* <div className={styles.description}>
+                You have <strong>2 days</strong> remaining to complete{" "}
+                <strong>5 more CP's Onboarding</strong>.
+              </div> */}
             </div>
-            <div className={styles.progressHeader}>
 
-              <p className={styles.title}>Progress</p>
-              <span className={styles.percentage}>0% Completed</span>
-
-            </div>
-            <div className={styles.description}>
-              You have <strong>2 days</strong> remaining to complete{" "}
-              <strong>5 more CP's Onboarding</strong>.
-
-            </div>
+            {/* Month Filter Icon */}
           </div>
-
-          {/* Month Filter Icon */}
-
         </div>
       </div>
-      </div>
-
-      
-
-      
 
       <div className="p-4 sm:p-6 pt-0">
         <div className="flex flex-col lg:flex-row gap-4">
@@ -792,6 +826,7 @@ export function ClosingManagerDashboardHeader({
                     color={kpi.color}
                     size={100}
                   />
+                  
                 ))}
               </div>
             </div>
