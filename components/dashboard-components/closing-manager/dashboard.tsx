@@ -35,6 +35,8 @@ import { MdOutlinePendingActions } from "react-icons/md";
 import ProjectTargetsCarousel from "./project-targets-carousel";
 import { createContext } from "vm";
 import { motion, AnimatePresence } from "framer-motion";
+import { useData } from "@/providers/dataContext";
+import { useUser } from "@/providers/userContext";
 
 interface ClosingManagerDashboardHeaderProps {
   userName: string;
@@ -53,6 +55,16 @@ export function ClosingManagerDashboardHeader({
   className,
   onSyncNow,
 }: ClosingManagerDashboardHeaderProps) {
+  const {  dashCount,
+    getClosingManagerDashBoardCount, } = useData();
+      const { user, loading } = useUser();
+
+      useEffect(() => {
+    if (user && !loading) {
+      console.log("use effect dashboard");
+      getClosingManagerDashBoardCount({  id: user?._id ?? null});
+    }
+  }, [user, loading]);
   const displayName = (userName ?? "").trim() || "User";
   const initials = React.useMemo(() => {
     const parts = displayName.split(/\s+/).filter(Boolean);
@@ -69,7 +81,7 @@ export function ClosingManagerDashboardHeader({
   const salesoverview = [
     {
       title: "Leads",
-      value: "12065",
+      value: dashCount?.lead?.total ?? 0,
       isPositive: true,
       icon: <Users className="h-6 w-6" />,
       iconColor: "text-blue-600",
@@ -79,7 +91,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "CP Visits",
-      value: "347",
+      value: dashCount?.lead?.visit1 ?? 0,
       isPositive: true,
       icon: <Calendar className="h-6 w-6" />,
       iconColor: "text-green-600",
@@ -89,7 +101,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Walk In Visits",
-      value: "162",
+      value: dashCount?.lead?.visit2 ?? 0,
       isPositive: true,
       icon: <Truck className="h-6 w-6" />,
       iconColor: "text-purple-600",
@@ -99,7 +111,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Booking",
-      value: "31",
+      value: dashCount?.lead?.booking ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-orange-600",
@@ -109,7 +121,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Internal Leads",
-      value: "209",
+      value: dashCount?.lead?.internalLeadCount ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-teal-600",
@@ -119,7 +131,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Bulk Leads",
-      value: "306",
+      value: dashCount?.lead?.bulkCount ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-pink-600",
@@ -129,7 +141,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Pending",
-      value: "11779",
+      value: dashCount?.lead?.pending ?? 0,
       isPositive: false,
       icon: <TrendingDown className="h-6 w-6" />,
       iconColor: "text-red-600",
@@ -289,8 +301,8 @@ export function ClosingManagerDashboardHeader({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [filterRef]);
-const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
-              
+  const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -643,52 +655,54 @@ const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
               </div>
             </div>
             {/* calender */}
-<AnimatePresence>
-  {showDate && ( // render when the button is clicked
-    <motion.div
-      key="calendar"
-      initial={{ opacity: 0, x: -50, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: -50, scale: 0.95 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-      className={styles.filter}
-    >
-      {/* Year Selector */}
-      <div className={styles.customSelect}>
-        <div className={styles.selected} onClick={() => setOpen(!open)}>
-          {year}
-            <span className={styles.arrow}>{open ? "▲" : "▼"}</span>
-        </div>
-        {open && (
-          <div className={styles.optionsGrid}>
-            {years.map((y) => (
-              <div
-                key={y}
-                className={styles.optionMain}
-                onClick={() => {
-                  setYear(y);
-                  setOpen(false);
-                }}
-              >
-                {y}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+            <AnimatePresence>
+              {showDate && ( // render when the button is clicked
+                <motion.div
+                  key="calendar"
+                  initial={{ opacity: 0, x: -50, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className={styles.filter}
+                >
+                  {/* Year Selector */}
+                  <div className={styles.customSelect}>
+                    <div
+                      className={styles.selected}
+                      onClick={() => setOpen(!open)}
+                    >
+                      {year}
+                      <span className={styles.arrow}>{open ? "▲" : "▼"}</span>
+                    </div>
+                    {open && (
+                      <div className={styles.optionsGrid}>
+                        {years.map((y) => (
+                          <div
+                            key={y}
+                            className={styles.optionMain}
+                            onClick={() => {
+                              setYear(y);
+                              setOpen(false);
+                            }}
+                          >
+                            {y}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-      {/* Month Grid */}
-      <div className={styles.monthGrid}>
-        {months.map((month, index) => (
-          <div key={index} className={styles.monthItem}>
-            {month}
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
-
+                  {/* Month Grid */}
+                  <div className={styles.monthGrid}>
+                    {months.map((month, index) => (
+                      <div key={index} className={styles.monthItem}>
+                        {month}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -752,7 +766,7 @@ const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
                 <p className={styles.title}>Progress</p>
                 <span className={styles.percentage}>0% Completed</span>
               </div>
-                <div className={styles.description}>
+              <div className={styles.description}>
                 <ProjectTargetsCarousel
                   showDate={showDate}
                   setShowDate={setshowDate}
@@ -826,7 +840,6 @@ const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
                     color={kpi.color}
                     size={100}
                   />
-                  
                 ))}
               </div>
             </div>

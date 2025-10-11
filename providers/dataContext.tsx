@@ -218,6 +218,11 @@ type DataProviderState = {
     id: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
+
+    getClosingManagerDashBoardCount: (params: {
+    id: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
   fetchAssignFeedbackLeads: (
     params: AssignParms
   ) => Promise<{ success: boolean; message?: string }>;
@@ -274,6 +279,9 @@ const initialState: DataProviderState = {
   fetchSearchLeads: async () => ({ success: false }),
   fetchDataAnalyzerVisits: async () => ({ success: false }),
   getSalesManagerDashBoardCount: async () => ({ success: false }),
+
+  getClosingManagerDashBoardCount: async () => ({ success: false }),
+
   fetchAssignFeedbackLeads: async () => ({ success: false }),
   fetchAssignFeedbackLeadsCount: async () => ({ success: false }),
   addNewLead: async () => ({ success: false, message: "Not initialized" }),
@@ -608,6 +616,42 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
     try {
       const url = `/api/v2/sales-dashboard-count/${id}`;
+      console.log("Fetching dashboard count from:", url);
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      // Assuming your fetchAdapter returns { data, status, message }
+      const dashboardData = res.data as DashboardCount;
+
+      console.log("Lead info:", dashboardData.lead);
+      setDashboardCount(dashboardData);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+      return { success: false, message: err.message };
+    }
+  };
+
+
+
+  // Function to get dashboard count for a Closing Manager
+const getClosingManagerDashBoardCount = async ({
+    id = null,
+  }: {
+    id: string | null;
+  }): Promise<{ success: boolean; message?: string }> => {
+    setError("");
+
+    if (!id) {
+      setError("ID is required");
+      return { success: false, message: "ID is required" };
+    }
+
+    try {
+      const url = `/api/v2/closing-manager-dashboard-count//${id}`;
       console.log("Fetching dashboard count from:", url);
 
       const res = await fetchAdapter(url, {
@@ -1063,6 +1107,7 @@ const fetchTeamLeaderGraphForDA = async ({
     getChannelPartners: getChannelPartners,
     addNewLead: addNewLead,
     fetchTeamLeaderGraphForDA: fetchTeamLeaderGraphForDA,
+    getClosingManagerDashBoardCount:getClosingManagerDashBoardCount
   };
 
   return (
