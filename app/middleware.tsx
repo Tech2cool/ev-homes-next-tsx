@@ -5,8 +5,11 @@ export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value;
 
   if (!accessToken) {
+    console.log("herre");
     return NextResponse.redirect(new URL('/login', request.url));
   }
+    console.log("herr1");
+
 
   return NextResponse.next();
 }

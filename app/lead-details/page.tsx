@@ -1,11 +1,15 @@
 "use client";
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { MdAddCall } from "react-icons/md";
+import { MdAddCall, MdCall } from "react-icons/md";
 import styles from "./lead-details.module.css";
-import { FaPhoneAlt } from "react-icons/fa";
-import { IoPersonSharp } from "react-icons/io5";
-
+import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks } from "react-icons/fa";
+import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
+import QuickAccess from "@/components/lead-details-components/quickaccess"
+import TaskOverview from "@/components/lead-details-components/taskoverview"
+import FollowUp from "@/components/lead-details-components/followup"
+import VisitHistory from "@/components/lead-details-components/visithistory"
+import TransferHistory from "@/components/lead-details-components/transferhistory"
 import {
   ArrowLeft,
   Calendar,
@@ -33,13 +37,14 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { MdEmail } from "react-icons/md";
 import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
-import { FaSourcetree } from "react-icons/fa6";
+import { FaBolt, FaClipboardList, FaFileContract, FaSourcetree, FaUser } from "react-icons/fa6";
 import { IoIosPerson } from "react-icons/io";
 import { BiSolidCalendarEdit } from "react-icons/bi";
 import { BsFillClockFill } from "react-icons/bs";
 import { MdAssignment } from "react-icons/md";
 import { SiGoogletasks } from "react-icons/si";
 import { FaAddressBook } from "react-icons/fa";
+import { CiLink } from "react-icons/ci";
 
 const VisitDetailWrapper = () => {
   return (
@@ -61,9 +66,10 @@ const LeadDetailsPage = () => {
   const [showSimilarVisits, setShowSimilarVisits] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [showFilterDialog, setShowFilterDialog] = useState(false);
-
+  const [activeTab, setActiveTab] = useState("overview");
   // Dialog states
   const [showEditDialog, setShowEditDialog] = useState<boolean>(false);
   const [showApprovalDialog, setShowApprovalDialog] = useState<boolean>(false);
@@ -377,104 +383,61 @@ const LeadDetailsPage = () => {
                   });
                 }}
               >
-                <div
-                  className={`${styles.statusTag} ${visit.clientInterestedStatus?.toLowerCase().replace(/\s+/g, "") === "moderate"
-                    ? styles.approved
-                    : visit.clientInterestedStatus?.toLowerCase().replace(/\s+/g, "") === "unknown"
-                      ? styles.inprogress
-                      : visit.clientInterestedStatus?.toLowerCase().replace(/\s+/g, "") === "not-interested"
-                        ? styles.rejected
-                        : ""
-                    }`}
-                >
-                  {visit.clientInterestedStatus ?? "Unknown"}
+                <div className={styles.leadInfo}>
+                  <div className={styles.clientIcon}>
+                    {visit?.firstName?.charAt(0)?.toUpperCase()}
+                  </div>
+                  <div className={styles.clientDetails}>
+                    <h4>
+                      {visit?.firstName ?? ""} {visit?.lastName ?? ""}
+                    </h4>
+                    <p className={styles.phone}>
+                      {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                    </p>
+                  </div>
                 </div>
 
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.clientName}>
-                    {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
-                    {visit?.lastName ?? ""}
-                  </h3>
-                </div>
-                <div className={styles.cardDetails}>
-                  {/* <div className={styles.detailRow}>
-                    <Phone className={styles.icon} />
-                    <span>
-                      {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
-                    </span>
-                    <MdAddCall
-                      size={25}
-                      color="dodgerblue"
-                      style={{ cursor: "pointer", marginLeft: "auto" }}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent card selection
-                        handleCall(visit);
-                      }}
-                    />
-                    
-                  </div> */}
-                  <div className={styles.firstrow}>
-                    <div className={styles.detailRow}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                        <Phone className={styles.icon} />
-                        Number:
-                      </span>
+                <div className={styles.leadMeta}>
+                  <p>
+                    <strong>Assign Date:</strong> {visit.cycle?.startDate ? (
+                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </p>
+                  <p>
+                    <strong>
 
-                      <span>
-                        {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
-                      </span>
-                    </div>
-                    <div className={styles.detailRow}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                        <User className={styles.icon} />
-                        Team Leader:
-                      </span>
+                      Deadline:
+                    </strong>{" "}
+                    {visit.cycle?.validTill ? (
+                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </p>
+                  <div className={styles.lastpart}>
+                    {visit?.clientInterestedStatus ? (
+                      <p className={styles.clientStatus}>
+                        {visit?.clientInterestedStatus}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                    {visit.teamLeader ? (
+                      <div className={styles.assignby}>
+                        {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
+                        {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                      </div>
 
-                      {visit.teamLeader ? (
-                        <span>
-                          {visit.teamLeader.firstName ?? ""}{" "}
-                          {visit.teamLeader.lastName ?? ""}
-                        </span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </div>
-                    {/* <div className={styles.detailRow}>
-                      <PersonStanding className={styles.icon} />
-                      Client Status:
-                      <span>{visit.clientInterestedStatus}</span>
-                    </div> */}
+                    ) : (
+                      <span>Not available</span>
+                    )}
 
                   </div>
-                  <div className={styles.firstrow}>
-                    <div className={styles.detailRow}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                        <Calendar className={styles.icon} />
-                        Tagging Date:
-                      </span>
-
-                      {visit.cycle?.startDate ? (
-                        <span>{formatDate(new Date(visit.cycle.startDate))}</span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </div>
-                    <div className={styles.detailRow}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                        <Calendar className={styles.icon} />
-                        Valid Till:
-                      </span>
-
-                      {visit.cycle?.validTill ? (
-                        <span>{formatDate(new Date(visit.cycle.validTill))}</span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </div>
-                  </div>
-
-
                 </div>
+
+               
               </div>
             ))}
             {hasMoreRef.current && (
@@ -496,18 +459,9 @@ const LeadDetailsPage = () => {
           {SelectedLead ? (
             <>
               <div className={styles.detailsHeader}>
-                <div className={styles.detailstab}>
-                  <div className={styles.navbar}>
-                    <button className={styles.navItem}>Client Overview</button>
-                    <button className={styles.navItem}>Quick Access</button>
-                    <button className={styles.navItem}>Task Overview</button>
-                    <button className={styles.navItem}>Task Details</button>
-                    <button className={styles.navItem}>Follow-up History</button>
-                    <button className={styles.navItem}>Site Visit History</button>
-                    <button className={styles.navItem}>Transfer History</button>
-                    <button className={styles.navItem}>Booking Overview</button>
-                  </div>
-                </div>
+
+
+
                 <div className={styles.headerInfo}>
                   <h2 className={styles.detailsTitle}>
                     {SelectedLead.prefix} {SelectedLead.firstName}{" "}
@@ -523,9 +477,6 @@ const LeadDetailsPage = () => {
                   <div className={styles.actionButtons}>
 
 
-                    {SelectedLead.approvalStatus && (
-                      <span className={styles.verifiedBadge}>✓</span>
-                    )}
                     <button
                       className={styles.editb}
                       onClick={() => {
@@ -533,9 +484,23 @@ const LeadDetailsPage = () => {
                         setShowEditDialog(true);
                       }}
                     >
-                      {/* <Edit className={styles.btnIcon} /> */}
+
                       <Edit size={15} />
                     </button>
+                    <button
+                      className={styles.verifiedBadge}
+                      onClick={() => { }}
+                    >
+                      <MdCall size={15} />
+                    </button>
+
+                    <button
+                      className={styles.whatsbtn}
+                      onClick={() => { }}
+                    >
+                      <IoLogoWhatsapp size={15} />
+                    </button>
+
                     <ThemeToggle />
                     {SelectedLead.approvalStatus === "pending" && (
                       <button
@@ -552,31 +517,116 @@ const LeadDetailsPage = () => {
 
               </div>
               {/* Visit Details Content - Pass handleCall function */}
-              <div className={styles.detailsContent}>
-                <VisitDetailsContent
-                  visit={SelectedLead}
-                  onCall={handleCall}
-                  user={user}
-                />
-                {/* Similar Visits Section */}
-                {similarVisits.length > 0 && (
-                  <div className={styles.similarVisitsSection}>
-                    <div
-                      className={styles.similarVisitsHeader}
-                      onClick={() => setShowSimilarVisits(!showSimilarVisits)}
-                    >
-                      <h3 className={styles.similarVisitsTitle}>
-                        Similar Visits ({similarVisits.length})
-                      </h3>
-                      {showSimilarVisits ? (
-                        <ChevronUp className={styles.chevron} />
-                      ) : (
-                        <ChevronDown className={styles.chevron} />
-                      )}
+              <div className={styles.detsilpart} >
+                <div className={styles.detailsContent}>
+                  {activeTab === "overview" && (
+                    <VisitDetailsContent visit={SelectedLead} onCall={handleCall} user={user} />
+                  )}
+
+                  {activeTab === "access" && (
+                    <QuickAccess />
+                  )}
+
+                  {activeTab === "taskDetails" && (
+                    <TaskOverview />
+                  )}
+
+
+
+                  {activeTab === "followup" && (
+                    <FollowUp />
+                  )}
+
+                  {activeTab === "siteVisit" && (
+                    <VisitHistory />
+                  )}
+
+                  {activeTab === "transfer" && (
+                    <TransferHistory />
+                  )}
+
+                  {activeTab === "booking" && (
+                    <div className={styles.tabContent}>
+                      <h3>Booking Overview</h3>
+                      <p>Client’s booking-related details and transactions.</p>
                     </div>
+                  )}
+                  {/* Similar Visits Section */}
+                  {similarVisits.length > 0 && (
+                    <div className={styles.similarVisitsSection}>
+                      <div
+                        className={styles.similarVisitsHeader}
+                        onClick={() => setShowSimilarVisits(!showSimilarVisits)}
+                      >
+                        <h3 className={styles.similarVisitsTitle}>
+                          Similar Visits ({similarVisits.length})
+                        </h3>
+                        {showSimilarVisits ? (
+                          <ChevronUp className={styles.chevron} />
+                        ) : (
+                          <ChevronDown className={styles.chevron} />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.detailstab}>
+                  <div className={styles.navbar}>
+                    <button
+                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("overview")}
+                    >
+                      <FaUser className={styles.icon} /> Client Overview
+                    </button>
+
+                    <button
+                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("access")}
+                    >
+                      <FaBolt className={styles.icon} /> Quick Access
+                    </button>
+
+
+
+                    <button
+                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("taskDetails")}
+                    >
+                      <FaTasks className={styles.icon} /> Task Details
+                    </button>
+
+                    <button
+                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("followup")}
+                    >
+                      <FaHistory className={styles.icon} /> Follow-up History
+                    </button>
+
+                    <button
+                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("siteVisit")}
+                    >
+                      <FaMapMarkedAlt className={styles.icon} /> Site Visit History
+                    </button>
+
+                    <button
+                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("transfer")}
+                    >
+                      <FaExchangeAlt className={styles.icon} /> Transfer History
+                    </button>
+
+                    <button
+                      className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""}`}
+                      onClick={() => setActiveTab("booking")}
+                    >
+                      <FaFileContract className={styles.icon} /> Booking Overview
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
+
             </>
           ) : (
             <div className={styles.emptyState}>
@@ -639,17 +689,20 @@ const LeadDetailsPage = () => {
     return (
       <div className={styles.leftSidebar}>
         <div className={styles.sidebarHeader}>
-          <h1 className={styles.title}>Leads</h1>
-          <div className={styles.searchContainer}>
-            <Search className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Search leads..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={styles.searchInput}
-            />
+          <div className={styles.serchlable}>
+            <h1 className={styles.title}>Leads</h1>
+            <div className={styles.searchContainer}>
+              <Search className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
           </div>
+
           <button
             className={styles.filterBtn}
             onClick={() => setShowFilterDialog(true)}
@@ -672,66 +725,77 @@ const LeadDetailsPage = () => {
                 });
               }}
             >
-
-
-              <div className={styles.cardHeader}>
-                <h3 className={styles.clientName}>
-                  {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
-                  {visit?.lastName ?? ""}
-                </h3>
-              </div>
-              <div className={styles.cardDetails}>
-                <div className={styles.detailRow}>
-                  <Phone className={styles.icon} />
-                  <span>
-                    {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
-                  </span>
-                  <MdAddCall
-                    size={25}
-                    color="dodgerblue"
-                    style={{ cursor: "pointer", marginLeft: "auto" }}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent card selection
-                      handleCall(visit);
-                    }}
-                  />
+              <div className={styles.leadInfo}>
+                <div className={styles.clientIcon}>
+                  {visit?.firstName?.charAt(0)?.toUpperCase()}
                 </div>
-                <div className={styles.detailRow}>
-                  <Calendar className={styles.icon} />
-                  Tagging Date:
-                  {visit.cycle?.startDate ? (
+                <div className={styles.clientDetails}>
+                  <h4>
+                    {visit?.firstName ?? ""} {visit?.lastName ?? ""}
+                  </h4>
+                  <p className={styles.phone}>
+                    {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.leadMeta}>
+                <p>
+                  <strong>Assign Date:</strong> {visit.cycle?.startDate ? (
                     <span>{formatDate(new Date(visit.cycle.startDate))}</span>
                   ) : (
                     <span>Not available</span>
                   )}
-                </div>
-                <div className={styles.detailRow}>
-                  <Calendar className={styles.icon} />
-                  Valid Till:
+                </p>
+                <p>
+                  <strong>
+
+                    Deadline:
+                  </strong>{" "}
                   {visit.cycle?.validTill ? (
                     <span>{formatDate(new Date(visit.cycle.validTill))}</span>
                   ) : (
                     <span>Not available</span>
                   )}
-                </div>
-                <div className={styles.detailRow}>
-                  <Calendar className={styles.icon} />
-                  Team Leader:
+                </p>
+                <div className={styles.lastpart}>
+                  {visit?.clientInterestedStatus ? (
+                    <p className={styles.clientStatus}>
+                      {visit?.clientInterestedStatus}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                   {visit.teamLeader ? (
-                    <span>
-                      {visit.teamLeader.firstName ?? ""}{" "}
-                      {visit.teamLeader.lastName ?? ""}
-                    </span>
+                    <div className={styles.assignby}>
+                      {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
+                      {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                    </div>
+
                   ) : (
                     <span>Not available</span>
                   )}
-                </div>
-                <div className={styles.detailRow}>
-                  <PersonStanding className={styles.icon} />
-                  Client Status:
-                  <span>{visit.clientInterestedStatus}</span>
+
                 </div>
               </div>
+
+              {/* <div className={styles.detailRow}>
+                    <Phone className={styles.icon} />
+                    <span>
+                      {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
+                    </span>
+                    <MdAddCall
+                      size={25}
+                      color="dodgerblue"
+                      style={{ cursor: "pointer", marginLeft: "auto" }}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card selection
+                        handleCall(visit);
+                      }}
+                    />
+                    
+                  </div> */}
+
             </div>
           ))}
           {hasMoreRef.current && (
@@ -746,47 +810,6 @@ const LeadDetailsPage = () => {
             </div>
           )}
         </div>
-        {/* Filter Dialog */}
-        <LeadFilterDialog
-          open={showFilterDialog}
-          onClose={() => setShowFilterDialog(false)}
-          onOpenChange={setShowFilterDialog}
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={() => {
-            const cleared = {
-              visitType: "",
-              leadFilter: "",
-              statusFilter: "",
-              feedbackFilter: "",
-              clientStatus: "",
-              leadStatus: "",
-              cycleStatus: 0,
-              dateFrom: "",
-              dateTo: "",
-            };
-            setFilters(cleared);
-            fetchTeamLeaderReportingToLeads({
-              id: user?._id,
-              page: 1,
-            });
-          }}
-          visits={leads || []}
-          resultCount={leads?.length || 0}
-        />
-
-        {/* Edit Dialog */}
-        {showEditDialog && (
-          <EditDialog
-            visit={editFormData}
-            onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit: any) => {
-              console.log("Saving visit:", updatedVisit);
-              setSelectedLead(updatedVisit);
-              setShowEditDialog(false);
-            }}
-          />
-        )}
       </div>
     );
   }
@@ -794,66 +817,191 @@ const LeadDetailsPage = () => {
   return (
     <div className={styles.container}>
       {/* Mobile Header */}
-      <div className={styles.mobileHeader}>
-        <button
-          className={styles.backBtn}
-          onClick={() => {
-            setSelectedLead(null);
-            router.push("/lead-details", { scroll: false });
-          }}
-        >
-          <ArrowLeft className={styles.backIcon} />
-        </button>
-        <h1 className={styles.headerTitle}>
-          {SelectedLead.prefix} {SelectedLead.firstName} {SelectedLead.lastName}
-        </h1>
-        <button className={styles.menuBtn} onClick={() => setShowSidebar(true)}>
-          <Menu className={styles.menuIcon} />
-        </button>
-      </div>
 
-      {/* Action Buttons */}
-      <div className={styles.actionBar}>
-        <button
-          className={styles.editBtn}
-          onClick={() => {
-            setEditFormData(SelectedLead);
-            setShowEditDialog(true);
-          }}
-        >
-          <Edit className={styles.btnIcon} />
-          Edit
-        </button>
-        <button className={styles.pdfBtn}>
-          <Download className={styles.btnIcon} />
-          PDF
-        </button>
-        {SelectedLead.approvalStatus === "pending" && (
-          <button className={styles.approveBtn}>
-            <Check className={styles.btnIcon} />
-            Approve
-          </button>
-        )}
-        {showEditDialog && (
-          <EditDialog
-            visit={editFormData}
-            onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit: any) => {
-              console.log("Saving visit:", updatedVisit);
-              setSelectedLead(updatedVisit);
-              setShowEditDialog(false);
+      <div className={styles.detailsHeader}>
+
+
+
+        <div className={styles.headerInfo}>
+          <button
+            className={styles.backBtn}
+            onClick={() => {
+              setSelectedLead(null);
+              router.push("/lead-details", { scroll: false });
             }}
-          />
-        )}
-      </div>
+          >
+            <ArrowLeft className={styles.backIcon} />
+          </button>
 
-      {/* Visit Details Content - Pass handleCall function */}
-      <div className={styles.detailsContent}>
-        <VisitDetailsContent
-          visit={SelectedLead}
-          onCall={handleCall}
-          user={user}
-        />
+          <div className={styles.actionButtons}>
+
+
+
+            <button
+              className={styles.verifiedBadge}
+              onClick={() => { }}
+            >
+              <MdCall size={15} />
+            </button>
+
+            <button
+              className={styles.whatsbtn}
+              onClick={() => { }}
+            >
+              <IoLogoWhatsapp size={15} />
+            </button>
+
+            <button
+              className={styles.menuBtn}
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? " " : <Menu className={styles.menuIcon} />}
+
+            </button>
+
+            {/* Sidebar Overlay */}
+            {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
+
+            {/* Sidebar Panel */}
+            <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
+              <div style={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
+                <button
+                  className={styles.editb}
+                  onClick={() => {
+                    setEditFormData(SelectedLead);
+                    setShowEditDialog(true);
+                  }}
+                >
+
+                  <Edit size={15} />
+                </button>
+                <ThemeToggle />
+              </div>
+
+              <button
+
+                onClick={() => setIsOpen(false)}
+                className="absolute top-4 right-4 z-50 p-2 lg:hidden" style={{ color: "red" }}
+              >
+                ✕
+              </button>
+              <button
+                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""}`}
+                onClick={() => setActiveTab("overview")}
+              >
+                <FaUser className={styles.icon} /> Client Overview
+              </button>
+
+              <button
+                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""}`}
+                onClick={() => setActiveTab("access")}
+              >
+                <FaBolt className={styles.icon} /> Quick Access
+              </button>
+
+              <button
+                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""}`}
+                onClick={() => setActiveTab("taskDetails")}
+              >
+                <FaTasks className={styles.icon} /> Task Details
+              </button>
+
+              <button
+                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""}`}
+                onClick={() => setActiveTab("followup")}
+              >
+                <FaHistory className={styles.icon} /> Follow-up History
+              </button>
+
+              <button
+                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""}`}
+                onClick={() => setActiveTab("siteVisit")}
+              >
+                <FaMapMarkedAlt className={styles.icon} /> Site Visit History
+              </button>
+
+              <button
+                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""}`}
+                onClick={() => setActiveTab("transfer")}
+              >
+                <FaExchangeAlt className={styles.icon} /> Transfer History
+              </button>
+
+              <button
+                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""}`}
+                onClick={() => setActiveTab("booking")}
+              >
+                <FaFileContract className={styles.icon} /> Booking Overview
+              </button>
+            </div>
+            {SelectedLead.approvalStatus === "pending" && (
+              <button
+                className={styles.approveBtn}
+                onClick={() => setShowApprovalDialog(true)}
+              >
+                <Check className={styles.btnIcon} />
+                Approve/Reject
+              </button>
+            )}
+          </div>
+        </div>
+
+      </div>
+      <div className={styles.detsilpart} >
+        <div className={styles.detailsContent}>
+          {activeTab === "overview" && (
+            <VisitDetailsContent visit={SelectedLead} onCall={handleCall} user={user} />
+          )}
+
+          {activeTab === "access" && (
+            <QuickAccess />
+          )}
+
+          {activeTab === "taskDetails" && (
+            <TaskOverview />
+          )}
+
+
+
+          {activeTab === "followup" && (
+            <FollowUp />
+          )}
+
+          {activeTab === "siteVisit" && (
+            <VisitHistory />
+          )}
+
+          {activeTab === "transfer" && (
+            <TransferHistory />
+          )}
+
+          {activeTab === "booking" && (
+            <div className={styles.tabContent}>
+              <h3>Booking Overview</h3>
+              <p>Client’s booking-related details and transactions.</p>
+            </div>
+          )}
+          {/* Similar Visits Section */}
+          {similarVisits.length > 0 && (
+            <div className={styles.similarVisitsSection}>
+              <div
+                className={styles.similarVisitsHeader}
+                onClick={() => setShowSimilarVisits(!showSimilarVisits)}
+              >
+                <h3 className={styles.similarVisitsTitle}>
+                  Similar Visits ({similarVisits.length})
+                </h3>
+                {showSimilarVisits ? (
+                  <ChevronUp className={styles.chevron} />
+                ) : (
+                  <ChevronDown className={styles.chevron} />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+
       </div>
 
       {/* Rest of mobile code... */}
@@ -913,24 +1061,23 @@ const VisitDetailsContent = ({
 
   return (
     <>
-      {/* Personal Information */}
       <div className={styles.infobutton}>
-        <div className={styles.statusCard} style={{ border: "1px solid blue" }}>
+        <div className={`${styles.statusCard} ${styles.blue}`} style={{ border: "1px solid blue" }}>
           <div className={styles.statusIcon}>📅</div>
           <span className={styles.statusLabel}>Status</span>
           <span className={styles.statusValue}>Visit Pending</span>
         </div>
-        <div className={styles.statusCard} style={{ border: "1px solid red" }}>
+        <div className={`${styles.statusCard} ${styles.red}`} style={{ border: "1px solid red" }}>
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
           <span className={styles.statusValue}>06 Nov 25</span>
         </div>
-        <div className={styles.statusCard} style={{ border: "1px solid purple" }}>
-          <div className={styles.statusIcon}>👤</div>
+        <div className={`${styles.statusCard} ${styles.purple}`} style={{ border: "1px solid purple" }}>
+          <div className={styles.statusIcon}>👨🏻‍💼</div>
           <span className={styles.statusLabel}>Client Status</span>
           <span className={styles.statusValue}>NA</span>
         </div>
-        <div className={styles.statusCard} style={{ border: "1px solid yellow" }}>
+        <div className={`${styles.statusCard} ${styles.yellow}`} style={{ border: "1px solid yellow" }}>
           <div className={styles.statusIcon} >💡</div>
           <span className={styles.statusLabel}>Lead Status</span>
           <span className={styles.statusValue}>Just-curious</span>
@@ -953,6 +1100,27 @@ const VisitDetailsContent = ({
                   {visit?.lastName ?? ""}
                 </p>
               </div>
+
+              {/* Phone with Call Button */}
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Phone Number</label>
+                <p className={styles.infoValue}>
+                  <MdAddCall
+                    size={15}
+                    color="dodgerblue"
+                    style={{ cursor: "pointer", }}
+                    onClick={() =>
+                      onCall({
+                        ...visit,
+                        phoneNumber: visit.phoneNumber,
+                      })
+                    }
+                    title="Make a call to number"
+                  />
+                  {visit?.phoneNumber ?? "NA"}
+                </p>
+
+              </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><MdEmail size={11} color="#4a84ff" />Email</label>
                 <p className={styles.infoValue}>
@@ -960,15 +1128,6 @@ const VisitDetailsContent = ({
                   {visit.email ?? "NA"}
                 </p>
               </div>
-              {/* Phone with Call Button */}
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Phone Number</label>
-                <p className={styles.infoValue}>
-                  {visit?.phoneNumber ?? "NA"}
-                </p>
-
-              </div>
-
 
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Alt Phone</label>
@@ -1005,10 +1164,10 @@ const VisitDetailsContent = ({
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Property Type</label>
                 <p className={styles.infoValue}>
-                 NA
+                  NA
                 </p>
               </div>
-               <div className={styles.infoItem}>
+              <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Channel Partner</label>
                 <p className={styles.infoValue}>
                   {visit?.channelPartner?.firmName ?? ""}
@@ -1058,69 +1217,33 @@ const VisitDetailsContent = ({
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Remark</label>
                 <p className={styles.infoValue}>
-                 NA
+                  NA
                 </p>
               </div>
-              <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><FaSourcetree size={14} color="#4a84ff" />LinkedIn</label>
-                 <div className={styles.buttonGroup}>
-    <button className={styles.infoButton}>Visit Profile</button>
-    <button className={styles.infoButton}>View Document</button>
-  </div>
+              <div className={styles.infoItem} style={{ flexDirection: "column" }}>
+
+                <div className={`${styles.infoHeader} ${styles.center}`}>
+
+                  <CiLink size={18} color="#4a84ff" />
+
+                  <label className={styles.infoLabel}>LinkedIn</label>
+                </div>
+
+                <div className={styles.buttonGroup}>
+                  <button className={`${styles.infoButton} ${styles.visitBtn}`}>
+                    <span>🔗 Visit Profile</span>
+                  </button>
+                  <button className={`${styles.infoButton} ${styles.visitBtn}`}>
+                    <span>📄 View Document</span>
+                  </button>
+                </div>
+
+
               </div>
-              
+
             </div>
           </div>
         </div>
-        {/* Team Information */}
-        {/* {visit.taskRef && (
-          <div className={styles.detailsCard}>
-            <div className={styles.cardTitle}>
-              <User className={styles.titleIcon} />
-              Task Details
-            </div>
-            <div className={styles.cardContent}>
-              <div className={styles.infoGrid}>
-                <div className={styles.infoItem}>
-                  <label className={styles.infoLabel}><BiSolidCalendarEdit size={14} color="#4a84ff" />
-                    Assigned Date</label>
-                  <p className={styles.infoValue}>
-                    {formatDate(visit?.taskRef.assignDate)}
-                  </p>
-                </div>
-                <div className={styles.infoItem}>
-                  <label className={styles.infoLabel}><BsFillClockFill size={14} color="#4a84ff" />
-                    Deadline</label>
-                  <p className={styles.infoValue}>
-                    {formatDate(visit?.taskRef.deadline)}
-                  </p>
-                </div>
-              </div>
-              <div className={styles.infoGrid}>
-                <div className={styles.infoItem}>
-                  <label className={styles.infoLabel}><MdAssignment size={14} color="#4a84ff" />Assigned By</label>
-                  <p className={styles.infoValue}>
-                    {visit?.taskRef.assignBy?.firstName ?? ""}{" "}
-                    {visit?.taskRef.assignBy?.lastName ?? ""}
-                  </p>
-                </div>
-                <div className={styles.infoItem}>
-                  <label className={styles.infoLabel}>< SiGoogletasks size={14} color="#4a84ff" />Assigned To</label>
-                  <p className={styles.infoValue}>
-                    {visit?.taskRef.assignTo?.firstName ?? ""}{" "}
-                    {visit?.taskRef.assignTo?.lastName ?? ""}
-                  </p>
-                </div>
-              </div>
-              <div className={styles.infoGrid}>
-                <div className={styles.infoItem} style={{ gridColumn: "1 / -1" }}>
-                  <label className={styles.infoLabel}><FaAddressBook size={14} color="#4a84ff" />Task Details</label>
-                  <p className={styles.infoValue}>{visit?.taskRef.details}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )} */}
       </div>
 
 
