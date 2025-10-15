@@ -1,0 +1,249 @@
+.teamplet {
+  position: relative; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  width: 100%;
+  background-image: url("/images/dark-abstract-background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+  padding: 1rem 0rem;
+}
+
+.teamplet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(13, 13, 13, 0.792); 
+  z-index: -1;
+}
+
+.title {
+  font-family: "Cormorant Garamond";
+  text-transform: uppercase;
+  color: #ffffff;
+  font-size: 4.5vw;
+  font-weight: 400;
+  line-height: 1.09em;
+  letter-spacing: 0.15em;
+  margin: 25px 0;
+  word-wrap: break-word;
+}
+
+.linetwo {
+  font-size: 13px;
+  letter-spacing: 0.6em;
+  font-family: Raleway;
+  font-weight: 500;
+  margin: 5px 0 20px;
+  text-transform: uppercase;
+  line-height: 2.2em;
+  color: #c28562;
+}
+
+.imgsection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 80%;
+  gap: 20px; 
+}
+
+.imgsectionone,
+.imgsectiontwo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.imgsectionone img,
+.imgsectiontwo img {
+  width: 100%;
+  height: 400px; 
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.titleproject {
+font-family: "Cormorant Garamond";
+    text-transform: uppercase;
+    color: #ffffff;
+    font-size: 25px;
+    line-height: 1.35em;
+    font-weight: 500;
+    letter-spacing: .1em;
+    margin: 25px 0 4px 0;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+}
+.locationtext {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #c49b66;
+  padding-bottom: 20px;
+}
+
+.location{
+      color: #c49b66;
+font-size: 14px;
+}
+
+
+
+.readMoreBtn {
+  position: relative;
+  padding: 8px 40px;
+  border: 2px solid #c49b66;
+  border-radius: 50px;
+  background: transparent;
+  color: #c49b66;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideUp 0.8s ease-out forwards;
+
+}
+
+.arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.readMoreBtn:hover .arrow {
+  transform: translateX(5px);
+}
+
+.readMoreBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 20%;
+  height: 100%;
+  background: linear-gradient(120deg,
+      transparent,
+      rgba(255, 255, 255, 0.234),
+      transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -75%;
+  }
+
+  100% {
+    left: 125%;
+  }
+}
+/* Responsive Design for Mobile */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 40px;
+    letter-spacing: 0.1em;
+  }
+
+  .linetwo {
+    font-size: 12px;
+    letter-spacing: 0.4em;
+  }
+
+  .imgsection {
+    width: 90%;
+    gap: 15px;
+  }
+
+  .imgsectionone img,
+  .imgsectiontwo img {
+    height: 320px;
+  }
+
+  .readMoreBtn {
+    padding: 6px 25px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .teamplet {
+    height: auto;
+    padding: 40px 20px;
+  }
+
+  .title {
+    font-size: 32px;
+    text-align: center;
+  }
+
+  .linetwo {
+    font-size: 11px;
+    text-align: center;
+    letter-spacing: 0.3em;
+  }
+
+  .imgsection {
+    flex-direction: column;
+    width: 100%;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .imgsectionone img,
+  .imgsectiontwo img {
+    width: 90%;
+    height: 280px;
+    border-radius: 12px;
+  }
+
+  .readMoreBtn {
+    font-size: 14px;
+    padding: 6px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 26px;
+    margin: 5px 0;
+  }
+
+  .linetwo {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+  }
+
+  .imgsectionone img,
+  .imgsectiontwo img {
+    width: 100%;
+    height: 220px;
+  }
+
+  .readMoreBtn {
+    padding: 5px 15px;
+    font-size: 13px;
+  }
+
+  .locationtext {
+    gap: 5px;
+  }
+
+  .location {
+    font-size: 12px;
+  }
+}
