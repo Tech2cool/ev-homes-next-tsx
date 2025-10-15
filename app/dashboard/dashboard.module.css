@@ -540,6 +540,8 @@
 }
 
 @media (max-width: 768px) {
+  
+  
   .headerContent {
     flex-direction: column;
     gap: 1rem;
