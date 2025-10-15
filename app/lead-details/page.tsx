@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import Image from "next/image";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdAddCall, MdCall } from "react-icons/md";
 import styles from "./lead-details.module.css";
@@ -10,6 +12,8 @@ import TaskOverview from "@/components/lead-details-components/taskoverview"
 import FollowUp from "@/components/lead-details-components/followup"
 import VisitHistory from "@/components/lead-details-components/visithistory"
 import TransferHistory from "@/components/lead-details-components/transferhistory"
+import BookingOverview from "@/components/lead-details-components/bookingoverview"
+import tagIcon from "@/public/images/taglabel.png"
 import {
   ArrowLeft,
   Calendar,
@@ -383,61 +387,94 @@ const LeadDetailsPage = () => {
                   });
                 }}
               >
+                <div className={styles.tag}></div>
                 <div className={styles.leadInfo}>
-                  <div className={styles.clientIcon}>
+                  {/* <div className={styles.clientIcon}>
                     {visit?.firstName?.charAt(0)?.toUpperCase()}
-                  </div>
+                  </div> */}
+                  <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={80} height={40} />
                   <div className={styles.clientDetails}>
-                    <h4>
+
+                    <p className={styles.trns}>Transferred From</p>
+                    <p className={styles.trnsname}>Vicky</p>
+                    <div className={styles.namecl}>
                       {visit?.firstName ?? ""} {visit?.lastName ?? ""}
-                    </h4>
+                    </div>
                     <p className={styles.phone}>
                       {visit?.countryCode ?? "91"} {visit?.phoneNumber}
                     </p>
                   </div>
                 </div>
+                {/* Task Details */}
 
                 <div className={styles.leadMeta}>
                   <p>
-                    <strong>Assign Date:</strong> {visit.cycle?.startDate ? (
+                    Assign Date : {" "}
+                    {visit.cycle?.startDate ? (
                       <span>{formatDate(new Date(visit.cycle.startDate))}</span>
                     ) : (
                       <span>Not available</span>
                     )}
                   </p>
                   <p>
-                    <strong>
-
-                      Deadline:
-                    </strong>{" "}
+                    Visit Deadline:
+                    {" "}
                     {visit.cycle?.validTill ? (
                       <span>{formatDate(new Date(visit.cycle.validTill))}</span>
                     ) : (
                       <span>Not available</span>
                     )}
                   </p>
+
+                  <div className={styles.taskContainer}>
+                    <div className={styles.taskHeader}>
+                      <div className={styles.accentLine} style={{backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                      <span className={styles.taskTitle}>Task Details</span>
+                    </div>
+
+                    <span className={styles.taskName}>
+                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""}`}
+                      <span className={styles.status}>
+                        <span className={styles.statusText} style={{ color: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}>{visit?.taskRef?.completed === true ? "COMPLETED" : "PENDING"}</span>
+                        <span className={styles.statusIcon}>⏳</span>
+                      </span>
+                    </span>
+                  </div>
+
+                  {visit.teamLeader ? (
+                    <div className={styles.assignby}>
+                      {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
+                      {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                    </div>
+
+                  ) : (
+                    <span>Not available</span>
+                  )}
+
                   <div className={styles.lastpart}>
                     {visit?.clientInterestedStatus ? (
-                      <p className={styles.clientStatus}>
+                      <div className={styles.clientStatus}>
                         {visit?.clientInterestedStatus}
-                      </p>
-                    ) : (
-                      <></>
-                    )}
-                    {visit.teamLeader ? (
-                      <div className={styles.assignby}>
-                        {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
-                        {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
                       </div>
+                    ) : null}
+                    <div
+                      style={{
+                        backgroundColor: "rgba(3, 84, 214, 1)",
+                      }}
+                      className={styles.clientStatus}
+                    >
+                      {visit.leadType === "cp"
+                        ? (visit.channelPartner?.firmName ?? "-")
+                        : (visit.leadType ?? "-")}
+                    </div>
 
-                    ) : (
-                      <span>Not available</span>
-                    )}
+
+
 
                   </div>
                 </div>
 
-               
+
               </div>
             ))}
             {hasMoreRef.current && (
@@ -547,8 +584,7 @@ const LeadDetailsPage = () => {
 
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
-                      <h3>Booking Overview</h3>
-                      <p>Client’s booking-related details and transactions.</p>
+                      <BookingOverview />
                     </div>
                   )}
                   {/* Similar Visits Section */}
@@ -725,14 +761,17 @@ const LeadDetailsPage = () => {
                 });
               }}
             >
+
+
+
               <div className={styles.leadInfo}>
-                <div className={styles.clientIcon}>
-                  {visit?.firstName?.charAt(0)?.toUpperCase()}
-                </div>
+                <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={80} height={40} />
                 <div className={styles.clientDetails}>
-                  <h4>
+                  <p className={styles.trns}>Transferred From</p>
+                  <p className={styles.trnsname}>Vicky</p>
+                  <div className={styles.namecl}>
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}
-                  </h4>
+                  </div>
                   <p className={styles.phone}>
                     {visit?.countryCode ?? "91"} {visit?.phoneNumber}
                   </p>
@@ -741,23 +780,38 @@ const LeadDetailsPage = () => {
 
               <div className={styles.leadMeta}>
                 <p>
-                  <strong>Assign Date:</strong> {visit.cycle?.startDate ? (
+                  Assign Date: {visit.cycle?.startDate ? (
                     <span>{formatDate(new Date(visit.cycle.startDate))}</span>
                   ) : (
                     <span>Not available</span>
                   )}
                 </p>
                 <p>
-                  <strong>
-
-                    Deadline:
-                  </strong>{" "}
+                  Visit Deadline:{" "}
                   {visit.cycle?.validTill ? (
                     <span>{formatDate(new Date(visit.cycle.validTill))}</span>
                   ) : (
                     <span>Not available</span>
                   )}
                 </p>
+                <div className={styles.taskContainer}>
+                  <div className={styles.taskHeader}>
+                    <div className={styles.accentLine} style={{backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                    <span className={styles.taskTitle}>Task Details</span>
+                  </div>
+
+                  <span className={styles.taskName}>
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""}`}
+                    <span className={styles.status}>
+                      <span className={styles.statusText} style={{ color: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}>
+                        {visit.taskRef?.completed === true ? "COMPLETED" : "PENDING"}</span>
+                      <span className={styles.statusIcons}>⏳</span>
+                    </span>
+                  </span>
+                </div>
+
+
+
                 <div className={styles.lastpart}>
                   {visit?.clientInterestedStatus ? (
                     <p className={styles.clientStatus}>
@@ -766,6 +820,7 @@ const LeadDetailsPage = () => {
                   ) : (
                     <></>
                   )}
+
                   {visit.teamLeader ? (
                     <div className={styles.assignby}>
                       {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
@@ -775,7 +830,16 @@ const LeadDetailsPage = () => {
                   ) : (
                     <span>Not available</span>
                   )}
-
+                  <div
+                    style={{
+                      backgroundColor: "rgba(3, 84, 214, 1)",
+                    }}
+                    className={styles.clientStatus}
+                  >
+                    {visit.leadType === "cp"
+                      ? (visit.channelPartner?.firmName ?? "-")
+                      : (visit.leadType ?? "-")}
+                  </div>
                 </div>
               </div>
 
@@ -977,8 +1041,7 @@ const LeadDetailsPage = () => {
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>
-              <h3>Booking Overview</h3>
-              <p>Client’s booking-related details and transactions.</p>
+              <BookingOverview />
             </div>
           )}
           {/* Similar Visits Section */}

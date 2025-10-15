@@ -1,4 +1,3 @@
-/* Desktop Container */
 .desktopContainer {
   display: flex;
   height: 100vh;
@@ -23,7 +22,7 @@
 }
 
 :global(html.light) .leftSidebar {
-  background-color: #fefcf4;
+  background-color: #f6f5f5;
   border-right: 1px solid #ddd;
 }
 
@@ -35,7 +34,7 @@
 }
 
 :global(html.light) .sidebarHeader {
-  background-color: #fefcf4;
+  background-color: #f6f5f5;
   border-bottom: 1px solid #ddd;
 }
 
@@ -67,7 +66,7 @@
 }
 
 :global(html.light) .rightPanel {
-  background-color: #fefefb;
+  background-color: #f6f5f5;
 }
 
 .detailsHeader {
@@ -81,7 +80,7 @@
 }
 
 :global(html.light) .detailsHeader {
-  background-color: #fefcf4;
+  background-color: #f6f5f5;
   border-bottom: 1px solid #ddd;
 }
 
@@ -154,9 +153,11 @@
   display: flex;
   flex-direction: column;
 }
-:global(html.light) .container{
-  background-color: #fefcf4;
+
+:global(html.light) .container {
+  background-color: #f6f5f5;
 }
+
 .loading {
   display: flex;
   align-items: center;
@@ -404,7 +405,7 @@
 }
 
 :global(html.light) .detailsContent {
-  background-color: #fefcf4;
+  background-color: #f6f5f5;
 }
 
 /* Details Card */
@@ -824,15 +825,15 @@
 .visitsList {
   flex: 1;
   overflow-y: auto;
-  padding: 0.5rem;
+  padding: 1rem 0.5rem;
 }
 
 .visitCard {
 
-  border-bottom: 1px solid #222;
-
-  padding: 1rem;
-  margin-bottom: 0.5rem;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 1rem 1rem 0.5rem 1rem;
+  margin-bottom: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
@@ -841,7 +842,7 @@
 
 :global(html.light) .visitCard {
   background-color: transparent;
-  border-bottom: 1px solid #dbdbdb;
+  border: 1px solid #dbdbdb;
 
 }
 
@@ -1093,14 +1094,12 @@
 
 
 
-/* Responsive adjustments for larger screens */
 @media (min-width: 769px) {
   .infoGrid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-/* Mobile responsive adjustments */
 
 
 
@@ -1332,7 +1331,7 @@
     0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-.statusIcon {
+.statusIcons {
   font-size: 18px;
   margin-bottom: 4px;
 }
@@ -1449,7 +1448,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #323232;
+  padding-left: 0.4rem;
 }
 
 .clientIcon {
@@ -1474,13 +1475,16 @@
   background-color: #0055af;
 }
 
-.clientDetails h4 {
+.namecl {
   margin: 0;
   font-size: 1vw;
   color: white;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding-left: 0.5rem;
 }
 
-:global(html.light) .clientDetails h4 {
+:global(html.light) .namecl {
   color: #0c0c0c;
 }
 
@@ -1492,28 +1496,42 @@
 :global(html.light) .phone {
   color: #3b3939;
 }
-
 .leadMeta p {
-  font-size: 2vh;
+   font-size: 14px;
+   font-weight: 500;
+   color: rgb(210, 209, 209);
+    margin: 3px 0;
+}
+:global(html.light) .leadMeta p {
+  color: #181818;
+}
+.leadMeta p span{
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
-  margin: 5px 0;
+  margin: 3px 0;
 }
 
-:global(html.light) .leadMeta p {
+:global(html.light) .leadMeta p span{
   color: #272525;
 }
 
 .lastpart {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
+  gap: 10px;
 }
 
+
+
 .clientStatus {
-  padding: 5px 10px;
+  padding: 3px 6px;
   border-radius: 8px;
-  font-size: 0.5vw;
-  background: rgb(243, 178, 58);
+  font-size: 1.8vh;
+  color: rgba(255, 255, 255, 0.6);
+
+  font-weight: 500;
+  background: rgb(188, 124, 3);
   color: white;
   display: inline-block;
 }
@@ -1527,13 +1545,16 @@
   display: flex;
   width: 27px;
   height: 27px;
-  border-radius: 50%;
+  border-radius: 5px;
   background-color: #007bff;
   justify-content: center;
   align-items: center;
   font-size: 14px;
   color: white;
   margin-left: auto;
+  position: absolute;
+  right: 10px;
+  top: 15px;
 }
 
 :global(html.light) .assignby {
@@ -1684,14 +1705,14 @@
     font-size: 2vh;
   }
 
-  .clientDetails h4 {
+  .namecl {
     font-size: 1.7vh;
   }
 
   .phone {
     font-size: 1.5vh;
   }
-
+.leadMeta p span,
   .leadMeta p {
     font-size: 2vh;
     margin: 1px 0;
@@ -1722,6 +1743,10 @@
     flex-direction: column;
     gap: 5px;
   }
+
+  .detailsCard {
+    flex: none;
+  }
 }
 
 @media screen and (max-width: 615px) {
@@ -1730,10 +1755,11 @@
     width: 50%;
 
   }
-.infoGridwork {
- 
-   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
+
+  .infoGridwork {
+
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 
   .infoButton {
     flex: 1;
@@ -1758,6 +1784,10 @@
 
   }
 
+  .detailsCard {
+    flex: none;
+  }
+
   .detsilpart {
     flex-direction: column-reverse;
     margin-top: 0.5rem;
@@ -1776,14 +1806,14 @@
     font-size: 3vw;
   }
 
-  .clientDetails h4 {
+  .namecl {
     font-size: 1rem;
   }
 
   .phone {
     font-size: 14px;
   }
-
+.leadMeta p span,
   .leadMeta p {
     font-size: 13px;
   }
@@ -1847,10 +1877,11 @@
     left: 0;
   }
 
-:global(html.light) .sidebar {
-  background: #e5e5e5;
-  box-shadow: 2px 0 10px rgba(236, 233, 233, 0.1);
-}
+  :global(html.light) .sidebar {
+    background: #fffcfc;
+    box-shadow: 2px 0 10px rgba(236, 233, 233, 0.1);
+  }
+
   .overlay {
     position: fixed;
     top: 0;
@@ -1864,6 +1895,7 @@
   .sidebar.open {
     left: 0;
   }
+
   .overlay {
     position: fixed;
     top: 0;
@@ -1888,25 +1920,27 @@
     color: #d9d9d9;
     transition: background 0.2s ease, color 0.2s ease;
     cursor: pointer;
-     box-shadow:none;
+    box-shadow: none;
   }
 
   .navItem:hover {
-  background-color: #0055af;
+    background-color: #0055af;
     color: #e3ecff;
   }
-:global(html.light) .navItem {
-  background: none;
-  color: rgb(27, 26, 26);
-  border: none;
-  box-shadow: none;
-}
 
-:global(html.light) .navItem:hover {
-  background: linear-gradient(145deg, #3474ff, #1247d8);
-  color: #fff;
-  box-shadow: 0 3px 10px rgba(74, 132, 255, 0.25);
-}
+  :global(html.light) .navItem {
+    background: none;
+    color: rgb(27, 26, 26);
+    border: none;
+    box-shadow: none;
+  }
+
+  :global(html.light) .navItem:hover {
+    background: linear-gradient(145deg, #3474ff, #1247d8);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(74, 132, 255, 0.25);
+  }
+
   .active {
     background: linear-gradient(145deg, #3474ff, #1247d8);
     color: #e5ecff;
@@ -1937,26 +1971,122 @@
     display: none;
   }
 }
+
 @media screen and (max-width: 420px) {
-.infobutton{
-display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-.statusCard{
-  position: relative;
-}
-.statusIcon {
-  position: absolute;
-  z-index: 2; 
-  right: 1px;
-  bottom: 1px;
-  font-size: 35px; 
-  color: rgba(0, 0, 0, 0.134); 
-  pointer-events: none;
-}
-.statusLabel {
-  font-size: 10px;
-  font-weight: 400;
+  .infobutton {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .statusCard {
+    position: relative;
+  }
+  .statusIcons {
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
+  .statusIcon {
+    position: absolute;
+    z-index: 2;
+    right: 1px;
+    bottom: 1px;
+    font-size: 35px;
+    color: rgba(0, 0, 0, 0.134);
+    pointer-events: none;
+  }
+
+  .statusLabel {
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+}
+
+.tagImage {
+  position: absolute;
+  object-fit: contain;
+  top: -16px;
+  left: -7px;
+
+}
+
+.trns {
+  position: absolute;
+  top: -8px;
+  z-index: 100;
+  font-size: 9px;
+  left: -2px;
+  color: white;
+  display: inline-block;
+  transform: rotate(-4deg);
+  transform-origin: left bottom;
+  font-weight: 500;
+}
+
+.trnsname {
+  position: absolute;
+  top: 3px;
+  z-index: 100;
+  font-size: 10px;
+  left: 7px;
+  color: white;
+  font-weight: 500;
+  display: inline-block;
+  transform: rotate(-2deg);
+  transform-origin: right top;
+
+}
+
+.taskContainer {
+  display: flex;
+  flex-direction: column;
+  padding:4px 0px 5px 8px;
+  position: relative;
+  line-height: 1rem;
+}
+
+.taskHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.accentLine {
+  width: 4px;
+  height: 15px;
+  background: #ffb84d;
+  border-radius: 2px;
+}
+:global(html.light) .accentLine{
+  background: #ffaa2a;
+}
+.taskTitle {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #cfcdcd;
+}
+:global(html.light) .taskTitle{
+   color: #212020;
+}
+.taskName {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #ddd;
+  padding-left: 12px;
+  padding-bottom: 7px;
+}
+:global(html.light) .taskName{
+   color: #474545;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffb84d;
+  margin-left: 5px;
+}
+:global(html.light) .status{
+  color: #ffaa2a;
 }
