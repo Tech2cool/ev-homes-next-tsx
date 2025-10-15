@@ -1,0 +1,18 @@
+.teamplate{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+   height: 100%;
+}
+.detlContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    
+}
+:global(html.light) .teamplate{
+    background-color: rgb(237, 243, 243);
+   
+}
