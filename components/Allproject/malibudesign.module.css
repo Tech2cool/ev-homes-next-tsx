@@ -1,0 +1,364 @@
+.teamplet {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+    padding: 1rem 0rem;
+
+}
+
+.textcontan {
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  color: #000;
+  padding: 0rem 3rem;
+}
+
+
+.logo {
+  width: 210px;
+  height: 100px;
+}
+
+.textarea {
+  padding-left: 30px;
+}
+
+.location {
+  padding-top: 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.location p {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 16px;
+  letter-spacing: 1.7px;
+  color: #c49b66;
+}
+
+.title {
+  font-family: Merriweather, serif;
+  font-size: 45px;
+  font-weight: 400;
+  text-transform: capitalize;
+  line-height: 1.2em;
+  letter-spacing: -0.3px;
+  color: #FFFCFC;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.discrip {
+  font-size: 15px;
+  font-weight: 400;
+  font-family: "Inter", sans-serif;
+  color: #c7c6c6;
+  line-height: 1.6;
+  text-align: justify;
+  padding: 10px;
+  border-radius: 8px;
+  max-height: calc(1.6em * 11);
+  overflow-y: auto;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.discrip span {
+  display: block;
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 4px;
+}
+
+.discrip span::before {
+  content: "➤";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #c49b66;
+  font-size: 14px;
+}
+
+.discrip::-webkit-scrollbar {
+  width: 3px;
+}
+
+.discrip::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.discrip::-webkit-scrollbar-track {
+  background: #c49b66;
+}
+
+.discrip {
+  scrollbar-width: thin;
+  scrollbar-color: transparent #c49b66;
+}
+
+.btnWrapper {
+  padding-top: 20px;
+}
+
+.readMoreBtn {
+  position: relative;
+  padding: 10px 40px;
+  border: 2px solid #c49b66;
+  border-radius: 50px;
+  background: transparent;
+  color: #c49b66;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideUp 0.8s ease-out forwards;
+
+}
+
+.arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.readMoreBtn:hover .arrow {
+  transform: translateX(5px);
+}
+
+.readMoreBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 20%;
+  height: 100%;
+  background: linear-gradient(120deg,
+      transparent,
+      rgba(255, 255, 255, 0.234),
+      transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -75%;
+  }
+
+  100% {
+    left: 125%;
+  }
+}
+
+.imgcontan {
+  width: 65%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-right: 0px;
+
+}
+
+.imgdes {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+}
+
+.sideImg {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  max-width: calc(33.33% - 10px);
+  border-radius: 8px;
+  border-bottom-left-radius: 75px;
+  border-top-right-radius: 75px;
+  overflow: hidden;
+  /* Needed for shimmer effect */
+}
+
+.sideImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Shimmer Effect */
+.sideImg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 20%;
+  height: 100%;
+  background: linear-gradient(150deg,
+      transparent,
+      rgba(255, 255, 255, 0.263),
+      transparent);
+  transform: skewX(-10deg);
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -150%;
+  }
+
+  100% {
+    left: 150%;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+   .logo {
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
+  }
+ .title {
+    font-size: 2.8vw;
+      padding-top: 10px;
+
+  }
+  .textcontan {
+  padding: 0rem 1rem;
+}
+.sideImg {
+  border-bottom-left-radius: 45px;
+  border-top-right-radius: 45px;
+  height: 450px;
+}
+.imgdes {
+    flex-direction: row;
+    gap:10px;
+    padding: 10px 2px;
+  }
+  
+}
+@media screen and (max-width: 850px) {
+  .teamplet {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+  }
+
+  .textcontan {
+    width: 100%;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .logo {
+    width: 180px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .discrip {
+    padding: 5px 0;
+    text-align: left;
+    
+  }
+
+  .btnWrapper {
+    text-align: center;
+  }
+
+  .readMoreBtn {
+    padding: 8px 25px;
+    font-size: 15px;
+  }
+
+  .imgcontan {
+    width: 100%;
+    padding: 10px 0;
+  }
+.sideImg {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  max-width: calc(33.33% - 10px);
+  border-radius: 8px;
+  border-bottom-left-radius: 40px;
+  border-top-right-radius: 40px;
+  overflow: hidden;
+}
+ .location {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .teamplet {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .imgdes {
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px 2px;
+  }
+.textarea {
+  padding-left: 10px;
+}
+.sideImg {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  max-width: calc(33.33% - 10px);
+  border-radius: 8px;
+  border-bottom-left-radius: 35px;
+  border-top-right-radius: 35px;
+  overflow: hidden;
+}
+
+  .title {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .discrip span {
+    padding-left: 15px;
+  }
+
+  .location {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .title {
+    font-size: 24px;
+  }
+.textarea {
+  padding-left: 10px;
+}
+  .readMoreBtn {
+    font-size: 14px;
+    padding: 8px 20px;
+  }
+
+
+}

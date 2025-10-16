@@ -1,0 +1,589 @@
+.marinasection {
+  width: 100%;
+  height: 90vh;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 85%;
+  height: 100%;
+
+}
+
+.imgcontainer {
+  display: flex;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.bgimg {
+  height: 60%;
+  width: 60%;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.smallsecond,
+.smallfirst {
+  display: flex;
+  width: 30%;
+  height: 30%;
+  border-radius: 25px;
+  object-fit: cover;
+  position: absolute;
+  border: 2 solid rgb(66, 66, 66);
+}
+
+.smallfirst {
+  top: 65px;
+  left: 5px;
+}
+
+.smallsecond {
+  bottom: 45px;
+  right: 26px;
+}
+
+
+
+.projectlogo {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-color: #0f0f0f;
+  border-radius: 50%;
+  bottom: 150px;
+  left: 60px;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.projectlogo::before,
+.projectlogo::after,
+.projectlogo .pulse {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-color: rgba(29, 28, 28, 0.4);
+  border-radius: 50%;
+  z-index: -1;
+  animation: pulse 2.5s infinite ease-out;
+}
+
+.projectlogo::before {
+  animation-delay: 0s;
+}
+
+.projectlogo::after {
+  animation-delay: 0.8s;
+}
+
+.projectlogo .pulse {
+  animation-delay: 1.6s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.8);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.logomarina {
+  width: 80%;
+  height: 80%;
+}
+
+.textcontainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex: 1;
+  height: 100%;
+  padding-top: 40px;
+}
+
+
+.textarea {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  color: white;
+  flex-direction: column;
+  margin-left: 100px;
+}
+
+
+.subtitle {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: "Inter", sans-serif;
+  color: #6e7173;
+  margin-bottom: 28px;
+  line-height: 1;
+  padding: 12px 0;
+  position: relative;
+  text-align: center;
+}
+
+
+
+.subtitle:before,
+.subtitle:after {
+  content: '';
+  position: absolute;
+  left: 20%;
+  transform: translateX(-50%);
+  height: 1px;
+  width: 32px;
+  background: #6e7173;
+}
+
+
+
+
+
+.subtitle:before {
+  top: 0;
+}
+
+.subtitle:after {
+  bottom: 0;
+}
+
+.sectitle {
+  font-size: 48px;
+  line-height: 1.333;
+  font-family: "Merriweather", serif;
+}
+
+.locationtext {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #c49b66;
+  padding-bottom: 20px;
+}
+.iconcolor{
+color: #c49b66;
+}
+
+.discrip {
+  font-size: 15px;
+  font-weight: 400;
+  font-family: "Inter", sans-serif;
+  color: #c7c6c6;
+  line-height: 1.6;
+  text-align: justify;
+  padding: 10px;
+  border-radius: 8px;
+  max-height: calc(1.6em * 11);
+  overflow-y: auto;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+
+.discrip span {
+  display: block;
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 4px;
+}
+
+.discrip span::before {
+  content: "➤";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #c49b66;
+  font-size: 14px;
+}
+
+.discrip::-webkit-scrollbar {
+  width: 3px;
+}
+
+.discrip::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+
+/* Firefox */
+.discrip {
+  scrollbar-width: thin;
+  scrollbar-color: transparent #c49b66;
+}
+
+.btnWrapper {
+  margin-top: 10px;
+}
+
+.readMoreBtn {
+  position: relative;
+  padding: 10px 40px;
+  border: 2px solid #c49b66;
+  border-radius: 50px;
+  background: transparent;
+  color: #c49b66;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideUp 0.8s ease-out forwards;
+
+}
+
+.arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.readMoreBtn:hover .arrow {
+  transform: translateX(5px);
+}
+
+.readMoreBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 20%;
+  height: 100%;
+  background: linear-gradient(120deg,
+      transparent,
+      rgba(255, 255, 255, 0.234),
+      transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 2s infinite linear;
+}
+@keyframes shimmer {
+  0% {
+    left: -75%;
+  }
+
+  100% {
+    left: 125%;
+  }
+}
+/* Mobile responsiveness */
+@media (max-width: 426px) {
+  .marinasection {
+    height: auto; 
+    padding: 20px 0;
+  }
+
+  .container {
+    flex-direction: column; 
+    align-items: center;
+    width: 95%;
+    height: auto;
+  }
+
+  .imgcontainer {
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .bgimg {
+    width: 90%;
+    height: auto;
+  }
+
+  .smallfirst,
+  .smallsecond {
+   display: none;
+  }
+
+  .smallfirst {
+    top: 20px;
+    left: 10px;
+  }
+
+  .smallsecond {
+    bottom: 20px;
+    right: 10px;
+  }
+
+  .projectlogo {
+    width: 90px;
+    height: 90px;
+    bottom: 10%;
+    left: 10%;
+  }
+
+  .logomarina {
+    width: 70%;
+    height: 70%;
+  }
+
+  .textcontainer {
+    width: 100%;
+    padding: 0;
+    margin-top: 20px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .textarea {
+    margin-left: 0;
+    align-items: center;
+    text-align: center;
+  }
+
+  .subtitle {
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+
+  .sectitle {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .locationtext {
+    justify-content: center;
+    font-size: 14px;
+    gap: 5px;
+  }
+
+  .discrip {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 5px;
+   
+  }
+
+  .readMoreBtn {
+    padding: 8px 25px;
+    font-size: 15px;
+  }
+  
+}
+/* Tablet Devices (426px - 768px) */
+@media (min-width: 426px) and (max-width: 768px) {
+  .marinasection {
+    height: auto;
+    padding: 30px 0;
+  }
+
+  .container {
+    flex-direction: column; /* Stack image & text vertically */
+    align-items: center;
+    width: 90%;
+    height: auto;
+  }
+
+  .imgcontainer {
+    width: 100%;
+    height: 60vh;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .bgimg {
+    width: 80%;
+    height: auto;
+    border-radius: 20px;
+  }
+
+  .smallfirst,
+  .smallsecond {
+    width: 30%;
+    height: 40%;
+    border-radius: 20px;
+  }
+
+  .smallfirst {
+    top:-20px;
+    left: 10px;
+  }
+
+  .smallsecond {
+    bottom: -20px;
+    right: 10px;
+  }
+
+  .projectlogo {
+    width: 80px;
+    height: 80px;
+    bottom: 15%;
+    left: 12%;
+  }
+
+  .logomarina {
+    width: 55%;
+    height: 55%;
+  }
+
+  .textcontainer {
+    width: 100%;
+    padding: 0;
+    margin-top: 20px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .textarea {
+    margin-left: 0;
+    align-items: center;
+    text-align: center;
+    width: 90%;
+  }
+
+  .subtitle {
+    margin-bottom: 18px;
+    font-size: 15px;
+  }
+
+  .sectitle {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  .locationtext {
+    justify-content: center;
+    font-size: 15px;
+    gap: 6px;
+  }
+
+  .discrip {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 6px;
+    max-height: calc(1.5em * 9);
+  }
+
+  .readMoreBtn {
+    padding: 8px 30px;
+    font-size: 16px;
+  }
+}
+
+/* Small Desktops (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .marinasection {
+    height: auto;
+    padding: 40px 0;
+  }
+
+  .container {
+    flex-direction: row;
+    align-items: center;
+    width: 95%;
+    height: auto;
+  }
+
+  .imgcontainer {
+    width: 50%;
+    height: auto;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+
+  .bgimg {
+    width: 85%;
+    height: 70vh;
+  }
+
+  .smallfirst,
+  .smallsecond {
+   display: none;
+  }
+
+  .smallfirst {
+    top: 40px;
+    left: 15px;
+  }
+
+  .smallsecond {
+    bottom: 40px;
+    right: 15px;
+  }
+
+  .projectlogo {
+    width: 100px;
+    height: 100px;
+    bottom: 10%;
+    left: 10%;
+  }
+
+  .logomarina {
+    width: 80%;
+    height: 80%;
+  }
+
+  .textcontainer {
+    width: 50%;
+    padding: 20px;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .textarea {
+    margin-left: 20px;
+    align-items: flex-start;
+    text-align: left;
+    width: 90%;
+  }
+
+  .subtitle {
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .sectitle {
+    font-size: 36px;
+  }
+
+  .locationtext {
+    justify-content: flex-start;
+    font-size: 15px;
+    gap: 8px;
+  }
+
+  .discrip {
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 8px;
+    max-height: calc(1.6em * 10);
+  }
+
+  .readMoreBtn {
+    padding: 9px 35px;
+    font-size: 16px;
+  }
+}
