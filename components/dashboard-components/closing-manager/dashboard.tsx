@@ -40,8 +40,8 @@ import { useUser } from "@/providers/userContext";
 
 interface ClosingManagerDashboardHeaderProps {
   userName: string;
-  pendingText?: string; // e.g., "You have 369 pending tasks"
-  lastSyncText?: string; // e.g., "24 Sep 25 10:45 pm"
+  pendingText?: string;
+  lastSyncText?: string;
   avatarUrl?: string;
   className?: string;
   onSyncNow?: () => void;
@@ -49,23 +49,50 @@ interface ClosingManagerDashboardHeaderProps {
 
 export function ClosingManagerDashboardHeader({
   userName = "Deepak Karki",
-  pendingText = "You have 369 pending tasks",
+  pendingText,
   lastSyncText = "07 Oct 25",
   avatarUrl,
   className,
   onSyncNow,
 }: ClosingManagerDashboardHeaderProps) {
-  const {  dashCount,
-    getClosingManagerDashBoardCount, } = useData();
-      const { user, loading } = useUser();
+  const {
+    TeamReportingTo,
+    dashCount,
+    asssignFeedbackInfo,
+    getClosingManagerDashBoardCount,
+    fetchAssignFeedbackLeadsCount,
+  } = useData();
+  const { user, loading } = useUser();
 
-      useEffect(() => {
+  const teamMembers =
+    TeamReportingTo?.crew
+      ?.map((member: any) => member.teamMember)
+      .filter(Boolean) || [];
+
+  // useEffect(() => {
+  //   console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
+  // }, [asssignFeedbackInfo]);
+
+  useEffect(() => {
     if (user && !loading) {
       console.log("use effect dashboard");
-      getClosingManagerDashBoardCount({  id: user?._id ?? null});
+      getClosingManagerDashBoardCount({ id: user?._id ?? null });
+      fetchAssignFeedbackLeadsCount({
+        query: "",
+        page: 1,
+        limit: 10,
+      });
     }
   }, [user, loading]);
-  const displayName = (userName ?? "").trim() || "User";
+
+  // This runs when the state is actually updated
+  useEffect(() => {
+    if (asssignFeedbackInfo) {
+      console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
+    }
+  }, [asssignFeedbackInfo]);
+
+  const displayName = (dashCount?.name ?? "").trim() || "User";
   const initials = React.useMemo(() => {
     const parts = displayName.split(/\s+/).filter(Boolean);
     if (parts.length === 0) return "U";
@@ -176,9 +203,10 @@ export function ClosingManagerDashboardHeader({
     { label: "Team Performance", color: "green", Icon: GrGroup },
   ];
 
-  const leads = 11608;
-  const bookings = 59;
-  const visits = 432;
+  const leads = dashCount?.lead?.total ?? 0;
+  const bookings = dashCount?.lead?.booking ?? 0;
+  const visits =
+    (dashCount?.lead?.visit1 ?? 0) + (dashCount?.lead?.visit2 ?? 0);
 
   const data = [
     {
@@ -209,66 +237,86 @@ export function ClosingManagerDashboardHeader({
 
   const cards = [
     {
-      name: "Closing Crew",
-      tasks: "3890 tasks",
+      name: TeamReportingTo?.teamName ?? "Test",
+      tasks: TeamReportingTo?.totalTasks ?? 10,
       borderColor: " #4A90E2",
-      members: ["Deepak", "Muthuswami Venugopal Iyer", "Priya"],
+      members: teamMembers, 
     },
-    {
-      name: "Shree Ganesh",
-      tasks: "2634 tasks",
-      borderColor: " #91082A",
+    // {
+    //   name: "Shree Ganesh",
+    //   tasks: "2634 tasks",
+    //   borderColor: " #91082A",
 
-      members: ["Rahul", "Sneha", "Kiran"],
-    },
-    {
-      name: "Deal Maker",
-      tasks: "3724 tasks",
-      borderColor: "#1F1F1F",
+    //   members: ["Rahul", "Sneha", "Kiran"],
+    // },
+    // {
+    //   name: "Deal Maker",
+    //   tasks: "3724 tasks",
+    //   borderColor: "#1F1F1F",
 
-      members: ["Suresh", "Anita", "Manoj"],
-    },
+    //   members: ["Suresh", "Anita", "Manoj"],
+    // },
   ];
 
   const assignFeedbackcard = [
-    { name: "Deepak Karki", feedback: 100, tasks: 300, border: "#87CEEB" },
-    { name: "Jaspreet Arora", feedback: 210, tasks: 320, border: "#BA1A42" },
-    { name: "Ranjna Gupta", feedback: 150, tasks: 310, border: "#546E86" },
+    {
+      name: asssignFeedbackInfo?.teamLeader?.firstName ?? "Test",
+      feedback: asssignFeedbackInfo?.notFollowUpCount ?? 0,
+      tasks: asssignFeedbackInfo?.notAssignedCount ?? 0,
+      border: "#87CEEB",
+    },
   ];
+
+  const safeDivision = (numerator: number, denominator: number): number => {
+    if (!denominator || denominator === 0) return 0;
+    return +(numerator / denominator).toFixed(1);
+  };
 
   const metrics = [
     {
       title: "Lead to CP",
-      percentage: 2.4,
-      count1: 11708,
-      count2: 280,
+      percentage: safeDivision(
+        (dashCount?.lead?.visit1 ?? 0) * 100,
+        dashCount?.lead?.total ?? 0
+      ),
+      count1: dashCount?.lead?.total ?? 0,
+      count2: dashCount?.lead?.visit1 ?? 0,
       label1: "Lead",
       label2: "CP",
       color: "#ec4899",
     },
     {
       title: "Lead to Walk In",
-      percentage: 1.4,
-      count1: 11708,
-      count2: 161,
+      percentage: safeDivision(
+        (dashCount?.lead?.visit2 ?? 0) * 100,
+        dashCount?.lead?.total ?? 0
+      ),
+      count1: dashCount?.lead?.total ?? 0,
+      count2: dashCount?.lead?.visit2 ?? 0,
       label1: "Lead",
       label2: "Visit",
       color: "#10b981",
     },
     {
       title: "CP to Booking",
-      percentage: 17.1,
-      count1: 280,
-      count2: 48,
+      percentage: safeDivision(
+        (dashCount?.lead?.bookingCp ?? 0) * 100,
+        dashCount?.lead?.visit1 ?? 0
+      ),
+      count1: dashCount?.lead?.visit1 ?? 0,
+      count2: dashCount?.lead?.bookingCp ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#3b82f6",
     },
     {
       title: "Walk In to Booking",
-      percentage: 7.5,
-      count1: 161,
-      count2: 12,
+      percentage: safeDivision(
+        (dashCount?.lead?.bookingWalkIn ?? 0) * 100,
+        dashCount?.lead?.visit2 ?? 0
+      ),
+      count1: dashCount?.lead?.visit2 ?? 0,
+      count2: dashCount?.lead?.bookingWalkIn ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#f97316",
@@ -362,17 +410,18 @@ export function ClosingManagerDashboardHeader({
                     avatarUrl ||
                     "/placeholder.svg?height=32&width=32&query=user%20avatar"
                   }
-                  alt={`${displayName} avatar`}
+                  alt={`${dashCount?.name ?? "test"} avatar`}
                 />
                 <AvatarFallback className="text-xs">{initials}</AvatarFallback>
               </Avatar>
 
               <div className="flex flex-col">
                 <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
-                  {displayName}
+                  {dashCount?.name ?? "test"}
                 </span>
                 <span className="text-[11px] leading-4 text-muted-foreground">
-                  {pendingText}
+                  {/* dynamically show pending tasks from dashCount */}
+                  {`You have ${dashCount?.task?.pending ?? 0} pending tasks`}
                 </span>
               </div>
             </div>
@@ -542,13 +591,13 @@ export function ClosingManagerDashboardHeader({
                   <div className={styles.sheetItem2}>
                     <p className={styles.sheetLabel2}>Feedback Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.red}`}>
-                      1000
+                      {asssignFeedbackInfo?.notFollowUpCount ?? 0}
                     </p>
                   </div>
                   <div className={`${styles.sheetItem2} ${styles.sheetgreen} `}>
                     <p className={styles.sheetLabel2}>Assign Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.blue}`}>
-                      200
+                      {asssignFeedbackInfo?.notAssignedCount ?? 0}
                     </p>
                   </div>
                 </div>
