@@ -258,14 +258,14 @@ export function ClosingManagerDashboardHeader({
     // },
   ];
 
-  const assignFeedbackcard = [
-    {
-      name: asssignFeedbackInfo?.teamLeader?.firstName ?? "Test",
-      feedback: asssignFeedbackInfo?.notFollowUpCount ?? 0,
-      tasks: asssignFeedbackInfo?.notAssignedCount ?? 0,
-      border: "#87CEEB",
-    },
-  ];
+  const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
+    ? asssignFeedbackInfo.map((item, index) => ({
+        name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"}`,
+        feedback: item.notFollowUpCount ?? 0,
+        tasks: item.notAssignedCount ?? 0,
+        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+      }))
+    : []
 
   const safeDivision = (numerator: number, denominator: number): number => {
     if (!denominator || denominator === 0) return 0;

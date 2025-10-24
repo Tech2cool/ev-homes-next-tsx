@@ -204,14 +204,14 @@ export function SalesManagerDashboardHeader({
     },
   ];
 
-  const assignFeedbackcard = [
-    {
-      name: asssignFeedbackInfo?.teamLeader?.firstName ?? "Test",
-      feedback: asssignFeedbackInfo?.notFollowUpCount ?? 0,
-      tasks: asssignFeedbackInfo?.notAssignedCount ?? 0,
-      border: "#87CEEB",
-    },
-  ];
+  const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
+    ? asssignFeedbackInfo.map((item, index) => ({
+        name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"}`,
+        feedback: item.notFollowUpCount ?? 0,
+        tasks: item.notAssignedCount ?? 0,
+        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+      }))
+    : []
 
   const safeDivision = (numerator: number, denominator: number): number => {
     if (!denominator || denominator === 0) return 0;
@@ -461,13 +461,13 @@ export function SalesManagerDashboardHeader({
                   <div className={styles.sheetItem2}>
                     <p className={styles.sheetLabel2}>Feedback Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.red}`}>
-                      1000
+                      {card.feedback}
                     </p>
                   </div>
                   <div className={`${styles.sheetItem2} ${styles.sheetgreen} `}>
                     <p className={styles.sheetLabel2}>Assign Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.blue}`}>
-                      200
+                      {card.tasks}
                     </p>
                   </div>
                 </div>

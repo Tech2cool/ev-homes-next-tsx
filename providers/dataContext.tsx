@@ -968,11 +968,11 @@ const getTeamReportingTo = async (id: string, dept: string) => {
         method: "GET",
       });
 
-      const { data, ...withoutData } = res;
-      console.log(withoutData);
-      // console.log("data:", JSON.stringify(data, null, 2));
-
-      setAssignFeedbackInfo(withoutData);
+if (res?.data) {
+      setAssignFeedbackInfo(res.data);
+    } else {
+      setAssignFeedbackInfo(res);
+    }
 
       // if (page > 1) {
       //   setleads((prev) => [...prev, ...(res?.data ?? [])]);
