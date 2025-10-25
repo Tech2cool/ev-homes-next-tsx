@@ -13,7 +13,7 @@ import FollowUp from "@/components/lead-details-components/followup"
 import VisitHistory from "@/components/lead-details-components/visithistory"
 import TransferHistory from "@/components/lead-details-components/transferhistory"
 import BookingOverview from "@/components/lead-details-components/bookingoverview"
-import tagIcon from "@/public/images/taglabel.png"
+import tagIcon from "@/public/images/transfer.png"
 import {
   ArrowLeft,
   Calendar,
@@ -392,10 +392,10 @@ const LeadDetailsPage = () => {
                   {/* <div className={styles.clientIcon}>
                     {visit?.firstName?.charAt(0)?.toUpperCase()}
                   </div> */}
-                  <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={80} height={40} />
+                  <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
                   <div className={styles.clientDetails}>
 
-                    <p className={styles.trns}>Transferred From</p>
+                    {/* <p className={styles.trns}>Transferred From</p> */}
                     <p className={styles.trnsname}>Vicky</p>
                     <div className={styles.namecl}>
                       {visit?.firstName ?? ""} {visit?.lastName ?? ""}
@@ -765,9 +765,9 @@ const LeadDetailsPage = () => {
 
 
               <div className={styles.leadInfo}>
-                <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={80} height={40} />
+                <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
                 <div className={styles.clientDetails}>
-                  <p className={styles.trns}>Transferred From</p>
+                  {/* <p className={styles.trns}>Transferred From</p> */}
                   <p className={styles.trnsname}>Vicky</p>
                   <div className={styles.namecl}>
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}

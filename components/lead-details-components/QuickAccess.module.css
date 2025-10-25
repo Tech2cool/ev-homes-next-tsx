@@ -274,7 +274,7 @@
 :global(html.light) .icontrans {
   color: #7999f2;
 }
-
+.vlinerun,
 .vline {
   width: 2px;
   flex-grow: 1;
@@ -283,7 +283,10 @@
   border-radius: 2px;
   margin-top: 6px;
 }
+.vlinerun{
+    background: linear-gradient(to bottom, #bdbfc0 0%, transparent 100%);
 
+}
 .maincot {
   display: flex;
   flex-direction: column;
@@ -650,8 +653,27 @@
   .maincot {
     padding: 1.3rem 0.5rem 0.3rem 0.5rem;
   }
-
+  .call,
+  .callgreen {
+    font-size: 0.6rem;
+  }
+   .lable {
+    font-size: 0.8rem;
+  }
+  
+  .circle {
+    height: 30px;
+    width: 30px;
+  }
+  .icontrans,
+.callicon {
+  font-size: 1.1rem;
 }
+.cont {
+  gap: 10px;
+}
+}
+
 
 /* ****************Booking overview *********** */
 .bosec {

@@ -1,0 +1,354 @@
+.fullContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(15, 15, 15);
+  display: flex;
+  flex-direction: column;
+
+  z-index: 999;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+
+:global(html.light) .fullContainer {
+  background: rgb(230, 230, 230);
+
+}
+
+.filleadlistContainer {
+  display: flex;
+  /* gap: 10px; */
+  align-items: flex-start;
+}
+
+.filterWrapper {
+  /* width: 250px; */
+  flex-shrink: 0;
+}
+
+.listDetailsContainer {
+  display: flex;
+  width: 100%;
+
+}
+
+.listContainer {
+  /* width: auto; */
+  width: 23%;
+
+}
+
+.listHistoryContainer {
+  display: flex;
+  flex-direction: column;
+  width: 77%;
+}
+
+.messageWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.messageWrapper p {
+  color: gray;
+  font-size: 18px;
+}
+
+.backButtonWrapper {
+  padding: 10px 20px 0px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.backIcon {
+  cursor: pointer;
+  color: #ffffff;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.backIcon:hover {
+  color: #007bff;
+  transform: translateX(-3px);
+}
+
+
+
+.leadListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.leadCard {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 15px;
+  color: white;
+  width: auto;
+  border: 1px solid rgba(255, 255, 255, 0.066);
+  background: rgba(58, 58, 58, 0.08);
+  border-radius: 8px;
+  padding: 12px;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.481),
+              0 2px 4px rgba(255, 255, 255, 0.101);
+}
+
+.leadInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex: 3;
+  flex-direction: column;
+  width: 100%;
+}
+
+.clientIcon {
+  width: 3vw;
+  height: 3vw;
+  border-radius: 50%;
+  background-color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.clientDetails {
+  background-color: #222;
+  width: 100%;
+  padding: 0px 7px;
+  border-radius: 3px;
+}
+
+.etmcontainer {
+  flex: 2;
+  display: flex;
+  gap: 10px;
+flex-direction: column;
+}
+
+
+.est {
+
+  background-color: #222;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.8vw;
+  text-align: center;
+  letter-spacing: 0.06em;
+  padding: 3.8px;
+  border-radius: 3px;
+
+}
+
+.clientDetails h4 {
+  margin: 0;
+  font-size: 1vw;
+  color: white;
+}
+
+.fistrow {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  gap: 10px;
+}
+
+.phone {
+  font-size: 1vw;
+  color: #bbb;
+}
+
+
+.lable{
+   font-size: 2vh;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 5px 0;
+}
+.value{
+  color: rgb(255, 255, 255);
+    font-size: 2vh;
+    margin-left: 15px;
+}
+.clientStatus {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.5vw;
+  background: rgb(243, 178, 58);
+  color: white;
+  display: inline-block;
+}
+
+.assignby {
+  display: flex;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background-color: #007bff;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: white;
+  margin-left: auto;
+}
+
+.lastpart {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nocont {
+  text-align: "center";
+  padding: 20px;
+  color: white
+}
+
+:global(html.light) .nocont {
+  color: rgb(22, 22, 22);
+}
+.listContainerestm{
+  width: 30%;
+}
+@media (max-width: 1024px) {
+  .listContainerestm {
+    width: 35%;
+  }
+
+  .listHistoryContainer {
+    width: 65%;
+  }
+.est{
+  font-size: 0.75rem;
+}
+  .clientIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .clientDetails h4 {
+    font-size: 1rem;
+  }
+
+  .phone {
+    font-size: 0.9rem;
+  }
+
+  .leadMeta p {
+    font-size: 0.9rem;
+  }
+
+  .leadCard {
+    padding: 8px;
+  }
+}
+
+/* ===== Mobile View ===== */
+@media (max-width: 768px) {
+  .listDetailsContainer {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .listContainerestm,
+  .listHistoryContainer {
+    width: 100%;
+  }
+
+  .leadListContainer {
+    border-right: none;
+    padding: 10px;
+  }
+
+  .leadCard {
+    border-radius: 8px;
+    background: rgba(58, 58, 58, 0.08);
+    padding: 12px;
+  }
+
+  .clientIcon {
+    width: 45px;
+    height: 45px;
+    font-size: 1rem;
+  }
+
+  .clientDetails h4 {
+    font-size: 1rem;
+  }
+
+  .phone {
+    font-size: 0.85rem;
+  }
+
+  .leadMeta p {
+    font-size: 0.85rem;
+  }
+
+  .lastpart {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  .fullContainer {
+    justify-content: flex-start;
+    align-items: stretch;
+    overflow-y: auto;
+  }
+
+  .backButtonWrapper {
+    padding: 10px;
+  }
+
+  .backIcon {
+    font-size: 24px;
+  }
+}
+
+:global(html.light) .leadListContainer {
+  border-right: 1px solid #ccc;
+  background: #f0f0f0;
+}
+
+:global(html.light) .leadCard {
+  background: #f0f0f0;
+  color: #222;
+  border-bottom: 1px solid #ccc;
+}
+
+:global(html.light) .clientIcon {
+  background-color: #007bff;
+  color: #fff;
+}
+
+:global(html.light) .clientDetails h4,
+:global(html.light) .phone {
+  color: #222;
+}
+
+:global(html.light) .leadMeta p {
+  color: #555;
+}
+
+:global(html.light) .lastpart span {
+  color: inherit;
+}
+
+:global(html.light) .backIcon {
+  color: #007bff;
+}
