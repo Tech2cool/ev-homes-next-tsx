@@ -1,0 +1,34 @@
+:global(html.light) .ScrollLeft{
+    background-color: white; /* same as page background */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s ease;   
+  
+}
+:global(html.light) .prev{
+    /* background-color: black; */
+    color: black;
+}
+:global(html.light) .ScrollRight{
+   background-color: white; /* same as page background */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s ease;       
+
+}
+:global(html.light) .next{
+    /* background-color: black; */
+    color: black;
+}
+
+:global(html.dark) .ScrollLeft{
+    background-color:rgba(0, 0, 0, 0.767); /* same as page background */
+  
+  
+}
+:global(html.dark) .ScrollRight{
+    background-color:rgba(0, 0, 0, 0.767); /* same as page background */
+  
+  
+}
+
+
+

@@ -122,7 +122,6 @@
 } */
 
 .cardtarget {
-
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -137,11 +136,8 @@
 }
 
 :global(html.light) .cardtarget {
-
   /* background: rgba(253, 253, 253, 0.7); */
 }
-
-
 
 /* Remove bottom border radius when sheet visible */
 .cardActive,
@@ -476,6 +472,9 @@
   color: #ececec;
   font-weight: 500;
 }
+:global(html.light) .label {
+  color: black;
+}
 
 .taricon {
   color: rgba(255, 167, 4, 0.13);
@@ -513,7 +512,6 @@
 :global(html.light) .graf {
   background: rgb(247, 247, 247);
   box-shadow: 0 2px 10px #01043333;
-
 }
 
 .grafcontainer {
@@ -550,6 +548,16 @@
   z-index: 1;
 }
 
+:global(html.light) .donut::before {
+  content: "";
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  background: rgba(255, 255, 255, 0.298);
+  border-radius: 50%;
+  z-index: 1;
+}
+
 .iconBg {
   position: absolute;
   z-index: 1;
@@ -558,6 +566,7 @@
   align-items: center;
   justify-content: center;
   color: inherit;
+  z-index: 999;
 }
 
 .centerNumber {
@@ -567,24 +576,29 @@
   z-index: 2;
   color: white;
 }
-
-
+:global(html.light) .centerNumber {
+  position: absolute;
+  font-size: 22px;
+  font-weight: bold;
+  z-index: 2;
+  color: black;
+}
 
 .targetcontainer {
-  width: 45vw;
+  width: 60%;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.073);
+
   border-radius: 8px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   padding: 1rem 1rem 1rem 1rem;
   gap: 2rem;
 }
 
 :global(html.light) .targetcontainer {
-  background-color: #392f5a;
-
+  background-color: white;
 }
 
 .texttarget {
@@ -594,13 +608,13 @@
   position: relative;
   gap: 1.5vw;
   background: linear-gradient(135deg, #1a1a1a, #262626);
-  padding: 16px 20px;
+  padding: 16px 30px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   color: #f1f1f1;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   transition: all 0.3s ease;
-  width: 100%;
+  width: 80%;
 }
 
 :global(html.light) .texttarget {
@@ -608,7 +622,7 @@
 }
 
 .texttarget:hover {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
 }
 
 .progressHeader {
@@ -655,33 +669,64 @@
   padding: 10px;
   border-radius: 8px;
   color: white;
-
 }
-.monthselect{
+
+.monthselect {
   background-color: red;
 }
 
 :global(html.light) .filter {
-  background-color: rgb(59, 67, 84);
+  background-color: white;
 }
 
-
-.yearSelector select {
-  background: #1a1a1a;
+.yearSelector {
+  /* background: #1a1a1a;
   color: white;
   border: none;
   padding: 5px 10px;
-
   font-size: 16px;
   border-radius: 6px;
-  margin-bottom: 15px;
+  margin-bottom: 15px; */
   outline: none;
+  position: relative;
+  display: inline-block;
+}
+.selectHeader {
+  appearance: none; /* Remove browser default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
 
+  background-color: rgba(0, 0, 0, 0.081);
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 30px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  width: 100px;
+
+  /* Add a custom dropdown arrow */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+.selectHeader:hover {
+  background-color: #2a2a3d;
+  border-color: #666;
+}
+:global(html.light) .selectHeader {
+  background-color: white;
+  color: black;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
 }
 
-:global(html.light) .yearSelector select {
+:global(html.light) .yearSelector {
   background: #fcf6f6;
   color: #090909;
+  border: 1px solid rgba(0, 0, 0, 0.263);
 }
 
 .monthGrid {
@@ -703,6 +748,7 @@
 :global(html.light) .monthItem {
   background: #fcf6f6;
   color: #090909;
+  border: 1px solid rgba(0, 0, 0, 0.288);
 }
 
 .monthItem:hover {
@@ -713,14 +759,26 @@
   display: none;
 }
 
+@media screen and (max-width:768px){
+  
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10%;
+  width: 100%;
+}
+.texttarget {
+ 
+  width: 100%;
+}
+}
+
 @media (max-width: 1135px) {
   .graf {
-
     padding: 1rem;
     gap: 2rem;
     align-items: center;
     justify-content: center;
-
   }
 
   .grafcontainer {
@@ -792,6 +850,10 @@
   .graf {
     display: none;
   }
+  .description{
+    margin-left: 2.5vw;
+  }
+  
 
   .grafMobile {
     display: flex;
@@ -806,6 +868,7 @@
     background: #1a1a1a;
     border-radius: 12px;
     padding: 16px;
+    /* background-color: red; */
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -815,7 +878,7 @@
 
   :global(html.light) .progressCard {
     background: rgb(255, 255, 255);
-    box-shadow: 0 2px 10px rgba(1, 4, 51, 0.388)
+    box-shadow: 0 2px 10px rgba(1, 4, 51, 0.388);
   }
 
   .targetsWrapper {
@@ -829,6 +892,8 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    
+    /* background-color: red; */
   }
 
   .targetNumber {
@@ -846,15 +911,15 @@
   .targetLabel {
     font-size: 12px;
     color: #fff;
+    
   }
 
   :global(html.light) .targetLabel {
     color: #232121;
-
   }
 
   .texttarget {
-    padding: 5px;
+    padding: 20px;
     color: #fff;
   }
 
@@ -881,7 +946,6 @@
     line-height: 1.4;
     margin-top: 4px;
   }
-
 
   .filterButton {
     color: #fff;
@@ -922,12 +986,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
   }
 
   .filterButton {
-    background: #292929;
-    color: #fff;
+    /* background: #292929; */
+    background-color: rgba(255, 255, 255, 0.892);
+
+    color: black;
+    font-weight: 700;
     border: none;
     padding: 8px 12px;
     border-radius: 6px;
@@ -939,11 +1005,11 @@
   }
 
   :global(html.light) .filterButton {
-    background: rgba(39, 90, 199, 0.361);
-    color: #060d5a;
-
+    background:rgba(0, 0, 0, 0.774);
+    /* box-shadow: #090909; */
+    color: white;
   }
-
+/* mobiletarget */
   .monthDropdown {
     position: absolute;
     top: 40px;
@@ -973,7 +1039,7 @@
   /* 6-column month grid */
   .monthGrid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
 
@@ -985,6 +1051,7 @@
     color: #fff;
     border-radius: 6px;
     transition: 0.2s;
+    border: 1px solid grey;
   }
 
   :global(html.light) .monthItemMobile {
@@ -994,7 +1061,6 @@
   .monthItemMobile:hover {
     background: #292929;
   }
-
 }
 
 @media (max-width: 576px) {
@@ -1015,7 +1081,6 @@
   .monthDropdown {
     width: 100%;
   }
-
 }
 
 @media (max-width: 768px) {
@@ -1082,4 +1147,102 @@
     display: flex;
     flex-direction: column;
   }
+}
+.optionMain {
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 14px;
+  padding: 8px;
+}
+
+:global(html.light) .optionMain {
+  background-color: white;
+  color: black;
+}
+/* .selectHeader{
+   background-color: #1a1a1a;
+  color: #fff;
+  padding: 10px 15px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  width: 150px;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+} */
+
+.customSelect {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  font-family: sans-serif;
+  color: black;
+  margin-bottom: 2vh;
+}
+:global(html.light) .customSelect {
+  background-color: white;
+  color: black;
+}
+
+.selected {
+  padding: 8px 12px;
+  border: 1px solid rgba(128, 128, 128, 0.124);
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between; /* year on left, arrow on right */
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.075);
+  color: rgba(255, 255, 255, 0.782);
+}
+:global(html.light) .selected {
+  color: black;
+}
+
+.arrow {
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.optionsGrid {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  border: 1px solid rgba(128, 128, 128, 0.582);
+  padding: 10px 10px;
+  border-radius: 4px;
+  background-color: black;
+  margin-top: 2px;
+  z-index: 10;
+
+  max-height: 200px; /* control height */
+  overflow-y: auto; /* scrollable */
+  display: grid;
+  gap: 5px;
+
+  border-radius: 6px;
+  z-index: 10;
+}
+:global(html.light) .optionsGrid{
+  background-color: white;
+}
+
+:global(html.light) .optionMain{
+  background-color: rgba(128, 128, 128, 0.178);
+}
+.optionMain {
+  padding: 8px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.optionMain:hover {
+  background-color: grey;
 }

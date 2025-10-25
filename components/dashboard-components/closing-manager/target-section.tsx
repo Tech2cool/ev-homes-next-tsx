@@ -121,7 +121,7 @@ export function TargetSection({
   return (
     <>
       <div className="p-6 pt-0">
-        <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
+        <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>           
        <section
   className={`${styles.wrap} bg-card text-card-foreground rounded-xl shadow-sm p-2 border`}
   aria-labelledby="target-section-heading"
@@ -139,11 +139,15 @@ export function TargetSection({
                 <span className={styles.progressText}>
                   Progress {progressPercent}%
                 </span>
+
+                
               </div>
 
+
+{/* mobile */}
                <div className={styles.grafcontainer}>
           {data.map((item, index) => {
-            const IconComponent = item.icon;
+            const IconComponent = item.icon; 
             return (
               <div className={styles.mytr} key={index}>
                 <div
@@ -154,12 +158,12 @@ export function TargetSection({
                 >
                   <div
                     className={styles.iconBg}
-                    style={{ color: item.iconColor }}
+                    // style={{ color: item.iconColor }}
                   >
-                    <IconComponent size={40} />
+                    <IconComponent size={40}   stroke={item.iconColor} />
                   </div>
                   <div className={styles.centerNumber}>{item.value}</div>
-                </div>
+                // </div>
                 <div className={styles.label}>{item.label}</div>
               </div>
             );

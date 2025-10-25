@@ -1,3 +1,7 @@
+import { useData } from "@/providers/dataContext";
+import { useUser } from "@/providers/userContext";
+import { useEffect } from "react";
+
 type ConversionOverviewProps = {
   leads: number;
   bookings: number;
@@ -58,6 +62,16 @@ export function ConversionOverview({
   bookings,
   visits,
 }: ConversionOverviewProps) {
+  const { dashCount, getClosingManagerDashBoardCount } = useData();
+  const { user, loading } = useUser();
+
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("use effect dashboard");
+      getClosingManagerDashBoardCount({ id: user?._id ?? null });
+    }
+  }, [user, loading]);
+
   const safeLeads = Math.max(0, leads || 0);
   const safeBookings = Math.max(0, bookings || 0);
   const safeVisits = Math.max(0, visits || 0);
@@ -66,19 +80,40 @@ export function ConversionOverview({
   const bookingRate = safeLeads > 0 ? clamp01(safeBookings / safeLeads) : 0;
   const visitRate = safeLeads > 0 ? clamp01(safeVisits / safeLeads) : 0;
 
+  const safeDivision = (numerator: number, denominator: number): number => {
+    if (!denominator || denominator === 0) return 0;
+    return +(numerator / denominator).toFixed(1);
+  };
+
   // KPI list for the right side
   const overview = [
-    { title: "Leads", percentage: 100, color: "#3b82f6" }, // always 100% of itself
-    {
-      title: "Bookings",
-      percentage: Math.round(bookingRate * 100),
-      color: "#8b5cf6",
-    },
-    {
+     {
       title: "Visits",
-      percentage: Math.round(visitRate * 100),
+      percentage: safeDivision(
+        ((dashCount?.lead?.visit1 ?? 0) + (dashCount?.lead?.visit2 ?? 0)) * 100,
+        dashCount?.lead?.total ?? 0
+      ),
+
       color: "#06b6d4",
     },
+   
+    {
+      title: "Bookings",
+      percentage: safeDivision(
+        (dashCount?.lead?.booking ?? 0) * 100,
+        (dashCount?.lead?.visit1 ?? 0) + (dashCount?.lead?.visit2 ?? 0)
+      ),
+      color: "#8b5cf6",
+    },
+     {
+      title: "Overall",
+      percentage: safeDivision(
+        (dashCount?.lead?.booking ?? 0) * 100,
+        dashCount?.lead?.total ?? 0
+      ),
+      color: "#3b82f6",
+    }, 
+   
   ];
 
   return (
@@ -117,9 +152,7 @@ export function ConversionOverview({
                   <div className="text-2xl font-bold ">
                     {safeLeads.toLocaleString()}
                   </div>
-                  <div className="text-xs font-medium  mt-0">
-                    TOTAL LEADS
-                  </div>
+                  <div className="text-xs font-medium  mt-0">TOTAL LEADS</div>
                 </div>
               </div>
             </div>

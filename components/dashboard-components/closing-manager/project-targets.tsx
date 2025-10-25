@@ -39,11 +39,11 @@ export function ProjectTargets({
       {/* Tiles: count above name, matching the screenshot intent */}
       <div className="grid grid-cols-3 gap-2 md:gap-3" role="list" aria-label="Project target metrics">
         {metrics.slice(0, 3).map((m) => (
-          <div key={m.label} role="listitem" className="rounded-md border bg-card p-3 text-center">
+          <div key={m.label} role="listitem" className="rounded-md border bg-card p-0.5 text-center ">
             <div className="text-base font-semibold text-foreground md:text-lg" aria-label={`${m.label} count`}>
               {m.count}
             </div>
-            <div className="mt-1 text-xs font-medium text-muted-foreground md:text-sm">{m.label}</div>
+            <div className="whitespace-nowrap overflow-hidden text-ellipsis block">{m.label}</div>
           </div>
         ))}
       </div>

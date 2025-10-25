@@ -33,11 +33,15 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { MdOutlinePendingActions } from "react-icons/md";
 import ProjectTargetsCarousel from "./project-targets-carousel";
+import { createContext } from "vm";
+import { motion, AnimatePresence } from "framer-motion";
+import { useData } from "@/providers/dataContext";
+import { useUser } from "@/providers/userContext";
 
 interface ClosingManagerDashboardHeaderProps {
   userName: string;
-  pendingText?: string; // e.g., "You have 369 pending tasks"
-  lastSyncText?: string; // e.g., "24 Sep 25 10:45 pm"
+  pendingText?: string;
+  lastSyncText?: string;
   avatarUrl?: string;
   className?: string;
   onSyncNow?: () => void;
@@ -45,13 +49,80 @@ interface ClosingManagerDashboardHeaderProps {
 
 export function ClosingManagerDashboardHeader({
   userName = "Deepak Karki",
-  pendingText = "You have 369 pending tasks",
+  pendingText,
   lastSyncText = "07 Oct 25",
   avatarUrl,
   className,
   onSyncNow,
 }: ClosingManagerDashboardHeaderProps) {
-  const displayName = (userName ?? "").trim() || "User";
+  const {
+    TeamReportingTo,
+    dashCount,
+    asssignFeedbackInfo,
+    myOverallTarget,
+    getClosingManagerDashBoardCount,
+    fetchAssignFeedbackLeadsCount,
+    getQuarterWiseTarget,
+  } = useData();
+  const { user, loading } = useUser();
+
+  const teamMembers =
+    TeamReportingTo?.crew
+      ?.map((member: any) => member.teamMember)
+      .filter(Boolean) || [];
+
+  // useEffect(() => {
+  //   console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
+  // }, [asssignFeedbackInfo]);
+
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("use effect dashboard");
+      getClosingManagerDashBoardCount({ id: user?._id ?? null });
+      fetchAssignFeedbackLeadsCount({
+        query: "",
+        page: 1,
+        limit: 10,
+      });
+
+      const currentYear = new Date().getFullYear();
+      const currentQuarter = Math.floor((new Date().getMonth() + 3) / 3);
+      getQuarterWiseTarget(user?._id ?? "", currentQuarter, currentYear);
+    }
+  }, [user, loading]);
+
+  // This runs when the state is actually updated
+  useEffect(() => {
+    if (asssignFeedbackInfo) {
+      console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
+    }
+  }, [asssignFeedbackInfo]);
+
+  useEffect(() => {
+    if (myOverallTarget) {
+      console.log("=== TARGET DATA DEBUG ===");
+      console.log("Target:", myOverallTarget.target);
+      console.log("Projects:", myOverallTarget.projectWise);
+
+      let debugBookings = 0;
+      let debugRegistrations = 0;
+
+      myOverallTarget.projectWise?.forEach((proj, idx) => {
+        console.log(`Project ${idx}:`, proj);
+        debugBookings += proj?.booking ?? 0;
+        debugRegistrations += proj?.registration ?? 0;
+      });
+
+      console.log("Total Bookings:", debugBookings);
+      console.log("Total Registrations:", debugRegistrations);
+      console.log("=== END DEBUG ===");
+
+      setBookingCount(debugBookings);
+      setRegistrationCount(debugRegistrations);
+    }
+  }, [myOverallTarget]);
+
+  const displayName = (dashCount?.name ?? "").trim() || "User";
   const initials = React.useMemo(() => {
     const parts = displayName.split(/\s+/).filter(Boolean);
     if (parts.length === 0) return "U";
@@ -62,10 +133,12 @@ export function ClosingManagerDashboardHeader({
       .toUpperCase();
   }, [displayName]);
 
+  const [showDate, setshowDate] = useState(false);
+
   const salesoverview = [
     {
       title: "Leads",
-      value: "12065",
+      value: dashCount?.lead?.total ?? 0,
       isPositive: true,
       icon: <Users className="h-6 w-6" />,
       iconColor: "text-blue-600",
@@ -75,7 +148,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "CP Visits",
-      value: "347",
+      value: dashCount?.lead?.visit1 ?? 0,
       isPositive: true,
       icon: <Calendar className="h-6 w-6" />,
       iconColor: "text-green-600",
@@ -85,7 +158,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Walk In Visits",
-      value: "162",
+      value: dashCount?.lead?.visit2 ?? 0,
       isPositive: true,
       icon: <Truck className="h-6 w-6" />,
       iconColor: "text-purple-600",
@@ -95,7 +168,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Booking",
-      value: "31",
+      value: dashCount?.lead?.booking ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-orange-600",
@@ -105,7 +178,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Internal Leads",
-      value: "209",
+      value: dashCount?.lead?.internalLeadCount ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-teal-600",
@@ -115,7 +188,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Bulk Leads",
-      value: "306",
+      value: dashCount?.lead?.bulkCount ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-pink-600",
@@ -125,7 +198,7 @@ export function ClosingManagerDashboardHeader({
     },
     {
       title: "Pending",
-      value: "11779",
+      value: dashCount?.lead?.pending ?? 0,
       isPositive: false,
       icon: <TrendingDown className="h-6 w-6" />,
       iconColor: "text-red-600",
@@ -146,7 +219,9 @@ export function ClosingManagerDashboardHeader({
   const [showMonths, setShowMonths] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const [selectedMonth, setSelectedMonth] = useState("");
-  
+  const [open, setOpen] = useState(false);
+  const [bookingCount, setBookingCount] = useState(0);
+  const [registrationCount, setRegistrationCount] = useState(0);
 
   type QuickAction = {
     label: string;
@@ -160,14 +235,35 @@ export function ClosingManagerDashboardHeader({
     { label: "Team Performance", color: "green", Icon: GrGroup },
   ];
 
-  const leads = 11608;
-  const bookings = 59;
-  const visits = 432;
+  const leads = dashCount?.lead?.total ?? 0;
+  const bookings = dashCount?.lead?.booking ?? 0;
+  const visits =
+    (dashCount?.lead?.visit1 ?? 0) + (dashCount?.lead?.visit2 ?? 0);
+
+  let totalBookings = 0;
+  let totalRegistrations = 0;
+  const projects = myOverallTarget?.projectWise ?? [];
+
+  for (const project of projects) {
+    totalBookings += project?.booking ?? 0;
+    totalRegistrations += project?.registration ?? 0;
+  }
+
+  const targetValue = myOverallTarget?.target ?? 0;
+  const bookingPercentage =
+    targetValue > 0
+      ? Math.min(100, Math.round((totalBookings / targetValue) * 100))
+      : 0;
+  const registrationPercentage =
+    targetValue > 0
+      ? Math.min(100, Math.round((totalRegistrations / targetValue) * 100))
+      : 0;
 
   const data = [
     {
       label: "Target",
       value: 22,
+      actualValue: targetValue,
       color1: "#ff7e5f",
       color2: "#feb47b",
       icon: Flag,
@@ -175,7 +271,8 @@ export function ClosingManagerDashboardHeader({
     },
     {
       label: "Booking",
-      value: 1,
+      value: bookingCount,
+      actualValue: bookingCount,
       color1: "#00b09b",
       color2: "#96c93d",
       icon: Home,
@@ -183,7 +280,8 @@ export function ClosingManagerDashboardHeader({
     },
     {
       label: "Registration",
-      value: 0,
+      value: registrationCount,
+      actualValue: registrationCount,
       color1: "#4facfe",
       color2: "#00f2fe",
       icon: Trophy,
@@ -193,66 +291,88 @@ export function ClosingManagerDashboardHeader({
 
   const cards = [
     {
-      name: "Closing Crew",
-      tasks: "3890 tasks",
+      name: TeamReportingTo?.teamName ?? "Test",
+      tasks: TeamReportingTo?.totalTasks ?? 10,
       borderColor: " #4A90E2",
-      members: ["Deepak", "Muthuswami Venugopal Iyer", "Priya"],
+      members: teamMembers,
     },
-    {
-      name: "Shree Ganesh",
-      tasks: "2634 tasks",
-      borderColor: " #91082A",
+    // {
+    //   name: "Shree Ganesh",
+    //   tasks: "2634 tasks",
+    //   borderColor: " #91082A",
 
-      members: ["Rahul", "Sneha", "Kiran"],
-    },
-    {
-      name: "Deal Maker",
-      tasks: "3724 tasks",
-      borderColor: "#1F1F1F",
+    //   members: ["Rahul", "Sneha", "Kiran"],
+    // },
+    // {
+    //   name: "Deal Maker",
+    //   tasks: "3724 tasks",
+    //   borderColor: "#1F1F1F",
 
-      members: ["Suresh", "Anita", "Manoj"],
-    },
+    //   members: ["Suresh", "Anita", "Manoj"],
+    // },
   ];
 
-  const assignFeedbackcard = [
-    { name: "Deepak Karki", feedback: 100, tasks: 300, border: "#87CEEB" },
-    { name: "Jaspreet Arora", feedback: 210, tasks: 320, border: "#BA1A42" },
-    { name: "Ranjna Gupta", feedback: 150, tasks: 310, border: "#546E86" },
-  ];
+  const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
+    ? asssignFeedbackInfo.map((item, index) => ({
+        name: `${item.teamLeader?.firstName ?? "Team"} ${
+          item.teamLeader?.lastName ?? "Leader"
+        }`,
+        feedback: item.notFollowUpCount ?? 0,
+        tasks: item.notAssignedCount ?? 0,
+        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+      }))
+    : [];
+
+  const safeDivision = (numerator: number, denominator: number): number => {
+    if (!denominator || denominator === 0) return 0;
+    return +(numerator / denominator).toFixed(1);
+  };
 
   const metrics = [
     {
       title: "Lead to CP",
-      percentage: 2.4,
-      count1: 11708,
-      count2: 280,
+      percentage: safeDivision(
+        (dashCount?.lead?.visit1 ?? 0) * 100,
+        dashCount?.lead?.total ?? 0
+      ),
+      count1: dashCount?.lead?.total ?? 0,
+      count2: dashCount?.lead?.visit1 ?? 0,
       label1: "Lead",
       label2: "CP",
       color: "#ec4899",
     },
     {
       title: "Lead to Walk In",
-      percentage: 1.4,
-      count1: 11708,
-      count2: 161,
+      percentage: safeDivision(
+        (dashCount?.lead?.visit2 ?? 0) * 100,
+        dashCount?.lead?.total ?? 0
+      ),
+      count1: dashCount?.lead?.total ?? 0,
+      count2: dashCount?.lead?.visit2 ?? 0,
       label1: "Lead",
       label2: "Visit",
       color: "#10b981",
     },
     {
       title: "CP to Booking",
-      percentage: 17.1,
-      count1: 280,
-      count2: 48,
+      percentage: safeDivision(
+        (dashCount?.lead?.bookingCp ?? 0) * 100,
+        dashCount?.lead?.visit1 ?? 0
+      ),
+      count1: dashCount?.lead?.visit1 ?? 0,
+      count2: dashCount?.lead?.bookingCp ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#3b82f6",
     },
     {
       title: "Walk In to Booking",
-      percentage: 7.5,
-      count1: 161,
-      count2: 12,
+      percentage: safeDivision(
+        (dashCount?.lead?.bookingWalkIn ?? 0) * 100,
+        dashCount?.lead?.visit2 ?? 0
+      ),
+      count1: dashCount?.lead?.visit2 ?? 0,
+      count2: dashCount?.lead?.bookingWalkIn ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#f97316",
@@ -273,7 +393,10 @@ export function ClosingManagerDashboardHeader({
   };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
         setShowMonths(false);
       }
     };
@@ -282,7 +405,7 @@ export function ClosingManagerDashboardHeader({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [filterRef]);
-  const years = Array.from({ length: 10 }, (_, i) => year - 5 + i);
+  const years = Array.from({ length: 2125 - 1925 + 1 }, (_, i) => 1925 + i);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -343,17 +466,18 @@ export function ClosingManagerDashboardHeader({
                     avatarUrl ||
                     "/placeholder.svg?height=32&width=32&query=user%20avatar"
                   }
-                  alt={`${displayName} avatar`}
+                  alt={`${dashCount?.name ?? "test"} avatar`}
                 />
                 <AvatarFallback className="text-xs">{initials}</AvatarFallback>
               </Avatar>
 
               <div className="flex flex-col">
                 <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
-                  {displayName}
+                  {dashCount?.name ?? "test"}
                 </span>
                 <span className="text-[11px] leading-4 text-muted-foreground">
-                  {pendingText}
+                  {/* dynamically show pending tasks from dashCount */}
+                  {`You have ${dashCount?.task?.pending ?? 0} pending tasks`}
                 </span>
               </div>
             </div>
@@ -521,13 +645,13 @@ export function ClosingManagerDashboardHeader({
                   <div className={styles.sheetItem2}>
                     <p className={styles.sheetLabel2}>Feedback Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.red}`}>
-                      1000
+                      {card.feedback}
                     </p>
                   </div>
                   <div className={`${styles.sheetItem2} ${styles.sheetgreen} `}>
                     <p className={styles.sheetLabel2}>Assign Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.blue}`}>
-                      200
+                      {card.tasks}
                     </p>
                   </div>
                 </div>
@@ -559,175 +683,242 @@ export function ClosingManagerDashboardHeader({
       </div>
 
       {/* <TargetSection /> */}
-            <div className="p-6 pt-0">
-      <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
-      <div className={styles.graf}>
-        <div className={styles.grafcontainer}>
-          {data.map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <div className={styles.mytr} key={index}>
-                <div
-                  className={styles.donut}
-                  style={{
-                    background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
-                  }}
-                >
+      <div className="p-6 pt-0">
+        <h2 className="text-xl font-semibold text-foreground mb-6">Target</h2>
+        <div className={styles.graf}>
+          <div className={styles.grafcontainer}>
+            {data.map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <div className={styles.mytr} key={index}>
                   <div
-                    className={styles.iconBg}
-                    style={{ color: item.iconColor }}
+                    className={styles.donut}
+                    style={{
+                      background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
+                    }}
                   >
-                    <IconComponent size={40} />
+                    <div
+                      className={styles.iconBg}
+                      style={{ color: item.iconColor }}
+                    >
+                      <IconComponent size={40} />
+                    </div>
+                    <div className={styles.centerNumber}>{item.value}</div>
                   </div>
-                  <div className={styles.centerNumber}>{item.value}</div>
+                  <div className={styles.label}>{item.label}</div>
                 </div>
-                <div className={styles.label}>{item.label}</div>
+              );
+            })}
+          </div>
+          <div className={styles.targetcontainer}>
+            <div className={styles.texttarget}>
+              <div className={styles.progressHeader}>
+                <p className={styles.title}>Progress</p>
+                <span className={styles.percentage}>0% Completed</span>
               </div>
-            );
-          })}
-        </div>
-
-        <div className={styles.targetcontainer}>
-          <div className={styles.texttarget}>
-            <div className={styles.progressHeader}>
-              <p className={styles.title}>Progress</p>
-              <span className={styles.percentage}>0% Completed</span>
+              <div className={styles.description}>
+                <ProjectTargetsCarousel
+                  showDate={showDate}
+                  setShowDate={setshowDate}
+                  projects={[
+                    {
+                      projectName: "EV 9 SQUARE",
+                      metrics: [
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
+                      ],
+                    },
+                    {
+                      projectName: "EV10 Marina Bay",
+                      metrics: [
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
+                      ],
+                    },
+                    {
+                      projectName: "EV 23 Malibu West",
+                      metrics: [
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
+                      ],
+                    },
+                    {
+                      projectName: "Heart City",
+                      metrics: [
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
+                      ],
+                    },
+                  ]}
+                />
+              </div>
             </div>
-            <div className={styles.description}>
-              <ProjectTargetsCarousel
-        projects={[
-          {
-            projectName: "EV 9 SQUARE",
-            metrics: [
-              { label: "Target", count: 120 },
-              { label: "Booking", count: 75 },
-              { label: "Registration", count: 58 },
-            ],
-          },
-          {
-            projectName: "EV10 Marina Bay",
-            metrics: [
-              { label: "Target", count: 9 },
-              { label: "Booking", count: 0 },
-              { label: "Registration", count: 0 },
-            ],
-          },
-          {
-            projectName: "EV 23 Malibu West",
-            metrics: [
-              { label: "Target", count: 6 },
-              { label: "Booking", count: 0 },
-              { label: "Registration", count: 0 },
-            ],
-          },
-          {
-            projectName: "Heart City",
-            metrics: [
-              { label: "Target", count: 7 },
-              { label: "Booking", count: 0 },
-              { label: "Registration", count: 0 },
-            ],
-          },
-        ]}
-      />
-            </div>
-          </div>
-
-          <div className={styles.filter}>
-            <div className={styles.yearSelector}>
-              <select  value={year} onChange={(e) => setYear(Number(e.target.value))}>
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.monthGrid}>
-              {months.map((month, index) => (
-                <div key={index} className={styles.monthItem}>
-                  {month}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={styles.grafMobile}>
-        <div className={styles.progressCard}>
-
-          <div className={styles.targetsWrapper}>
-            {[
-              { label: "Target", value: 10, color: "#ffb347" },
-              { label: "Achieved", value: 5, color: "#4caf50" },
-              { label: "Pending", value: 5, color: "#ef5350" },
-            ].map((item, index) => (
-              <div className={styles.targetCard} key={index}>
-                <div
-                  className={styles.targetNumber}
-                  style={{ backgroundColor: item.color }}
+            {/* calender */}
+            <AnimatePresence>
+              {showDate && ( // render when the button is clicked
+                <motion.div
+                  key="calendar"
+                  initial={{ opacity: 0, x: -50, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className={styles.filter}
                 >
-                  {item.value}
-                </div>
-                <div className={styles.targetLabel}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className={styles.texttarget}>
-            <div className={styles.filterIconContainer} ref={filterRef}>
-              <button
-                className={styles.filterButton}
-                onClick={() => setShowMonths(!showMonths)}
-              >
-                {selectedMonth ? selectedMonth : ""} <Funnel size={15} />
-              </button>
-
-              {showMonths && (
-                <div className={styles.monthDropdown}>
-
-                  <div className={styles.yearSelector}>
-                    <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-                      {years.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Year Selector */}
+                  <div className={styles.customSelect}>
+                    <div
+                      className={styles.selected}
+                      onClick={() => setOpen(!open)}
+                    >
+                      {year}
+                      <span className={styles.arrow}>{open ? "▲" : "▼"}</span>
+                    </div>
+                    {open && (
+                      <div className={styles.optionsGrid}>
+                        {years.map((y) => (
+                          <div
+                            key={y}
+                            className={styles.optionMain}
+                            onClick={() => {
+                              setYear(y);
+                              setOpen(false);
+                            }}
+                          >
+                            {y}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
+
+                  {/* Month Grid */}
                   <div className={styles.monthGrid}>
                     {months.map((month, index) => (
-                      <div
-                        key={index}
-                        className={styles.monthItemMobile}
-                        onClick={() => handleMonthSelect(month)}
-                      >
+                      <div key={index} className={styles.monthItem}>
                         {month}
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )}
-            </div>
-            <div className={styles.progressHeader}>
-
-              <p className={styles.title}>Progress</p>
-              <span className={styles.percentage}>0% Completed</span>
-
-            </div>
-            <div className={styles.description}>
-              You have <strong>2 days</strong> remaining to complete{" "}
-              <strong>5 more CP's Onboarding</strong>.
-
-            </div>
+            </AnimatePresence>
           </div>
+        </div>
 
-          {/* Month Filter Icon */}
+        <div className={styles.grafMobile}>
+          <div className={styles.progressCard}>
+            <div className={styles.targetsWrapper}>
+              {[
+                { label: "Target", value: 10, color: "#ffb347" },
+                { label: "Achieved", value: 5, color: "#4caf50" },
+                { label: "Pending", value: 5, color: "#ef5350" },
+              ].map((item, index) => (
+                <div className={styles.targetCard} key={index}>
+                  <div
+                    className={styles.targetNumber}
+                    style={{ backgroundColor: item.color }}
+                  >
+                    {item.value}
+                  </div>
+                  <div className={styles.targetLabel}>{item.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className={styles.texttarget}>
+              <div className={styles.filterIconContainer} ref={filterRef}>
+                <button
+                  className={styles.filterButton}
+                  onClick={() => setShowMonths(!showMonths)}
+                >
+                  {selectedMonth ? selectedMonth : ""} <Funnel size={15} />
+                </button>
 
+                {showMonths && (
+                  <div className={styles.monthDropdown}>
+                    <div className={styles.yearSelector}>
+                      <select
+                        value={year}
+                        onChange={(e) => setYear(Number(e.target.value))}
+                      >
+                        {years.map((y) => (
+                          <option key={y} value={y}>
+                            {y}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className={styles.monthGrid}>
+                      {months.map((month, index) => (
+                        <div
+                          key={index}
+                          className={styles.monthItemMobile}
+                          onClick={() => handleMonthSelect(month)}
+                        >
+                          {month}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className={styles.progressHeader}>
+                <p className={styles.title}>Progress</p>
+                <span className={styles.percentage}>0% Completed</span>
+              </div>
+              <div className={styles.description}>
+                <ProjectTargetsCarousel
+                  showDate={showDate}
+                  setShowDate={setshowDate}
+                  projects={[
+                    {
+                      projectName: "EV 9 SQUARE",
+                      metrics: [
+                        { label: "Target", count: 120 },
+                        { label: "Booking", count: 75 },
+                        { label: "Registration", count: 58 },
+                      ],
+                    },
+                    {
+                      projectName: "EV10 Marina Bay",
+                      metrics: [
+                        { label: "Target", count: 9 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                    {
+                      projectName: "EV 23 Malibu West",
+                      metrics: [
+                        { label: "Target", count: 6 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                    {
+                      projectName: "Heart City",
+                      metrics: [
+                        { label: "Target", count: 7 },
+                        { label: "Booking", count: 0 },
+                        { label: "Registration", count: 0 },
+                      ],
+                    },
+                  ]}
+                />
+              </div>
+              {/* <div className={styles.description}>
+                You have <strong>2 days</strong> remaining to complete{" "}
+                <strong>5 more CP's Onboarding</strong>.
+              </div> */}
+            </div>
+
+            {/* Month Filter Icon */}
+          </div>
         </div>
       </div>
-      </div>
-      
 
       <div className="p-4 sm:p-6 pt-0">
         <div className="flex flex-col lg:flex-row gap-4">

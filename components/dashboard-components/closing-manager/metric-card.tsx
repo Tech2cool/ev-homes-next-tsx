@@ -5,7 +5,7 @@ import styles from "./dashboard.module.css";
 
 interface MetricCardProps {
   title: string;
-  value: string;
+  value: string | number;
   isPositive: boolean;
   icon: React.ReactNode;
   iconColor: string; // e.g., text-blue-600
