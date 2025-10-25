@@ -525,11 +525,9 @@ export function ClosingManagerDashboardHeader({
             <div
               key={index}
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
-              style={
-                {
-                  // minWidth: "150px", // adjust card width as needed
-                }
-              }
+              style={{
+                minWidth: "173px", // adjust card width as needed
+              }}
             >
               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
