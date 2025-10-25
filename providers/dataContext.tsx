@@ -71,6 +71,8 @@ type FetchLeadsParams = {
   project?: string | null;
 };
 
+
+
 //site visit
 type SiteVisitParams = {
   query?: string;
@@ -80,6 +82,147 @@ type SiteVisitParams = {
   startDate?: string | null;
   endDate?: string | null;
   date?: string | null;
+};
+
+type PostSaleLead = {
+  id?: string | null;
+  unitNo?: string | null;
+  floor?: number | null;
+  buildingNo?: number | null;
+  number?: number | null;
+  project?: OurProject | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  requirement?: string | null;
+  countryCode?: string | null;
+  phoneNumber?: number | null;
+  address?: string | null;
+  email?: string | null;
+  date?: Date | null;
+  carpetArea?: number | null;
+  sellableCarpetArea?: number | null;
+  flatCost?: number | null;
+  closingManager?: Employee | null;
+  postSaleExecutive?: Employee | null;
+  closingManagerTeam: Employee[];
+  postSaleAssignTo: Employee[];
+  bookingStatus?: BookingStatus | null;
+  applicants: Applicant[];
+  preRegistrationCheckList?: PreRegistrationChecklist | null;
+  disbursementRecord: DisbursementRecord[];
+  allInclusiveAmount?: number | null;
+  totalAmount?: number | null;
+  cgstAmount?: number | null;
+  netAmount?: number | null;
+  stampDutyAmount?: number | null;
+  tdsAmount?: number | null;
+  registrationDone?: boolean | null;
+  status?: string | null;
+  bookingCancelRemark?: string | null;
+  bookingCancelDate?: Date | null;
+  currentSlab?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+  bookingFormFront?: string | null;
+  bookingFormBack?: string | null;
+  bookingPdf?: string | null;
+  registrationDoneDate?: Date | null;
+  callHistory: CallHistory[];
+  parking: Parking[];
+  agreementValue?: number | null;
+  stampDutyValue?: number | null;
+  gstValue?: number | null;
+  roundedAgreementValue?: number | null;
+  roundedStampDutyValue?: number | null;
+  roundedGstValue?: number | null;
+  adjustedStampDutyAmt?: number | null;
+  totalValue?: number | null;
+  roundedAdjustedStampDuty?: number | null;
+  costSheetUrl?: string | null;
+  uploadedDocuments: UploadedDocuments[];
+  floorRise?: number | null;
+  pricingRemark?: string | null;
+  paymentOneAmt?: number | null;
+  paymentTwoAmt?: number | null;
+  paymentThreeAmt?: number | null;
+  paymentOneDueDate?: Date | null;
+  paymentTwoDueDate?: Date | null;
+  paymentThreeDueDate?: Date | null;
+  paymentScheme?: string | null;
+};
+
+type ProjectSchema = {
+  projectId?: OurProject | null;
+  target?: number | null;
+  booking?: number | null;
+  registration?: number | null;
+};
+
+type ProjectTargetData = {
+  projectName: string;
+  metrics: {
+    label: "Target" | "Booking" | "Registration";
+    count: number;
+  }[];
+};
+
+type OverallTarget = {
+  staffId?: Employee | null;
+  target?: number | null;
+  quarter?: number | null;
+  year?: number | null;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  currentDate?: Date | null;
+  booking: PostSaleLead[];
+  registration: PostSaleLead[];
+  projectWise: ProjectSchema[];
+};
+
+type BookingStatus = {
+  // Add BookingStatus properties as needed
+  id?: string;
+  status?: string;
+  // ... other properties
+};
+
+type Applicant = {
+  // Add Applicant properties as needed
+  id?: string;
+  name?: string;
+  // ... other properties
+};
+
+type PreRegistrationChecklist = {
+  // Add PreRegistrationChecklist properties as needed
+  id?: string;
+  // ... other properties
+};
+
+type DisbursementRecord = {
+  // Add DisbursementRecord properties as needed
+  id?: string;
+  // ... other properties
+};
+
+type CallHistory = {
+  // Add CallHistory properties as needed
+  id?: string;
+  // ... other properties
+};
+
+type Parking = {
+  // Add Parking properties as needed
+  id?: string;
+  // ... other properties
+};
+
+type UploadedDocuments = {
+  // Add UploadedDocuments properties as needed
+  id?: string;
+  // ... other properties
 };
 
 //total count
@@ -214,6 +357,10 @@ type DataProviderState = {
   searchLeadInfo: PaginationProps | null;
   leadsTeamLeaderGraphForDT: ChartModel[];
   asssignFeedbackInfo: TeamLeaderAssignFolloupUp | null;
+   myOverallTarget: OverallTarget | null;
+   projectTargets: ProjectTargetData[];
+  loadingProjectTargets: boolean;
+   
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
@@ -247,9 +394,9 @@ type DataProviderState = {
     id: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
-  // fetchAssignFeedbackLeads: (
-  //   params: AssignParms
-  // ) => Promise<{ success: boolean; message?: string }>;
+  fetchAssignFeedbackLeads: (
+    params: AssignParms
+  ) => Promise<{ success: boolean; message?: string }>;
 
   fetchAssignFeedbackLeadsCount: (
     params: TeamLeaderAssignFolloupUp
@@ -263,6 +410,15 @@ type DataProviderState = {
     endDate?: string | null;
     month?: number | null;
   }) => Promise<{ success: boolean; message?: string }>;
+
+    getQuarterWiseTarget: (
+    id: string, 
+    quarter?: number | null, 
+    year?: number | null
+  ) => Promise<{ success: boolean; message?: string; data?: OverallTarget }>;
+
+   getProjectTargets: (id: string, quarter?: number | null, year?: number | null) => Promise<{ success: boolean; message?: string }>;
+
 
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
@@ -289,6 +445,9 @@ const initialState: DataProviderState = {
   channelPartners: [],
   leadsTeamLeaderGraphForDT: [],
   closingManager: [],
+  myOverallTarget: null, 
+  projectTargets: [],
+  loadingProjectTargets: false,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getTestimonals: async () => ({ success: false, message: "Not initialized" }),
@@ -305,7 +464,7 @@ const initialState: DataProviderState = {
 
   getClosingManagerDashBoardCount: async () => ({ success: false }),
 
-  // fetchAssignFeedbackLeads: async () => ({ success: false }),
+  fetchAssignFeedbackLeads: async () => ({ success: false }),
   fetchAssignFeedbackLeadsCount: async () => ({ success: false }),
   addNewLead: async () => ({ success: false, message: "Not initialized" }),
   fetchTeamLeaderGraphForDA: async () => ({
@@ -316,6 +475,13 @@ const initialState: DataProviderState = {
 
   //   setTheme: () => null,
   //   toggleTheme: () => null,
+    getQuarterWiseTarget: async () => ({ 
+    success: false, 
+    message: "Not initialized",
+    data: undefined 
+  }),
+
+    getProjectTargets: async () => ({ success: false, message: "Not initialized" }),
 };
 
 const dataProviderContext =
@@ -336,7 +502,11 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
 
+  const [myOverallTarget, setMyOverallTarget] = useState<OverallTarget | null>(null);
   const [leadInfo, setleadInfo] = useState<PaginationProps | null>(null);
+
+    const [projectTargets, setProjectTargets] = useState<ProjectTargetData[]>([]);
+  const [loadingProjectTargets, setLoadingProjectTargets] = useState<boolean>(false);
 
   const [searchLeadInfo, setSearchLeadInfo] = useState<PaginationProps | null>(
     null
@@ -360,6 +530,121 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     useState<boolean>(false);
   const [channelPartners, setChannelPartners] = useState<ChannelPartner[]>([]);
   const [leadsTeamLeaderGraphForDT, setChartData] = useState<ChartModel[]>([]);
+
+  // Add this function after getQuarterWiseTarget
+const getProjectTargets = async (
+  id: string, 
+  quarter?: number | null, 
+  year?: number | null
+): Promise<{ success: boolean; message?: string }> => {
+  setLoadingProjectTargets(true);
+  setError("");
+
+  try {
+    // First get the overall target data using your existing function
+    const targetResult = await getQuarterWiseTarget(id, quarter, year);
+    
+    if (!targetResult.success || !targetResult.data) {
+      return { success: false, message: targetResult.message || "Failed to fetch target data" };
+    }
+
+    const overallTarget = targetResult.data;
+    
+    // Transform the projectWise data into the format needed for ProjectTargetsCarousel
+    const transformedProjects: ProjectTargetData[] = overallTarget.projectWise?.map(project => {
+      // Adjust the property names based on your actual API response structure
+      const projectName = (project.projectId as any)?.projectName || 
+                         (project.projectId as any)?.name || 
+                         "Unknown Project";
+      
+      return {
+        projectName: projectName,
+        metrics: [
+          { label: "Target", count: project.target || 0 },
+          { label: "Booking", count: project.booking || 0 },
+          { label: "Registration", count: project.registration || 0 }
+        ]
+      };
+    }) || [];
+
+    setProjectTargets(transformedProjects);
+    return { success: true };
+  } catch (err: any) {
+    console.log("Error fetching project targets:", err);
+    let errorMessage = 'Something went wrong';
+
+    if (err.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    if (errorMessage.trim().toLowerCase() === 'null') {
+      errorMessage = 'Something went wrong';
+    }
+
+    setError(errorMessage);
+    return { success: false, message: errorMessage };
+  } finally {
+    setLoadingProjectTargets(false);
+  }
+};
+  
+const getQuarterWiseTarget = async (
+  id: string, 
+  quarter?: number | null, 
+  year?: number | null
+): Promise<{ success: boolean; message?: string; data?: OverallTarget }> => {
+  setLoading(true);
+  setError("");
+
+  try {
+    let url = `/api/revised-my-target/${id}`;
+    const queryParams = new URLSearchParams();
+    
+    if (year) queryParams.append('year', year.toString());
+    if (quarter) queryParams.append('quarter', quarter.toString());
+    
+    if (queryParams.toString()) {
+      url += `?${queryParams.toString()}`;
+    }
+
+    console.log("Fetching quarter-wise target from:", url);
+
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    if (res?.code !== 200) {
+      return { success: false, message: res?.message || "Failed to fetch target" };
+    }
+
+    const parsedTarget = res.data as OverallTarget;
+    setMyOverallTarget(parsedTarget);
+    
+    console.log("Quarter-wise target:", parsedTarget);
+    return { success: true, data: parsedTarget };
+  } catch (err: any) {
+    console.log(err);
+    let errorMessage = 'Something went wrong';
+
+    if (err.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    // Prevent literal 'null' from showing
+    if (errorMessage.trim().toLowerCase() === 'null') {
+      errorMessage = 'Something went wrong';
+    }
+
+    setError(errorMessage);
+    return { success: false, message: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -889,54 +1174,54 @@ const getTeamReportingTo = async (id: string, dept: string) => {
     }
   };
 
-  //assign / feedback pending...hold
-  // const fetchAssignFeedbackLeads = async ({
-  //   query = "",
-  //   page = 1,
-  //   limit = 10,
-  //   status = null,
-  // }: AssignParms): Promise<{ success: boolean; message?: string }> => {
-  //   if (page === 1) {
-  //     setLoadingLeads(true);
-  //   } else {
-  //     setFetchingMoreLeads(true);
-  //   }
-  //   setError("");
+  // assign / feedback pending...hold
+  const fetchAssignFeedbackLeads = async ({
+    query = "",
+    page = 1,
+    limit = 10,
+    status = null,
+  }: AssignParms): Promise<{ success: boolean; message?: string }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
 
-  //   try {
-  //     let url = `/api/leads-assign-feedback?query=${query}&page=${page}&limit=${limit}`;
-  //     if (status) {
-  //       url += `&status=${status}`;
-  //     }
+    try {
+      let url = `/api/leads-assign-feedback?query=${query}&page=${page}&limit=${limit}`;
+      if (status) {
+        url += `&status=${status}`;
+      }
 
-  //     console.log(url);
-  //     const res = await fetchAdapter(url, {
-  //       method: "GET",
-  //     });
-  //     const { data, ...withoutData } = res;
+      console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res;
 
-  //     setAssignInfo(data);
-  //     if (page > 1) {
-  //       setleads((prev) => [...prev, ...res?.data]);
-  //     } else {
-  //       setleads(res?.data ?? []);
-  //     }
-  //     console.log(res);
-  //     setFetchingMoreLeads(false);
-  //     setLoadingLeads(false);
+      setAssignInfo(data);
+      if (page > 1) {
+        setleads((prev) => [...prev, ...res?.data]);
+      } else {
+        setleads(res?.data ?? []);
+      }
+      console.log(res);
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
 
-  //     return { success: true };
-  //   } catch (err: any) {
-  //     setError(err.message);
-  //     setFetchingMoreLeads(false);
-  //     setLoadingLeads(false);
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
 
-  //     return { success: false, message: err.message };
-  //   } finally {
-  //     setFetchingMoreLeads(false);
-  //     setLoadingLeads(false);
-  //   }
-  // };
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
 
   //TODO: asign/feedback lead list count
   const fetchAssignFeedbackLeadsCount = async ({
@@ -1167,6 +1452,10 @@ if (res?.data) {
     leadsTeamLeaderGraphForDT: leadsTeamLeaderGraphForDT,
     closingManager: closingManager,
     asssignFeedbackInfo: asssignFeedbackInfo,
+    myOverallTarget: myOverallTarget,
+     projectTargets: projectTargets,
+  loadingProjectTargets: loadingProjectTargets,
+  getProjectTargets: getProjectTargets,
 
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -1177,7 +1466,7 @@ if (res?.data) {
     fetchDataAnalyzerVisits: fetchDataAnalyzerVisits,
     fetchTeamLeaderReportingToLeads: fetchTeamLeaderReportingToLeads,
     getSalesManagerDashBoardCount: getSalesManagerDashBoardCount,
-    // fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
+    fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
     fetchSearchLeads: fetchSearchLeads,
     fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
     getChannelPartners: getChannelPartners,
@@ -1185,6 +1474,7 @@ if (res?.data) {
     addNewLead: addNewLead,
     fetchTeamLeaderGraphForDA: fetchTeamLeaderGraphForDA,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
+      getQuarterWiseTarget: getQuarterWiseTarget,
   };
 
   return (

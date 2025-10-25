@@ -59,8 +59,10 @@ export function ClosingManagerDashboardHeader({
     TeamReportingTo,
     dashCount,
     asssignFeedbackInfo,
+    myOverallTarget,
     getClosingManagerDashBoardCount,
     fetchAssignFeedbackLeadsCount,
+    getQuarterWiseTarget,
   } = useData();
   const { user, loading } = useUser();
 
@@ -82,6 +84,10 @@ export function ClosingManagerDashboardHeader({
         page: 1,
         limit: 10,
       });
+
+      const currentYear = new Date().getFullYear();
+      const currentQuarter = Math.floor((new Date().getMonth() + 3) / 3);
+      getQuarterWiseTarget(user?._id ?? "", currentQuarter, currentYear);
     }
   }, [user, loading]);
 
@@ -91,6 +97,30 @@ export function ClosingManagerDashboardHeader({
       console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
     }
   }, [asssignFeedbackInfo]);
+
+  useEffect(() => {
+    if (myOverallTarget) {
+      console.log("=== TARGET DATA DEBUG ===");
+      console.log("Target:", myOverallTarget.target);
+      console.log("Projects:", myOverallTarget.projectWise);
+
+      let debugBookings = 0;
+      let debugRegistrations = 0;
+
+      myOverallTarget.projectWise?.forEach((proj, idx) => {
+        console.log(`Project ${idx}:`, proj);
+        debugBookings += proj?.booking ?? 0;
+        debugRegistrations += proj?.registration ?? 0;
+      });
+
+      console.log("Total Bookings:", debugBookings);
+      console.log("Total Registrations:", debugRegistrations);
+      console.log("=== END DEBUG ===");
+
+      setBookingCount(debugBookings);
+      setRegistrationCount(debugRegistrations);
+    }
+  }, [myOverallTarget]);
 
   const displayName = (dashCount?.name ?? "").trim() || "User";
   const initials = React.useMemo(() => {
@@ -190,6 +220,8 @@ export function ClosingManagerDashboardHeader({
   const filterRef = useRef<HTMLDivElement>(null);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [open, setOpen] = useState(false);
+  const [bookingCount, setBookingCount] = useState(0);
+  const [registrationCount, setRegistrationCount] = useState(0);
 
   type QuickAction = {
     label: string;
@@ -208,10 +240,30 @@ export function ClosingManagerDashboardHeader({
   const visits =
     (dashCount?.lead?.visit1 ?? 0) + (dashCount?.lead?.visit2 ?? 0);
 
+  let totalBookings = 0;
+  let totalRegistrations = 0;
+  const projects = myOverallTarget?.projectWise ?? [];
+
+  for (const project of projects) {
+    totalBookings += project?.booking ?? 0;
+    totalRegistrations += project?.registration ?? 0;
+  }
+
+  const targetValue = myOverallTarget?.target ?? 0;
+  const bookingPercentage =
+    targetValue > 0
+      ? Math.min(100, Math.round((totalBookings / targetValue) * 100))
+      : 0;
+  const registrationPercentage =
+    targetValue > 0
+      ? Math.min(100, Math.round((totalRegistrations / targetValue) * 100))
+      : 0;
+
   const data = [
     {
       label: "Target",
       value: 22,
+      actualValue: targetValue,
       color1: "#ff7e5f",
       color2: "#feb47b",
       icon: Flag,
@@ -219,7 +271,8 @@ export function ClosingManagerDashboardHeader({
     },
     {
       label: "Booking",
-      value: 1,
+      value: bookingCount,
+      actualValue: bookingCount,
       color1: "#00b09b",
       color2: "#96c93d",
       icon: Home,
@@ -227,7 +280,8 @@ export function ClosingManagerDashboardHeader({
     },
     {
       label: "Registration",
-      value: 0,
+      value: registrationCount,
+      actualValue: registrationCount,
       color1: "#4facfe",
       color2: "#00f2fe",
       icon: Trophy,
@@ -240,7 +294,7 @@ export function ClosingManagerDashboardHeader({
       name: TeamReportingTo?.teamName ?? "Test",
       tasks: TeamReportingTo?.totalTasks ?? 10,
       borderColor: " #4A90E2",
-      members: teamMembers, 
+      members: teamMembers,
     },
     // {
     //   name: "Shree Ganesh",
@@ -260,12 +314,14 @@ export function ClosingManagerDashboardHeader({
 
   const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
-        name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"}`,
+        name: `${item.teamLeader?.firstName ?? "Team"} ${
+          item.teamLeader?.lastName ?? "Leader"
+        }`,
         feedback: item.notFollowUpCount ?? 0,
         tasks: item.notAssignedCount ?? 0,
         border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
       }))
-    : []
+    : [];
 
   const safeDivision = (numerator: number, denominator: number): number => {
     if (!denominator || denominator === 0) return 0;
@@ -591,13 +647,13 @@ export function ClosingManagerDashboardHeader({
                   <div className={styles.sheetItem2}>
                     <p className={styles.sheetLabel2}>Feedback Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.red}`}>
-                      {asssignFeedbackInfo?.notFollowUpCount ?? 0}
+                      {card.feedback}
                     </p>
                   </div>
                   <div className={`${styles.sheetItem2} ${styles.sheetgreen} `}>
                     <p className={styles.sheetLabel2}>Assign Pending</p>
                     <p className={`${styles.sheetValue2} ${styles.blue}`}>
-                      {asssignFeedbackInfo?.notAssignedCount ?? 0}
+                      {card.tasks}
                     </p>
                   </div>
                 </div>
@@ -670,33 +726,33 @@ export function ClosingManagerDashboardHeader({
                     {
                       projectName: "EV 9 SQUARE",
                       metrics: [
-                        { label: "Target", count: 120 },
-                        { label: "Booking", count: 75 },
-                        { label: "Registration", count: 58 },
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
                       ],
                     },
                     {
                       projectName: "EV10 Marina Bay",
                       metrics: [
-                        { label: "Target", count: 9 },
-                        { label: "Booking", count: 0 },
-                        { label: "Registration", count: 0 },
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
                       ],
                     },
                     {
                       projectName: "EV 23 Malibu West",
                       metrics: [
-                        { label: "Target", count: 6 },
-                        { label: "Booking", count: 0 },
-                        { label: "Registration", count: 0 },
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
                       ],
                     },
                     {
                       projectName: "Heart City",
                       metrics: [
-                        { label: "Target", count: 7 },
-                        { label: "Booking", count: 0 },
-                        { label: "Registration", count: 0 },
+                        { label: "Target", count: targetValue },
+                        { label: "Booking", count: bookingCount },
+                        { label: "Registration", count: registrationCount },
                       ],
                     },
                   ]}
