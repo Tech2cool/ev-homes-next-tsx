@@ -7,8 +7,13 @@ import { redirect } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import Navbar from "../../components/home-components/HomeNavbar";
 import { MdOutlineEmail, MdPassword } from "react-icons/md";
+import { Eye,EyeOff } from "lucide-react";
+// import "./forgotpassword";
+import Link from "next/link";
 
 const LoginPage = () => {
+
+const [showpassword,setshowpassword]=useState(false);
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
     "email"
   );
@@ -197,7 +202,7 @@ const LoginPage = () => {
                 <div className={styles.inputWithIcon}>
                   <Lock className={styles.inputIcon} />
                   <input
-                    type="password"
+                    type={showpassword? "text":"password"}
                     id="password"
                     name="password"
                     value={emailFormData.password}
@@ -206,10 +211,15 @@ const LoginPage = () => {
                     placeholder="••••••••"
                     required
                   />
+                  <button type="button" 
+                  className='absolute right-2  cursor-pointer'
+                  onClick={()=> setshowpassword(!showpassword)}>  
+                  {showpassword? <EyeOff size={20} color="grey" /> :<Eye size={20} color="grey"/>}
+                  </button>
                 </div>
-                <a href="#" className={styles.forgotPasswordLink}>
-                  Forgot Password?
-                </a>
+                <Link href="/login/forgotpassword" className={styles.forgotPasswordLink}>
+                  Forgot Password?  
+                </Link>
               </div>
 
               {loginMessage && (

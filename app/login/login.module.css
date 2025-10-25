@@ -481,6 +481,7 @@ background: black;
 }
 
 .forgotPasswordLink {
+  cursor:pointer;
   font-size: 0.9rem;
   font-weight: 600;
   color: #caa14e;
@@ -490,6 +491,7 @@ background: black;
   text-decoration: none;
   transition: color 0.2s ease;
   font-family: "Jura", sans-serif;
+  z-index: 999;
 }
 :global(html.light) .forgotPasswordLink{
   
@@ -506,6 +508,7 @@ background: black;
 .forgotPasswordLink:hover {
   color: #c49b66;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .loginMessage {
@@ -735,6 +738,7 @@ background: black;
 @media (max-width: 768px) {
   .forgotPasswordLink {
      color: #ffd900;
+     cursor: pointer;
   }
   .loginContainer{
     background-image: url(../../public/images/moibilebg.png);
@@ -831,3 +835,10 @@ background: black;
     background:  linear-gradient(90deg, #c59f21, #f7c053); /* default gradient */
   }
 }
+
+
+/* update */
+
+/* .passbtn{
+  background-color: red;
+} */
