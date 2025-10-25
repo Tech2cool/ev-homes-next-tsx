@@ -1,0 +1,221 @@
+/* ===== Base Header Style ===== */
+.container {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  flex-wrap: wrap;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.titlees,
+.title {
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0;
+}
+:global(html.light) .container {
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+:global(html.light) .titlees,
+:global(html.light) .title {
+  color: #222; 
+}
+/* ===== Search Box ===== */
+.searchContainer {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 3px;
+  width: 500px;
+  margin: 0 15px;
+  transition: all 0.3s ease;
+}
+:global(html.light) .searchContainer {
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+.searchInput {
+  border: none;
+  outline: none;
+  padding: 8px;
+  background: transparent;
+  color: white;
+  flex: 1;
+  font-size: 16px;
+}
+:global(html.light) .searchInput {
+  color: #222;
+  background: transparent;
+}
+
+.searchInput::placeholder {
+  color: rgb(237, 228, 228);
+  font-size: 15px;
+  font-weight: 400;
+}
+:global(html.light) .searchInput::placeholder {
+  color: #888;
+}
+.searchButton {
+  background: #007bff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+:global(html.light) .searchButton {
+  background: #007bff; 
+  color: #fff;
+}
+/* ===== Menu Section ===== */
+.menuWrapper {
+  position: relative;
+}
+
+.menuIcon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  background: #007bff;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+:global(html.light) .menuIcon {
+  color: #fff;
+  background: #007bff;
+}
+.menuOptions {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.menuItem {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.menuItem:hover {
+  background: #f2f2f2;
+}
+
+/* ===== Tablet View (1024px and below) ===== */
+@media (max-width: 1024px) {
+  .container {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .titlees {
+    font-size: 1.5rem;
+  }
+
+  .searchContainer {
+    /* width: 350px; */
+    order: 3;
+    margin-top: 10px;
+  }
+
+  .searchInput {
+    font-size: 14px;
+  }
+
+  .searchButton {
+    padding: 5px 8px;
+  }
+
+  .menuIcon {
+    padding: 7px 9px;
+  }
+}
+
+/* ===== Mobile View (768px and below) ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .titlees {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .searchContainer {
+    width: 100%;
+    margin: 0;
+  }
+
+  .searchInput {
+    font-size: 14px;
+  }
+
+  .menuWrapper {
+    position: absolute;
+    z-index: 666;
+    right: 10;
+  }
+
+  .menuIcon {
+    padding: 6px 8px;
+    font-size: 16px;
+  }
+
+  .menuOptions {
+    top: 38px;
+    right: 5px;
+    width: 150px;
+  }
+
+  .menuItem {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+}
+
+/* ===== Extra Small Screens (480px and below) ===== */
+@media (max-width: 480px) {
+  .titlees {
+    font-size: 1.2rem;
+  }
+
+  .searchContainer {
+    padding: 2px;
+  }
+
+  .searchInput {
+    font-size: 13px;
+  }
+
+  .searchButton {
+    padding: 4px 6px;
+  }
+
+  .menuOptions {
+    width: 130px;
+  }
+}

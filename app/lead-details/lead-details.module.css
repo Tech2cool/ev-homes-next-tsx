@@ -2026,14 +2026,14 @@
 
 .trnsname {
   position: absolute;
-  top: 3px;
+  top: 5px;
   z-index: 100;
-  font-size: 10px;
+  font-size: 9px;
   left: 7px;
   color: white;
   font-weight: 500;
   display: inline-block;
-  transform: rotate(-2deg);
+  transform: rotate(-15deg);
   transform-origin: right top;
 
 }

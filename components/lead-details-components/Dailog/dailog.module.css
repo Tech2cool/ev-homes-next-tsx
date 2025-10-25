@@ -1,0 +1,626 @@
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 15, 15, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+
+:global(html.light) .dialogOverlay {
+  background: rgba(45, 45, 45, 0.401);
+}
+
+.dialogBox {
+  background: #1e1e1e;
+  color: #fff;
+  border-radius: 12px;
+  width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  animation: popup 0.3s ease-in-out;
+
+  scrollbar-width: thin;
+  scrollbar-color: #4a4d4c #222;
+}
+
+:global(html.light) .dialogBox {
+  background: #ebebeb;
+  box-shadow: 0 8px 25px rgba(159, 159, 159, 0.4);
+  color: #262626;
+  scrollbar-color: #a065ff #d8d4e9;
+
+}
+
+.dialogBox::-webkit-scrollbar {
+  width: 6px;
+
+}
+
+.dialogBox::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3d4140, #1a1b1c);
+  border-radius: 30px;
+}
+
+.dialogBox::-webkit-scrollbar-track {
+  background: #222;
+}
+
+
+@keyframes popup {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dailogcnt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialogTitle {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #ece4fe;
+}
+
+:global(html.light) .dialogTitle {
+  color: #252425;
+}
+
+
+.dialogButtons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  gap: 10px;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 2px solid #16476A;
+  color: #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancelBtn:hover {
+  background: #333;
+}
+
+:global(html.light) .cancelBtn {
+  color: #16476A;
+}
+
+:global(html.light) .cancelBtn:hover {
+  background: #ffffff;
+}
+
+.submitBtn {
+  background: linear-gradient(90deg, #16476A, #132440);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.submitBtn:hover {
+
+  background: linear-gradient(90deg, #132440, #16476A);
+
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+  gap: 2vw;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+
+
+}
+
+.formControl {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.formControl label {
+  font-size: 1.8vh;
+  color: rgb(142, 141, 141);
+  align-items: center;
+  padding-left: 0.5rem;
+  padding-bottom: 2px;
+  display: flex;
+  gap: 7px;
+}
+
+:global(html.light) .formControl label {
+  color: rgb(70, 69, 69);
+}
+
+.formControl select {
+  padding: 0.7rem;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 8px;
+  background-color: #151414f5;
+  border: 1px solid #444444f5;
+}
+
+:global(html.light) .formControl select {
+  color: #201f1f;
+  border: 2px solid #927fbff5;
+  background-color: transparent;
+}
+
+.formControl input {
+  padding: 0.7rem;
+  font-size: 14px;
+  color: #fff;
+  border: 1px solid #444444f5;
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+:global(html.light) .formControl input {
+  color: #201f1f;
+  border: 2px solid #927fbff5;
+
+}
+
+.formControl input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #000000f5 inset !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: 1vw !important;
+  border: 1px solid #444444f5 !important;
+  border-radius: 8px !important;
+}
+
+.iconcolor {
+  color: yellow;
+}
+
+.formControl textarea {
+  color: #fff;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 1px solid #444444f5;
+  padding: 0.4rem 0.7rem;
+  line-height: 1.2rem;
+}
+
+:global(html.light) .formControl textarea {
+  color: #201f1f;
+  border: 2px solid #927fbff5;
+
+}
+
+:global(html.light) .iconcolor {
+  color: #7341e7;
+}
+
+.mainlable {
+  font-size: 2.2vh;
+  font-weight: 400;
+  color: rgb(95, 65, 217);
+}
+
+.uploadBox {
+  position: relative;
+  border: 2px dashed #555;
+  border-radius: 10px;
+  background: rgba(30, 30, 30, 0.6);
+  padding: 1rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.uploadBox:hover {
+  border-color: #0000ff;
+  background: rgba(40, 40, 40, 0.8);
+  box-shadow: 0 0 10px rgba(0, 55, 255, 0.3);
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #aaa;
+}
+
+.uploadIcon {
+  background: linear-gradient(135deg, #16476A, #132440);
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(30, 0, 255, 0.155);
+}
+
+.uploadLabel p {
+  font-size: 1rem;
+  color: #ddd;
+}
+
+:global(html.light) .uploadLabel p {
+  color: #242323;
+
+}
+
+.fileNote {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+:global(html.light) .uploadBox {
+  border: 2px dashed #927fbf;
+  background: rgba(234, 234, 234, 0.8);
+}
+
+:global(html.light) .uploadLabel {
+  color: #333;
+}
+
+.errorMsg {
+  color: #ff4d4f;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.infoCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+
+}
+
+:global(html.light) .infoCard {
+  background: #f7f7f7;
+  border: 1px solid #d0cce0;
+  box-shadow: 0 2px 8px rgba(180, 180, 180, 0.2);
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #3d23ff;
+}
+
+:global(html.light) .cardTitle {
+  color: #2a04b5;
+}
+
+.infoRow {
+  display: flex;
+  margin-bottom: 4px;
+  gap: 20px
+}
+
+.infoLabel {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+:global(html.light) .infoLabel {
+  color: #555;
+}
+
+.infoValue {
+  color: #dfdede;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+:global(html.light) .infoValue {
+  color: #222;
+}
+
+@media screen and (max-width: 850px) {
+  .mainlable {
+    font-size: 2vh;
+    font-weight: 400;
+
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .dialogBox {
+    width: 80vw;
+    padding: 1.2rem;
+  }
+
+}
+
+/* Mobile devices */
+@media screen and (max-width: 768px) {
+  .dialogBox {
+    width: 95vw;
+    padding: 1rem;
+  }
+
+  .cardTitle {
+    font-size: 0.9rem;
+
+  }
+
+  .infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .dialogTitle {
+    font-size: 1.1rem;
+  }
+
+  .mainlable {
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .card {
+    flex-direction: column;
+    /* ✅ Stack fields vertically */
+    gap: 12px;
+  }
+
+  .formControl label {
+    font-size: 0.9rem;
+  }
+
+  .uploadLabel p {
+    font-size: 0.85rem;
+  }
+
+  .dialogButtons {
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cancelBtn,
+  .submitBtn {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+}
+
+/* Extra small screens */
+@media screen and (max-width: 480px) {
+  .dialogBox {
+    padding: 0.8rem;
+  }
+
+  .dialogTitle {
+    font-size: 1rem;
+  }
+
+  .mainlable {
+    font-size: 0.9rem;
+  }
+
+  .uploadLabel p {
+    font-size: 0.8rem;
+  }
+
+  .formControl label {
+    font-size: 0.85rem;
+  }
+
+
+
+
+  .cancelBtn,
+  .submitBtn {
+    padding: 0.5rem 0.8rem;
+  }
+
+}
+
+.progressBarContainer {
+  position: relative;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.progressLine {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  width: calc(100% - 32px);
+  height: 4px;
+  background-color: #cccccc;
+  z-index: 1;
+  border-radius: 2px;
+  margin-left: 25px;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--circle-bg, #555);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--circle-color, #fff);
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--circle-border, #ccc);
+}
+
+.circle.active {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+  color: white;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+  border-color: #4caf50;
+}
+
+.label {
+  margin-top: 10px;
+  font-size: 12px;
+  text-align: center;
+  max-width: 80px;
+  color: var(--label-color, #aaa);
+  word-wrap: break-word;
+}
+
+/* Circles in light theme */
+:global(html.light) .circle {
+  --circle-bg: #fff;
+  /* white background */
+  --circle-color: #222;
+  /* text color */
+  --circle-border: #ccc;
+  /* border color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:global(html.light) .circle.active {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  border-color: #4caf50;
+}
+
+/* Labels in light theme */
+:global(html.light) .label {
+  color: #555;
+}
+
+/* Progress line in light theme */
+:global(html.light) .progressLine {
+  background-color: #ddd;
+}
+
+:global(html.light) .progressFill {
+  background-color: #4caf50;
+}
+
+@media (max-width: 768px) {
+  .circle {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .progressLine {
+    top: 12px;
+    height: 3px;
+    margin-left: 18px;
+
+  }
+
+  .label {
+    font-size: 10px;
+    margin-top: 6px;
+    max-width: 60px;
+  }
+
+  .steps {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .circle {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .progressLine {
+    top: 10px;
+    height: 2px;
+    margin-left: 15px;
+
+  }
+
+  .label {
+    font-size: 9px;
+    margin-top: 4px;
+    max-width: 50px;
+  }
+
+  .steps {
+    gap: 2px;
+  }
+}
+.varning{
+  font-size: 12px;
+  padding: 0px 0px 12px 12px;
+  color: rgb(241, 89, 89);
+}
