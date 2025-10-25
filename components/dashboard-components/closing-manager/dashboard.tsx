@@ -56,7 +56,7 @@ export function ClosingManagerDashboardHeader({
   onSyncNow,
 }: ClosingManagerDashboardHeaderProps) {
   const {
-    TeamReportingTo,
+    teamOverview,
     dashCount,
     asssignFeedbackInfo,
     myOverallTarget,
@@ -67,13 +67,17 @@ export function ClosingManagerDashboardHeader({
   const { user, loading } = useUser();
 
   const teamMembers =
-    TeamReportingTo?.crew
+    teamOverview?.crew
       ?.map((member: any) => member.teamMember)
       .filter(Boolean) || [];
 
-  // useEffect(() => {
-  //   console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
-  // }, [asssignFeedbackInfo]);
+  useEffect(() => {
+    const teamMembers =
+    teamOverview?
+      ?.map((member: any) => member.teamMember)
+      .filter(Boolean) || [];
+      console.log("test memebers:",teamMembers);
+  }, [teamOverview]);
 
   useEffect(() => {
     if (user && !loading) {
@@ -291,8 +295,8 @@ export function ClosingManagerDashboardHeader({
 
   const cards = [
     {
-      name: TeamReportingTo?.teamName ?? "Test",
-      tasks: TeamReportingTo?.totalTasks ?? 10,
+      name: teamOverview?? "Test",
+      tasks: teamOverview,
       borderColor: " #4A90E2",
       members: teamMembers,
     },
