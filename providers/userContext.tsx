@@ -1,9 +1,12 @@
 "use client";
 
 import fetchAdapter from "@/adapter/fetchAdapter";
+import { redirect } from "next/navigation";
+
 import React from "react";
 import { createContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
+
 
 type UserProviderProps = {
   children: React.ReactNode;
@@ -127,6 +130,13 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
       }
 
       setUser(res?.data);
+  // if (res?.data.designation?._id === "desg-data-analyzer") {
+  //       redirect("/dashboard");
+  //     } else {
+  //       redirect("/closing-manager-dasboard");
+  //     }
+
+      console.log(res.data );
       return { success: true, ...res.data };
     } catch (err: any) {
       setError(err.message);

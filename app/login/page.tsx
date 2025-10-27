@@ -7,17 +7,19 @@ import { redirect } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import Navbar from "../../components/home-components/HomeNavbar";
 import { MdOutlineEmail, MdPassword } from "react-icons/md";
-import { Eye,EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 // import "./forgotpassword";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const router = useRouter();
 
-const [showpassword,setshowpassword]=useState(false);
+  const [showpassword, setshowpassword] = useState(false);
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
     "email"
   );
-  const { login } = useUser();
+  const { login, user } = useUser();
 
   const [emailFormData, setEmailFormData] = useState({
     email: "",
@@ -55,11 +57,19 @@ const [showpassword,setshowpassword]=useState(false);
     // console.log("Attempting login with:", emailFormData);
 
     const result = await login(emailFormData.email, emailFormData.password);
-    // console.log("Login result:", result);
-
-    if (result.success) {
-      redirect("/dashboard");
+    console.log("Login result:", result);
+    // const desg = result
+    if (result.success == true) {
+      // if (user?.designation?._id === "desg-data-analyzer") {
+      //   // console.log(user?.designation);
+      //   redirect("/data-analyzer-dashboard");
+      // } else {
+      //   redirect("/closing-manager-dashboard");
+      //   // setLoginMessage(result.message || "Login failed.");
+      // }
     } else {
+      //  redirect("/closing-manager-dashboard");
+
       setLoginMessage(result.message || "Login failed.");
     }
 
@@ -107,16 +117,18 @@ const [showpassword,setshowpassword]=useState(false);
 
       <div
         className={styles.singleContainer}
-        style={{
-          // backgroundImage: "url('https://cdn.evhomes.tech/9e777ccb-8f63-4c1f-a939-ba279aff71aa-first.jpg')",
-          // backgroundImage: "images/bglogin.png",
-        }}
+        style={
+          {
+            // backgroundImage: "url('https://cdn.evhomes.tech/9e777ccb-8f63-4c1f-a939-ba279aff71aa-first.jpg')",
+            // backgroundImage: "images/bglogin.png",
+          }
+        }
       >
         {/* Background overlay for text readability */}
         {/* <div className={styles.backgroundOverlay}></div> */}
 
         {/* Testimonial content positioned over background */}
-        
+
         <div className={styles.testimonialContent}>
           <h2 className={styles.visualShowcaseTitle}>
             Your Dream Home Awaits!
@@ -145,7 +157,7 @@ const [showpassword,setshowpassword]=useState(false);
           <div className={styles.loginHeading}>LOGIN</div>
 
           {/* <div className={styles.loginTabs}> */}
-            {/* <button
+          {/* <button
               className={`${styles.tabButton} ${
                 activeLoginTab === "email" ? styles.activeTab : ""
               }`}
@@ -158,7 +170,7 @@ const [showpassword,setshowpassword]=useState(false);
               <Mail className={styles.tabIcon} color="#c49b66" /> Email &
               Password
             </button> */}
-            {/* <button
+          {/* <button
               className={`${styles.tabButton} ${
                 activeLoginTab === "phone" ? styles.activeTab : ""
               }`}
@@ -202,7 +214,7 @@ const [showpassword,setshowpassword]=useState(false);
                 <div className={styles.inputWithIcon}>
                   <Lock className={styles.inputIcon} />
                   <input
-                    type={showpassword? "text":"password"}
+                    type={showpassword ? "text" : "password"}
                     id="password"
                     name="password"
                     value={emailFormData.password}
@@ -211,14 +223,23 @@ const [showpassword,setshowpassword]=useState(false);
                     placeholder="••••••••"
                     required
                   />
-                  <button type="button" 
-                  className='absolute right-2  cursor-pointer'
-                  onClick={()=> setshowpassword(!showpassword)}>  
-                  {showpassword? <EyeOff size={20} color="grey" /> :<Eye size={20} color="grey"/>}
+                  <button
+                    type="button"
+                    className="absolute right-2  cursor-pointer"
+                    onClick={() => setshowpassword(!showpassword)}
+                  >
+                    {showpassword ? (
+                      <EyeOff size={20} color="grey" />
+                    ) : (
+                      <Eye size={20} color="grey" />
+                    )}
                   </button>
                 </div>
-                <Link href="/login/forgotpassword" className={styles.forgotPasswordLink}>
-                  Forgot Password?  
+                <Link
+                  href="/login/forgotpassword"
+                  className={styles.forgotPasswordLink}
+                >
+                  Forgot Password?
                 </Link>
               </div>
 
@@ -260,7 +281,7 @@ const [showpassword,setshowpassword]=useState(false);
             </form>
           )}
 
-          {activeLoginTab === "phone" && (
+          {/* {activeLoginTab === "phone" && (
             <form className={styles.loginForm} onSubmit={handlePhoneLogin}>
               <div className={styles.inputGroup}>
                 <label htmlFor="phone" className={styles.label}>
@@ -365,18 +386,16 @@ const [showpassword,setshowpassword]=useState(false);
                 </button>
               )}
             </form>
-          )}
+          )} */}
 
-          <div className={styles.divider}>
-            {/* <span>OR</span> */}
-          </div>
+          <div className={styles.divider}>{/* <span>OR</span> */}</div>
 
-          <p className={styles.signupText}>
+          {/* <p className={styles.signupText}>
             Don&apos;t have an account?{" "}
             <a href="#" className={styles.signupLink}>
               Sign Up
             </a>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

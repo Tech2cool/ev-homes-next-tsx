@@ -8,20 +8,22 @@ import {
 import DashboardSalesPage from "@/components/dashboard-components/sales/dashboard";
 import { useUser } from "@/providers/userContext";
 import DataAnalyzerDashboardPage from "@/components/dashboard-components/data-analyzer/dashboard";
+import ClosingManagerPage from "../closing-manager-dashboard/page";
+import DataAnalyzerDashboard from "../data-analyzer-dashboard/page";
 
 const DashboardPage = () => {
   const { user, loading } = useUser(); 
 
 
-
+// console.log("user ",user);
     if (loading) return;
 
     if (user?.designation?._id === "desg-data-analyzer") {
-         return <DataAnalyzerDashboardPage />;
+         return <DataAnalyzerDashboard />;
     }else {
- return <DashboardSalesPage />;
+ return <ClosingManagerPage />;
     }
-    // else let them stay on this page
+    // else let them stay on this page  
 
   //
 
