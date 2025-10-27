@@ -57,18 +57,13 @@ const LoginPage = () => {
     // console.log("Attempting login with:", emailFormData);
 
     const result = await login(emailFormData.email, emailFormData.password);
-    console.log("Login result:", result);
+    // console.log("Login result:", result);
     // const desg = result
-    if (result.success == true) {
-      // if (user?.designation?._id === "desg-data-analyzer") {
-      //   // console.log(user?.designation);
-      //   redirect("/data-analyzer-dashboard");
-      // } else {
-      //   redirect("/closing-manager-dashboard");
-      //   // setLoginMessage(result.message || "Login failed.");
-      // }
+    if (result.success) {
+  
+      redirect("/dashboard");
     } else {
-      //  redirect("/closing-manager-dashboard");
+
 
       setLoginMessage(result.message || "Login failed.");
     }
