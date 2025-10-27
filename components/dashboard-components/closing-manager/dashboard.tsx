@@ -73,17 +73,15 @@ export function ClosingManagerDashboardHeader({
   //     .filter(Boolean) || [];
 
   useEffect(() => {
-  const fetchTeamOverview = async () => {
-    if (user?._id) {
-      console.log("👤 Fetching team overview for user:", user._id);
-      await getTeamOverview(user._id);
-    }
-  };
+    const fetchTeamOverview = async () => {
+      if (user?._id) {
+        console.log("👤 Fetching team overview for user:", user._id);
+        await getTeamOverview(user._id);
+      }
+    };
 
-  fetchTeamOverview();
-}, [user?._id]);
-
- 
+    fetchTeamOverview();
+  }, [user?._id]);
 
   useEffect(() => {
     if (user && !loading) {
@@ -299,40 +297,44 @@ export function ClosingManagerDashboardHeader({
     },
   ];
 
-const colors = ["#4A90E2", "#50E3C2", "#F5A623", "#BD10E0", "#9013FE"];
+  const colors = ["#4A90E2", "#50E3C2", "#F5A623", "#BD10E0", "#9013FE"];
 
-const cards = teamOverview.length > 0 
-  ? teamOverview.map((team, index) => ({
-      name: team.teamName ?? `Team ${index + 1}`,
-      tasks: team.totalTasks ?? 0,
-      borderColor: colors[index % colors.length],
-      members: team.crew?.map(c => 
-        `${c?.teamMember?.firstName || ''} ${c?.teamMember?.lastName || ''}`.trim() || "Unnamed Member"
-      ) ?? [],
-    }))
-  : [
-      {
-        name: "No Teams Available",
-        tasks: 0,
-        borderColor: "#CCCCCC",
-        members: ["Add teams to see overview"],
-      },
-    ];
-    // {
-    //   name: "Shree Ganesh",
-    //   tasks: "2634 tasks",
-    //   borderColor: " #91082A",
+  const cards =
+    teamOverview.length > 0
+      ? teamOverview.map((team, index) => ({
+          name: team.teamName ?? `Team ${index + 1}`,
+          tasks: team.totalTasks ?? 0,
+          borderColor: colors[index % colors.length],
+          members:
+            team.crew?.map(
+              (c) =>
+                `${c?.teamMember?.firstName || ""} ${
+                  c?.teamMember?.lastName || ""
+                }`.trim() || "Unnamed Member"
+            ) ?? [],
+        }))
+      : [
+          {
+            name: "No Teams Available",
+            tasks: 0,
+            borderColor: "#CCCCCC",
+            members: ["Add teams to see overview"],
+          },
+        ];
+  // {
+  //   name: "Shree Ganesh",
+  //   tasks: "2634 tasks",
+  //   borderColor: " #91082A",
 
-    //   members: ["Rahul", "Sneha", "Kiran"],
-    // },
-    // {
-    //   name: "Deal Maker",
-    //   tasks: "3724 tasks",
-    //   borderColor: "#1F1F1F",
+  //   members: ["Rahul", "Sneha", "Kiran"],
+  // },
+  // {
+  //   name: "Deal Maker",
+  //   tasks: "3724 tasks",
+  //   borderColor: "#1F1F1F",
 
-    //   members: ["Suresh", "Anita", "Manoj"],
-    // },
-  
+  //   members: ["Suresh", "Anita", "Manoj"],
+  // },
 
   const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
@@ -572,59 +574,64 @@ const cards = teamOverview.length > 0
       </div>
 
       <div className={styles.mainContainer}>
-       <div className="p-6 pt-0">
-  <h2 className="text-xl font-semibold text-foreground mb-6">
-    Team Overview
-  </h2>
+        <div className="p-6 pt-0">
+          <h2 className="text-xl font-semibold text-foreground mb-6">
+            Team Overview
+          </h2>
 
-<div className={styles.Monthlytarget} ref={containerRef}>
-  {cards.map((card, index) => (
-    <div key={index} className={styles.cardWrapper}>
-      <div
-        className={cn(
-          `${styles.cardtarget} ${activeCard === index ? styles.cardActive : ""}`,
-          "bg-card text-card-foreground rounded-xl shadow-sm"
-        )}
-        style={{ border: `2px solid ${card.borderColor}` }}
-        onClick={() => toggleBottomSheet(index)}
-      >
-       <div className={styles.cardHeader}>
-  <h3 className="teamName">{card.name}</h3>
-  <div
-    className={styles.assignpendibg}
-    style={{
-      borderLeftColor: card.borderColor,
-      "--hover-color": card.borderColor,
-    } as React.CSSProperties}
-  >
-    <FaTasks style={{ marginRight: "6px" }} /> 
-    {card.tasks} Tasks
-  </div>
-</div>
+          <div className={styles.Monthlytarget} ref={containerRef}>
+            {cards.map((card, index) => (
+              <div key={index} className={styles.cardWrapper}>
+                <div
+                  className={cn(
+                    `${styles.cardtarget} ${
+                      activeCard === index ? styles.cardActive : ""
+                    }`,
+                    "bg-card text-card-foreground rounded-xl shadow-sm"
+                  )}
+                  style={{ border: `2px solid ${card.borderColor}` }}
+                  onClick={() => toggleBottomSheet(index)}
+                >
+                  <div className={styles.cardHeader}>
+                    <h3 className="teamName">{card.name}</h3>
+                    <div
+                      className={styles.assignpendibg}
+                      style={
+                        {
+                          borderLeftColor: card.borderColor,
+                          "--hover-color": card.borderColor,
+                        } as React.CSSProperties
+                      }
+                    >
+                      <FaTasks style={{ marginRight: "6px" }} />
+                      {card.tasks} Tasks
+                    </div>
+                  </div>
+                </div>
 
-      </div>
-
-      <div
-        className={`${styles.bottomSheet} ${activeCard === index ? styles.show : ""}`}
-        style={{ border: `2px solid ${card.borderColor}` }}
-      >
-        {card.members.map((member, mIndex) => (
-          <div
-            key={mIndex}
-            className={styles.sheetItem}
-            style={{
-              border: `0.5px solid ${card.borderColor}`,
-              background: `${card.borderColor}10`,
-            }}
-          >
-            <p className={styles.sheetLabel}>{member}</p>
+                <div
+                  className={`${styles.bottomSheet} ${
+                    activeCard === index ? styles.show : ""
+                  }`}
+                  style={{ border: `2px solid ${card.borderColor}` }}
+                >
+                  {card.members.map((member, mIndex) => (
+                    <div
+                      key={mIndex}
+                      className={styles.sheetItem}
+                      style={{
+                        border: `0.5px solid ${card.borderColor}`,
+                        background: `${card.borderColor}10`,
+                      }}
+                    >
+                      <p className={styles.sheetLabel}>{member}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
-  ))}
-</div>
-</div>
+        </div>
 
         {/* assign */}
         <div className="p-6 pt-0">

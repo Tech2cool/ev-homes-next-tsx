@@ -71,8 +71,6 @@ type FetchLeadsParams = {
   project?: string | null;
 };
 
-
-
 //site visit
 type SiteVisitParams = {
   query?: string;
@@ -306,18 +304,17 @@ type TaskCount = {
 };
 
 type Crew = {
-  _id: string | null
- teamMember: Employee;
+  _id: string | null;
+  teamMember: Employee;
 };
 
 type TeamInsight = {
-   _id: string | null
-  teamName?: string | null
-  reportingTo?: string | null
-  crew?: Crew[]
-  totalTasks: number | null
+  _id: string | null;
+  teamName?: string | null;
+  reportingTo?: string | null;
+  crew?: Crew[];
+  totalTasks: number | null;
 };
-
 
 type AssignParms = {
   query?: string;
@@ -362,10 +359,9 @@ type DataProviderState = {
   searchLeadInfo: PaginationProps | null;
   leadsTeamLeaderGraphForDT: ChartModel[];
   asssignFeedbackInfo: TeamLeaderAssignFolloupUp | null;
-   myOverallTarget: OverallTarget | null;
-   projectTargets: ProjectTargetData[];
+  myOverallTarget: OverallTarget | null;
+  projectTargets: ProjectTargetData[];
   loadingProjectTargets: boolean;
-   
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
@@ -416,16 +412,20 @@ type DataProviderState = {
     month?: number | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
-    getQuarterWiseTarget: (
-    id: string, 
-    quarter?: number | null, 
+  getQuarterWiseTarget: (
+    id: string,
+    quarter?: number | null,
     year?: number | null
   ) => Promise<{ success: boolean; message?: string; data?: OverallTarget }>;
 
-   getProjectTargets: (id: string, quarter?: number | null, year?: number | null) => Promise<{ success: boolean; message?: string }>;
+  getProjectTargets: (
+    id: string,
+    quarter?: number | null,
+    year?: number | null
+  ) => Promise<{ success: boolean; message?: string }>;
 
   getTeamOverview: (
-    id: string,
+    id: string
   ) => Promise<{ success: boolean; message?: string }>;
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
@@ -452,7 +452,7 @@ const initialState: DataProviderState = {
   channelPartners: [],
   leadsTeamLeaderGraphForDT: [],
   closingManager: [],
-  myOverallTarget: null, 
+  myOverallTarget: null,
   projectTargets: [],
   loadingProjectTargets: false,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
@@ -482,16 +482,18 @@ const initialState: DataProviderState = {
 
   //   setTheme: () => null,
   //   toggleTheme: () => null,
-    getQuarterWiseTarget: async () => ({ 
-    success: false, 
+  getQuarterWiseTarget: async () => ({
+    success: false,
     message: "Not initialized",
-    data: undefined 
+    data: undefined,
   }),
 
-    getProjectTargets: async () => ({ success: false, message: "Not initialized" }),
+  getProjectTargets: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 
   getTeamOverview: async () => ({ success: false, message: "Not initialized" }),
-
 };
 
 const dataProviderContext =
@@ -506,18 +508,21 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [loadingProject, setLoadingProject] = useState<boolean>(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
+  const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
 
-  const [myOverallTarget, setMyOverallTarget] = useState<OverallTarget | null>(null);
+  const [myOverallTarget, setMyOverallTarget] = useState<OverallTarget | null>(
+    null
+  );
   const [leadInfo, setleadInfo] = useState<PaginationProps | null>(null);
 
-    const [projectTargets, setProjectTargets] = useState<ProjectTargetData[]>([]);
-  const [loadingProjectTargets, setLoadingProjectTargets] = useState<boolean>(false);
+  const [projectTargets, setProjectTargets] = useState<ProjectTargetData[]>([]);
+  const [loadingProjectTargets, setLoadingProjectTargets] =
+    useState<boolean>(false);
 
   const [searchLeadInfo, setSearchLeadInfo] = useState<PaginationProps | null>(
     null
@@ -543,119 +548,127 @@ const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
   const [leadsTeamLeaderGraphForDT, setChartData] = useState<ChartModel[]>([]);
 
   // Add this function after getQuarterWiseTarget
-const getProjectTargets = async (
-  id: string, 
-  quarter?: number | null, 
-  year?: number | null
-): Promise<{ success: boolean; message?: string }> => {
-  setLoadingProjectTargets(true);
-  setError("");
+  const getProjectTargets = async (
+    id: string,
+    quarter?: number | null,
+    year?: number | null
+  ): Promise<{ success: boolean; message?: string }> => {
+    setLoadingProjectTargets(true);
+    setError("");
 
-  try {
-    // First get the overall target data using your existing function
-    const targetResult = await getQuarterWiseTarget(id, quarter, year);
-    
-    if (!targetResult.success || !targetResult.data) {
-      return { success: false, message: targetResult.message || "Failed to fetch target data" };
+    try {
+      // First get the overall target data using your existing function
+      const targetResult = await getQuarterWiseTarget(id, quarter, year);
+
+      if (!targetResult.success || !targetResult.data) {
+        return {
+          success: false,
+          message: targetResult.message || "Failed to fetch target data",
+        };
+      }
+
+      const overallTarget = targetResult.data;
+
+      // Transform the projectWise data into the format needed for ProjectTargetsCarousel
+      const transformedProjects: ProjectTargetData[] =
+        overallTarget.projectWise?.map((project) => {
+          // Adjust the property names based on your actual API response structure
+          const projectName =
+            (project.projectId as any)?.projectName ||
+            (project.projectId as any)?.name ||
+            "Unknown Project";
+
+          return {
+            projectName: projectName,
+            metrics: [
+              { label: "Target", count: project.target || 0 },
+              { label: "Booking", count: project.booking || 0 },
+              { label: "Registration", count: project.registration || 0 },
+            ],
+          };
+        }) || [];
+
+      setProjectTargets(transformedProjects);
+      return { success: true };
+    } catch (err: any) {
+      console.log("Error fetching project targets:", err);
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoadingProjectTargets(false);
     }
+  };
 
-    const overallTarget = targetResult.data;
-    
-    // Transform the projectWise data into the format needed for ProjectTargetsCarousel
-    const transformedProjects: ProjectTargetData[] = overallTarget.projectWise?.map(project => {
-      // Adjust the property names based on your actual API response structure
-      const projectName = (project.projectId as any)?.projectName || 
-                         (project.projectId as any)?.name || 
-                         "Unknown Project";
-      
-      return {
-        projectName: projectName,
-        metrics: [
-          { label: "Target", count: project.target || 0 },
-          { label: "Booking", count: project.booking || 0 },
-          { label: "Registration", count: project.registration || 0 }
-        ]
-      };
-    }) || [];
+  const getQuarterWiseTarget = async (
+    id: string,
+    quarter?: number | null,
+    year?: number | null
+  ): Promise<{ success: boolean; message?: string; data?: OverallTarget }> => {
+    setLoading(true);
+    setError("");
 
-    setProjectTargets(transformedProjects);
-    return { success: true };
-  } catch (err: any) {
-    console.log("Error fetching project targets:", err);
-    let errorMessage = 'Something went wrong';
+    try {
+      let url = `/api/revised-my-target/${id}`;
+      const queryParams = new URLSearchParams();
 
-    if (err.response?.data?.message) {
-      errorMessage = err.response.data.message;
-    } else if (err.message) {
-      errorMessage = err.message;
+      if (year) queryParams.append("year", year.toString());
+      if (quarter) queryParams.append("quarter", quarter.toString());
+
+      if (queryParams.toString()) {
+        url += `?${queryParams.toString()}`;
+      }
+
+      console.log("Fetching quarter-wise target from:", url);
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      if (res?.code !== 200) {
+        return {
+          success: false,
+          message: res?.message || "Failed to fetch target",
+        };
+      }
+
+      const parsedTarget = res.data as OverallTarget;
+      setMyOverallTarget(parsedTarget);
+
+      console.log("Quarter-wise target:", parsedTarget);
+      return { success: true, data: parsedTarget };
+    } catch (err: any) {
+      console.log(err);
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      // Prevent literal 'null' from showing
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoading(false);
     }
-
-    if (errorMessage.trim().toLowerCase() === 'null') {
-      errorMessage = 'Something went wrong';
-    }
-
-    setError(errorMessage);
-    return { success: false, message: errorMessage };
-  } finally {
-    setLoadingProjectTargets(false);
-  }
-};
-  
-const getQuarterWiseTarget = async (
-  id: string, 
-  quarter?: number | null, 
-  year?: number | null
-): Promise<{ success: boolean; message?: string; data?: OverallTarget }> => {
-  setLoading(true);
-  setError("");
-
-  try {
-    let url = `/api/revised-my-target/${id}`;
-    const queryParams = new URLSearchParams();
-    
-    if (year) queryParams.append('year', year.toString());
-    if (quarter) queryParams.append('quarter', quarter.toString());
-    
-    if (queryParams.toString()) {
-      url += `?${queryParams.toString()}`;
-    }
-
-    console.log("Fetching quarter-wise target from:", url);
-
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
-
-    if (res?.code !== 200) {
-      return { success: false, message: res?.message || "Failed to fetch target" };
-    }
-
-    const parsedTarget = res.data as OverallTarget;
-    setMyOverallTarget(parsedTarget);
-    
-    console.log("Quarter-wise target:", parsedTarget);
-    return { success: true, data: parsedTarget };
-  } catch (err: any) {
-    console.log(err);
-    let errorMessage = 'Something went wrong';
-
-    if (err.response?.data?.message) {
-      errorMessage = err.response.data.message;
-    } else if (err.message) {
-      errorMessage = err.message;
-    }
-
-    // Prevent literal 'null' from showing
-    if (errorMessage.trim().toLowerCase() === 'null') {
-      errorMessage = 'Something went wrong';
-    }
-
-    setError(errorMessage);
-    return { success: false, message: errorMessage };
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const getProjects = async () => {
     setLoadingProject(true);
@@ -708,50 +721,49 @@ const getQuarterWiseTarget = async (
     }
   };
 
-const getTeamOverview = async (id: string) => {
-  setLoading(true);
-  setError("");
-  try {
-    let url = `/api/team-insight-reporting-to/${id}`;
-    
-    console.log("📡 Making API request to:", url);
-    const res = await fetchAdapter(url, { method: "GET" });
+  const getTeamOverview = async (id: string) => {
+    setLoading(true);
+    setError("");
+    try {
+      let url = `/api/team-insight-reporting-to/${id}`;
 
-    console.log("✅ API Response received:", res);
-    console.log("📊 Response data:", res?.data);
-    console.log("🔍 Data type:", typeof res?.data);
-    console.log("🔍 Is array?", Array.isArray(res?.data));
+      console.log("📡 Making API request to:", url);
+      const res = await fetchAdapter(url, { method: "GET" });
 
-    if (res?.data && Array.isArray(res?.data)) {
-      console.log("🎯 Number of teams:", res.data.length);
-      console.log("👥 First team sample:", res.data[0]);
-      
-      const teams = res.data.map((team: any) => ({
-        _id: team._id || null,
-        teamName: team.teamName || null,
-        reportingTo: team.reportingTo || null,
-        crew: team.crew || [],
-        totalTasks: team.totalTasks || 0
-      }));
-      
-      console.log("🏷️ Processed teams:", teams);
-      setTeamReprotingTo(teams);
-    } else {
-      console.log("❌ No data or data is not an array");
-      setTeamReprotingTo([]);
+      console.log("✅ API Response received:", res);
+      console.log("📊 Response data:", res?.data);
+      console.log("🔍 Data type:", typeof res?.data);
+      console.log("🔍 Is array?", Array.isArray(res?.data));
+
+      if (res?.data && Array.isArray(res?.data)) {
+        console.log("🎯 Number of teams:", res.data.length);
+        console.log("👥 First team sample:", res.data[0]);
+
+        const teams = res.data.map((team: any) => ({
+          _id: team._id || null,
+          teamName: team.teamName || null,
+          reportingTo: team.reportingTo || null,
+          crew: team.crew || [],
+          totalTasks: team.totalTasks || 0,
+        }));
+
+        console.log("🏷️ Processed teams:", teams);
+        setTeamReprotingTo(teams);
+      } else {
+        console.log("❌ No data or data is not an array");
+        setTeamReprotingTo([]);
+      }
+
+      setLoadingProject(false);
+      return { success: true };
+    } catch (err: any) {
+      console.log("❌ API Error:", err);
+      setError(err.message);
+      return { success: false, message: err.message };
+    } finally {
+      setLoading(false);
     }
-    
-    setLoadingProject(false);
-    return { success: true };
-  } catch (err: any) {
-    console.log("❌ API Error:", err);
-    setError(err.message);
-    return { success: false, message: err.message };
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   //get all testimonials
   const getTestimonals = async () => {
@@ -1068,7 +1080,7 @@ const getTeamOverview = async (id: string) => {
         url += `&endDate=${endDate}`;
       }
 
-      console.log(url);
+      // console.log(url);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
@@ -1284,11 +1296,11 @@ const getTeamOverview = async (id: string) => {
         method: "GET",
       });
 
-if (res?.data) {
-      setAssignFeedbackInfo(res.data);
-    } else {
-      setAssignFeedbackInfo(res);
-    }
+      if (res?.data) {
+        setAssignFeedbackInfo(res.data);
+      } else {
+        setAssignFeedbackInfo(res);
+      }
 
       // if (page > 1) {
       //   setleads((prev) => [...prev, ...(res?.data ?? [])]);
@@ -1404,6 +1416,7 @@ if (res?.data) {
       });
       const { data, ...withoutData } = res as PaginationProps;
 
+      console.log(data);
       setSearchLeadInfo(withoutData);
       if (page > 1) {
         // setleads((prev) => [...prev, ...res?.data]);
@@ -1444,15 +1457,23 @@ if (res?.data) {
 
     try {
       let url = `/api/lead-count-pre-sale-team-leader-for-data-analyser?interval=${interval}`;
-      if (year != null) url += `&year=${year}`;
-      if (month != null) url += `&month=${month}`;
-      if (startDate != null) url += `&startDate=${startDate}`;
-      if (endDate != null) url += `&endDate=${endDate}`;
+      if (year != null) {
+        url += `&year=${year}`;
+      }
+      if (month != null) {
+        url += `&month=${month}`;
+      }
+      if (startDate != null) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate != null) {
+        url += `&endDate=${endDate}`;
+      }
 
       console.log("Fetching dashboard count from:", url);
 
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log(res);
+      console.log("res",res);
       setChartData(res?.data ?? []);
 
       return { success: true };
@@ -1484,9 +1505,9 @@ if (res?.data) {
     closingManager: closingManager,
     asssignFeedbackInfo: asssignFeedbackInfo,
     myOverallTarget: myOverallTarget,
-     projectTargets: projectTargets,
-  loadingProjectTargets: loadingProjectTargets,
-  getProjectTargets: getProjectTargets,
+    projectTargets: projectTargets,
+    loadingProjectTargets: loadingProjectTargets,
+    getProjectTargets: getProjectTargets,
 
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -1505,7 +1526,7 @@ if (res?.data) {
     addNewLead: addNewLead,
     fetchTeamLeaderGraphForDA: fetchTeamLeaderGraphForDA,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
-      getQuarterWiseTarget: getQuarterWiseTarget,
+    getQuarterWiseTarget: getQuarterWiseTarget,
   };
 
   return (
