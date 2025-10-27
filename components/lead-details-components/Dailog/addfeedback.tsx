@@ -8,6 +8,7 @@ import { FaStar } from "react-icons/fa6";
 import { PiBagFill } from "react-icons/pi";
 import { AiFillPicture } from "react-icons/ai";
 import ReactDOM from "react-dom";
+import { MdCancel } from "react-icons/md";
 
 interface AddFeedBaackProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -180,6 +181,21 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick }) => {
         <div className={styles.dialogOverlay}>
             <div ref={dialogRef} className={styles.dialogBox}>
                 <h3 className={styles.dialogTitle}>📝 Edit Lead Details</h3>
+                <MdCancel
+                    onClick={() => openclick(false)}
+                    style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        color: "red",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "23px",
+                        height: "23px",
+                        cursor: "pointer",
+                        zIndex: "999",
+                    }}
+                />
                 <div className={styles.dailogcnt}>
                     <div className={styles.mainlable}>Client Details</div>
                     <div className={styles.card}>

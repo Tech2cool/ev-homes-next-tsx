@@ -2,10 +2,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./dailog.module.css"
 import { IoLocation } from "react-icons/io5";
-import {  BsLinkedin } from "react-icons/bs";
+import { BsLinkedin } from "react-icons/bs";
 import { PiBagFill } from "react-icons/pi";
 import { AiFillPicture } from "react-icons/ai";
 import ReactDOM from "react-dom";
+import { MdCancel } from "react-icons/md";
 
 interface LinkdinUpdateProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,7 +41,7 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, [openclick]);
-   
+
 
     const handleCancel = () => {
         setformData({
@@ -93,6 +94,21 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
         <div className={styles.dialogOverlay}>
             <div ref={dialogRef} className={styles.dialogBox}>
                 <h3 className={styles.dialogTitle}>📝 Work Information</h3>
+                <MdCancel
+                    onClick={() => openclick(false)}
+                    style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        color: "red",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "23px",
+                        height: "23px",
+                        cursor: "pointer",
+                        zIndex: "999",
+                    }}
+                />
                 <div className={styles.dailogcnt}>
 
                     <div className={styles.card}>
