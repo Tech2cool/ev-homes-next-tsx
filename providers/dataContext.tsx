@@ -714,25 +714,43 @@ const getTeamOverview = async (id: string) => {
   try {
     let url = `/api/team-insight-reporting-to/${id}`;
     
+    console.log("📡 Making API request to:", url);
     const res = await fetchAdapter(url, { method: "GET" });
 
-    console.log("Team Reporting API Response:", res?.data);
+    console.log("✅ API Response received:", res);
+    console.log("📊 Response data:", res?.data);
+    console.log("🔍 Data type:", typeof res?.data);
+    console.log("🔍 Is array?", Array.isArray(res?.data));
 
-     let reqs = res?.data?.map((ele: any) => ele?.crew);
-      setTeamReprotingTo(reqs ?? []);
-      setLoadingProject(false);
-  
-
+    if (res?.data && Array.isArray(res?.data)) {
+      console.log("🎯 Number of teams:", res.data.length);
+      console.log("👥 First team sample:", res.data[0]);
+      
+      const teams = res.data.map((team: any) => ({
+        _id: team._id || null,
+        teamName: team.teamName || null,
+        reportingTo: team.reportingTo || null,
+        crew: team.crew || [],
+        totalTasks: team.totalTasks || 0
+      }));
+      
+      console.log("🏷️ Processed teams:", teams);
+      setTeamReprotingTo(teams);
+    } else {
+      console.log("❌ No data or data is not an array");
+      setTeamReprotingTo([]);
+    }
+    
+    setLoadingProject(false);
     return { success: true };
   } catch (err: any) {
-    console.log(err);
+    console.log("❌ API Error:", err);
     setError(err.message);
     return { success: false, message: err.message };
   } finally {
     setLoading(false);
   }
 };
-
 
 
   //get all testimonials
