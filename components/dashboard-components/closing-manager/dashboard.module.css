@@ -135,6 +135,13 @@
   border: 1px solid #5c36e4c1;
 }
 
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes name & task box apart */
+  gap: 12px; /* adds breathing space */
+}
+
 :global(html.light) .cardtarget {
   /* background: rgba(253, 253, 253, 0.7); */
 }

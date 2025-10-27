@@ -305,11 +305,16 @@ type TaskCount = {
   completed: number | null;
 };
 
+type Crew = {
+  _id: string | null
+ teamMember: Employee;
+};
+
 type TeamInsight = {
    _id: string | null
   teamName?: string | null
   reportingTo?: string | null
-  crew?: Array<{ teamMember: string; _id: string }>
+  crew?: Crew[]
   totalTasks: number | null
 };
 
@@ -344,7 +349,7 @@ type DataProviderState = {
   loadingLeads: boolean;
   fetchingMoreLeads: boolean;
   employees: Employee[];
-  TeamReportingTo: TeamInsight | null;
+  teamOverview: TeamInsight[];
   requirements: string[];
   leadInfo: PaginationProps | null;
   assignInfo: TeamLeaderAssignFolloupUp | null;
@@ -419,7 +424,9 @@ type DataProviderState = {
 
    getProjectTargets: (id: string, quarter?: number | null, year?: number | null) => Promise<{ success: boolean; message?: string }>;
 
-
+  getTeamOverview: (
+    id: string,
+  ) => Promise<{ success: boolean; message?: string }>;
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 };
@@ -430,7 +437,7 @@ const initialState: DataProviderState = {
   testimonials: [],
   loadingTestimonial: false,
   fetchingMoreLeads: false,
-  TeamReportingTo: null,
+  teamOverview: [],
   employees: [],
   searchLeadInfo: null,
   leadInfo: null,
@@ -482,6 +489,9 @@ const initialState: DataProviderState = {
   }),
 
     getProjectTargets: async () => ({ success: false, message: "Not initialized" }),
+
+  getTeamOverview: async () => ({ success: false, message: "Not initialized" }),
+
 };
 
 const dataProviderContext =
@@ -496,7 +506,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [loadingProject, setLoadingProject] = useState<boolean>(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [TeamReportingTo, setTeamReprotingTo] = useState<TeamInsight | null>(null);
+const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
+
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
@@ -697,29 +708,49 @@ const getQuarterWiseTarget = async (
     }
   };
 
-const getTeamReportingTo = async (id: string, dept: string) => {
+const getTeamOverview = async (id: string) => {
   setLoading(true);
   setError("");
   try {
     let url = `/api/team-insight-reporting-to/${id}`;
-    if (dept) url += `?dept=${dept}`;
+    
+    console.log("📡 Making API request to:", url);
     const res = await fetchAdapter(url, { method: "GET" });
 
-    console.log("Team Reporting API Response:", res?.data);
+    console.log("✅ API Response received:", res);
+    console.log("📊 Response data:", res?.data);
+    console.log("🔍 Data type:", typeof res?.data);
+    console.log("🔍 Is array?", Array.isArray(res?.data));
 
-    // if response is an array
-    setTeamReprotingTo(Array.isArray(res?.data) ? res.data[0] : res.data);
-
+    if (res?.data && Array.isArray(res?.data)) {
+      console.log("🎯 Number of teams:", res.data.length);
+      console.log("👥 First team sample:", res.data[0]);
+      
+      const teams = res.data.map((team: any) => ({
+        _id: team._id || null,
+        teamName: team.teamName || null,
+        reportingTo: team.reportingTo || null,
+        crew: team.crew || [],
+        totalTasks: team.totalTasks || 0
+      }));
+      
+      console.log("🏷️ Processed teams:", teams);
+      setTeamReprotingTo(teams);
+    } else {
+      console.log("❌ No data or data is not an array");
+      setTeamReprotingTo([]);
+    }
+    
+    setLoadingProject(false);
     return { success: true };
   } catch (err: any) {
-    console.log(err);
+    console.log("❌ API Error:", err);
     setError(err.message);
     return { success: false, message: err.message };
   } finally {
     setLoading(false);
   }
 };
-
 
 
   //get all testimonials
@@ -1443,7 +1474,7 @@ if (res?.data) {
     siteInfo: siteInfo,
     visits: visits,
     leads: leads,
-    TeamReportingTo: TeamReportingTo,
+    teamOverview: teamOverview,
     fetchingMoreLeads: fetchingMoreLeads,
     assignInfo: assignInfo,
     searchLeadInfo: searchLeadInfo,
@@ -1470,7 +1501,7 @@ if (res?.data) {
     fetchSearchLeads: fetchSearchLeads,
     fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
     getChannelPartners: getChannelPartners,
-    getTeamReportingTo: getTeamReportingTo,
+    getTeamOverview: getTeamOverview,
     addNewLead: addNewLead,
     fetchTeamLeaderGraphForDA: fetchTeamLeaderGraphForDA,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
