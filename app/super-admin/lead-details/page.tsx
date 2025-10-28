@@ -324,12 +324,12 @@ const LeadDetailsPage = () => {
   };
 
   const handleVisitSelect = (SelectedLead: Lead) => {
-    router.push(`/lead-details?id=${SelectedLead._id}`);
+    router.push(`/super-admin/lead-details?id=${SelectedLead._id}`);
     setShowSidebar(false);
   };
 
   const handleBackToList = () => {
-    router.push("/lead-details");
+    router.push("/super-admin/lead-details");
   };
 
   const clearFilters = () => {
@@ -382,7 +382,7 @@ const LeadDetailsPage = () => {
                   }`}
                 onClick={() => {
                   setSelectedLead(visit);
-                  router.push(`/lead-details?id=${visit._id}`, {
+                  router.push(`/super-admin/lead-details?id=${visit._id}`, {
                     scroll: false,
                   });
                 }}
@@ -750,7 +750,7 @@ const LeadDetailsPage = () => {
               // }`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/lead-details?id=${visit._id}`, {
+                router.push(`/super-admin/lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -885,7 +885,7 @@ const LeadDetailsPage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/lead-details", { scroll: false });
+              router.push("/super-admin/lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />

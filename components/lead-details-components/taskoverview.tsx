@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import styles from "@/app/lead-details/lead-details.module.css";
+import styles from "@/app/super-admin/lead-details/lead-details.module.css";
 import { Building, Calendar, Clock, User } from "lucide-react";
 import { IoPersonSharp } from "react-icons/io5";
 import { FaPhoneAlt, FaTasks } from "react-icons/fa";
