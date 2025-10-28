@@ -8,7 +8,7 @@ import {
 import DashboardSalesPage from "@/components/dashboard-components/sales/dashboard";
 import { useUser } from "@/providers/userContext";
 import DataAnalyzerDashboardPage from "@/components/dashboard-components/data-analyzer/dashboard";
-import ClosingManagerPage from "../closing-manager-dashboard/page";
+import ClosingManagerPage from "../closing-manager/closing-manager-dashboard/page";
 import DataAnalyzerDashboard from "../data-analyzer-dashboard/page";
 
 const DashboardPage = () => {
