@@ -61,7 +61,7 @@ const LoginPage = () => {
     // const desg = result
     if (result.success) {
   
-      redirect("/dashboard");
+      router.push("/dashboard");
     } else {
 
 

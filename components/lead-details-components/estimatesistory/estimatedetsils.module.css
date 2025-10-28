@@ -575,11 +575,11 @@
   }
 
   /* ✅ FIXED GLOBAL SELECTORS */
-  :global(table th),
+  /* :global(table th),
   :global(table td) {
     font-size: 0.85rem;
     padding: 6px;
-  }
+  } */
 
   .finalprice button {
     width: 100%;
@@ -680,7 +680,7 @@
 }
 
 /* Tables */
-:global(html.light) table,
+/* :global(html.light) table,
 :global(html.light) table th,
 :global(html.light) table td {
   color: #222;
@@ -697,4 +697,4 @@
 
 :global(html.light) table tr:hover {
   background-color: #f1f1f1;
-}
+} */
