@@ -17,40 +17,42 @@ import { MdOutlinePendingActions } from "react-icons/md";
 import Report from "./Report";
 import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
+import Link from "next/link";
 
 const SectionTap = () => {
   const {
     searchLeadInfo,
     siteInfo,
     asssignFeedbackInfo,
+    onboardTargetData,
     fetchSearchLeads,
     fetchDataAnalyzerVisits,
-     fetchAssignFeedbackLeadsCount,
+    fetchAssignFeedbackLeadsCount,
+    fetchOnboardTarget,
   } = useData();
   const { user, loading } = useUser();
-useEffect(() => {
-  if (user && !loading && !searchLeadInfo) {
-    fetchSearchLeads({
-      query: "",
-      page: 1,
-      limit: 10,
-    });
-  }
-}, [user, loading, searchLeadInfo]);
 
-   useEffect(() => {
-      if (user && !loading) {
-        // console.log("use effect dashboard");
-        // getClosingManagerDashBoardCount({ id: user?._id ?? null });
-        fetchAssignFeedbackLeadsCount({
-          query: "",
-          page: 1,
-          limit: 10,
-        });
-  
-    
-      }
-    }, [user, loading]);
+  useEffect(() => {
+    if (user && !loading && !searchLeadInfo) {
+      fetchSearchLeads({
+        query: "",
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [user, loading, searchLeadInfo]);
+
+  useEffect(() => {
+    if (user && !loading) {
+      // console.log("use effect dashboard");
+      // getClosingManagerDashBoardCount({ id: user?._id ?? null });
+      fetchAssignFeedbackLeadsCount({
+        query: "",
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     if (user && !loading) {
@@ -127,11 +129,13 @@ useEffect(() => {
   const starRef = useRef<HTMLSpanElement>(null);
   const starvisitRef = useRef<HTMLSpanElement>(null);
 
-    useEffect(() => {
-      if (asssignFeedbackInfo) {
-        console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
-      }
-    }, [asssignFeedbackInfo]);
+  const [loadingTarget, setLoadingTarget] = useState(false);
+
+  useEffect(() => {
+    if (asssignFeedbackInfo) {
+      console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
+    }
+  }, [asssignFeedbackInfo]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -205,7 +209,7 @@ useEffect(() => {
   //   { name: "Jasprit Arora", feedback: 210, tasks: 320 },
   //   { name: "Janhana Gumpta", feedback: 150, tasks: 310 },
   // ];
-    const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
+  const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
         name: `${item.teamLeader?.firstName ?? "Team"} ${
           item.teamLeader?.lastName ?? "Leader"
@@ -260,6 +264,134 @@ useEffect(() => {
     },
   ];
 
+  useEffect(() => {
+    if (user && !loading) {
+      fetchTargetData();
+    }
+  }, [user, loading]);
+
+  // Add useEffect for year/month changes
+  useEffect(() => {
+    if (selectedMonth !== null) {
+      fetchTargetData();
+    }
+  }, [year, selectedMonth]);
+
+  // Add fetch target data function
+  const fetchTargetData = async () => {
+    try {
+      setLoadingTarget(true);
+      const date =
+        selectedMonth !== null
+          ? `${year}-${String(selectedMonth + 1).padStart(2, "0")}-01`
+          : undefined;
+
+      console.log("Fetching target data with date:", date);
+      await fetchOnboardTarget({ date });
+    } catch (error) {
+      console.error("Error fetching target data:", error);
+    } finally {
+      setLoadingTarget(false);
+    }
+  };
+
+  // Replace your static data with dynamic data calculation
+  const getTargetData = () => {
+    if (!onboardTargetData) {
+      // Fallback data when no API data
+      return [
+        {
+          label: "Target",
+          value: 0,
+          color1: "#ff7e5f",
+          color2: "#feb47b",
+          icon: FaFlag,
+          iconColor: "#ff7e5f",
+        },
+        {
+          label: "Achieved",
+          value: 0,
+          color1: "#00b09b",
+          color2: "#96c93d",
+          icon: FaCheck,
+          iconColor: "#00b09b",
+        },
+        {
+          label: "Pending",
+          value: 0,
+          color1: "#4facfe",
+          color2: "#00f2fe",
+          icon: MdOutlinePendingActions,
+          iconColor: "#4facfe",
+        },
+      ];
+    }
+
+    const { target = 0, achieved = 0, pending = 0 } = onboardTargetData;
+    const completionRate =
+      target > 0 ? Math.min(100, (achieved / target) * 100) : 0;
+
+    return [
+      {
+        label: "Target",
+        value: target,
+        color1: "#ff7e5f",
+        color2: "#feb47b",
+        icon: FaFlag,
+        iconColor: "#ff7e5f",
+      },
+      {
+        label: "Achieved",
+        value: achieved,
+        color1: "#00b09b",
+        color2: "#96c93d",
+        icon: FaCheck,
+        iconColor: "#00b09b",
+      },
+      {
+        label: "Pending",
+        value: pending,
+        color1: "#4facfe",
+        color2: "#00f2fe",
+        icon: MdOutlinePendingActions,
+        iconColor: "#4facfe",
+      },
+      {
+        label: "Completion",
+        value: Math.round(completionRate),
+        color1: "#8B5CF6",
+        color2: "#A78BFA",
+        icon: FaUsers,
+        iconColor: "#8B5CF6",
+      },
+    ];
+  };
+
+  // Calculate remaining info
+  const getRemainingInfo = () => {
+    if (!onboardTargetData) {
+      return { percentage: 0, days: 2, cps: 5 }; // Default values
+    }
+
+    const { target = 0, achieved = 0, pending = 0 } = onboardTargetData;
+    const percentage =
+      target > 0 ? Math.min(100, (achieved / target) * 100) : 0;
+
+    // Calculate days remaining in current month
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const daysRemaining = Math.max(0, lastDay.getDate() - now.getDate());
+
+    return {
+      percentage: Math.round(percentage),
+      days: daysRemaining,
+      cps: pending,
+    };
+  };
+
+  const targetData = getTargetData();
+  const remainingInfo = getRemainingInfo();
+
   return (
     <div className={styles.tabcontainer}>
       <div className={styles.headtitle}>
@@ -269,7 +401,7 @@ useEffect(() => {
         {/* Horizontal scrollable cards */}
         <div className={styles.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-            <div className={styles.card} key={index}>
+             <Link  href="/lead-details" >    <div className={styles.card} key={index}>
               <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
                 {card.icon}
               </div>
@@ -291,7 +423,8 @@ useEffect(() => {
                 <p className={styles.label}>{card.label}</p>
                 <p className={styles.value}>{card.value}</p>
               </div>
-            </div>
+            </div></Link>
+        
           ))}
         </div>
 
@@ -348,67 +481,75 @@ useEffect(() => {
       <div className={styles.headtitle}>
         <div className={styles.ding}>Monthly Target</div>
       </div>
-      <div className={styles.graf}>
-        <div className={styles.grafcontainer}>
-          {data.map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <div className={styles.mytr} key={index}>
-                <div
-                  className={styles.donut}
-                  style={{
-                    background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
-                  }}
-                >
+      {loadingTarget ? (
+        <div className={styles.loadingState}>Loading target data...</div>
+      ) : (
+        <div className={styles.graf}>
+          <div className={styles.grafcontainer}>
+            {targetData.map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <div className={styles.mytr} key={index}>
                   <div
-                    className={styles.iconBg}
-                    style={{ color: item.iconColor }}
+                    className={styles.donut}
+                    style={{
+                      background: `conic-gradient(from 0deg, ${item.color1} 0%, ${item.color2} ${item.value}%, #e0e0e0 ${item.value}% 100%)`,
+                    }}
                   >
-                    <IconComponent size={45} />
+                    <div
+                      className={styles.iconBg}
+                      style={{ color: item.iconColor }}
+                    >
+                      <IconComponent size={45} />
+                    </div>
+                    <div className={styles.centerNumber}>
+                      {item.value}
+                      {item.label === "Completion" ? "%" : ""}
+                    </div>
                   </div>
-                  <div className={styles.centerNumber}>{item.value}</div>
+                  <div className={styles.label}>{item.label}</div>
                 </div>
-                <div className={styles.label}>{item.label}</div>
+              );
+            })}
+          </div>
+
+          <div className={styles.targetcontainer}>
+            <div className={styles.texttarget}>
+              <div className={styles.progressHeader}>
+                <p className={styles.title}>Progress</p>
+                <span className={styles.percentage}>0% Completed</span>
               </div>
-            );
-          })}
-        </div>
-        <div className={styles.targetcontainer}>
-          <div className={styles.texttarget}>
-            <div className={styles.progressHeader}>
-              <p className={styles.title}>Progress</p>
-              <span className={styles.percentage}>0% Completed</span>
+              <div className={styles.description}>
+                You have <strong>2 days</strong> remaining to complete{" "}
+                <strong>5 more CP's Onboarding</strong>.
+              </div>
             </div>
-            <div className={styles.description}>
-              You have <strong>2 days</strong> remaining to complete{" "}
-              <strong>5 more CP's Onboarding</strong>.
-            </div>
-          </div>
 
-          <div className={styles.filter}>
-            <div className={styles.yearSelector}>
-              <select
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value))}
-              >
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
+            <div className={styles.filter}>
+              <div className={styles.yearSelector}>
+                <select
+                  value={year}
+                  onChange={(e) => setYear(Number(e.target.value))}
+                >
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.monthGrid}>
+                {months.map((month, index) => (
+                  <div key={index} className={styles.monthItem}>
+                    {month}
+                  </div>
                 ))}
-              </select>
-            </div>
-
-            <div className={styles.monthGrid}>
-              {months.map((month, index) => (
-                <div key={index} className={styles.monthItem}>
-                  {month}
-                </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <div className={styles.grafMobile}>
         <div className={styles.progressCard}>
           <div className={styles.targetsWrapper}>

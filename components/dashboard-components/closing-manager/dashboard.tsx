@@ -37,6 +37,7 @@ import { createContext } from "vm";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
+import Link from "next/link";
 
 interface ClosingManagerDashboardHeaderProps {
   userName: string;
@@ -553,9 +554,12 @@ export function ClosingManagerDashboardHeader({
                 minWidth: "173px", // adjust card width as needed
               }}
             >
-              <div className={styles.metricCardContent}>
+              <Link  href="/lead-details" >
+               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
               </div>
+              </Link>
+             
             </div>
           ))}
         </div>

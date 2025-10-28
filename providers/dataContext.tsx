@@ -223,6 +223,33 @@ type UploadedDocuments = {
   // ... other properties
 };
 
+type CpOnboarding = {
+  id: string;
+  name?: string;
+  email?: string;
+  status?: string;
+};
+
+type OnboardTarget = {
+  id?: string;
+  month?: number;
+  year?: number;
+  target?: number;
+  achieved?: number;
+  pending?: number;
+  date?: string;
+  onboards: CpOnboarding[];
+};
+
+type TargetProgressData = {
+  label: string;
+  value: number;
+  color1: string;
+  color2: string;
+  icon: any; // React component type
+  iconColor: string;
+}
+
 //total count
 type SearchLeadParms = {
   query: string;
@@ -353,11 +380,16 @@ type DataProviderState = {
   closingManager: PaginationProps[];
   leads: Lead[] | null;
   dashCount: DashboardCount | null;
+  salesDashCount: DashboardCount | null;
   siteInfo: PaginationProps | null;
   visits: SiteVisit[] | null;
   channelPartners: ChannelPartner[];
   searchLeadInfo: PaginationProps | null;
   leadsTeamLeaderGraphForDT: ChartModel[];
+  leadsChannelPartnerGraphForDT: ChartModel[];
+  leadsFunnelGraphForDT: ChartModel[];
+  leadsLineGraphForDT: ChartModel[];
+  onboardTargetData: OnboardTarget | null;
   asssignFeedbackInfo: TeamLeaderAssignFolloupUp | null;
   myOverallTarget: OverallTarget | null;
   projectTargets: ProjectTargetData[];
@@ -412,6 +444,36 @@ type DataProviderState = {
     month?: number | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
+  fetchChannelPartnerGraphForDA: (params: {
+    // Add this
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    month?: number | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
+  fetchFunnelGraphForDA: (params: {
+    // Add this
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    month?: number | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
+  fetchLineGraphForDA: (params: {
+    // Add this
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
+  fetchOnboardTarget: (params: { // Add this
+    date?: string | null;
+  }) => Promise<{ success: boolean; message?: string; data?: OnboardTarget }>;
+
   getQuarterWiseTarget: (
     id: string,
     quarter?: number | null,
@@ -447,10 +509,15 @@ const initialState: DataProviderState = {
   siteInfo: null,
   visits: null,
   dashCount: null,
+  salesDashCount: null,
   assignInfo: null,
   asssignFeedbackInfo: null,
   channelPartners: [],
   leadsTeamLeaderGraphForDT: [],
+  leadsChannelPartnerGraphForDT: [],
+  leadsFunnelGraphForDT: [],
+  leadsLineGraphForDT: [],
+  onboardTargetData: null, 
   closingManager: [],
   myOverallTarget: null,
   projectTargets: [],
@@ -475,6 +542,24 @@ const initialState: DataProviderState = {
   fetchAssignFeedbackLeadsCount: async () => ({ success: false }),
   addNewLead: async () => ({ success: false, message: "Not initialized" }),
   fetchTeamLeaderGraphForDA: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  fetchChannelPartnerGraphForDA: async () => ({
+    // Add this
+    success: false,
+    message: "Not initialized",
+  }),
+  fetchFunnelGraphForDA: async () => ({
+    // Add this
+    success: false,
+    message: "Not initialized",
+  }),
+  fetchLineGraphForDA: async () => ({ // Add this
+    success: false,
+    message: "Not initialized",
+  }),
+   fetchOnboardTarget: async () => ({ // Add this
     success: false,
     message: "Not initialized",
   }),
@@ -536,6 +621,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
 
+  const [salesDashCount, setSalesDashCount] = useState<DashboardCount | null>(null);
+
+
   const [leads, setleads] = useState<Lead[]>([]);
 
   const [loadingVisits, setLoadingVisits] = useState<boolean>(false);
@@ -546,8 +634,56 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     useState<boolean>(false);
   const [channelPartners, setChannelPartners] = useState<ChannelPartner[]>([]);
   const [leadsTeamLeaderGraphForDT, setChartData] = useState<ChartModel[]>([]);
+  const [leadsChannelPartnerGraphForDT, setChannelPartnerChartData] = useState<
+    ChartModel[]
+  >([]);
+  const [leadsFunnelGraphForDT, setFunnelChartData] = useState<ChartModel[]>(
+    []
+  );
+  const [leadsLineGraphForDT, setLineChartData] = useState<ChartModel[]>([]); 
+  const [onboardTargetData, setOnboardTargetData] = useState<OnboardTarget | null>(null); 
+  
+  const fetchOnboardTarget = async ({
+    date = null,
+  }: {
+    date?: string | null;
+  }): Promise<{ success: boolean; message?: string; data?: OnboardTarget }> => {
+    setError("");
 
-  // Add this function after getQuarterWiseTarget
+    try {
+      let url = '/api/onboard-target';
+      if (date != null) {
+        url += `?date=${date}`;
+      }
+
+      console.log("Fetching onboard target data from:", url);
+      const res = await fetchAdapter(url, { method: "GET" });
+      console.log("Onboard target API response:", res);
+
+      if (res?.data) {
+        const targetData: OnboardTarget = {
+          id: res.data._id || res.data.id,
+          month: res.data.month ? parseInt(res.data.month) : undefined,
+          year: res.data.year ? parseInt(res.data.year) : undefined,
+          target: res.data.target ? parseInt(res.data.target) : 0,
+          achieved: res.data.achieved ? parseInt(res.data.achieved) : 0,
+          pending: res.data.pending ? parseInt(res.data.pending) : 0,
+          date: res.data.date,
+          onboards: res.data.onboards || [],
+        };
+
+        setOnboardTargetData(targetData);
+        return { success: true, data: targetData };
+      } else {
+        return { success: false, message: "No data received" };
+      }
+    } catch (err: any) {
+      const message = String(err);
+      setError(message);
+      return { success: false, message };
+    }
+  };
+  
   const getProjectTargets = async (
     id: string,
     quarter?: number | null,
@@ -1005,7 +1141,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       const dashboardData = res.data as DashboardCount;
 
       // console.log("Lead info:", dashboardData.lead);
-      setDashboardCount(dashboardData);
+      setSalesDashCount(dashboardData);
 
       return { success: true };
     } catch (err: any) {
@@ -1473,8 +1609,138 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       console.log("Fetching dashboard count from:", url);
 
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log("res",res);
+      console.log("res", res);
       setChartData(res?.data ?? []);
+
+      return { success: true };
+    } catch (err: any) {
+      const message = String(err);
+      setError(message);
+      return { success: false, message };
+    }
+  };
+
+  const fetchChannelPartnerGraphForDA = async ({
+    interval = "monthly",
+    year = null,
+    startDate = null,
+    endDate = null,
+    month = null,
+  }: {
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    month?: number | null;
+  }): Promise<{ success: boolean; message?: string }> => {
+    setError("");
+
+    try {
+      let url = `/api/lead-count-channel-partners?interval=${interval}`;
+      if (year != null) {
+        url += `&year=${year}`;
+      }
+      if (month != null) {
+        url += `&month=${month}`;
+      }
+      if (startDate != null) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate != null) {
+        url += `&endDate=${endDate}`;
+      }
+
+      console.log("Fetching channel partner data from:", url);
+      const res = await fetchAdapter(url, { method: "GET" });
+      console.log("Channel partner API response:", res);
+
+      // Set the channel partner data
+      setChannelPartnerChartData(res?.data ?? []);
+
+      return { success: true };
+    } catch (err: any) {
+      const message = String(err);
+      setError(message);
+      return { success: false, message };
+    }
+  };
+
+  const fetchFunnelGraphForDA = async ({
+    interval = "yearly",
+    year = null,
+    startDate = null,
+    endDate = null,
+    month = null,
+  }: {
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    month?: number | null;
+  }): Promise<{ success: boolean; message?: string }> => {
+    setError("");
+
+    try {
+      let url = `/api/lead-count-funnel?interval=${interval}`;
+      if (year != null) {
+        url += `&year=${year}`;
+      }
+      if (month != null) {
+        url += `&month=${month}`;
+      }
+      if (startDate != null) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate != null) {
+        url += `&endDate=${endDate}`;
+      }
+
+      console.log("Fetching funnel data from:", url);
+      const res = await fetchAdapter(url, { method: "GET" });
+      console.log("Funnel API response:", res);
+
+      // Set the funnel data
+      setFunnelChartData(res?.data ?? []);
+
+      return { success: true };
+    } catch (err: any) {
+      const message = String(err);
+      setError(message);
+      return { success: false, message };
+    }
+  };
+
+  const fetchLineGraphForDA = async ({
+    interval = "monthly",
+    year = null,
+    startDate = null,
+    endDate = null,
+  }: {
+    interval?: string | null;
+    year?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  }): Promise<{ success: boolean; message?: string }> => {
+    setError("");
+
+    try {
+      let url = `/api/lead-count?interval=${interval}`;
+      if (year != null) {
+        url += `&year=${year}`;
+      }
+      if (startDate != null) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate != null) {
+        url += `&endDate=${endDate}`;
+      }
+
+      console.log("Fetching line chart data from:", url);
+      const res = await fetchAdapter(url, { method: "GET" });
+      console.log("Line chart API response:", res);
+      
+      // Set the line chart data
+      setLineChartData(res?.data ?? []);
 
       return { success: true };
     } catch (err: any) {
@@ -1502,12 +1768,19 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     requirements: requirements,
     channelPartners: channelPartners,
     leadsTeamLeaderGraphForDT: leadsTeamLeaderGraphForDT,
+    leadsChannelPartnerGraphForDT: leadsChannelPartnerGraphForDT,
+    leadsFunnelGraphForDT: leadsFunnelGraphForDT,
+    leadsLineGraphForDT: leadsLineGraphForDT,
+    onboardTargetData : onboardTargetData,
     closingManager: closingManager,
     asssignFeedbackInfo: asssignFeedbackInfo,
     myOverallTarget: myOverallTarget,
     projectTargets: projectTargets,
+    
     loadingProjectTargets: loadingProjectTargets,
+    salesDashCount: salesDashCount,
     getProjectTargets: getProjectTargets,
+
 
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -1525,6 +1798,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getTeamOverview: getTeamOverview,
     addNewLead: addNewLead,
     fetchTeamLeaderGraphForDA: fetchTeamLeaderGraphForDA,
+    fetchChannelPartnerGraphForDA: fetchChannelPartnerGraphForDA,
+    fetchFunnelGraphForDA: fetchFunnelGraphForDA,
+    fetchLineGraphForDA: fetchLineGraphForDA,
+    fetchOnboardTarget : fetchOnboardTarget,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
   };

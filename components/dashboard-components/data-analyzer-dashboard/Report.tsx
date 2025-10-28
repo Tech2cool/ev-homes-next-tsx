@@ -57,25 +57,349 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 const ReportsSection: React.FC = () => {
   const {
     leadsTeamLeaderGraphForDT,
+    leadsChannelPartnerGraphForDT,
+    leadsLineGraphForDT,
     fetchTeamLeaderGraphForDA,
+    fetchChannelPartnerGraphForDA,
+    fetchLineGraphForDA,
   } = useData();
   const { user, loading } = useUser();
   const [showFilter, setshowFilter] = useState(false);
   const [leadfilter, setleadfilter] = useState(false);
   const [leaderFilter, setleaderFilter] = useState(false);
+  const [lineChartFilter, setLineChartFilter] = useState(false);
   const [selectedFilter, setselectedFilter] = useState("Monthly");
   const [leadfilteSelect, setleadfilteSelect] = useState("Monthly");
   const [leaderSelect, setleaderSelect] = useState("Monthly");
+  const [lineChartSelect, setLineChartSelect] = useState("Monthly");
   const [isDesktop, setIsDesktop] = useState(false);
 
   const [teamLeaderData, setTeamLeaderData] = useState<TeamLeaderData[]>([]);
-    const [channelPartnerData, setChannelPartnerData] = useState<ChannelPartnerData[]>([]);
+  const [channelPartnerData, setChannelPartnerData] = useState<
+    ChannelPartnerData[]
+  >([]);
+  const [lineChartData, setLineChartData] = useState<LineChartData[]>([]);
   const [totalLeads, setTotalLeads] = useState<number>(0);
-  const [loadingChart, setLoadingChart] = useState<boolean>(true);
+  const [totalCPCount, setTotalCPCount] = useState<number>(0);
+  const [totalLineChartLeads, setTotalLineChartLeads] = useState<number>(0);
 
+  const [loadingChart, setLoadingChart] = useState<boolean>(true);
+  const [loadingCPChart, setLoadingCPChart] = useState<boolean>(true);
+  const [loadingLineChart, setLoadingLineChart] = useState<boolean>(true);
   useEffect(() => {
     fetchTeamLeaderData();
+    fetchChannelPartnerData();
+    fetchLineChartData();
   }, []);
+
+   useEffect(() => {
+    if (user && !loading) {
+      fetchTeamLeaderGraphForDA({ interval: "monthly" });
+      fetchChannelPartnerGraphForDA({ interval: "monthly" });
+      fetchLineGraphForDA({ interval: "monthly" });
+    }
+  }, [user, loading]);
+
+ useEffect(() => {
+  if (leadsTeamLeaderGraphForDT?.length > 0) {
+    const transformed = leadsTeamLeaderGraphForDT.map((item, i) => ({
+      name: item.category || `Team ${i + 1}`, // category = team leader name
+      value: item.value ?? 0,                // value = total leads
+    })).filter(d => d.value > 0);
+
+    setTeamLeaderData(transformed);
+  }
+}, [leadsTeamLeaderGraphForDT]);
+
+
+  // 🔹 Update Channel Partner Chart
+ useEffect(() => {
+  if (leadsChannelPartnerGraphForDT?.length > 0) {
+    const transformed = leadsChannelPartnerGraphForDT
+      .map((item, i) => ({
+        name: item.category || `Partner ${i + 1}`, // category = partner name
+        count: item.value ?? 0,                    // value = lead count
+      }))
+      .filter(d => d.count > 0)
+      .sort((a, b) => b.count - a.count);
+
+    setChannelPartnerData(transformed);
+    updateCPChart(transformed);
+  }
+}, [leadsChannelPartnerGraphForDT]);
+
+
+  // 🔹 Update Line Chart
+  useEffect(() => {
+  if (leadsLineGraphForDT?.length > 0) {
+    const transformed = leadsLineGraphForDT.map((item, i) => ({
+      month: item.category || `Month ${i + 1}`, // category = month label
+      leads: item.value ?? 0,                   // value = total leads
+    }));
+
+    setLineChartData(transformed);
+    updateLineChart(transformed);
+  }
+}, [leadsLineGraphForDT]);
+
+  // Line Chart data fetching (NEW)
+  const fetchLineChartData = async (interval: string = "Monthly") => {
+    try {
+      setLoadingLineChart(true);
+      console.log("Fetching line chart data with interval:", interval);
+
+      const result = await fetchLineGraphForDA({
+        interval: interval.toLowerCase(),
+      });
+
+      console.log("Line chart API result:", result);
+      console.log("Line chart data:", leadsLineGraphForDT);
+
+      if (result.success) {
+        if (leadsLineGraphForDT && leadsLineGraphForDT.length > 0) {
+          console.log("Raw line chart data structure:", leadsLineGraphForDT[0]);
+
+          const transformedData = leadsLineGraphForDT
+            .map((item: any, index: number) => {
+              // Map the API response to LineChartData format
+              const month =
+                item.category ||
+                item.name ||
+                item.month || // This matches your Flutter mapping
+                `Month ${index + 1}`;
+
+              const leads = item.value || item.count || Number(item.value) || 0;
+
+              console.log(`Line Chart Item ${index}:`, {
+                month,
+                leads,
+                rawItem: item,
+              });
+
+              return {
+                month: month,
+                leads: leads,
+              };
+            })
+            .filter((item) => item.leads > 0)
+            .sort((a, b) => {
+              // Sort by month order if possible, otherwise by count
+              const monthOrder = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ];
+              const aIndex = monthOrder.indexOf(a.month);
+              const bIndex = monthOrder.indexOf(b.month);
+
+              if (aIndex !== -1 && bIndex !== -1) {
+                return aIndex - bIndex;
+              }
+              return a.leads - b.leads;
+            });
+
+          console.log("Transformed line chart data:", transformedData);
+
+          if (transformedData.length > 0) {
+            setLineChartData(transformedData);
+            updateLineChart(transformedData);
+          } else {
+            useLineChartFallbackData();
+          }
+        } else {
+          console.log("No line chart data from API, using fallback data");
+          useLineChartFallbackData();
+        }
+      } else {
+        console.error("Failed to fetch line chart data:", result.message);
+        useLineChartFallbackData();
+      }
+    } catch (error) {
+      console.error("Error fetching line chart data:", error);
+      useLineChartFallbackData();
+    } finally {
+      setLoadingLineChart(false);
+    }
+  };
+
+  const useLineChartFallbackData = () => {
+    const fallbackData = [
+      { month: "Jan", leads: 2286 },
+      { month: "Feb", leads: 2895 },
+      { month: "Mar", leads: 3191 },
+      { month: "Apr", leads: 3085 },
+      { month: "May", leads: 2026 },
+    ];
+    setLineChartData(fallbackData);
+    updateLineChart(fallbackData);
+  };
+
+  // Update line chart when data changes
+  const updateLineChart = (data: LineChartData[]) => {
+    const categories = data.map((item) => item.month);
+    const chartData = data.map((item) => item.leads);
+
+    const total = chartData.reduce((sum, leads) => sum + leads, 0);
+    setTotalLineChartLeads(total);
+
+    // Check current theme
+    const isLightTheme = document.documentElement.classList.contains("light");
+
+    setChartState((prevState) => ({
+      ...prevState,
+      series: [{ name: "Leads", data: chartData }],
+      options: {
+        chart: {
+          height: 350,
+          type: "line",
+          toolbar: {
+            show: true,
+            tools: {
+              download: false,
+              selection: false,
+              zoom: false,
+              zoomin: true,
+              zoomout: true,
+              pan: false,
+              reset: false,
+            },
+          },
+          foreColor: isLightTheme ? "#333333" : "#ffffff",
+        },
+        stroke: {
+          width: 3,
+          curve: "smooth",
+          colors: ["#0088FE"],
+        },
+        markers: {
+          size: 5,
+          colors: ["#0088FE"],
+          strokeColors: "#fff",
+          strokeWidth: 2,
+          hover: {
+            size: 7,
+          },
+        },
+        xaxis: {
+          categories,
+          title: { text: "Month" },
+          labels: {
+            style: {
+              colors: isLightTheme ? "#666666" : "#8a8a8a",
+            },
+          },
+        },
+        yaxis: {
+          title: { text: "Total Leads" },
+          labels: {
+            style: {
+              colors: isLightTheme ? "#666666" : "#8a8a8a",
+            },
+          },
+        },
+        title: {
+          text: "Leads Over Time",
+          align: "left",
+          style: {
+            fontSize: "15px",
+            color: isLightTheme ? "#666666" : "#8a8a8a",
+            fontFamily: "inherit",
+          },
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shade: "dark",
+            gradientToColors: ["#FDD835"],
+            shadeIntensity: 1,
+            type: "horizontal",
+            opacityFrom: 1,
+            opacityTo: 1,
+            stops: [0, 100],
+          },
+        },
+        tooltip: {
+          theme: isLightTheme ? "light" : "dark",
+          style: {
+            fontSize: "12px",
+            fontFamily: "inherit",
+          },
+          y: {
+            formatter: (value: number) => `Leads: ${value}`,
+          },
+        },
+        grid: {
+          borderColor: isLightTheme
+            ? "rgba(0,0,0,0.1)"
+            : "rgba(255,255,255,0.1)",
+        },
+      },
+    }));
+  };
+
+  // Line chart filter change handler
+  const lineChartFilterChange = async (interval: string) => {
+    setLineChartFilter(false);
+    setLineChartSelect(interval);
+    await fetchLineChartData(interval);
+  };
+
+  // Update when line chart data changes
+  useEffect(() => {
+    console.log("Line chart data updated:", leadsLineGraphForDT);
+    if (leadsLineGraphForDT && leadsLineGraphForDT.length > 0) {
+      const transformedData = leadsLineGraphForDT
+        .map((item: any, index: number) => {
+          const month =
+            item.category || item.name || item.month || `Month ${index + 1}`;
+
+          const leads = item.value || item.count || Number(item.value) || 0;
+
+          return {
+            month: month,
+            leads: leads,
+          };
+        })
+        .filter((item) => item.leads > 0)
+        .sort((a, b) => {
+          const monthOrder = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+          const aIndex = monthOrder.indexOf(a.month);
+          const bIndex = monthOrder.indexOf(b.month);
+
+          if (aIndex !== -1 && bIndex !== -1) {
+            return aIndex - bIndex;
+          }
+          return a.leads - b.leads;
+        });
+
+      if (transformedData.length > 0) {
+        setLineChartData(transformedData);
+        updateLineChart(transformedData);
+      }
+    }
+  }, [leadsLineGraphForDT]);
 
   const fetchTeamLeaderData = async (interval: string = "Monthly") => {
     try {
@@ -106,15 +430,25 @@ const ReportsSection: React.FC = () => {
                 `Team ${index + 1}`;
               const value =
                 item.value || item.count || item.leadCount || item.total || 0;
+              const email = item.email || item.teamLeaderEmail || ""; // handle multiple possible fields
 
-              console.log(`Item ${index}:`, { name, value, rawItem: item });
+              console.log(`Item ${index}:`, {
+                name,
+                value,
+                email,
+                rawItem: item,
+              });
 
               return {
                 name: name,
                 value: value,
+                email: email.toLowerCase(),
               };
             })
-            .filter((item) => item.value > 0); // Filter out items with 0 value
+            // ✅ Filter out: 0 value, dummy email, and the known dummy name
+            .filter(
+              (item) => item.value > 0 && item.email == "dummytest@gmail.com"
+            );
 
           console.log("Transformed data:", transformedData);
 
@@ -160,6 +494,12 @@ const ReportsSection: React.FC = () => {
     await fetchTeamLeaderData(interval);
   };
 
+  const channelPartnerFilterChange = async (interval: string) => {
+    setshowFilter(false);
+    setselectedFilter(interval);
+    await fetchChannelPartnerData(interval);
+  };
+
   // Add this useEffect to update when leadsTeamLeaderGraphForDT changes
   useEffect(() => {
     console.log(
@@ -192,6 +532,32 @@ const ReportsSection: React.FC = () => {
     }
   }, [leadsTeamLeaderGraphForDT]);
 
+  useEffect(() => {
+    console.log("Channel partner data updated:", leadsChannelPartnerGraphForDT);
+    if (
+      leadsChannelPartnerGraphForDT &&
+      leadsChannelPartnerGraphForDT.length > 0
+    ) {
+      const transformedData = leadsChannelPartnerGraphForDT
+        .map((item: any, index: number) => {
+          const name =
+            item.category ||
+            item.name ||
+            item.channelPartner ||
+            `Partner ${index + 1}`;
+          const count = item.value || item.count || Number(item.value) || 0;
+          return { name, count };
+        })
+        .filter((item) => item.count > 0)
+        .sort((a, b) => b.count - a.count);
+
+      if (transformedData.length > 0) {
+        setChannelPartnerData(transformedData);
+        updateCPChart(transformedData);
+      }
+    }
+  }, [leadsChannelPartnerGraphForDT]);
+
   // Debug: Log the current state
   useEffect(() => {
     console.log("Current teamLeaderData:", teamLeaderData);
@@ -212,6 +578,10 @@ const ReportsSection: React.FC = () => {
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
+
+  const handleFilterChange1 = (value: string) => {
+    channelPartnerFilterChange(value);
+  };
 
   const handleFilterChange = (value: string) => {
     setselectedFilter(value);
@@ -284,6 +654,7 @@ const ReportsSection: React.FC = () => {
           },
         },
         tooltip: {
+          theme: "dark",
           custom: ({ series, seriesIndex, dataPointIndex }) =>
             `<div style="color: black; padding: 6px;">Leads: ${series[seriesIndex][dataPointIndex]}</div>`,
         },
@@ -312,18 +683,181 @@ const ReportsSection: React.FC = () => {
     });
   }, []);
 
+  // Channel Partner data fetching (NEW)
+  const fetchChannelPartnerData = async (interval: string = "Monthly") => {
+    try {
+      setLoadingCPChart(true);
+      console.log("Fetching channel partner data with interval:", interval);
+
+      const result = await fetchChannelPartnerGraphForDA({
+        interval: interval.toLowerCase(),
+      });
+
+      console.log("Channel partner API result:", result);
+      console.log("Channel partner chart data:", leadsChannelPartnerGraphForDT);
+
+      if (result.success) {
+        if (
+          leadsChannelPartnerGraphForDT &&
+          leadsChannelPartnerGraphForDT.length > 0
+        ) {
+          console.log(
+            "Raw channel partner data structure:",
+            leadsChannelPartnerGraphForDT[0]
+          );
+
+          const transformedData = leadsChannelPartnerGraphForDT
+            .map((item: any, index: number) => {
+              // Map the API response to ChannelPartnerData format
+              const name =
+                item.category ||
+                item.name ||
+                item.channelPartner || // This matches your Flutter mapping
+                `Partner ${index + 1}`;
+              const count = item.value || item.count || Number(item.value) || 0;
+
+              console.log(`Channel Partner Item ${index}:`, {
+                name,
+                count,
+                rawItem: item,
+              });
+
+              return {
+                name: name,
+                count: count,
+              };
+            })
+            .filter((item) => item.count > 0)
+            .sort((a, b) => b.count - a.count); // Sort by count descending
+
+          console.log("Transformed channel partner data:", transformedData);
+
+          if (transformedData.length > 0) {
+            setChannelPartnerData(transformedData);
+            updateCPChart(transformedData); // Update the chart with real data
+          } else {
+            useChannelPartnerFallbackData();
+          }
+        } else {
+          console.log("No channel partner data from API, using fallback data");
+          useChannelPartnerFallbackData();
+        }
+      } else {
+        console.error("Failed to fetch channel partner data:", result.message);
+        useChannelPartnerFallbackData();
+      }
+    } catch (error) {
+      console.error("Error fetching channel partner data:", error);
+      useChannelPartnerFallbackData();
+    } finally {
+      setLoadingCPChart(false);
+    }
+  };
+
+  const useChannelPartnerFallbackData = () => {
+    const fallbackData = [
+      { name: "Partner A", count: 400 },
+      { name: "Partner B", count: 98 },
+      { name: "Partner C", count: 500 },
+      { name: "Partner D", count: 200 },
+      { name: "Partner E", count: 300 },
+    ];
+    setChannelPartnerData(fallbackData);
+    updateCPChart(fallbackData);
+  };
+
+  // Update channel partner chart when data changes
+  const updateCPChart = (data: ChannelPartnerData[]) => {
+    const cpNames = data.map((item) => item.name);
+    const cpCounts = data.map((item) => item.count);
+
+    const total = cpCounts.reduce((sum, count) => sum + count, 0);
+    setTotalCPCount(total);
+
+    setChartState((prevState) => ({
+      ...prevState,
+      cpChart: {
+        series: [{ name: "Count", data: cpCounts }],
+        options: {
+          ...prevState.cpChart?.options,
+          chart: {
+            type: "bar",
+            height: 300,
+            toolbar: { show: false },
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+              borderRadius: 4,
+              dataLabels: { position: "right" },
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: (val: number, opt: any) => {
+              return `${cpNames[opt.dataPointIndex]}: ${val}`;
+            },
+            style: { fontSize: "10px", colors: ["#d2cfcf"] },
+          },
+          xaxis: {
+            categories: cpNames,
+            title: { text: "Count" },
+          },
+          yaxis: {
+            title: { text: "Channel Partners" },
+          },
+        },
+      },
+    }));
+  };
+
   return (
     <div className={styles.container}>
       {/* Line Chart */}
       <div className={styles.firstContainer}>
         <div className={styles.leadsMonth}>
-          {chartState.series.length > 0 && (
+          <div className={styles.chartHeader}>
+            <span>Leads Over Time</span>
+            <div className={styles.filterWrapper}>
+              <FaFilter
+                onClick={() => setLineChartFilter(!lineChartFilter)}
+                style={{ cursor: "pointer" }}
+              />
+              {lineChartFilter && (
+                <div className={styles.filterDropdown}>
+                  {[
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Semi-Annually",
+                    "Annually",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className={styles.filterOption}
+                      onClick={() => lineChartFilterChange(item)}
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {loadingLineChart ? (
+            <div className={styles.loadingState}>
+              Loading line chart data...
+            </div>
+          ) : chartState.series.length > 0 ? (
             <ReactApexChart
               options={chartState.options}
               series={chartState.series}
               type="line"
               height="100%"
             />
+          ) : (
+            <div className={styles.noData}>No line chart data available</div>
           )}
         </div>
 
@@ -425,13 +959,13 @@ const ReportsSection: React.FC = () => {
                     "Quarterly",
                     "Semi-Annually",
                     "Annually",
-                  ].map((Item) => (
+                  ].map((item) => (
                     <div
-                      key={Item}
+                      key={item}
                       className={styles.filterOption}
-                      onClick={() => handleFilterChange(Item)}
+                      onClick={() => handleFilterChange1(item)}
                     >
-                      {Item}
+                      {item}
                     </div>
                   ))}
                 </div>
@@ -439,16 +973,30 @@ const ReportsSection: React.FC = () => {
             </div>
           </div>
 
-          <div className={styles.chartScrollWrapper}>
-            {chartState.cpChart && (
-              <ReactApexChart
-                options={chartState.cpChart.options}
-                series={chartState.cpChart.series}
-                type="bar"
-                height={channelPartnerData.length * 32}
-              />
-            )}
+          <div className={styles.channelPartnerheading}>
+            Total: {totalCPCount}
           </div>
+
+          {loadingCPChart ? (
+            <div className={styles.loadingState}>
+              Loading channel partner data...
+            </div>
+          ) : channelPartnerData.length > 0 ? (
+            <div className={styles.chartScrollWrapper}>
+              {chartState.cpChart && (
+                <ReactApexChart
+                  options={chartState.cpChart.options}
+                  series={chartState.cpChart.series}
+                  type="bar"
+                  height={Math.max(channelPartnerData.length * 32, 300)}
+                />
+              )}
+            </div>
+          ) : (
+            <div className={styles.noData}>
+              No channel partner data available
+            </div>
+          )}
         </div>
 
         <div>

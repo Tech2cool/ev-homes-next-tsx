@@ -47,7 +47,7 @@ export function SalesManagerDashboardHeader({
   onSyncNow,
 }: SalesManagerDashboardHeaderProps) {
   const {
-    dashCount,
+    salesDashCount,
     asssignFeedbackInfo,
     getSalesManagerDashBoardCount,
     fetchAssignFeedbackLeadsCount,
@@ -57,7 +57,7 @@ export function SalesManagerDashboardHeader({
   useEffect(() => {
     if (user && !loading) {
       console.log("use effect dashboard");
-      getSalesManagerDashBoardCount({ id: user?._id ?? null });
+      getSalesManagerDashBoardCount({ id: user?._id ??"" });
       fetchAssignFeedbackLeadsCount({
         query: "",
         page: 1,
@@ -73,7 +73,9 @@ export function SalesManagerDashboardHeader({
     }
   }, [asssignFeedbackInfo]);
 
-  const displayName = (dashCount?.name ?? "").trim() || "User";
+  const displayName =  (`${user?.firstName ?? ""} ${user?.lastName ?? ""}`);
+  console.log(displayName);
+
   const initials = React.useMemo(() => {
     const parts = displayName.split(/\s+/).filter(Boolean);
     if (parts.length === 0) return "U";
@@ -87,7 +89,7 @@ export function SalesManagerDashboardHeader({
   const salesoverview = [
     {
       title: "Leads",
-      value: dashCount?.lead?.total ?? 0,
+      value: salesDashCount?.lead?.total ?? 0,
       isPositive: true,
       icon: <Users className="h-6 w-6" />,
       iconColor: "text-blue-600",
@@ -97,7 +99,7 @@ export function SalesManagerDashboardHeader({
     },
     {
       title: "CP Visits",
-      value: dashCount?.lead?.visit1 ?? 0,
+      value: salesDashCount?.lead?.visit1 ?? 0,
       isPositive: true,
       icon: <Calendar className="h-6 w-6" />,
       iconColor: "text-green-600",
@@ -107,7 +109,7 @@ export function SalesManagerDashboardHeader({
     },
     {
       title: "Walk In Visits",
-      value: dashCount?.lead?.visit2 ?? 0,
+      value: salesDashCount?.lead?.visit2 ?? 0,
       isPositive: true,
       icon: <Truck className="h-6 w-6" />,
       iconColor: "text-purple-600",
@@ -117,7 +119,7 @@ export function SalesManagerDashboardHeader({
     },
     {
       title: "Booking",
-      value: dashCount?.lead?.booking ?? 0,
+      value: salesDashCount?.lead?.booking ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-orange-600",
@@ -127,7 +129,7 @@ export function SalesManagerDashboardHeader({
     },
     {
       title: "Internal Leads",
-      value: dashCount?.lead?.internalLeadCount ?? 0,
+      value: salesDashCount?.lead?.internalLeadCount ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-teal-600",
@@ -137,7 +139,7 @@ export function SalesManagerDashboardHeader({
     },
     {
       title: "Bulk Leads",
-      value: dashCount?.lead?.bulkCount ?? 0,
+      value: salesDashCount?.lead?.bulkCount ?? 0,
       isPositive: true,
       icon: <TrendingUp className="h-6 w-6" />,
       iconColor: "text-pink-600",
@@ -147,7 +149,7 @@ export function SalesManagerDashboardHeader({
     },
     {
       title: "Pending",
-      value: dashCount?.lead?.pending ?? 0,
+      value: salesDashCount?.lead?.pending ?? 0,
       isPositive: false,
       icon: <TrendingDown className="h-6 w-6" />,
       iconColor: "text-red-600",
@@ -176,10 +178,10 @@ export function SalesManagerDashboardHeader({
     { label: "Inventory", color: "green", Icon: Timeline20Regular  },
   ];
 
-  const leads = dashCount?.lead?.total ?? 0;
-  const bookings = dashCount?.lead?.booking ?? 0;
+  const leads = salesDashCount?.lead?.total ?? 0;
+  const bookings = salesDashCount?.lead?.booking ?? 0;
   const visits =
-    (dashCount?.lead?.visit1 ?? 0) + (dashCount?.lead?.visit2 ?? 0);
+    (salesDashCount?.lead?.visit1 ?? 0) + (salesDashCount?.lead?.visit2 ?? 0);
 
   const cards = [
     {
@@ -222,11 +224,11 @@ export function SalesManagerDashboardHeader({
     {
       title: "Lead to CP",
       percentage: safeDivision(
-        (dashCount?.lead?.visit1 ?? 0) * 100,
-        dashCount?.lead?.total ?? 0
+        (salesDashCount?.lead?.visit1 ?? 0) * 100,
+        salesDashCount?.lead?.total ?? 0
       ),
-      count1: dashCount?.lead?.total ?? 0,
-      count2: dashCount?.lead?.visit1 ?? 0,
+      count1: salesDashCount?.lead?.total ?? 0,
+      count2: salesDashCount?.lead?.visit1 ?? 0,
       label1: "Lead",
       label2: "CP",
       color: "#ec4899",
@@ -234,11 +236,11 @@ export function SalesManagerDashboardHeader({
     {
       title: "Lead to Walk In",
       percentage: safeDivision(
-        (dashCount?.lead?.visit2 ?? 0) * 100,
-        dashCount?.lead?.total ?? 0
+        (salesDashCount?.lead?.visit2 ?? 0) * 100,
+        salesDashCount?.lead?.total ?? 0
       ),
-      count1: dashCount?.lead?.total ?? 0,
-      count2: dashCount?.lead?.visit2 ?? 0,
+      count1: salesDashCount?.lead?.total ?? 0,
+      count2: salesDashCount?.lead?.visit2 ?? 0,
       label1: "Lead",
       label2: "Visit",
       color: "#10b981",
@@ -246,11 +248,11 @@ export function SalesManagerDashboardHeader({
     {
       title: "CP to Booking",
       percentage: safeDivision(
-        (dashCount?.lead?.bookingCp ?? 0) * 100,
-        dashCount?.lead?.visit1 ?? 0
+        (salesDashCount?.lead?.bookingCp ?? 0) * 100,
+        salesDashCount?.lead?.visit1 ?? 0
       ),
-      count1: dashCount?.lead?.visit1 ?? 0,
-      count2: dashCount?.lead?.bookingCp ?? 0,
+      count1: salesDashCount?.lead?.visit1 ?? 0,
+      count2: salesDashCount?.lead?.bookingCp ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#3b82f6",
@@ -258,11 +260,11 @@ export function SalesManagerDashboardHeader({
     {
       title: "Walk In to Booking",
       percentage: safeDivision(
-        (dashCount?.lead?.bookingWalkIn ?? 0) * 100,
-        dashCount?.lead?.visit2 ?? 0
+        (salesDashCount?.lead?.bookingWalkIn ?? 0) * 100,
+        salesDashCount?.lead?.visit2 ?? 0
       ),
-      count1: dashCount?.lead?.visit2 ?? 0,
-      count2: dashCount?.lead?.bookingWalkIn ?? 0,
+      count1: salesDashCount?.lead?.visit2 ?? 0,
+      count2: salesDashCount?.lead?.bookingWalkIn ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#f97316",
@@ -336,18 +338,18 @@ export function SalesManagerDashboardHeader({
                     avatarUrl ||
                     "/placeholder.svg?height=32&width=32&query=user%20avatar"
                   }
-                  alt={`${dashCount?.name ?? "test"} avatar`}
+                  alt= {`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}
                 />
                 <AvatarFallback className="text-xs">{initials}</AvatarFallback>
               </Avatar>
 
               <div className="flex flex-col">
                 <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
-                  {dashCount?.name ?? "test"}
+                   {`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}
                 </span>
                 <span className="text-[11px] leading-4 text-muted-foreground">
-                  {/* dynamically show pending tasks from dashCount */}
-                  {`You have ${dashCount?.task?.pending ?? 0} pending tasks`}
+                  {/* dynamically show pending tasks from salesDashCount */}
+                  {`You have ${salesDashCount?.task?.pending ?? 0} pending tasks`}
                 </span>
               </div>
             </div>
