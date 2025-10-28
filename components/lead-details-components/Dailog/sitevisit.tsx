@@ -5,7 +5,7 @@ import styles from "./dailog.module.css";
 import { IoLocation, IoPersonOutline } from "react-icons/io5";
 import { FaLocationDot, FaStar, FaUsers, FaUserTie } from "react-icons/fa6";
 import { AiFillPicture } from "react-icons/ai";
-import { MdHomeWork, MdLocalPhone, MdNotListedLocation, MdOutlineEmail, MdOutlinePhoneInTalk } from "react-icons/md";
+import { MdCancel, MdHomeWork, MdLocalPhone, MdNotListedLocation, MdOutlineEmail, MdOutlinePhoneInTalk } from "react-icons/md";
 import { BsBuildingFill } from "react-icons/bs";
 import Select, { components } from "react-select";
 import { LocateIcon } from "lucide-react";
@@ -275,7 +275,21 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
     <div className={styles.dialogOverlay}>
       <div ref={dialogRef} className={styles.dialogBox}>
         <h3 className={styles.dialogTitle}>📝 Site Visit Form</h3>
-
+        <MdCancel
+          onClick={() => openclick(false)}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            color: "red",
+            border: "none",
+            borderRadius: "50%",
+            width: "23px",
+            height: "23px",
+            cursor: "pointer",
+            zIndex: "999",
+          }}
+        />
         {!selectedUser ? (
           <div className={styles.formControl}>
 

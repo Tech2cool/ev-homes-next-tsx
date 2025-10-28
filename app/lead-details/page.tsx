@@ -567,21 +567,15 @@ const LeadDetailsPage = () => {
                   {activeTab === "taskDetails" && (
                     <TaskOverview />
                   )}
-
-
-
                   {activeTab === "followup" && (
                     <FollowUp />
                   )}
-
                   {activeTab === "siteVisit" && (
                     <VisitHistory />
                   )}
-
                   {activeTab === "transfer" && (
                     <TransferHistory />
                   )}
-
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />

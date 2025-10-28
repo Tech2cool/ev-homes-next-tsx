@@ -9,7 +9,7 @@ import { GiProgression } from "react-icons/gi";
 import { BsFillPatchQuestionFill } from "react-icons/bs";
 import { LuAlarmClock } from "react-icons/lu";
 import { FaCalendarAlt } from "react-icons/fa";
-import { MdFeedback } from "react-icons/md";
+import { MdCancel, MdFeedback } from "react-icons/md";
 
 interface FeedbackTwoProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -114,6 +114,21 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
         <div className={styles.dialogOverlay}>
             <div ref={dialogRef} className={styles.dialogBox}>
                 <h3 className={styles.dialogTitle}>📝 Update Feedback</h3>
+                <MdCancel
+                    onClick={() => openclick(false)}
+                    style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        color: "red",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "23px",
+                        height: "23px",
+                        cursor: "pointer",
+                        zIndex: "999",
+                    }}
+                />
                 <div className={styles.dailogcnt}>
                     <div className={styles.card}>
                         {/* Call Status */}

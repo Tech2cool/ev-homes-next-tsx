@@ -8,6 +8,7 @@ import { AiFillPicture } from "react-icons/ai";
 import ReactDOM from "react-dom";
 import { IoMdTime } from "react-icons/io";
 import { FaLocationDot } from "react-icons/fa6";
+import { MdCancel } from "react-icons/md";
 
 interface ScheduleMeetingProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -82,15 +83,29 @@ const ScheduleMeeting: React.FC<ScheduleMeetingProps> = ({ openclick }) => {
         <div className={styles.dialogOverlay}>
             <div ref={dialogRef} className={styles.dialogBox}>
                 <h3 className={styles.dialogTitle}>📝 Shedule Meeting</h3>
+                <MdCancel
+                    onClick={() => openclick(false)}
+                    style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        color: "red",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "23px",
+                        height: "23px",
+                        cursor: "pointer",
+                        zIndex: "999",
+                    }}
+                />
                 <div className={styles.infoSection}>
-                    {/* Client Details Card */}
                     <div className={styles.infoCard}>
                         <h4 className={styles.cardTitle}>Client Details</h4>
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>Client Name:</span>
                             <span className={styles.infoValue}>Rahul Sharma</span>
                         </div>
-                         <div className={styles.infoRow}>
+                        <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>Phone Number:</span>
                             <span className={styles.infoValue}>+91 9876543210</span>
                         </div>
@@ -102,7 +117,7 @@ const ScheduleMeeting: React.FC<ScheduleMeetingProps> = ({ openclick }) => {
                             <span className={styles.infoLabel}>Site Visit Date:</span>
                             <span className={styles.infoValue}>12 Oct 2025</span>
                         </div>
-                    
+
                     </div>
 
                     <div className={styles.infoCard}>
@@ -115,7 +130,7 @@ const ScheduleMeeting: React.FC<ScheduleMeetingProps> = ({ openclick }) => {
                             <span className={styles.infoLabel}>Gmail:</span>
                             <span className={styles.infoValue}>snehal@evgroup.co.in</span>
                         </div>
-                        
+
                     </div>
                 </div>
 
