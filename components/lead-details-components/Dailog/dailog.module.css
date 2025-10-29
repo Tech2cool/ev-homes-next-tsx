@@ -30,6 +30,7 @@
 
   scrollbar-width: thin;
   scrollbar-color: #4a4d4c #222;
+  position: relative;
 }
 
 :global(html.light) .dialogBox {
@@ -359,6 +360,33 @@
 
 :global(html.light) .infoValue {
   color: #222;
+}
+.checkboxGroup {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.formSpacing {
+  padding-bottom: 5px;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+}
+.formControl .radioLabel{
+  color: white;
+}
+
+.radioLabel .percentDropdown {  
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 11px;
+ padding: 0.1rem 0.1rem;
+ margin-left: 5px;
 }
 
 @media screen and (max-width: 850px) {

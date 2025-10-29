@@ -8,6 +8,7 @@ import { BiTask } from "react-icons/bi";
 import Select, { components } from "react-select";
 import { CgNotes } from "react-icons/cg";
 import { FaCalendarAlt } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 
 interface AssignTaskProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -158,6 +159,21 @@ const AssignTask: React.FC<AssignTaskProps> = ({ openclick }) => {
     return ReactDOM.createPortal(
         <div className={styles.dialogOverlay}>
             <div ref={dialogRef} className={styles.dialogBox}>
+                <MdCancel
+                    onClick={() => openclick(false)}
+                    style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        color: "red",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "23px",
+                        height: "23px",
+                        cursor: "pointer",
+                        zIndex: "999",
+                    }}
+                />
                 <h3 className={styles.dialogTitle}>📝 Assign Task</h3>
                 <div className={styles.dailogcnt}>
                     <div className={styles.formControl}>

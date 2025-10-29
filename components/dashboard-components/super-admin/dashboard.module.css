@@ -1,0 +1,113 @@
+
+.tapsection {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 cards per row */
+  gap: 16px; /* spacing between cards */
+  width: 100%;
+  overflow-x: auto; /* scroll if needed on smaller screens */
+  padding: 10px 0;
+}
+
+.card {
+  height: 17vh;
+  background: #090909;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+
+:global(html.light) .card {
+  background: #ffffffde;
+
+  box-shadow: 0 4px 20px #01043333;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  width: 300%;
+  height: 300%;
+  background: conic-gradient(#1c1c1c, #e3d1ff, #d2b5ff, #121212, #121212);
+  animation: rotate 3s linear infinite;
+  z-index: 0;
+}
+
+:global(html.light) .card::before {
+  background: none;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: #121212;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+:global(html.light) .card::after {
+  background: none;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 1000px) {
+
+  .tapsection {
+     display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+    .card {
+    width: 16vw;
+    height: 140px;
+    flex: 0 0 auto;
+  }
+  :global(html.light) .card {
+  background: #ffffffde;
+
+  box-shadow: 0 2px 10px #01043333;
+}
+ 
+}
+@media (max-width: 768px) {
+
+
+
+  .card {
+    width: 20vw;
+    height: 140px;
+    flex: 0 0 auto;
+  }
+ 
+}
+
+@media (max-width: 480px) {
+
+
+  .card {
+    width: 110px;
+    height: 100px;
+  }
+
+  :global(html.light) .card {
+    box-shadow: 0 2px 5px #0407281d;
+  }
+
+}
+

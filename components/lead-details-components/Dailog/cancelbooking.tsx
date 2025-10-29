@@ -4,13 +4,14 @@ import styles from "./dailog.module.css"
 import { IoLocation } from "react-icons/io5";
 
 import ReactDOM from "react-dom";
+import { MdCancel } from "react-icons/md";
 
 interface CancelBookingProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface FormState {
- 
+
     remark: string,
 }
 
@@ -36,7 +37,7 @@ const CancelBooking: React.FC<CancelBookingProps> = ({ openclick }) => {
 
     const handleCancel = () => {
         setformData({
-         
+
             remark: "",
         })
         openclick(false);
@@ -48,7 +49,7 @@ const CancelBooking: React.FC<CancelBookingProps> = ({ openclick }) => {
     const onSubmit = () => {
         const newErrors: { [key: string]: string } = {};
 
-       
+
 
         if (!formData.remark.trim()) {
             newErrors.remark = "Please enter Remark";
@@ -73,14 +74,29 @@ const CancelBooking: React.FC<CancelBookingProps> = ({ openclick }) => {
         <div className={styles.dialogOverlay}>
             <div ref={dialogRef} className={styles.dialogBox}>
                 <h3 className={styles.dialogTitle}>🚫 Cancel Booking</h3>
-                <p className={styles.dialogTitle} style={{fontSize:"15px",letterSpacing:"1px", color:"grey"}}>
-                    Please Provide a season for Cancellation:   
+                <MdCancel
+                    onClick={() => openclick(false)}
+                    style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        color: "red",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "23px",
+                        height: "23px",
+                        cursor: "pointer",
+                        zIndex: "999",
+                    }}
+                />
+                <p className={styles.dialogTitle} style={{ fontSize: "15px", letterSpacing: "1px", color: "grey" }}>
+                    Please Provide a season for Cancellation:
                 </p>
 
                 <div className={styles.dailogcnt}>
-                   
 
-                
+
+
                     <div className={styles.formControl}>
                         <label>
                             <RequiredLabel icon={<IoLocation className={styles.iconcolor} />} text="Remark" />

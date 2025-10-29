@@ -114,13 +114,14 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
     setLoading(true);
     setError("");
 
-    // console.log("here");
+    console.log("here");
     try {
+      console.log("/employee-login");
       const res = await fetchAdapter("/api/employee-login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-        // console.log(res);
+        console.log(res);
       if (res.code != 200) {
         setError(res?.message);
         return { success: false, message: res?.message };

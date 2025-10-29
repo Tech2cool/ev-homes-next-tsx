@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { MdAddCall, MdCall } from "react-icons/md";
-import styles from "./lead-details.module.css";
-import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks } from "react-icons/fa";
+import { MdAddCall, MdCall, MdEmail } from "react-icons/md";
+import styles from "../../super-admin/lead-details/lead-details.module.css";
+import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks, FaBolt, FaFileContract, FaUser } from "react-icons/fa";
 import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
 import QuickAccess from "@/components/lead-details-components/quickaccess"
 import TaskOverview from "@/components/lead-details-components/taskoverview"
@@ -17,54 +17,129 @@ import tagIcon from "@/public/images/transfer.png"
 import {
   ArrowLeft,
   Calendar,
-  Phone,
   FileText,
-  Download,
   Check,
   Edit,
   Building,
   User,
-  Mail,
   Menu,
   ChevronDown,
   ChevronUp,
   Search,
   SlidersHorizontal,
-  PersonStanding,
 } from "lucide-react";
-import useDebounce from "@/hooks/useDebounce";
-import { useUser } from "@/providers/userContext";
-import { useData } from "@/providers/dataContext";
 import EditDialog from "@/components/lead-details-components/edit-dialog";
 import { LeadFilterDialog } from "@/components/lead-details-components/filter-dialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { MdEmail } from "react-icons/md";
 import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
-import { FaBolt, FaClipboardList, FaFileContract, FaSourcetree, FaUser } from "react-icons/fa6";
-import { IoIosPerson } from "react-icons/io";
-import { BiSolidCalendarEdit } from "react-icons/bi";
-import { BsFillClockFill } from "react-icons/bs";
-import { MdAssignment } from "react-icons/md";
-import { SiGoogletasks } from "react-icons/si";
-import { FaAddressBook } from "react-icons/fa";
 import { CiLink } from "react-icons/ci";
+import { IoIosPerson } from "react-icons/io";
 
-const VisitDetailWrapper = () => {
+
+
+interface Lead {
+  _id: string;
+  prefix?: string;
+  firstName?: string;
+  lastName?: string;
+  countryCode?: string;
+  phoneNumber?: string;
+  altPhoneNumber?: string;
+  email?: string;
+  approvalStatus?: string;
+  clientInterestedStatus?: string;
+  leadType?: string;
+  cycle?: {
+    startDate?: number | string;
+    validTill?: number | string;
+  };
+  taskRef?: {
+    completed?: boolean;
+    assignTo?: {
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+  teamLeader?: {
+    firstName?: string;
+    lastName?: string;
+  };
+  channelPartner?: {
+    firmName?: string;
+  };
+  requirement?: string[];
+  project?: { name: string }[];
+  bookingStatus?: string;
+}
+
+const DUMMY_LEADS: Lead[] = [
+  {
+    _id: "lead-1",
+    prefix: "Mr.",
+    firstName: "Rajesh",
+    lastName: "Sharma",
+    countryCode: "+91",
+    phoneNumber: "9876543210",
+    altPhoneNumber: "9988776655",
+    email: "rajesh.s@example.com",
+    approvalStatus: "approved",
+    clientInterestedStatus: "Hot Lead",
+    leadType: "cp",
+    cycle: { startDate: Date.now() - 86400000 * 5, validTill: Date.now() + 86400000 * 20 },
+    taskRef: { completed: false, assignTo: { firstName: "Akshay", lastName: "K" } },
+    teamLeader: { firstName: "deepak", lastName: "karki" },
+    channelPartner: { firmName: "City Realtors" },
+    requirement: ["2 BHK", "3 BHK Premium"],
+    project: [{ name: "Project Alpha" }, { name: "Project Beta" }],
+  },
+  {
+    _id: "lead-2",
+    prefix: "Ms.",
+    firstName: "Priya",
+    lastName: "Verma",
+    countryCode: "+91",
+    phoneNumber: "8765432109",
+    altPhoneNumber: "8877665544",
+    email: "priya.v@example.com",
+    approvalStatus: "pending",
+    clientInterestedStatus: "Warm Lead",
+    leadType: "walk-in",
+    cycle: { startDate: Date.now() - 86400000 * 10, validTill: Date.now() + 86400000 * 10 },
+    taskRef: { completed: true, assignTo: { firstName: "Sam", lastName: "J" } },
+    teamLeader: { firstName: "ranjana", lastName: "jupta" },
+    requirement: ["1 BHK", "Studio"],
+    project: [{ name: "Project Gamma" }],
+  },
+];
+
+const DUMMY_USER = {
+  _id: 'user-123',
+  firstName: 'Dummy',
+  lastName: 'User'
+};
+
+const DUMMY_LEAD_INFO = {
+  page: 1,
+  totalPages: 1,
+};
+
+
+const closingdetilsWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <LeadDetailsPage />
+      <Closingdetaispage />
     </Suspense>
   );
 };
 
-export default VisitDetailWrapper;
+export default closingdetilsWrapper;
 
-const LeadDetailsPage = () => {
+const Closingdetaispage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const visitId = searchParams.get("id");
-  const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const visitId = "lead-1"; 
+  const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS); 
+  const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null); 
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showSimilarVisits, setShowSimilarVisits] = useState<boolean>(false);
@@ -74,24 +149,26 @@ const LeadDetailsPage = () => {
 
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  // Dialog states
   const [showEditDialog, setShowEditDialog] = useState<boolean>(false);
   const [showApprovalDialog, setShowApprovalDialog] = useState<boolean>(false);
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
 
-  // Form states
   const [editFormData, setEditFormData] = useState({});
   const [approvalData, setApprovalData] = useState({
     action: "approve",
     remark: "",
   });
 
-  const debouncedSearch = useDebounce(searchTerm, 500);
-  const loadingRef = useRef(false);
-  const hasMoreRef = useRef(true);
 
-  // Filter states
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(false); 
+  const leadInfo = DUMMY_LEAD_INFO; 
+  const loading = false;
+  const loadingLeads = false;
+  const fetchingMoreLeads = false;
+  const user = DUMMY_USER;
+
   const [filters, setFilters] = useState({
     visitType: "",
     leadFilter: "",
@@ -104,50 +181,20 @@ const LeadDetailsPage = () => {
     dateTo: "",
   });
 
-  const { user, loading, getSocket, reconnectSocket } = useUser();
-  const {
-    fetchTeamLeaderReportingToLeads,
-    leadInfo,
-    leads,
-    loadingLeads,
-    fetchingMoreLeads,
-  } = useData();
-
-  const socket = getSocket();
-
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
+    console.log("Filters applied (Dummy):", newFilters);
 
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id ?? null,
-      status: newFilters.visitType || null,
-      status2: newFilters.statusFilter || null,
-      callData: newFilters.feedbackFilter || null,
-      clientstatus: newFilters.clientStatus || null,
-      leadstatus: newFilters.leadStatus || null,
-      cycle: newFilters.cycleStatus || null,
-      startDateDeadline: newFilters.dateFrom || null,
-      endDateDeadline: newFilters.dateTo || null,
-      page: 1,
-    });
   };
 
-  // Function to handle call functionality - can be passed to child components
   const handleCall = useCallback(
     (lead: any) => {
-      console.log("Making call to:", lead);
-      socket?.emit("callCustomerWeb", {
-        lead: lead?._id,
-        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
-        type: "call",
-        message: "call",
-        userId: user?._id,
-      });
+      alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
+      console.log("Simulating call to:", lead);
     },
-    [socket, user?._id]
+    []
   );
 
-  // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -155,41 +202,9 @@ const LeadDetailsPage = () => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-    reconnectSocket();
   }, []);
 
-  // Initial data fetch
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("Initial fetch - visit details");
-      fetchTeamLeaderReportingToLeads({
-        id: user?._id,
-        query: searchTerm,
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading]);
 
-  // Initial data fetch
-  useEffect(() => {
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id,
-      query: searchTerm,
-      page: 1,
-      limit: 10,
-    });
-  }, [debouncedSearch]);
-
-  // Update refs when leadInfo changes
-  useEffect(() => {
-    if (leadInfo) {
-      hasMoreRef.current = (leadInfo.page ?? 0) < (leadInfo.totalPages ?? 0);
-      loadingRef.current = loadingLeads || fetchingMoreLeads;
-    }
-  }, [leadInfo, loadingLeads, fetchingMoreLeads]);
-
-  // Find selected visit when visitId changes
   useEffect(() => {
     if (visitId && leads!.length > 0) {
       const foundVisit = leads?.find((v: any) => v?._id === visitId);
@@ -199,59 +214,29 @@ const LeadDetailsPage = () => {
     }
   }, [visitId, leads]);
 
-  // Fixed loadMoreVisits function
   const loadMoreLeads = useCallback(
     (resetPage = false) => {
-      console.log("Load more called", {
-        loadingRef: loadingRef.current,
-        hasMoreRef: hasMoreRef.current,
-        currentPage: leadInfo?.page,
-        totalPages: leadInfo?.totalPages,
-        resetPage,
-      });
-      if (loadingRef.current) {
-        console.log("Already loading, skipping");
-        return;
-      }
-      if (!resetPage && !hasMoreRef.current) {
-        console.log("No more pages to load");
-        return;
-      }
-
-      const page = resetPage ? 1 : (leadInfo?.page || 0) + 1;
-      console.log(`Fetching page ${page}`);
-      fetchTeamLeaderReportingToLeads({
-        id: user?._id,
-        query: searchTerm,
-        page: page,
-        limit: 10,
-      });
+      console.log("Load more called (Dummy): No more data to fetch.");
     },
-    [leadInfo, fetchTeamLeaderReportingToLeads]
+    []
   );
 
   const fetchLeads = () => {
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id,
-      ...filters,
-      page: 1,
-    });
+    console.log("Fetch leads called (Dummy).");
   };
 
-  // Fixed scroll handler with debouncing
   const handleScroll = useCallback(
     (e: any) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
       const threshold = 100;
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        console.log("Reached end of scroll");
+        console.log("Reached end of scroll (Dummy)");
         loadMoreLeads(false);
       }
     },
     [loadMoreLeads]
   );
 
-  // Debounced scroll handler to prevent excessive calls
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
     handleScroll,
   ]);
@@ -324,12 +309,12 @@ const LeadDetailsPage = () => {
   };
 
   const handleVisitSelect = (SelectedLead: Lead) => {
-    router.push(`/lead-details?id=${SelectedLead._id}`);
+    router.push(`/closing-manager-lead-details?id=${SelectedLead._id}`);
     setShowSidebar(false);
   };
 
   const handleBackToList = () => {
-    router.push("/lead-details");
+    router.push("/closing-manager-lead-details");
   };
 
   const clearFilters = () => {
@@ -344,13 +329,12 @@ const LeadDetailsPage = () => {
       dateFrom: "string",
       dateTo: "string",
     });
+    console.log("Filters cleared (Dummy)");
   };
 
-  // Desktop view - Two panel layout
   if (!isMobile) {
     return (
       <div className={styles.desktopContainer}>
-        {/* Left Sidebar - Visits List with Filters */}
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
@@ -382,16 +366,14 @@ const LeadDetailsPage = () => {
                   }`}
                 onClick={() => {
                   setSelectedLead(visit);
-                  router.push(`/lead-details?id=${visit._id}`, {
+                  router.push(`/closing-manager-lead-details?id=${visit._id}`, {
                     scroll: false,
                   });
                 }}
               >
                 <div className={styles.tag}></div>
                 <div className={styles.leadInfo}>
-                  {/* <div className={styles.clientIcon}>
-                    {visit?.firstName?.charAt(0)?.toUpperCase()}
-                  </div> */}
+                 
                   <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
                   <div className={styles.clientDetails}>
 
@@ -428,7 +410,7 @@ const LeadDetailsPage = () => {
 
                   <div className={styles.taskContainer}>
                     <div className={styles.taskHeader}>
-                      <div className={styles.accentLine} style={{backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                      <div className={styles.accentLine} style={{ backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
                       <span className={styles.taskTitle}>Task Details</span>
                     </div>
 
@@ -491,7 +473,6 @@ const LeadDetailsPage = () => {
           </div>
         </div>
 
-        {/* Right Panel - Visit Details Preview */}
         <div className={styles.rightPanel}>
           {SelectedLead ? (
             <>
@@ -526,14 +507,14 @@ const LeadDetailsPage = () => {
                     </button>
                     <button
                       className={styles.verifiedBadge}
-                      onClick={() => { }}
+                      onClick={() => { handleCall(SelectedLead) }}
                     >
                       <MdCall size={15} />
                     </button>
 
                     <button
                       className={styles.whatsbtn}
-                      onClick={() => { }}
+                      onClick={() => { alert("Simulating WhatsApp chat.") }}
                     >
                       <IoLogoWhatsapp size={15} />
                     </button>
@@ -550,10 +531,8 @@ const LeadDetailsPage = () => {
                     )}
                   </div>
                 </div>
-                {/* Action buttons */}
 
               </div>
-              {/* Visit Details Content - Pass handleCall function */}
               <div className={styles.detsilpart} >
                 <div className={styles.detailsContent}>
                   {activeTab === "overview" && (
@@ -567,27 +546,20 @@ const LeadDetailsPage = () => {
                   {activeTab === "taskDetails" && (
                     <TaskOverview />
                   )}
-
-
-
                   {activeTab === "followup" && (
                     <FollowUp />
                   )}
-
                   {activeTab === "siteVisit" && (
                     <VisitHistory />
                   )}
-
                   {activeTab === "transfer" && (
                     <TransferHistory />
                   )}
-
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />
                     </div>
                   )}
-                  {/* Similar Visits Section */}
                   {similarVisits.length > 0 && (
                     <div className={styles.similarVisitsSection}>
                       <div
@@ -692,23 +664,20 @@ const LeadDetailsPage = () => {
               dateTo: "",
             };
             setFilters(cleared);
-            fetchTeamLeaderReportingToLeads({
-              id: user?._id,
-              page: 1,
-            });
+            console.log("Filters cleared and data refresh simulated.");
           }}
           visits={leads || []}
           resultCount={leads?.length || 0}
         />
 
-        {/* Edit Dialog */}
         {showEditDialog && (
           <EditDialog
             visit={editFormData}
             onClose={() => setShowEditDialog(false)}
             onSave={(updatedVisit: any) => {
-              console.log("Saving visit:", updatedVisit);
+              console.log("Saving visit (Dummy):", updatedVisit);
               setSelectedLead(updatedVisit);
+              setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
               setShowEditDialog(false);
             }}
           />
@@ -717,10 +686,6 @@ const LeadDetailsPage = () => {
     );
   }
 
-  // Mobile views remain the same but also pass handleCall to VisitDetailsContent
-  // ... rest of your mobile code with similar changes
-
-  // Show detail view when visitId exists
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
@@ -751,23 +716,16 @@ const LeadDetailsPage = () => {
             <div
               key={visit._id}
               className={`${styles.visitCard}`}
-              // className={`${styles.visitCard} ${
-              //   SelectedLead?._id === visit?._id ? styles.selectedCard : ""
-              // }`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/lead-details?id=${visit._id}`, {
+                router.push(`/closing-manager-lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
             >
-
-
-
               <div className={styles.leadInfo}>
                 <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
                 <div className={styles.clientDetails}>
-                  {/* <p className={styles.trns}>Transferred From</p> */}
                   <p className={styles.trnsname}>Vicky</p>
                   <div className={styles.namecl}>
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}
@@ -796,7 +754,7 @@ const LeadDetailsPage = () => {
                 </p>
                 <div className={styles.taskContainer}>
                   <div className={styles.taskHeader}>
-                    <div className={styles.accentLine} style={{backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                    <div className={styles.accentLine} style={{ backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
                     <span className={styles.taskTitle}>Task Details</span>
                   </div>
 
@@ -842,24 +800,6 @@ const LeadDetailsPage = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <div className={styles.detailRow}>
-                    <Phone className={styles.icon} />
-                    <span>
-                      {visit?.countryCode ?? ""} {visit?.phoneNumber ?? "NA"}
-                    </span>
-                    <MdAddCall
-                      size={25}
-                      color="dodgerblue"
-                      style={{ cursor: "pointer", marginLeft: "auto" }}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent card selection
-                        handleCall(visit);
-                      }}
-                    />
-                    
-                  </div> */}
-
             </div>
           ))}
           {hasMoreRef.current && (
@@ -878,39 +818,32 @@ const LeadDetailsPage = () => {
     );
   }
 
+  // Mobile detail view
   return (
     <div className={styles.container}>
-      {/* Mobile Header */}
-
       <div className={styles.detailsHeader}>
-
-
-
         <div className={styles.headerInfo}>
           <button
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/lead-details", { scroll: false });
+              router.push("/closing-manager-lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
           </button>
 
           <div className={styles.actionButtons}>
-
-
-
             <button
               className={styles.verifiedBadge}
-              onClick={() => { }}
+              onClick={() => { handleCall(SelectedLead) }}
             >
               <MdCall size={15} />
             </button>
 
             <button
               className={styles.whatsbtn}
-              onClick={() => { }}
+              onClick={() => { alert("Simulating WhatsApp chat.") }}
             >
               <IoLogoWhatsapp size={15} />
             </button>
@@ -1025,8 +958,6 @@ const LeadDetailsPage = () => {
             <TaskOverview />
           )}
 
-
-
           {activeTab === "followup" && (
             <FollowUp />
           )}
@@ -1044,7 +975,6 @@ const LeadDetailsPage = () => {
               <BookingOverview />
             </div>
           )}
-          {/* Similar Visits Section */}
           {similarVisits.length > 0 && (
             <div className={styles.similarVisitsSection}>
               <div
@@ -1067,12 +997,10 @@ const LeadDetailsPage = () => {
 
       </div>
 
-      {/* Rest of mobile code... */}
     </div>
   );
 };
 
-// Debounce utility function
 function debounce(func: (...args: any[]) => void, wait: number) {
   let timeout: ReturnType<typeof setTimeout>;
   return function executedFunction(...args: any[]) {
@@ -1085,7 +1013,6 @@ function debounce(func: (...args: any[]) => void, wait: number) {
   };
 }
 
-// Updated VisitDetailsContent component with call functionality
 const VisitDetailsContent = ({
   visit,
   onCall,
@@ -1104,21 +1031,7 @@ const VisitDetailsContent = ({
   };
 
   const renderValue = (value: any) => {
-    if (value === null || value === undefined) return "Not specified";
-    if (typeof value === "object") {
-      if (Array.isArray(value)) {
-        return value
-          .map((item) =>
-            typeof item === "object"
-              ? item.name || item.title || JSON.stringify(item)
-              : item
-          )
-          .join(", ");
-      }
-      return (
-        value.name || value.title || value.address || JSON.stringify(value)
-      );
-    }
+    if (value === null || value === undefined || value === "") return "Not specified";
     return value;
   };
 
@@ -1138,7 +1051,7 @@ const VisitDetailsContent = ({
         <div className={`${styles.statusCard} ${styles.purple}`} style={{ border: "1px solid purple" }}>
           <div className={styles.statusIcon}>👨🏻‍💼</div>
           <span className={styles.statusLabel}>Client Status</span>
-          <span className={styles.statusValue}>NA</span>
+          <span className={styles.statusValue}>{visit?.clientInterestedStatus ?? "NA"}</span>
         </div>
         <div className={`${styles.statusCard} ${styles.yellow}`} style={{ border: "1px solid yellow" }}>
           <div className={styles.statusIcon} >💡</div>
@@ -1164,7 +1077,6 @@ const VisitDetailsContent = ({
                 </p>
               </div>
 
-              {/* Phone with Call Button */}
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Phone Number</label>
                 <p className={styles.infoValue}>
@@ -1208,7 +1120,7 @@ const VisitDetailsContent = ({
                       }
                       title="Make a call to alternate number"
                     />
-                    {visit.countryCode} {visit.altPhoneNumber}
+                    {visit.countryCode} {visit.altPhoneNumber ?? "NA"}
                   </p>
 
                 </div>
@@ -1216,7 +1128,6 @@ const VisitDetailsContent = ({
             </div>
           </div>
         </div>
-        {/* Project Information */}
         <div className={styles.detailsCard}>
           <div className={styles.cardTitle}>
             <Building className={styles.titleIcon} />
@@ -1233,27 +1144,35 @@ const VisitDetailsContent = ({
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Channel Partner</label>
                 <p className={styles.infoValue}>
-                  {visit?.channelPartner?.firmName ?? ""}
+                  {visit?.channelPartner?.firmName ?? "NA"}
                 </p>
               </div>
               <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
                 <label className={styles.infoLabel}><PiBuildingApartmentBold size={14} color="#4a84ff" />Apartment Choices</label>
                 <div className={styles.choicesList}>
-                  {visit.requirement?.map((choice: any, index: number) => (
-                    <span key={choice} className={styles.choiceBadge}>
-                      {choice}
-                    </span>
-                  ))}
+                  {visit.requirement && visit.requirement.length > 0 ? (
+                    visit.requirement.map((choice: any) => (
+                      <span key={choice} className={styles.choiceBadge}>
+                        {choice}
+                      </span>
+                    ))
+                  ) : (
+                    <span className={styles.choiceBadge}>NA</span>
+                  )}
                 </div>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}><BsFillBuildingFill size={12} color="#4a84ff" />Projects</label>
                 <div className={styles.projectsList}>
-                  {visit.project?.map((project: any, index: number) => (
-                    <span key={index} className={styles.projectBadge}>
-                      {project?.name ?? ""}
-                    </span>
-                  ))}
+                  {visit.project && visit.project.length > 0 ? (
+                    visit.project.map((project: any, index: number) => (
+                      <span key={index} className={styles.projectBadge}>
+                        {project?.name ?? "NA"}
+                      </span>
+                    ))
+                  ) : (
+                    <span className={styles.projectBadge}>NA</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1274,13 +1193,13 @@ const VisitDetailsContent = ({
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Occupation</label>
                 <p className={styles.infoValue}>
-                  NA
+                  Dummy Occupation
                 </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Remark</label>
                 <p className={styles.infoValue}>
-                  NA
+                  Dummy Remark: Interested in investment property.
                 </p>
               </div>
               <div className={styles.infoItem} style={{ flexDirection: "column" }}>
@@ -1293,10 +1212,10 @@ const VisitDetailsContent = ({
                 </div>
 
                 <div className={styles.buttonGroup}>
-                  <button className={`${styles.infoButton} ${styles.visitBtn}`}>
+                  <button className={`${styles.infoButton} ${styles.visitBtn}`} onClick={() => alert("Simulating Visit Profile")}>
                     <span>🔗 Visit Profile</span>
                   </button>
-                  <button className={`${styles.infoButton} ${styles.visitBtn}`}>
+                  <button className={`${styles.infoButton} ${styles.visitBtn}`} onClick={() => alert("Simulating View Document")}>
                     <span>📄 View Document</span>
                   </button>
                 </div>

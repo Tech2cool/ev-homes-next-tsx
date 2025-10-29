@@ -37,6 +37,7 @@ import { createContext } from "vm";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface ClosingManagerDashboardHeaderProps {
@@ -49,7 +50,7 @@ interface ClosingManagerDashboardHeaderProps {
 }
 
 export function ClosingManagerDashboardHeader({
-  userName = "Deepak Karki",
+  userName ,
   pendingText,
   lastSyncText = "07 Oct 25",
   avatarUrl,
@@ -67,6 +68,7 @@ export function ClosingManagerDashboardHeader({
     getTeamOverview,
   } = useData();
   const { user, loading } = useUser();
+  const router = useRouter();
 
   // const teamMembers =
   //   teamOverview?.crew
@@ -154,6 +156,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-blue-100",
       gradientFrom: "from-blue-50",
       gradientTo: "to-white",
+      onClick: () => router.push("/lead-details"),
     },
     {
       title: "CP Visits",
@@ -547,6 +550,7 @@ export function ClosingManagerDashboardHeader({
           }}
         >
           {salesoverview.map((metric, index) => (
+
             <div
               key={index}
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
@@ -561,6 +565,7 @@ export function ClosingManagerDashboardHeader({
               </Link>
              
             </div>
+
           ))}
         </div>
 
