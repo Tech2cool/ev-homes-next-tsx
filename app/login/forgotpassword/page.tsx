@@ -167,7 +167,11 @@ function ForgotPassword() {
 
                                 </div>
 
-                                <button className={styles.ResendOtpbtn}>Resend 0TP</button>
+                                <button className={styles.ResendOtpbtn}
+                                    onClick={() => {
+                                        settimer(120)
+                                        setisactve(true);
+                                    }}>Resend 0TP</button>
                                 <h2 className={styles.resetHeading}>RESET PASSWORD</h2>
                                 <div className={styles.passwordinputsmain}>
                                     <div className={styles.newpassowrd}>
@@ -198,7 +202,39 @@ function ForgotPassword() {
 
             </div>
 
+            {/* mobile ui */}
+            <div className={styles.mobileViewMain}>
+                <div className={`${styles.resetpass} ${otpform ? styles.hide : ""}`}>
 
+                    {/* <img src="/images/evhomeslogo_1.webp" alt="img" className={styles.logoimg} /> */}
+                    <h2 className={styles.forgottext}>FORGOT PASSWORD!!</h2>
+                    <p className={styles.note}>Enter your registered email address below. <br /> We’ll send you password reset instructions.</p>
+                    <div className={styles.inputmain}>
+                        <FiMail className={styles.mailicon} />
+                        <input type="email" placeholder="Enter your email" className={styles.emailInput} ref={emailinput} />
+
+                    </div>
+                    <button className={styles.Submitbtn} onClick={() => {
+                        if (!emailinput.current || emailinput.current.value.trim() === "") {
+                            alert("please enter your email before proceding!");
+                            return;
+
+                        }
+                        setshowotpform(true);
+                    }
+
+
+
+
+
+                    }> Submit</button>
+
+
+                </div>
+
+
+
+            </div>
 
 
 
