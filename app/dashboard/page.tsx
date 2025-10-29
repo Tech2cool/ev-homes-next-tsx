@@ -12,7 +12,6 @@ import DataAnalyzerDashboard from "../data-analyzer-dashboard/page";
 
 import SalesManagerPage from "../sales-manager/sales-manager-dashboard/page";
 
-
 const DashboardPage = () => {
   const { user, loading } = useUser();
 
@@ -26,17 +25,17 @@ const DashboardPage = () => {
     user?.designation?._id === "desg-senior-sales-manager"
   ) {
     return <SalesManagerPage />;
+  }
 
-    if (user?.designation?._id === "desg-data-analyzer") {
-         return <DataAnalyzerDashboard />;
-    } else if (user?.designation?._id === "desg-sales-executive") {
-         return <SalesManagerPage />;
-    }
-    else {
- return <ClosingManagerPage />;
-    }
-    // else let them stay on this page  
-
+  // if (user?.designation?._id === "desg-data-analyzer") {
+  //      return <DataAnalyzerDashboard />;
+  // } else if (user?.designation?._id === "desg-sales-executive") {
+  //      return <SalesManagerPage />;
+  // }
+  else {
+    return <ClosingManagerPage />;
+  }
+  // else let them stay on this page
 
   //
 };
