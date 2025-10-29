@@ -238,6 +238,8 @@ const Gallary = () => {
                     alt={img?.name || "Gallery Image"}
                     fill
                     className={styles.galleryImage}
+                      style={{ objectFit: "contain" }} 
+    sizes="(max-width: 768px) 30vw, (max-width: 1200px) 14vw, 14vw"
                   />
                 </div>
                 <p className={styles.imageText}>

@@ -126,6 +126,9 @@ const Contact = () => {
               priority
               quality={75}
               className={styles.image}
+                style={{ objectFit: "contain" }} 
+    sizes="(max-width: 768px) 30vw, (max-width: 1200px) 14vw, 14vw"
+             
             />
           )}
         </div>
@@ -141,6 +144,9 @@ const Contact = () => {
                 fill
                 priority
                 quality={75}
+                 style={{ objectFit: "contain" }} 
+    sizes="(max-width: 768px) 30vw, (max-width: 1200px) 14vw, 14vw"
+                
               />
             </div>
             {/* QUICK LINKS */}

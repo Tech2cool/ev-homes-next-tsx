@@ -172,6 +172,8 @@ const RecentProjects = () => {
                   // width={100}
                   // height={100}
                   fill
+                     style={{ objectFit: "contain" }} 
+    sizes="(max-width: 768px) 30vw, (max-width: 1200px) 14vw, 14vw"
                 />
               </div>
               <span className={styles.projectName}>
@@ -201,6 +203,7 @@ const RecentProjects = () => {
                 fill
                 className={styles.imagePoster}
                 priority
+                 sizes="10vw"
               />
             </div>
             <div className={styles.rightSection}>

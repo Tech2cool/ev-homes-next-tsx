@@ -52,6 +52,7 @@
 }
 
 .logoImage {
+  width: auto;
   height: auto;
   transition: transform var(--transition-fast);
 }
@@ -326,7 +327,7 @@
   }
 
   .logoImage {
-    width: 120px;
+    width: auto;
     height: auto;
   }
 }

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from "react";
 import styles from "./../forgotpassword.module.css";
-import Lottie from "lottie-react";
+
 import forgotAnimation from "../../../public/assets/password (1).json"
 import email from "../../../public/assets/email.json"
 import { FiMail } from "react-icons/fi";
@@ -114,11 +114,10 @@ function ForgotPassword() {
                         !otpform ? (
                             <div className={`${styles.resetpass} ${otpform ? styles.hide : ""}`}>
 
-                                {/* <img src="/images/evhomeslogo_1.webp" alt="img" className={styles.logoimg} /> */}
                                 <h2 className={styles.forgottext}>FORGOT PASSWORD!!</h2>
                                 <p className={styles.note}>Enter your registered email address below. <br /> We’ll send you password reset instructions.</p>
                                 <div className={styles.inputmain}>
-                                    <FiMail className={styles.mailicon} />
+                                    <FiMail className={styles.mailicon} />  
                                     <input type="email" placeholder="Enter your email" className={styles.emailInput} ref={emailinput} />
 
                                 </div>
@@ -206,7 +205,7 @@ function ForgotPassword() {
             <div className={styles.mobileViewMain}>
                 <div className={`${styles.resetpass} ${otpform ? styles.hide : ""}`}>
 
-                    {/* <img src="/images/evhomeslogo_1.webp" alt="img" className={styles.logoimg} /> */}
+                    
                     <h2 className={styles.forgottext}>FORGOT PASSWORD!!</h2>
                     <p className={styles.note}>Enter your registered email address below. <br /> We’ll send you password reset instructions.</p>
                     <div className={styles.inputmain}>
