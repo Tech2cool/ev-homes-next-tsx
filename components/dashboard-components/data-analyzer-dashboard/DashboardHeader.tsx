@@ -1,53 +1,79 @@
 "use client";
-import styles from "./analyzerdashboard.module.css"
+import { useUser } from "@/providers/userContext";
+import styles from "./analyzerdashboard.module.css";
 import { PiBagSimpleFill } from "react-icons/pi";
 
 type DashboardHeaderProps = {
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
   activeTab: string;
-}
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ setActiveTab, activeTab }) => {
-
+};
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({
+  setActiveTab,
+  activeTab,
+}) => {
+  const { user, loading } = useUser();
 
   return (
     <div className={styles.container}>
       <div className={styles.innercontainer}>
-        
-          <div className={styles.profilesection}>
-            <img src="/images/HomePageImage.png" alt="profile img" />
-            <div className={styles.name}>
+        <div className={styles.profilesection}>
+          <img
+            src={user?.profilePic || "/images/HomePageImage.png"}
+            alt="profile img"
+            onError={(e) => {
+              e.currentTarget.src = "/images/HomePageImage.png";
+            }}
+          />
+          <div className={styles.name}>
+            <h1>
+              {/* Display user's name or fallback */}
+              {
+                user?.firstName && user?.lastName
+                  ? `${user.firstName ?? ""} ${user.lastName ?? ""}`
+                  : user?.firstName
+                  ? user.firstName
+                  : "Test" // Fallback name
+              }
+            </h1>
+            <p>
+              <PiBagSimpleFill />
 
-              <h1>
-                Mahek Tulve
-              </h1>
-              <p>  <PiBagSimpleFill />Data Analyzer</p>
-            </div>
+              {user?.designation?.designation ?? ""}
+            </p>
           </div>
-        
+        </div>
+
         <div className={styles.nectsection}>
           <div className={styles.textsection}>
             <div
-              className={`${styles.text} ${activeTab === "overview" ? styles.active : ""}`}
+              className={`${styles.text} ${
+                activeTab === "overview" ? styles.active : ""
+              }`}
               onClick={() => setActiveTab("overview")}
             >
               Overview
             </div>
 
             <div
-              className={`${styles.text} ${activeTab === "enquiry" ? styles.active : ""}`}
+              className={`${styles.text} ${
+                activeTab === "enquiry" ? styles.active : ""
+              }`}
               onClick={() => setActiveTab("enquiry")}
             >
               Enquiry
             </div>
             <div
-              className={`${styles.text} ${activeTab === "inventory" ? styles.active : ""}`}
+              className={`${styles.text} ${
+                activeTab === "inventory" ? styles.active : ""
+              }`}
               onClick={() => setActiveTab("inventory")}
             >
               Inventory
             </div>
           </div>
 
-          <button className={styles.button}
+          <button
+            className={styles.button}
             onClick={() => setActiveTab("tagging")}
           >
             <svg
@@ -63,11 +89,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ setActiveTab, activeT
             </svg>
             <span className={styles.textbutton}>Client Tagging</span>
           </button>
-
         </div>
-
       </div>
-
     </div>
   );
 };

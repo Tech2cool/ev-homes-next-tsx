@@ -329,3 +329,14 @@ interface ChartModel {
   value: number | null;
   value2: number | null;
 }
+
+interface FunnelStageData {
+  stage: string;
+  count: number;
+  color?: string;
+}
+
+interface LineChartData {
+  month: string;
+  leads: number;
+}

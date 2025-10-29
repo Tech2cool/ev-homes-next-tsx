@@ -550,19 +550,22 @@ export function ClosingManagerDashboardHeader({
           }}
         >
           {salesoverview.map((metric, index) => (
-            <Link href={"/lead-details"}>
-              <div
-                key={index}
-                className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
-                style={{
-                  minWidth: "173px", // adjust card width as needed
-                }}
-              >
-                <div className={styles.metricCardContent}>
-                  <MetricCard {...metric} />
-                </div>
+
+            <div
+              key={index}
+              className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
+              style={{
+                minWidth: "173px", // adjust card width as needed
+              }}
+            >
+              <Link  href="/lead-details" >
+               <div className={styles.metricCardContent}>
+                <MetricCard {...metric} />
               </div>
-            </Link>
+              </Link>
+             
+            </div>
+
           ))}
         </div>
 

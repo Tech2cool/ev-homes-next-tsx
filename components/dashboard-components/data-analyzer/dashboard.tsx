@@ -91,7 +91,7 @@ export default function DataAnalyzerDashboardPage() {
     searchLeadInfo,
     siteInfo,
     closingManager,
-    fetchDataAnalyzerVisits,
+    // fetchDataAnalyzerVisits,
     fetchAssignFeedbackLeadsCount,
     // fetchAssignFeedbackLeads,
     assignInfo,
@@ -99,16 +99,16 @@ export default function DataAnalyzerDashboardPage() {
     fetchTeamLeaderGraphForDA,
   } = useData();
 
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("use effect dashboard");
-      fetchSearchLeads({ query: "", page: 1, limit: 10 });
-      fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
-      // fetchAssignFeedbackLeads({ query: "", page: 1, limit: 10 });
-      fetchTeamLeaderGraphForDA({ interval: "monthly" });
-      fetchAssignFeedbackLeadsCount({ query: "", page: 1, limit: 10 });
-    }
-  }, [user, loading]);
+useEffect(() => {
+  if (user && !loading) {
+    console.log("use effect dashboard");
+    fetchSearchLeads({ query: "", page: 1, limit: 10 });
+    fetchTeamLeaderGraphForDA({ interval: "monthly" });
+    fetchAssignFeedbackLeadsCount({ query: "", page: 1, limit: 10 });
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [searchLeadInfo]); // ✅ only run once when component mounts
+
 
   if (loading || !user) {
     return <div>Loading...</div>; // You can customize the loading state
