@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdAddCall, MdCall, MdEmail } from "react-icons/md";
-import styles from "../lead-details/lead-details.module.css";
+import styles from "../../super-admin/lead-details/lead-details.module.css";
 import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks, FaBolt, FaFileContract, FaUser } from "react-icons/fa";
 import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
 import QuickAccess from "@/components/lead-details-components/quickaccess"
