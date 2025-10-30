@@ -4,9 +4,9 @@ import React from "react";
 
 const SuperAdminDashboard = () => {
   return (  
-    <div>
+    
      <SuperAdminDasboard />
-    </div>
+   
   );
 };
 
