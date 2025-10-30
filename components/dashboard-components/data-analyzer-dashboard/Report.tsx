@@ -86,6 +86,7 @@ const ReportsSection: React.FC = () => {
   const [loadingChart, setLoadingChart] = useState<boolean>(true);
   const [loadingCPChart, setLoadingCPChart] = useState<boolean>(true);
   const [loadingLineChart, setLoadingLineChart] = useState<boolean>(true);
+    const ALLOWED_TEAM_LEADERS = ["Deepak Karki", "Ranjna Gupta", "Jaspreet Arora"]
   useEffect(() => {
     fetchTeamLeaderData();
     fetchChannelPartnerData();
@@ -416,39 +417,13 @@ const ReportsSection: React.FC = () => {
       if (result.success) {
         // Check if we have data and transform it
         if (leadsTeamLeaderGraphForDT && leadsTeamLeaderGraphForDT.length > 0) {
-          // Log the actual structure of the data
-          console.log("Raw API data structure:", leadsTeamLeaderGraphForDT[0]);
-
-          // Try different possible field mappings based on your Flutter model
-          const transformedData = leadsTeamLeaderGraphForDT
-            .map((item: any, index: number) => {
-              // Try different possible field names from the API
-              const name =
-                item.category ||
-                item.name ||
-                item.teamLeader ||
-                `Team ${index + 1}`;
-              const value =
-                item.value || item.count || item.leadCount || item.total || 0;
-              const email = item.email || item.teamLeaderEmail || ""; // handle multiple possible fields
-
-              console.log(`Item ${index}:`, {
-                name,
-                value,
-                email,
-                rawItem: item,
-              });
-
-              return {
-                name: name,
-                value: value,
-                email: email.toLowerCase(),
-              };
-            })
-            // ✅ Filter out: 0 value, dummy email, and the known dummy name
-            .filter(
-              (item) => item.value > 0 && item.email == "dummytest@gmail.com"
-            );
+      const transformedData = leadsTeamLeaderGraphForDT
+        .map((item: any, index: number) => {
+          const name = item.category || item.name || item.teamLeader || `Team ${index + 1}`
+          const value = item.value || item.count || item.leadCount || item.total || 0
+          return { name, value }
+        })
+        .filter((item) => item.value > 0 && ALLOWED_TEAM_LEADERS.includes(item.name))
 
           console.log("Transformed data:", transformedData);
 
@@ -767,49 +742,86 @@ const ReportsSection: React.FC = () => {
   };
 
   // Update channel partner chart when data changes
-  const updateCPChart = (data: ChannelPartnerData[]) => {
-    const cpNames = data.map((item) => item.name);
-    const cpCounts = data.map((item) => item.count);
+ const updateCPChart = (data: ChannelPartnerData[]) => {
+  const cpNames = data.map((item) => item.name);
+  const cpCounts = data.map((item) => item.count);
 
-    const total = cpCounts.reduce((sum, count) => sum + count, 0);
-    setTotalCPCount(total);
+  const total = cpCounts.reduce((sum, count) => sum + count, 0);
+  setTotalCPCount(total);
 
-    setChartState((prevState) => ({
-      ...prevState,
-      cpChart: {
-        series: [{ name: "Count", data: cpCounts }],
-        options: {
-          ...prevState.cpChart?.options,
-          chart: {
-            type: "bar",
-            height: 300,
-            toolbar: { show: false },
-          },
-          plotOptions: {
-            bar: {
-              horizontal: true,
-              borderRadius: 4,
-              dataLabels: { position: "right" },
-            },
-          },
-          dataLabels: {
-            enabled: true,
-            formatter: (val: number, opt: any) => {
-              return `${cpNames[opt.dataPointIndex]}: ${val}`;
-            },
-            style: { fontSize: "10px", colors: ["#d2cfcf"] },
-          },
-          xaxis: {
-            categories: cpNames,
-            title: { text: "Count" },
-          },
-          yaxis: {
-            title: { text: "Channel Partners" },
+  setChartState((prevState) => ({
+    ...prevState,
+    cpChart: {
+      series: [{ name: "Count", data: cpCounts }],
+      options: {
+        ...prevState.cpChart?.options,
+        chart: {
+          type: "bar",
+          height: 300,
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            borderRadius: 4,
+            dataLabels: { position: "right" },
           },
         },
+
+        // ✅ Make name:count label red on hover
+        dataLabels: {
+          enabled: true,
+          formatter: (val, opt) =>
+            `${cpNames[opt.dataPointIndex]}: ${val}`,
+          style: {
+            fontSize: "10px",
+            colors: ["#d2cfcf"]
+          }
+        },
+
+        // ✅ Remove hover dark overlay + change bar color on hover
+        states: {
+          normal: {
+            filter: {
+              type: "none"
+            }
+          },
+          hover: {
+            filter: {
+              type: "none"
+            },
+            style: {
+              color: "#ff1a1a"  // ✅ Red text
+            }
+          },
+          active: {
+            filter: {
+              type: "none"
+            }
+          }
+        },
+
+        // ✅ Tooltip also red
+        tooltip: {
+          theme: "dark",
+          style: {
+            fontSize: "12px",
+            color: "#ff1a1a"
+          }
+        },
+
+        xaxis: {
+          categories: cpNames,
+          title: { text: "Count" },
+        },
+        yaxis: {
+          title: { text: "Channel Partners" },
+        },
       },
-    }));
-  };
+    },
+  }));
+};
+
 
   return (
     <div className={styles.container}>

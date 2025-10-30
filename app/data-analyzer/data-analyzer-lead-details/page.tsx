@@ -67,15 +67,15 @@ const DataAnalyzerdetailspage = () => {
   const leads = searchLeadInfo?.data ;
   console.log("leads", searchLeadInfo);
 
-  useEffect(() => {
-    if (searchLeadInfo) {
-      console.log(
-        "Full searchLeadInfo structure:",
-        JSON.stringify(searchLeadInfo, null, 2)
-      );
-      console.log("Available keys:", Object.keys(searchLeadInfo));
-    }
-  }, [searchLeadInfo]);
+  // useEffect(() => {
+  //   if (searchLeadInfo) {
+  //     console.log(
+  //       "Full searchLeadInfo structure:",
+  //       JSON.stringify(searchLeadInfo, null, 2)
+  //     );
+  //     console.log("Available keys:", Object.keys(searchLeadInfo));
+  //   }
+  // }, [searchLeadInfo]);
   // const mapLead = searchLeadInfo?.map((e: any) => {
   //   return e.firstName + " " + e.lastName;
   // });
@@ -114,7 +114,7 @@ const DataAnalyzerdetailspage = () => {
 
   useEffect(() => {
     const fetchLeadsBasedOnStatus = async () => {
-      console.log("Fetching leads with status:", status);
+      // console.log("Fetching leads with status:", status);
 
       if (user && !loading) {
         try {
@@ -130,7 +130,7 @@ const DataAnalyzerdetailspage = () => {
     };
 
     fetchLeadsBasedOnStatus();
-  }, [user, loading, status, fetchSearchLeads]);
+  }, []);
 
 //   useEffect(() => {
 //     console.log("data analyzer ");
