@@ -1551,6 +1551,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         method: "GET",
       });
       const { data, ...withoutData } = res as PaginationProps;
+      console.log("url",url);
 
       console.log(data);
       setSearchLeadInfo(withoutData);

@@ -8,7 +8,7 @@ import DashboardSalesPage from "@/components/dashboard-components/sales/dashboar
 import { useUser } from "@/providers/userContext";
 import DataAnalyzerDashboardPage from "@/components/dashboard-components/data-analyzer/dashboard";
 import ClosingManagerPage from "../closing-manager/closing-manager-dashboard/page";
-import DataAnalyzerDashboard from "../data-analyzer-dashboard/page";
+import DataAnalyzerDashboard from "../data-analyzer/data-analyzer-dashboard/page";
 
 import SalesManagerPage from "../sales-manager/sales-manager-dashboard/page";
 
