@@ -4,16 +4,25 @@ import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdAddCall, MdCall, MdEmail } from "react-icons/md";
-import styles from "../lead-details/lead-details.module.css";
-import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks, FaBolt, FaFileContract, FaUser } from "react-icons/fa";
+import styles from "../../super-admin/lead-details/lead-details.module.css";
+import {
+  FaExchangeAlt,
+  FaHistory,
+  FaMapMarkedAlt,
+  FaPhoneAlt,
+  FaTasks,
+  FaBolt,
+  FaFileContract,
+  FaUser,
+} from "react-icons/fa";
 import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
-import QuickAccess from "@/components/lead-details-components/quickaccess"
-import TaskOverview from "@/components/lead-details-components/taskoverview"
-import FollowUp from "@/components/lead-details-components/followup"
-import VisitHistory from "@/components/lead-details-components/visithistory"
-import TransferHistory from "@/components/lead-details-components/transferhistory"
-import BookingOverview from "@/components/lead-details-components/bookingoverview"
-import tagIcon from "@/public/images/transfer.png"
+import QuickAccess from "@/components/lead-details-components/quickaccess";
+import TaskOverview from "@/components/lead-details-components/taskoverview";
+import FollowUp from "@/components/lead-details-components/followup";
+import VisitHistory from "@/components/lead-details-components/visithistory";
+import TransferHistory from "@/components/lead-details-components/transferhistory";
+import BookingOverview from "@/components/lead-details-components/bookingoverview";
+import tagIcon from "@/public/images/transfer.png";
 import {
   ArrowLeft,
   Calendar,
@@ -35,112 +44,47 @@ import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
 import { IoIosPerson } from "react-icons/io";
+import { useData } from "@/providers/dataContext";
+import { useUser } from "@/providers/userContext";
 
-
-
-interface Lead {
-  _id: string;
-  prefix?: string;
-  firstName?: string;
-  lastName?: string;
-  countryCode?: string;
-  phoneNumber?: string;
-  altPhoneNumber?: string;
-  email?: string;
-  approvalStatus?: string;
-  clientInterestedStatus?: string;
-  leadType?: string;
-  cycle?: {
-    startDate?: number | string;
-    validTill?: number | string;
-  };
-  taskRef?: {
-    completed?: boolean;
-    assignTo?: {
-      firstName?: string;
-      lastName?: string;
-    };
-  };
-  teamLeader?: {
-    firstName?: string;
-    lastName?: string;
-  };
-  channelPartner?: {
-    firmName?: string;
-  };
-  requirement?: string[];
-  project?: { name: string }[];
-  bookingStatus?: string;
-}
-
-const DUMMY_LEADS: Lead[] = [
-  {
-    _id: "lead-1",
-    prefix: "Mr.",
-    firstName: "Rajesh",
-    lastName: "Sharma",
-    countryCode: "+91",
-    phoneNumber: "9876543210",
-    altPhoneNumber: "9988776655",
-    email: "rajesh.s@example.com",
-    approvalStatus: "approved",
-    clientInterestedStatus: "Hot Lead",
-    leadType: "cp",
-    cycle: { startDate: Date.now() - 86400000 * 5, validTill: Date.now() + 86400000 * 20 },
-    taskRef: { completed: false, assignTo: { firstName: "Akshay", lastName: "K" } },
-    teamLeader: { firstName: "deepak", lastName: "karki" },
-    channelPartner: { firmName: "City Realtors" },
-    requirement: ["2 BHK", "3 BHK Premium"],
-    project: [{ name: "Project Alpha" }, { name: "Project Beta" }],
-    
-  },
-  {
-    _id: "lead-2",
-    prefix: "Ms.",
-    firstName: "Priya",
-    lastName: "Verma",
-    countryCode: "+91",
-    phoneNumber: "8765432109",
-    altPhoneNumber: "8877665544",
-    email: "priya.v@example.com",
-    approvalStatus: "pending",
-    clientInterestedStatus: "Warm Lead",
-    leadType: "walk-in",
-    cycle: { startDate: Date.now() - 86400000 * 10, validTill: Date.now() + 86400000 * 10 },
-    taskRef: { completed: true, assignTo: { firstName: "Sam", lastName: "J" } },
-    teamLeader: { firstName: "ranjana", lastName: "jupta" },
-    requirement: ["1 BHK", "Studio"],
-    project: [{ name: "Project Gamma" }],
-  },
-];
-
-const DUMMY_USER = {
-  _id: 'user-123',
-  firstName: 'Dummy',
-  lastName: 'User'
-};
-
-const DUMMY_LEAD_INFO = {
-  page: 1,
-  totalPages: 1,
-};
-
-
-const salesdetilsWrapper = () => {
+const dataAnalyzerWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Salesdetaispage />
+      <DataAnalyzerdetailspage />
     </Suspense>
   );
 };
 
-export default salesdetilsWrapper;
+export default dataAnalyzerWrapper;
 
-const Salesdetaispage = () => {
+const DataAnalyzerdetailspage = () => {
+  const { searchLeadInfo, fetchSearchLeads } = useData();
+  const { user, loading } = useUser();
+
   const router = useRouter();
-  const visitId = "lead-1"; 
-  const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS); 
-  const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null); 
+  //   const visitId = "lead-1";
+  //   const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
+  const leads = searchLeadInfo?.data ;
+  console.log("leads", searchLeadInfo);
+
+  useEffect(() => {
+    if (searchLeadInfo) {
+      console.log(
+        "Full searchLeadInfo structure:",
+        JSON.stringify(searchLeadInfo, null, 2)
+      );
+      console.log("Available keys:", Object.keys(searchLeadInfo));
+    }
+  }, [searchLeadInfo]);
+  // const mapLead = searchLeadInfo?.map((e: any) => {
+  //   return e.firstName + " " + e.lastName;
+  // });
+  // console.log(mapLead);
+  const searchParams = useSearchParams();
+  const status = searchParams.get("status");
+  const visitId = searchParams.get("id"); // Get ID from URL if needed
+
+  const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showSimilarVisits, setShowSimilarVisits] = useState<boolean>(false);
@@ -161,14 +105,45 @@ const Salesdetaispage = () => {
     remark: "",
   });
 
-
   const loadingRef = useRef(false);
-  const hasMoreRef = useRef(false); 
-  const leadInfo = DUMMY_LEAD_INFO; 
-  const loading = false;
-  const loadingLeads = false;
-  const fetchingMoreLeads = false;
-  const user = DUMMY_USER;
+  const hasMoreRef = useRef(false);
+  //   const leadInfo = DUMMY_LEAD_INFO;
+  //   const loading = false;
+
+  //   const user = DUMMY_USER;
+
+  useEffect(() => {
+    const fetchLeadsBasedOnStatus = async () => {
+      console.log("Fetching leads with status:", status);
+
+      if (user && !loading) {
+        try {
+          fetchSearchLeads({
+            query: "",
+            page: 1,
+            limit: 10,
+          });
+        } catch (error) {
+          console.error("Error fetching leads:", error);
+        }
+      }
+    };
+
+    fetchLeadsBasedOnStatus();
+  }, [user, loading, status, fetchSearchLeads]);
+
+//   useEffect(() => {
+//     console.log("data analyzer ");
+//     if (user && !loading && !searchLeadInfo) {
+//       console.log("data analyzer 1");
+
+//       fetchSearchLeads({
+//         query: "",
+//         page: 1,
+//         limit: 10,
+//       });
+//     }
+//   }, [user, loading, searchLeadInfo]);
 
   const [filters, setFilters] = useState({
     visitType: "",
@@ -185,16 +160,12 @@ const Salesdetaispage = () => {
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
     console.log("Filters applied (Dummy):", newFilters);
-
   };
 
-  const handleCall = useCallback(
-    (lead: any) => {
-      alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
-      console.log("Simulating call to:", lead);
-    },
-    []
-  );
+  const handleCall = useCallback((lead: any) => {
+    alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
+    console.log("Simulating call to:", lead);
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -205,7 +176,6 @@ const Salesdetaispage = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-
   useEffect(() => {
     if (visitId && leads!.length > 0) {
       const foundVisit = leads?.find((v: any) => v?._id === visitId);
@@ -215,12 +185,9 @@ const Salesdetaispage = () => {
     }
   }, [visitId, leads]);
 
-  const loadMoreLeads = useCallback(
-    (resetPage = false) => {
-      console.log("Load more called (Dummy): No more data to fetch.");
-    },
-    []
-  );
+  const loadMoreLeads = useCallback((resetPage = false) => {
+    console.log("Load more called (Dummy): No more data to fetch.");
+  }, []);
 
   const fetchLeads = () => {
     console.log("Fetch leads called (Dummy).");
@@ -310,12 +277,12 @@ const Salesdetaispage = () => {
   };
 
   const handleVisitSelect = (SelectedLead: Lead) => {
-    router.push(`/sales-manager-lead-details?id=${SelectedLead._id}`);
+    router.push(`/data-analyzer-lead-details?id=${SelectedLead._id}`);
     setShowSidebar(false);
   };
 
   const handleBackToList = () => {
-    router.push("/sales-manager-lead-details");
+    router.push("/data-analyzer-lead-details");
   };
 
   const clearFilters = () => {
@@ -360,106 +327,138 @@ const Salesdetaispage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {leads?.map((visit) => (
-              <div
-                key={visit._id}
-                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
+            {console.log("Rendering leads, count:", leads?.length)}
+            {leads?.map((visit: Lead, index: number) => {
+              console.log(`Rendering lead ${index}:`, visit);
+              return (
+                <div
+                  key={visit._id}
+                  className={`${styles.visitCard} ${
+                    SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
-                onClick={() => {
-                  setSelectedLead(visit);
-                  router.push(`/sales-manager-lead-details?id=${visit._id}`, {
-                    scroll: false,
-                  });
-                }}
-              >
-                <div className={styles.tag}></div>
-                <div className={styles.leadInfo}>
-                 
-                  <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
-                  <div className={styles.clientDetails}>
+                  onClick={() => {
+                    setSelectedLead(visit);
+                    // Preserve status in navigation
+                    const currentParams = new URLSearchParams(
+                      window.location.search
+                    );
+                    const statusParam = currentParams.get("status");
 
-                    {/* <p className={styles.trns}>Transferred From</p> */}
-                    <p className={styles.trnsname}>Vicky</p>
-                    <div className={styles.namecl}>
-                      {visit?.firstName ?? ""} {visit?.lastName ?? ""}
-                    </div>
-                    <p className={styles.phone}>
-                      {visit?.countryCode ?? "91"} {visit?.phoneNumber}
-                    </p>
-                  </div>
-                </div>
-                {/* Task Details */}
+                    let url = `/data-analyzer/data-analyzer-lead-details?id=${visit._id}`;
+                    if (statusParam) {
+                      url += `&status=${statusParam}`;
+                    }
 
-                <div className={styles.leadMeta}>
-                  <p>
-                    Assign Date : {" "}
-                    {visit.cycle?.startDate ? (
-                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
-                    ) : (
-                      <span>Not available</span>
-                    )}
-                  </p>
-                  <p>
-                    Visit Deadline:
-                    {" "}
-                    {visit.cycle?.validTill ? (
-                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
-                    ) : (
-                      <span>Not available</span>
-                    )}
-                  </p>
-
-                  <div className={styles.taskContainer}>
-                    <div className={styles.taskHeader}>
-                      <div className={styles.accentLine} style={{ backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
-                      <span className={styles.taskTitle}>Task Details</span>
-                    </div>
-
-                    <span className={styles.taskName}>
-                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""}`}
-                      <span className={styles.status}>
-                        <span className={styles.statusText} style={{ color: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}>{visit?.taskRef?.completed === true ? "COMPLETED" : "PENDING"}</span>
-                        <span className={styles.statusIcon}>⏳</span>
-                      </span>
-                    </span>
-                  </div>
-
-                  {visit.teamLeader ? (
-                    <div className={styles.assignby}>
-                      {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
-                      {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
-                    </div>
-
-                  ) : (
-                    <span>Not available</span>
-                  )}
-
-                  <div className={styles.lastpart}>
-                    {visit?.clientInterestedStatus ? (
-                      <div className={styles.clientStatus}>
-                        {visit?.clientInterestedStatus}
+                    router.push(url, { scroll: false });
+                  }}
+                >
+                  <div className={styles.tag}></div>
+                  <div className={styles.leadInfo}>
+                    <Image
+                      src={tagIcon}
+                      alt="Tag"
+                      className={styles.tagImage}
+                      width={55}
+                      height={20}
+                    />
+                    <div className={styles.clientDetails}>
+                      <p className={styles.trnsname}>Vicky</p>
+                      <div className={styles.namecl}>
+                        {visit?.firstName ?? "No Name"} {visit?.lastName ?? ""}
                       </div>
-                    ) : null}
-                    <div
-                      style={{
-                        backgroundColor: "rgba(3, 84, 214, 1)",
-                      }}
-                      className={styles.clientStatus}
-                    >
-                      {visit.leadType === "cp"
-                        ? (visit.channelPartner?.firmName ?? "-")
-                        : (visit.leadType ?? "-")}
+                      <p className={styles.phone}>
+                        {visit?.countryCode ?? "91"}{" "}
+                        {visit?.phoneNumber ?? "No Phone"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={styles.leadMeta}>
+                    <p>
+                      Assign Date:{" "}
+                      {visit.cycle?.startDate ? (
+                        <span>
+                          {formatDate(new Date(visit.cycle.startDate))}
+                        </span>
+                      ) : (
+                        <span>Not available</span>
+                      )}
+                    </p>
+                    <p>
+                      Visit Deadline:{" "}
+                      {visit.cycle?.validTill ? (
+                        <span>
+                          {formatDate(new Date(visit.cycle.validTill))}
+                        </span>
+                      ) : (
+                        <span>Not available</span>
+                      )}
+                    </p>
+
+                    <div className={styles.taskContainer}>
+                      <div className={styles.taskHeader}>
+                        <div
+                          className={styles.accentLine}
+                          style={{
+                            backgroundColor:
+                              visit?.taskRef?.completed === true
+                                ? "rgb(5, 170, 5)"
+                                : "orange",
+                          }}
+                        ></div>
+                        <span className={styles.taskTitle}>Task Details</span>
+                      </div>
+                      <span className={styles.taskName}>
+                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                          visit.taskRef?.assignTo?.lastName ?? ""
+                        }`}
+                        <span className={styles.status}>
+                          <span
+                            className={styles.statusText}
+                            style={{
+                              color:
+                                visit?.taskRef?.completed === true
+                                  ? "rgb(5, 170, 5)"
+                                  : "orange",
+                            }}
+                          >
+                            {visit?.taskRef?.completed === true
+                              ? "COMPLETED"
+                              : "PENDING"}
+                          </span>
+                          <span className={styles.statusIcon}>⏳</span>
+                        </span>
+                      </span>
                     </div>
 
+                    {visit.teamLeader ? (
+                      <div className={styles.assignby}>
+                        {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
+                        {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                      </div>
+                    ) : (
+                      <span>Not available</span>
+                    )}
 
-
-
+                    <div className={styles.lastpart}>
+                      {visit?.clientInterestedStatus ? (
+                        <div className={styles.clientStatus}>
+                          {visit?.clientInterestedStatus}
+                        </div>
+                      ) : null}
+                      <div
+                        style={{ backgroundColor: "rgba(3, 84, 214, 1)" }}
+                        className={styles.clientStatus}
+                      >
+                        {visit.leadType === "cp"
+                          ? visit.channelPartner?.firmName ?? "-"
+                          : visit.leadType ?? "-"}
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-
-              </div>
-            ))}
+              );
+            })}
             {hasMoreRef.current && (
               <div className={styles.loadMoreContainer}>
                 <button
@@ -478,9 +477,6 @@ const Salesdetaispage = () => {
           {SelectedLead ? (
             <>
               <div className={styles.detailsHeader}>
-
-
-
                 <div className={styles.headerInfo}>
                   <h2 className={styles.detailsTitle}>
                     {SelectedLead.prefix} {SelectedLead.firstName}{" "}
@@ -494,8 +490,6 @@ const Salesdetaispage = () => {
                     </span>
                   </h2>
                   <div className={styles.actionButtons}>
-
-
                     <button
                       className={styles.editb}
                       onClick={() => {
@@ -503,19 +497,22 @@ const Salesdetaispage = () => {
                         setShowEditDialog(true);
                       }}
                     >
-
                       <Edit size={15} />
                     </button>
                     <button
                       className={styles.verifiedBadge}
-                      onClick={() => { handleCall(SelectedLead) }}
+                      onClick={() => {
+                        handleCall(SelectedLead);
+                      }}
                     >
                       <MdCall size={15} />
                     </button>
 
                     <button
                       className={styles.whatsbtn}
-                      onClick={() => { alert("Simulating WhatsApp chat.") }}
+                      onClick={() => {
+                        alert("Simulating WhatsApp chat.");
+                      }}
                     >
                       <IoLogoWhatsapp size={15} />
                     </button>
@@ -532,30 +529,23 @@ const Salesdetaispage = () => {
                     )}
                   </div>
                 </div>
-
               </div>
-              <div className={styles.detsilpart} >
+              <div className={styles.detsilpart}>
                 <div className={styles.detailsContent}>
                   {activeTab === "overview" && (
-                    <VisitDetailsContent visit={SelectedLead} onCall={handleCall} user={user} />
+                    <VisitDetailsContent
+                      visit={SelectedLead}
+                      onCall={handleCall}
+                      user={user}
+                    />
                   )}
 
-                  {activeTab === "access" && (
-                    <QuickAccess />
-                  )}
+                  {activeTab === "access" && <QuickAccess />}
 
-                  {activeTab === "taskDetails" && (
-                    <TaskOverview />
-                  )}
-                  {activeTab === "followup" && (
-                    <FollowUp />
-                  )}
-                  {activeTab === "siteVisit" && (
-                    <VisitHistory />
-                  )}
-                  {activeTab === "transfer" && (
-                    <TransferHistory />
-                  )}
+                  {activeTab === "taskDetails" && <TaskOverview />}
+                  {activeTab === "followup" && <FollowUp />}
+                  {activeTab === "siteVisit" && <VisitHistory />}
+                  {activeTab === "transfer" && <TransferHistory />}
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />
@@ -583,59 +573,72 @@ const Salesdetaispage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
-
-
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "siteVisit" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
-                      <FaMapMarkedAlt className={styles.icon} /> Site Visit History
+                      <FaMapMarkedAlt className={styles.icon} /> Site Visit
+                      History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "transfer" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "booking" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("booking")}
                     >
-                      <FaFileContract className={styles.icon} /> Booking Overview
+                      <FaFileContract className={styles.icon} /> Booking
+                      Overview
                     </button>
                   </div>
                 </div>
               </div>
-
             </>
           ) : (
             <div className={styles.emptyState}>
@@ -678,7 +681,7 @@ const Salesdetaispage = () => {
             onSave={(updatedVisit: any) => {
               console.log("Saving visit (Dummy):", updatedVisit);
               setSelectedLead(updatedVisit);
-              setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
+              //   setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
               setShowEditDialog(false);
             }}
           />
@@ -713,19 +716,25 @@ const Salesdetaispage = () => {
           </button>
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-          {leads?.map((visit) => (
+          {leads?.map((visit: Lead) => (
             <div
               key={visit._id}
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/sales-manager-lead-details?id=${visit._id}`, {
+                router.push(`/data-analyzer-lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
             >
               <div className={styles.leadInfo}>
-                <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
+                <Image
+                  src={tagIcon}
+                  alt="Tag"
+                  className={styles.tagImage}
+                  width={55}
+                  height={20}
+                />
                 <div className={styles.clientDetails}>
                   <p className={styles.trnsname}>Vicky</p>
                   <div className={styles.namecl}>
@@ -739,7 +748,8 @@ const Salesdetaispage = () => {
 
               <div className={styles.leadMeta}>
                 <p>
-                  Assign Date: {visit.cycle?.startDate ? (
+                  Assign Date:{" "}
+                  {visit.cycle?.startDate ? (
                     <span>{formatDate(new Date(visit.cycle.startDate))}</span>
                   ) : (
                     <span>Not available</span>
@@ -755,21 +765,40 @@ const Salesdetaispage = () => {
                 </p>
                 <div className={styles.taskContainer}>
                   <div className={styles.taskHeader}>
-                    <div className={styles.accentLine} style={{ backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                    <div
+                      className={styles.accentLine}
+                      style={{
+                        backgroundColor:
+                          visit?.taskRef?.completed === true
+                            ? "rgb(5, 170, 5)"
+                            : "orange",
+                      }}
+                    ></div>
                     <span className={styles.taskTitle}>Task Details</span>
                   </div>
 
                   <span className={styles.taskName}>
-                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""}`}
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                      visit.taskRef?.assignTo?.lastName ?? ""
+                    }`}
                     <span className={styles.status}>
-                      <span className={styles.statusText} style={{ color: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}>
-                        {visit.taskRef?.completed === true ? "COMPLETED" : "PENDING"}</span>
+                      <span
+                        className={styles.statusText}
+                        style={{
+                          color:
+                            visit?.taskRef?.completed === true
+                              ? "rgb(5, 170, 5)"
+                              : "orange",
+                        }}
+                      >
+                        {visit.taskRef?.completed === true
+                          ? "COMPLETED"
+                          : "PENDING"}
+                      </span>
                       <span className={styles.statusIcons}>⏳</span>
                     </span>
                   </span>
                 </div>
-
-
 
                 <div className={styles.lastpart}>
                   {visit?.clientInterestedStatus ? (
@@ -785,7 +814,6 @@ const Salesdetaispage = () => {
                       {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
                       {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
                     </div>
-
                   ) : (
                     <span>Not available</span>
                   )}
@@ -796,8 +824,8 @@ const Salesdetaispage = () => {
                     className={styles.clientStatus}
                   >
                     {visit.leadType === "cp"
-                      ? (visit.channelPartner?.firmName ?? "-")
-                      : (visit.leadType ?? "-")}
+                      ? visit.channelPartner?.firmName ?? "-"
+                      : visit.leadType ?? "-"}
                   </div>
                 </div>
               </div>
@@ -828,7 +856,7 @@ const Salesdetaispage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/sales-manager-lead-details", { scroll: false });
+              router.push("/data-analyzer-lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
@@ -837,14 +865,18 @@ const Salesdetaispage = () => {
           <div className={styles.actionButtons}>
             <button
               className={styles.verifiedBadge}
-              onClick={() => { handleCall(SelectedLead) }}
+              onClick={() => {
+                handleCall(SelectedLead);
+              }}
             >
               <MdCall size={15} />
             </button>
 
             <button
               className={styles.whatsbtn}
-              onClick={() => { alert("Simulating WhatsApp chat.") }}
+              onClick={() => {
+                alert("Simulating WhatsApp chat.");
+              }}
             >
               <IoLogoWhatsapp size={15} />
             </button>
@@ -854,15 +886,25 @@ const Salesdetaispage = () => {
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? " " : <Menu className={styles.menuIcon} />}
-
             </button>
 
             {/* Sidebar Overlay */}
-            {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
+            {isOpen && (
+              <div
+                className={styles.overlay}
+                onClick={() => setIsOpen(false)}
+              />
+            )}
 
             {/* Sidebar Panel */}
             <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
-              <div style={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                }}
+              >
                 <button
                   className={styles.editb}
                   onClick={() => {
@@ -870,63 +912,76 @@ const Salesdetaispage = () => {
                     setShowEditDialog(true);
                   }}
                 >
-
                   <Edit size={15} />
                 </button>
                 <ThemeToggle />
               </div>
 
               <button
-
                 onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 z-50 p-2 lg:hidden" style={{ color: "red" }}
+                className="absolute top-4 right-4 z-50 p-2 lg:hidden"
+                style={{ color: "red" }}
               >
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "overview" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "access" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "taskDetails" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "followup" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "siteVisit" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "transfer" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("transfer")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "booking" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("booking")}
               >
                 <FaFileContract className={styles.icon} /> Booking Overview
@@ -943,33 +998,26 @@ const Salesdetaispage = () => {
             )}
           </div>
         </div>
-
       </div>
-      <div className={styles.detsilpart} >
+      <div className={styles.detsilpart}>
         <div className={styles.detailsContent}>
           {activeTab === "overview" && (
-            <VisitDetailsContent visit={SelectedLead} onCall={handleCall} user={user} />
+            <VisitDetailsContent
+              visit={SelectedLead}
+              onCall={handleCall}
+              user={user}
+            />
           )}
 
-          {activeTab === "access" && (
-            <QuickAccess />
-          )}
+          {activeTab === "access" && <QuickAccess />}
 
-          {activeTab === "taskDetails" && (
-            <TaskOverview />
-          )}
+          {activeTab === "taskDetails" && <TaskOverview />}
 
-          {activeTab === "followup" && (
-            <FollowUp />
-          )}
+          {activeTab === "followup" && <FollowUp />}
 
-          {activeTab === "siteVisit" && (
-            <VisitHistory />
-          )}
+          {activeTab === "siteVisit" && <VisitHistory />}
 
-          {activeTab === "transfer" && (
-            <TransferHistory />
-          )}
+          {activeTab === "transfer" && <TransferHistory />}
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>
@@ -994,10 +1042,7 @@ const Salesdetaispage = () => {
             </div>
           )}
         </div>
-
-
       </div>
-
     </div>
   );
 };
@@ -1032,35 +1077,49 @@ const VisitDetailsContent = ({
   };
 
   const renderValue = (value: any) => {
-    if (value === null || value === undefined || value === "") return "Not specified";
+    if (value === null || value === undefined || value === "")
+      return "Not specified";
     return value;
   };
 
   return (
     <>
       <div className={styles.infobutton}>
-        <div className={`${styles.statusCard} ${styles.blue}`} style={{ border: "1px solid blue" }}>
+        <div
+          className={`${styles.statusCard} ${styles.blue}`}
+          style={{ border: "1px solid blue" }}
+        >
           <div className={styles.statusIcon}>📅</div>
           <span className={styles.statusLabel}>Status</span>
           <span className={styles.statusValue}>Visit Pending</span>
         </div>
-        <div className={`${styles.statusCard} ${styles.red}`} style={{ border: "1px solid red" }}>
+        <div
+          className={`${styles.statusCard} ${styles.red}`}
+          style={{ border: "1px solid red" }}
+        >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
           <span className={styles.statusValue}>06 Nov 25</span>
         </div>
-        <div className={`${styles.statusCard} ${styles.purple}`} style={{ border: "1px solid purple" }}>
+        <div
+          className={`${styles.statusCard} ${styles.purple}`}
+          style={{ border: "1px solid purple" }}
+        >
           <div className={styles.statusIcon}>👨🏻‍💼</div>
           <span className={styles.statusLabel}>Client Status</span>
-          <span className={styles.statusValue}>{visit?.clientInterestedStatus ?? "NA"}</span>
+          <span className={styles.statusValue}>
+            {visit?.clientInterestedStatus ?? "NA"}
+          </span>
         </div>
-        <div className={`${styles.statusCard} ${styles.yellow}`} style={{ border: "1px solid yellow" }}>
-          <div className={styles.statusIcon} >💡</div>
+        <div
+          className={`${styles.statusCard} ${styles.yellow}`}
+          style={{ border: "1px solid yellow" }}
+        >
+          <div className={styles.statusIcon}>💡</div>
           <span className={styles.statusLabel}>Lead Status</span>
           <span className={styles.statusValue}>Just-curious</span>
         </div>
       </div>
-
 
       <div className={styles.cardrow}>
         <div className={styles.detailsCard}>
@@ -1071,7 +1130,9 @@ const VisitDetailsContent = ({
           <div className={styles.cardContent}>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><IoPersonSharp size={11} color="#4a84ff" /> Full Name</label>
+                <label className={styles.infoLabel}>
+                  <IoPersonSharp size={11} color="#4a84ff" /> Full Name
+                </label>
                 <p className={styles.infoValue}>
                   {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
                   {visit?.lastName ?? ""}
@@ -1079,12 +1140,15 @@ const VisitDetailsContent = ({
               </div>
 
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Phone Number</label>
+                <label className={styles.infoLabel}>
+                  <FaPhoneAlt size={11} color="#4a84ff" />
+                  Phone Number
+                </label>
                 <p className={styles.infoValue}>
                   <MdAddCall
                     size={15}
                     color="dodgerblue"
-                    style={{ cursor: "pointer", }}
+                    style={{ cursor: "pointer" }}
                     onClick={() =>
                       onCall({
                         ...visit,
@@ -1095,24 +1159,26 @@ const VisitDetailsContent = ({
                   />
                   {visit?.phoneNumber ?? "NA"}
                 </p>
-
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><MdEmail size={11} color="#4a84ff" />Email</label>
-                <p className={styles.infoValue}>
-
-                  {visit.email ?? "NA"}
-                </p>
+                <label className={styles.infoLabel}>
+                  <MdEmail size={11} color="#4a84ff" />
+                  Email
+                </label>
+                <p className={styles.infoValue}>{visit.email ?? "NA"}</p>
               </div>
 
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Alt Phone</label>
+                <label className={styles.infoLabel}>
+                  <FaPhoneAlt size={11} color="#4a84ff" />
+                  Alt Phone
+                </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
                     <MdAddCall
                       size={15}
                       color="dodgerblue"
-                      style={{ cursor: "pointer", }}
+                      style={{ cursor: "pointer" }}
                       onClick={() =>
                         onCall({
                           ...visit,
@@ -1123,7 +1189,6 @@ const VisitDetailsContent = ({
                     />
                     {visit.countryCode} {visit.altPhoneNumber ?? "NA"}
                   </p>
-
                 </div>
               </div>
             </div>
@@ -1137,19 +1202,26 @@ const VisitDetailsContent = ({
           <div className={styles.cardContent}>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Property Type</label>
-                <p className={styles.infoValue}>
-                  NA
-                </p>
+                <label className={styles.infoLabel}>
+                  <IoIosPerson size={12} color="#4a84ff" />
+                  Property Type
+                </label>
+                <p className={styles.infoValue}>NA</p>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Channel Partner</label>
+                <label className={styles.infoLabel}>
+                  <IoIosPerson size={12} color="#4a84ff" />
+                  Channel Partner
+                </label>
                 <p className={styles.infoValue}>
                   {visit?.channelPartner?.firmName ?? "NA"}
                 </p>
               </div>
               <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
-                <label className={styles.infoLabel}><PiBuildingApartmentBold size={14} color="#4a84ff" />Apartment Choices</label>
+                <label className={styles.infoLabel}>
+                  <PiBuildingApartmentBold size={14} color="#4a84ff" />
+                  Apartment Choices
+                </label>
                 <div className={styles.choicesList}>
                   {visit.requirement && visit.requirement.length > 0 ? (
                     visit.requirement.map((choice: any) => (
@@ -1163,7 +1235,10 @@ const VisitDetailsContent = ({
                 </div>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><BsFillBuildingFill size={12} color="#4a84ff" />Projects</label>
+                <label className={styles.infoLabel}>
+                  <BsFillBuildingFill size={12} color="#4a84ff" />
+                  Projects
+                </label>
                 <div className={styles.projectsList}>
                   {visit.project && visit.project.length > 0 ? (
                     visit.project.map((project: any, index: number) => (
@@ -1181,7 +1256,6 @@ const VisitDetailsContent = ({
         </div>
       </div>
 
-
       <div className={styles.cardrow}>
         {/* Lead Information */}
         <div className={styles.detailsCard}>
@@ -1192,44 +1266,52 @@ const VisitDetailsContent = ({
           <div className={styles.cardContent}>
             <div className={styles.infoGridwork}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Occupation</label>
-                <p className={styles.infoValue}>
-                  Dummy Occupation
-                </p>
+                <label className={styles.infoLabel}>
+                  {" "}
+                  <Calendar size={14} color="#4a84ff" />
+                  Occupation
+                </label>
+                <p className={styles.infoValue}>Dummy Occupation</p>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Remark</label>
+                <label className={styles.infoLabel}>
+                  {" "}
+                  <Calendar size={14} color="#4a84ff" />
+                  Remark
+                </label>
                 <p className={styles.infoValue}>
                   Dummy Remark: Interested in investment property.
                 </p>
               </div>
-              <div className={styles.infoItem} style={{ flexDirection: "column" }}>
-
+              <div
+                className={styles.infoItem}
+                style={{ flexDirection: "column" }}
+              >
                 <div className={`${styles.infoHeader} ${styles.center}`}>
-
                   <CiLink size={18} color="#4a84ff" />
 
                   <label className={styles.infoLabel}>LinkedIn</label>
                 </div>
 
                 <div className={styles.buttonGroup}>
-                  <button className={`${styles.infoButton} ${styles.visitBtn}`} onClick={() => alert("Simulating Visit Profile")}>
+                  <button
+                    className={`${styles.infoButton} ${styles.visitBtn}`}
+                    onClick={() => alert("Simulating Visit Profile")}
+                  >
                     <span>🔗 Visit Profile</span>
                   </button>
-                  <button className={`${styles.infoButton} ${styles.visitBtn}`} onClick={() => alert("Simulating View Document")}>
+                  <button
+                    className={`${styles.infoButton} ${styles.visitBtn}`}
+                    onClick={() => alert("Simulating View Document")}
+                  >
                     <span>📄 View Document</span>
                   </button>
                 </div>
-
-
               </div>
-
             </div>
           </div>
         </div>
       </div>
-
-
     </>
   );
 };

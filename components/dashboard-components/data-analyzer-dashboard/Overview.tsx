@@ -70,6 +70,8 @@ const SectionTap = () => {
     {
       label: "Total Leads",
       value: searchLeadInfo?.totalItems ?? 0,
+      linkHref: "/data-analyzer/data-analyzer-lead-details?status=all",
+      status: "all",
       icon: <FaUsers />,
       color: "#ad82f2e1",
       bgcolor: "#7c2ff706",
@@ -77,6 +79,8 @@ const SectionTap = () => {
     {
       label: "Approved",
       value: searchLeadInfo?.approvedCount ?? 0,
+      linkHref:"/data-analyzer/data-analyzer-lead-details?status=approved",
+      status: "approved",
       icon: <FaCheck />,
       color: "#88c08aa8",
       bgcolor: "#4caf4f09",
@@ -84,13 +88,17 @@ const SectionTap = () => {
     {
       label: "Rejected",
       value: searchLeadInfo?.rejectedCount ?? 0,
-      icon: <FaTimes />,
+       linkHref:"/data-analyzer/data-analyzer-lead-details?status=rejected",
+      status: "rejected",
+       icon: <FaTimes />,
       color: "#ce676082",
       bgcolor: "#f4433609",
     },
     {
       label: "Pending",
       value: searchLeadInfo?.pendingCount ?? 0,
+      linkHref:"/data-analyzer/data-analyzer-lead-details?status=pending",
+      status: "pending",
       icon: <FaClock />,
       color: "#c0a24aa7",
       bgcolor: "#ffc10709",
@@ -98,6 +106,8 @@ const SectionTap = () => {
     {
       label: "Bulk Lead",
       value: searchLeadInfo?.bulkCount ?? 0,
+      linkHref:"/data-analyzer/data-analyzer-lead-details?status=bulk",
+      status: "bulk",
       icon: <FaBoxes />,
       color: "#58b1bd9c",
       bgcolor: "#00bbd409",
@@ -401,30 +411,31 @@ const SectionTap = () => {
         {/* Horizontal scrollable cards */}
         <div className={styles.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-             <Link  href="/lead-details" >    <div className={styles.card} key={index}>
-              <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
-                {card.icon}
-              </div>
-              <div className={styles.cardContent}>
-                <div className={styles.topRow}>
-                  <div
-                    className={styles.iconContainer}
-                    style={{ color: card.color }}
-                  >
-                    {card.icon}
-                  </div>
-                  <div
-                    className={styles.arrowContainer}
-                    style={{ color: card.color }}
-                  >
-                    <FaArrowRight />
-                  </div>
+            <Link href="/data-analyzer/data-analyzer-lead-details" key={index}>
+              <div className={styles.card}>
+                <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
+                  {card.icon}
                 </div>
-                <p className={styles.label}>{card.label}</p>
-                <p className={styles.value}>{card.value}</p>
+                <div className={styles.cardContent}>
+                  <div className={styles.topRow}>
+                    <div
+                      className={styles.iconContainer}
+                      style={{ color: card.color }}
+                    >
+                      {card.icon}
+                    </div>
+                    <div
+                      className={styles.arrowContainer}
+                      style={{ color: card.color }}
+                    >
+                      <FaArrowRight />
+                    </div>
+                  </div>
+                  <p className={styles.label}>{card.label}</p>
+                  <p className={styles.value}>{card.value}</p>
+                </div>
               </div>
-            </div></Link>
-        
+            </Link>
           ))}
         </div>
 
