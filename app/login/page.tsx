@@ -19,7 +19,7 @@ const LoginPage = () => {
   const [activeLoginTab, setActiveLoginTab] = useState<"email" | "phone">(
     "email"
   );
-  const { login, user } = useUser();
+  const { login, user } = useUser(); 
 
   const [emailFormData, setEmailFormData] = useState({
     email: "",

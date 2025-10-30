@@ -17,6 +17,9 @@ function ForgotPassword() {
     const [hideConfirm, setHideConfirm] = useState(false);
 
     const emailinput = useRef<(HTMLInputElement | null)>(null);
+    const mobileinput = useRef<(HTMLInputElement | null)>(null);
+
+
     const [timer, settimer] = useState(120);
     const [isactive, setisactve] = useState(true);
 
@@ -117,12 +120,14 @@ function ForgotPassword() {
                                 <h2 className={styles.forgottext}>FORGOT PASSWORD!!</h2>
                                 <p className={styles.note}>Enter your registered email address below. <br /> We’ll send you password reset instructions.</p>
                                 <div className={styles.inputmain}>
-                                    <FiMail className={styles.mailicon} />  
+                                    <FiMail className={styles.mailicon} />
                                     <input type="email" placeholder="Enter your email" className={styles.emailInput} ref={emailinput} />
 
                                 </div>
                                 <button className={styles.Submitbtn} onClick={() => {
-                                    if (!emailinput.current || emailinput.current.value.trim() === "") {
+                                    const emailValue = emailinput.current?.value || mobileinput.current?.value;
+
+                                    if (!emailValue || emailValue.trim() === "") {
                                         alert("please enter your email before proceding!");
                                         return;
 
@@ -203,18 +208,21 @@ function ForgotPassword() {
 
             {/* mobile ui */}
             <div className={styles.mobileViewMain}>
-                <div className={`${styles.resetpass} ${otpform ? styles.hide : ""}`}>
+                {!otpform ?(
+                     <div className={`${styles.resetpass} ${otpform ? styles.hide : ""}`}>
 
-                    
+
                     <h2 className={styles.forgottext}>FORGOT PASSWORD!!</h2>
                     <p className={styles.note}>Enter your registered email address below. <br /> We’ll send you password reset instructions.</p>
                     <div className={styles.inputmain}>
                         <FiMail className={styles.mailicon} />
-                        <input type="email" placeholder="Enter your email" className={styles.emailInput} ref={emailinput} />
+                        <input type="email" placeholder="Enter your email" className={styles.emailInput} ref={mobileinput} />
 
                     </div>
                     <button className={styles.Submitbtn} onClick={() => {
-                        if (!emailinput.current || emailinput.current.value.trim() === "") {
+                        const emailValue = emailinput.current?.value || mobileinput.current?.value;
+
+                        if (!emailValue || emailValue.trim() === "") {
                             alert("please enter your email before proceding!");
                             return;
 
@@ -223,13 +231,67 @@ function ForgotPassword() {
                     }
 
 
-
-
-
                     }> Submit</button>
 
 
                 </div>
+
+                ):
+                <div className={`${styles.otpform} ${styles.fadeIn}`}>
+                    <div className={styles.otpAndP}>
+                        <h2 className={styles.otpHeading}>ENTER OTP</h2>
+                        <p className={styles.otpinstrucrtion}>Enter the code from your email and set a new password.</p>
+                    </div>
+                    <p className={styles.otptimer}>
+                        {isactive ? `wait ${timer} sec...` : "Timer finished!"}
+                    </p>
+
+
+
+                    <div className={styles.otpinputsmain}>
+                        {otp.map((value, index) => (
+                            <input type="text"
+                                key={index}
+                                value={value}
+                                maxLength={1}
+                                ref={(el) => { (inputrefs.current[index] = el) }}
+                                onChange={(e) => handleChange(e, index)}
+                                onKeyDown={(e) => handleKeyDown(e, index)}
+                                className={styles.otpinput}
+                            />
+                        ))}
+
+                    </div>
+
+                    <button className={styles.ResendOtpbtn}
+                        onClick={() => {
+                            settimer(120)
+                            setisactve(true);
+                        }}>Resend 0TP</button>
+                    <h2 className={styles.resetHeading}>RESET PASSWORD</h2>
+                    <div className={styles.passwordinputsmain}>
+                        <div className={styles.newpassowrd}>
+                            <IoMdKey className={styles.keyicon} />
+                            <input type={hidden ? "password" : "text"} placeholder="New Password" onChange={(e) => handlePassword(e, "new")} className={styles.passwordInputs} />
+                        </div>
+                        <div className={styles.setnewpassword}>
+                            <IoMdKey className={styles.keyicontwo} />
+
+                            <input type={hideConfirm ? "password" : "text"} placeholder="Confirm Password" onChange={(e) => handlePassword(e, "confirm")} className={styles.passwordInputs} />
+                        </div>
+
+
+                    </div>
+
+                    <button className={styles.Submitpasswordbtn} onClick={handlePageChnage}>SUBMIT</button>
+
+
+                </div>
+                 
+                }
+              
+                
+
 
 
 
