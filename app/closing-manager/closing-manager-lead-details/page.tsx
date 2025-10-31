@@ -366,7 +366,7 @@ const Closingdetaispage = () => {
                   }`}
                 onClick={() => {
                   setSelectedLead(visit);
-                  router.push(`/closing-manager-lead-details?id=${visit._id}`, {
+                  router.push(`/closing-manager/closing-manager-lead-details?id=${visit._id}`, {
                     scroll: false,
                   });
                 }}
@@ -718,7 +718,7 @@ const Closingdetaispage = () => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/closing-manager-lead-details?id=${visit._id}`, {
+                router.push(`/closing-manager/closing-manager-lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -827,7 +827,7 @@ const Closingdetaispage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/closing-manager-lead-details", { scroll: false });
+              router.push("/closing-manager/closing-manager-lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
