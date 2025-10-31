@@ -46,6 +46,7 @@ import { CiLink } from "react-icons/ci";
 import { IoIosPerson } from "react-icons/io";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
+import { dateFormatOnly } from "@/hooks/useDateFormat";
 
 const dataAnalyzerWrapper = () => {
   return (
@@ -58,14 +59,25 @@ const dataAnalyzerWrapper = () => {
 export default dataAnalyzerWrapper;
 
 const DataAnalyzerdetailspage = () => {
-  const { searchLeadInfo, fetchSearchLeads } = useData();
+   const {
+    searchLeadInfo,
+    fetchSearchLeads,
+    channelPartners,
+    leads,
+    loadingLeads,
+    getProjects,
+    getRequirements,
+    projects,
+    requirements,
+  } = useData();
+
   const { user, loading } = useUser();
 
   const router = useRouter();
   //   const visitId = "lead-1";
   //   const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
-  const leads = searchLeadInfo?.data ;
-  console.log("leads", searchLeadInfo);
+  // const leads = searchLeadInfo?.data ;
+  // console.log("leads", searchLeadInfo);
 
   // useEffect(() => {
   //   if (searchLeadInfo) {
@@ -81,9 +93,10 @@ const DataAnalyzerdetailspage = () => {
   // });
   // console.log(mapLead);
   const searchParams = useSearchParams();
-  const status = searchParams.get("status");
-  const visitId = searchParams.get("id"); // Get ID from URL if needed
-
+  // const status = searchParams.get("status");
+  // const visitId = searchParams.get("id"); // Get ID from URL if needed
+// console.log("leads from context", leads);
+//   console.log("pagination info", searchLeadInfo);
   const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -98,6 +111,7 @@ const DataAnalyzerdetailspage = () => {
   const [showApprovalDialog, setShowApprovalDialog] = useState<boolean>(false);
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
+   const [query, setQuery] = useState("");
 
   const [editFormData, setEditFormData] = useState({});
   const [approvalData, setApprovalData] = useState({
@@ -112,16 +126,47 @@ const DataAnalyzerdetailspage = () => {
 
   //   const user = DUMMY_USER;
 
+    const [selectedFilter, setSelectedFilter] = useState({
+     status : null,
+    callData : null,
+    cycle : null,
+    order : null,
+    interval : null,
+    clientstatus : null,
+    leadstatus : null,
+    startDateDeadline : null,
+    endDateDeadline : null,
+    date : null,
+    status2 : null,
+    //  approvalStatus : null,
+    //  stage : null,
+    channelPartner : null,
+    teamLeader : null,
+    taskType : null,
+    member : null,
+    });
+
+// useEffect(() => {
+//   if (visitId && leads && leads.length > 0) {
+//     const foundLead = leads.find((lead: any) => lead._id === visitId);
+//     if (foundLead) {
+//       setSelectedLead(foundLead);
+//     } else {
+//       console.warn(`Lead with id ${visitId} not found in current leads`);
+//     }
+//   }
+// }, [visitId, leads]);
+
+  // Fix your fetch call
   useEffect(() => {
     const fetchLeadsBasedOnStatus = async () => {
-      // console.log("Fetching leads with status:", status);
-
       if (user && !loading) {
         try {
-          fetchSearchLeads({
+          await fetchSearchLeads({
             query: "",
-            page: 1,
+           page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
             limit: 10,
+            status: selectedFilter?.status,
           });
         } catch (error) {
           console.error("Error fetching leads:", error);
@@ -130,7 +175,75 @@ const DataAnalyzerdetailspage = () => {
     };
 
     fetchLeadsBasedOnStatus();
-  }, []);
+  }, [user, loading, selectedFilter]); // Remove searchLeadInfo?.page from dependencies
+
+  // Fix the loadMore function
+  const loadMoreLeads = useCallback(async () => {
+    if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
+      const nextPage = searchLeadInfo.page + 1;
+      if (nextPage <= searchLeadInfo.totalPages) {
+        await fetchSearchLeads({
+          query: "",
+          page: nextPage,
+          limit: 10,
+          status: selectedFilter?.status,
+        });
+      }
+    }
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads]);
+
+  // Update your scroll handler
+  const handleScroll = useCallback(
+    (e: any) => {
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+      const threshold = 100;
+      
+      if (scrollHeight - scrollTop <= clientHeight + threshold) {
+        if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages && 
+            searchLeadInfo.page < searchLeadInfo.totalPages) {
+          loadMoreLeads();
+        }
+      }
+    },
+    [loadMoreLeads, loadingLeads, searchLeadInfo]
+  );
+
+  // Fix the lead selection handler
+  const handleVisitSelect = (lead: Lead) => {
+    setSelectedLead(lead);
+    const currentParams = new URLSearchParams(window.location.search);
+    const statusParam = currentParams.get("status");
+
+    let url = `/data-analyzer/data-analyzer-lead-details?id=${lead._id}`;
+    if (statusParam) {
+      url += `&status=${statusParam}`;
+    }
+
+    router.push(url, { scroll: false });
+  };
+
+
+//   useEffect(() => {
+//     const fetchLeadsBasedOnStatus = async () => {
+//       // console.log("Fetching leads with status:", status);
+
+//       if (user && !loading) {
+//         try {
+// await           fetchSearchLeads({
+//             query: "",
+//             page: searchLeadInfo?.page,
+//             limit: 10,
+//           status: selectedFilter?.status,
+
+//           });
+//         } catch (error) {
+//           console.error("Error fetching leads:", error);
+//         }
+//       }
+//     };
+
+//     fetchLeadsBasedOnStatus();
+//   }, [searchLeadInfo?.page, query, selectedFilter, user]);
 
 //   useEffect(() => {
 //     console.log("data analyzer ");
@@ -176,34 +289,31 @@ const DataAnalyzerdetailspage = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    if (visitId && leads!.length > 0) {
-      const foundVisit = leads?.find((v: any) => v?._id === visitId);
-      if (foundVisit) {
-        setSelectedLead(foundVisit);
-      }
-    }
-  }, [visitId, leads]);
+  // useEffect(() => {
+  //   if (visitId && leads!.length > 0) {
+  //     const foundVisit = leads?.find((v: any) => v?._id === visitId);
+  //     if (foundVisit) {
+  //       setSelectedLead(foundVisit);
+  //     }
+  //   }
+  // }, [visitId, leads]);
 
-  const loadMoreLeads = useCallback((resetPage = false) => {
-    console.log("Load more called (Dummy): No more data to fetch.");
-  }, []);
+  // const loadMoreLeads = useCallback((resetPage = false) => {
+  //   console.log("Load more called (Dummy): No more data to fetch.");
+  // }, []);
 
-  const fetchLeads = () => {
-    console.log("Fetch leads called (Dummy).");
-  };
 
-  const handleScroll = useCallback(
-    (e: any) => {
-      const { scrollTop, scrollHeight, clientHeight } = e.target;
-      const threshold = 100;
-      if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        console.log("Reached end of scroll (Dummy)");
-        loadMoreLeads(false);
-      }
-    },
-    [loadMoreLeads]
-  );
+  // const handleScroll = useCallback(
+  //   (e: any) => {
+  //     const { scrollTop, scrollHeight, clientHeight } = e.target;
+  //     const threshold = 100;
+  //     if (scrollHeight - scrollTop <= clientHeight + threshold) {
+  //       console.log("Reached end of scroll (Dummy)");
+  //       loadMoreLeads(false);
+  //     }
+  //   },
+  //   [loadMoreLeads]
+  // );
 
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
     handleScroll,
@@ -276,10 +386,10 @@ const DataAnalyzerdetailspage = () => {
     }
   };
 
-  const handleVisitSelect = (SelectedLead: Lead) => {
-    router.push(`/data-analyzer-lead-details?id=${SelectedLead._id}`);
-    setShowSidebar(false);
-  };
+  // const handleVisitSelect = (SelectedLead: Lead) => {
+  //   router.push(`/data-analyzer-lead-details?id=${SelectedLead._id}`);
+  //   setShowSidebar(false);
+  // };
 
   const handleBackToList = () => {
     router.push("/data-analyzer-lead-details");
@@ -300,6 +410,7 @@ const DataAnalyzerdetailspage = () => {
     console.log("Filters cleared (Dummy)");
   };
 
+  //desktop view (list and details)
   if (!isMobile) {
     return (
       <div className={styles.desktopContainer}>
@@ -327,17 +438,17 @@ const DataAnalyzerdetailspage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {console.log("Rendering leads, count:", leads?.length)}
+          
             {leads?.map((visit: Lead, index: number) => {
               console.log(`Rendering lead ${index}:`, visit);
               return (
                 <div
-                  key={visit._id}
+                 key={`${visit._id}-${index}`}
                   className={`${styles.visitCard} ${
                     SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
                   onClick={() => {
-                    setSelectedLead(visit);
+                     handleVisitSelect(visit);
                     // Preserve status in navigation
                     const currentParams = new URLSearchParams(
                       window.location.search
@@ -362,7 +473,7 @@ const DataAnalyzerdetailspage = () => {
                       height={20}
                     />
                     <div className={styles.clientDetails}>
-                      <p className={styles.trnsname}>Vicky</p>
+                      {/* <p className={styles.trnsname}>Vicky</p> */}
                       <div className={styles.namecl}>
                         {visit?.firstName ?? "No Name"} {visit?.lastName ?? ""}
                       </div>
@@ -459,16 +570,17 @@ const DataAnalyzerdetailspage = () => {
                 </div>
               );
             })}
-            {hasMoreRef.current && (
-              <div className={styles.loadMoreContainer}>
-                <button
-                  className={styles.loadMoreBtn}
-                  onClick={() => loadMoreLeads(false)}
-                  disabled={loadingRef.current}
-                >
-                  {loadingRef.current ? "Loading..." : "Load More"}
-                </button>
-              </div>
+             {searchLeadInfo?.page && searchLeadInfo.totalPages && 
+           searchLeadInfo.page < searchLeadInfo.totalPages && (
+            <div className={styles.loadMoreContainer}>
+              <button
+                className={styles.loadMoreBtn}
+                onClick={loadMoreLeads}
+                disabled={loadingLeads}
+              >
+                {loadingLeads ? "Loading..." : "Load More"}
+              </button>
+            </div>
             )}
           </div>
         </div>
@@ -690,6 +802,7 @@ const DataAnalyzerdetailspage = () => {
     );
   }
 
+  //mobile view (list)
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
@@ -835,7 +948,7 @@ const DataAnalyzerdetailspage = () => {
             <div className={styles.loadMoreContainer}>
               <button
                 className={styles.loadMoreBtn}
-                onClick={() => loadMoreLeads(false)}
+                onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
                 {loadingRef.current ? "Loading..." : "Load More"}
@@ -847,7 +960,7 @@ const DataAnalyzerdetailspage = () => {
     );
   }
 
-  // Mobile detail view
+  // Mobile view (details)
   return (
     <div className={styles.container}>
       <div className={styles.detailsHeader}>
@@ -1059,6 +1172,7 @@ function debounce(func: (...args: any[]) => void, wait: number) {
   };
 }
 
+//Details Page (client overview for both)
 const VisitDetailsContent = ({
   visit,
   onCall,
@@ -1068,13 +1182,7 @@ const VisitDetailsContent = ({
   onCall: (lead: any) => void;
   user: any;
 }) => {
-  const formatDate = (date: any) => {
-    return new Date(date).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
+
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined || value === "")
@@ -1099,7 +1207,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
-          <span className={styles.statusValue}>06 Nov 25</span>
+          <span className={styles.statusValue}> {dateFormatOnly(visit?.cycle?.validTill) }</span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.purple}`}
@@ -1191,6 +1299,16 @@ const VisitDetailsContent = ({
                   </p>
                 </div>
               </div>
+
+               <div className={styles.infoItem}>
+                <label className={styles.infoLabel}>
+                  <IoPersonSharp size={11} color="#4a84ff" /> Assigned To
+                </label>
+                <p className={styles.infoValue}>
+                  {visit?.prefix ?? ""} {visit?.taskRef?.assignTo?.firstName ?? ""}{" "}
+                 {visit?.taskRef?.assignTo?.lastName ?? ""}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -1216,6 +1334,20 @@ const VisitDetailsContent = ({
                 <p className={styles.infoValue}>
                   {visit?.channelPartner?.firmName ?? "NA"}
                 </p>
+              </div>
+               <div className={styles.infoItem}>
+                <label className={styles.infoLabel}>
+                  <IoIosPerson size={12} color="#4a84ff" />
+                  CP Tagging Start
+                </label>
+                <p className={styles.infoValue}>{dateFormatOnly(visit?.startDate) }</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label className={styles.infoLabel}>
+                  <IoIosPerson size={12} color="#4a84ff" />
+                  CP Tagging End
+                </label>
+                <p className={styles.infoValue}>{dateFormatOnly(visit?.validTill) }</p>
               </div>
               <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
                 <label className={styles.infoLabel}>
@@ -1256,8 +1388,8 @@ const VisitDetailsContent = ({
         </div>
       </div>
 
-      <div className={styles.cardrow}>
-        {/* Lead Information */}
+      {/* <div className={styles.cardrow}>
+  
         <div className={styles.detailsCard}>
           <div className={styles.cardTitle}>
             <Calendar className={styles.titleIcon} />
@@ -1311,7 +1443,7 @@ const VisitDetailsContent = ({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
