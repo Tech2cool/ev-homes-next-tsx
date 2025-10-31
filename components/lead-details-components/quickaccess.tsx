@@ -19,8 +19,8 @@ import CancelBooking from "./Dailog/cancelbooking";
 import ScheduleMeeting from "./Dailog/schedulemeeting";
 import RunningStatus from "./Dailog/runningstatus";
 import AddBooking from "./Dailog/addbooking";
-import EstimateHistory from "./estimatesistory/estimatemain";
-
+import EstimateHistory from "@/app/estimate-history/page";
+import { useRouter } from "next/navigation";
 const QuickAccess = () => {
   const [showfb, setshowfb] = useState(false);
   const [showsite, setshowsite] = useState(false);
@@ -30,8 +30,10 @@ const QuickAccess = () => {
   const [showmeeting, setshowmeeting] = useState(false);
   const [showrunstatus, setshowrunstatus] = useState(false);
   const [showaddbooking, setshowaddbooking] = useState(false);
-const [showEstimateHistory, setShowEstimateHistory] = useState(false);
-
+  const router= useRouter();
+  const pagenavigate =()=>{
+    router.push("/estimate-history")
+  }
 
 
   const actions = [
@@ -65,20 +67,18 @@ const [showEstimateHistory, setShowEstimateHistory] = useState(false);
     if (label === "Cancel Booking") {
       setshowcancelbooking(true);
     };
-   
+
     if (label === "Schedule Meeting") {
       setshowmeeting(true);
     };
     if (label === "Lead Running Status") {
       setshowrunstatus(true);
     };
-     if (label === "Add Booking") {
+    if (label === "Add Booking") {
       setshowaddbooking(true);
     };
-    if (label === "Estimate History") {
-      <EstimateHistory/>
-    };
-    if (label === "Estimate History") return setShowEstimateHistory(true);
+   
+    if (label === "Estimate History") return pagenavigate();
 
   }
   return (
@@ -116,14 +116,14 @@ const [showEstimateHistory, setShowEstimateHistory] = useState(false);
       {showmeeting && (
         <ScheduleMeeting openclick={setshowmeeting} />
       )}
-       {showrunstatus && (
+      {showrunstatus && (
         <RunningStatus openclick={setshowrunstatus} />
       )}
-      
- {showaddbooking && (
+
+      {showaddbooking && (
         <AddBooking openclick={setshowaddbooking} />
       )}
-      {showEstimateHistory && (<EstimateHistory />)}
+      
 
     </div>
 
