@@ -11,7 +11,6 @@ import { TbCancel } from "react-icons/tb";
 import { AiFillCalculator } from "react-icons/ai";
 import { FaRobot } from "react-icons/fa6";
 import AddFeedBaack from "./Dailog/addfeedback";
-import FeedbackTwo from "./Dailog/feedbacktwo";
 import SiteVisit from "./Dailog/sitevisit";
 import AssignTask from "./Dailog/assigntask";
 import LinkdinUpdate from "./Dailog/linkdinupdate";
@@ -19,7 +18,6 @@ import CancelBooking from "./Dailog/cancelbooking";
 import ScheduleMeeting from "./Dailog/schedulemeeting";
 import RunningStatus from "./Dailog/runningstatus";
 import AddBooking from "./Dailog/addbooking";
-import EstimateHistory from "@/app/estimate-history/page";
 import { useRouter } from "next/navigation";
 const QuickAccess = () => {
   const [showfb, setshowfb] = useState(false);
