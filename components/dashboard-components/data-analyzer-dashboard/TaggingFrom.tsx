@@ -105,59 +105,59 @@ const TaggingForm = () => {
         setValidTill(validTillDate.format("YYYY-MM-DD"));
     };
 
-   const onSubmit = () => {
-    if (!formData.leadType) {
-        alert("Please select Lead Type");
-        return;
-    }
+    const onSubmit = () => {
+        if (!formData.leadType) {
+            alert("Please select Lead Type");
+            return;
+        }
 
-    if (!formData.firstName.trim()) {
-        alert("Please enter First Name");
-        return;
-    }
+        if (!formData.firstName.trim()) {
+            alert("Please enter First Name");
+            return;
+        }
 
-    if (!formData.lastName.trim()) {
-        alert("Please enter Last Name");
-        return;
-    }
+        if (!formData.lastName.trim()) {
+            alert("Please enter Last Name");
+            return;
+        }
 
-    if (!formData.phoneNumber || formData.phoneNumber.length !== 10) {
-        alert("Please enter a valid 10-digit Phone Number");
-        return;
-    }
+        if (!formData.phoneNumber || formData.phoneNumber.length !== 10) {
+            alert("Please enter a valid 10-digit Phone Number");
+            return;
+        }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailRegex.test(formData.email)) {
-        alert("Please enter a valid Email");
-        return;
-    }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email || !emailRegex.test(formData.email)) {
+            alert("Please enter a valid Email");
+            return;
+        }
 
-    if (!formData.projects || formData.projects.length === 0) {
-        alert("Please select at least one Project");
-        return;
-    }
-    if (!formData.requirements || formData.requirements.length === 0) {
-        alert("Please select at least one Requirement");
-        return;
-    }
+        if (!formData.projects || formData.projects.length === 0) {
+            alert("Please select at least one Project");
+            return;
+        }
+        if (!formData.requirements || formData.requirements.length === 0) {
+            alert("Please select at least one Requirement");
+            return;
+        }
 
-    if (!formData.propertyType) {
-        alert("Please select Property Type");
-        return;
-    }
+        if (!formData.propertyType) {
+            alert("Please select Property Type");
+            return;
+        }
 
-    if (!checked) {
-        alert("Please confirm the details first");
-        return;
-    }
-     if (!formData.channelPartner) {
-        alert("Please select channel Partner");
-        return;
-    }
+        if (!checked) {
+            alert("Please confirm the details first");
+            return;
+        }
+        if (!formData.channelPartner) {
+            alert("Please select channel Partner");
+            return;
+        }
 
-    // If all validations pass
-    alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
-};
+        // If all validations pass
+        alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
+    };
 
 
     const handleCancel = () => {

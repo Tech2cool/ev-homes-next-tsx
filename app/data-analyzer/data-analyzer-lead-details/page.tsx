@@ -16,7 +16,6 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
-import QuickAccess from "@/components/lead-details-components/quickaccess";
 import TaskOverview from "@/components/lead-details-components/taskoverview";
 import FollowUp from "@/components/lead-details-components/followup";
 import VisitHistory from "@/components/lead-details-components/visithistory";
@@ -36,17 +35,18 @@ import {
   ChevronUp,
   Search,
   SlidersHorizontal,
+  Calendar1,
 } from "lucide-react";
 import EditDialog from "@/components/lead-details-components/edit-dialog";
 import { LeadFilterDialog } from "@/components/lead-details-components/filter-dialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
-import { CiLink } from "react-icons/ci";
 import { IoIosPerson } from "react-icons/io";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
+import AnalyzerQuickaccess from "@/components/lead-details-components/analyzerquikaccess";
 
 const dataAnalyzerWrapper = () => {
   return (
@@ -652,7 +652,7 @@ const DataAnalyzerdetailspage = () => {
                     />
                   )}
 
-                  {activeTab === "access" && <QuickAccess />}
+                  {activeTab === "access" && <AnalyzerQuickaccess />}
 
                   {activeTab === "taskDetails" && <TaskOverview />}
                   {activeTab === "followup" && <FollowUp />}
@@ -1122,7 +1122,7 @@ const DataAnalyzerdetailspage = () => {
             />
           )}
 
-          {activeTab === "access" && <QuickAccess />}
+          {activeTab === "access" && <AnalyzerQuickaccess />}
 
           {activeTab === "taskDetails" && <TaskOverview />}
 
@@ -1337,14 +1337,14 @@ const VisitDetailsContent = ({
               </div>
                <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
-                  <IoIosPerson size={12} color="#4a84ff" />
+                  <Calendar1 size={12} color="#4a84ff" />
                   CP Tagging Start
                 </label>
                 <p className={styles.infoValue}>{dateFormatOnly(visit?.startDate) }</p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
-                  <IoIosPerson size={12} color="#4a84ff" />
+                  <Calendar1 size={12} color="#4a84ff" />
                   CP Tagging End
                 </label>
                 <p className={styles.infoValue}>{dateFormatOnly(visit?.validTill) }</p>
