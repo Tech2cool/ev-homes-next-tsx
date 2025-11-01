@@ -46,6 +46,7 @@ import { CiLink } from "react-icons/ci";
 import { IoIosPerson } from "react-icons/io";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
+import { dateFormatOnly } from "@/hooks/useDateFormat";
 
 const closingdetilsWrapper = () => {
   return (
@@ -1131,7 +1132,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>📅</div>
           <span className={styles.statusLabel}>Status</span>
-          <span className={styles.statusValue}>Visit Pending</span>
+          <span className={styles.statusValue}> {visit?.stage ?? "NA"}</span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.red}`}
@@ -1139,7 +1140,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
-          <span className={styles.statusValue}>06 Nov 25</span>
+          <span className={styles.statusValue}>{dateFormatOnly(visit?.cycle?.validTill) }</span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.purple}`}
@@ -1311,7 +1312,7 @@ const VisitDetailsContent = ({
                   <Calendar size={14} color="#4a84ff" />
                   Occupation
                 </label>
-                <p className={styles.infoValue}>Dummy Occupation</p>
+                <p className={styles.infoValue}> {visit?.occupation ?? "NA"}</p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
@@ -1320,7 +1321,7 @@ const VisitDetailsContent = ({
                   Remark
                 </label>
                 <p className={styles.infoValue}>
-                  Dummy Remark: Interested in investment property.
+                  {visit?.additionLinRemark ?? "NA"}
                 </p>
               </div>
               <div

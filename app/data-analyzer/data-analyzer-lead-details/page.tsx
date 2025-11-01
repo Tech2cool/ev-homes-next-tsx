@@ -1199,7 +1199,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>📅</div>
           <span className={styles.statusLabel}>Status</span>
-          <span className={styles.statusValue}>Visit Pending</span>
+          <span className={styles.statusValue}> {visit?.stage ?? "NA"}</span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.red}`}

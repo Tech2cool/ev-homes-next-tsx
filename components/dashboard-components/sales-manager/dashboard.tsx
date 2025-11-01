@@ -7,6 +7,7 @@ import {
   TrendingUp,
   Users,
   TrendingDown,
+  Link,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
@@ -96,6 +97,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-blue-100",
       gradientFrom: "from-blue-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
     {
       title: "CP Visits",
@@ -106,6 +108,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-green-100",
       gradientFrom: "from-green-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
     {
       title: "Walk In Visits",
@@ -116,6 +119,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-purple-100",
       gradientFrom: "from-purple-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
     {
       title: "Booking",
@@ -126,6 +130,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-orange-100",
       gradientFrom: "from-orange-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
     {
       title: "Internal Leads",
@@ -136,6 +141,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-teal-100",
       gradientFrom: "from-teal-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
     {
       title: "Bulk Leads",
@@ -146,6 +152,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-pink-100",
       gradientFrom: "from-pink-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
     {
       title: "Pending",
@@ -156,6 +163,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-red-100",
       gradientFrom: "from-red-50",
       gradientTo: "to-white",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
     },
   ];
 
@@ -403,9 +411,12 @@ export function SalesManagerDashboardHeader({
                 }
               }
             >
+              <Link href={metric.linkHref} key={index}>
               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
+                
               </div>
+              </Link>
             </div>
           ))}
         </div>
