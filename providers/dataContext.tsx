@@ -71,6 +71,32 @@ type FetchLeadsParams = {
   project?: string | null;
 };
 
+type FetchTeamLeaderParams = {
+  id?: string | null | undefined;
+  query?: string;
+  page?: number;
+  limit?: number;
+  status?: string | null;
+  callData?: string | null;
+  cycle?: string | null;
+  order?: string | null;
+  clientstatus?: string | null;
+  leadstatus?: string | null;
+  member?: string | null;
+  startDateDeadline?: string | null;
+  endDateDeadline?: string | null;
+  date?: string | null;
+
+  status2?: string | null;
+  channelPartner?: string | null;
+  taskType?: string | null;
+  bulkLead?: string | null;
+  project?: string | null;
+  interval?: string | null;
+
+  propertyType?: string | null;
+};
+
 //site visit
 type SiteVisitParams = {
   query?: string;
@@ -248,7 +274,7 @@ type TargetProgressData = {
   color2: string;
   icon: any; // React component type
   iconColor: string;
-}
+};
 
 //total count
 type SearchLeadParms = {
@@ -406,6 +432,9 @@ type DataProviderState = {
   fetchSaleExecutiveLeads: (
     params: FetchLeadsParams
   ) => Promise<{ success: boolean; message?: string }>;
+  fetchTeamLeaderLeads: (
+    params: FetchTeamLeaderParams
+  ) => Promise<{ success: boolean; message?: string }>;
 
   fetchTeamLeaderReportingToLeads: (
     params: LeadsReportingToParams
@@ -470,7 +499,8 @@ type DataProviderState = {
     endDate?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
-  fetchOnboardTarget: (params: { // Add this
+  fetchOnboardTarget: (params: {
+    // Add this
     date?: string | null;
   }) => Promise<{ success: boolean; message?: string; data?: OnboardTarget }>;
 
@@ -517,7 +547,7 @@ const initialState: DataProviderState = {
   leadsChannelPartnerGraphForDT: [],
   leadsFunnelGraphForDT: [],
   leadsLineGraphForDT: [],
-  onboardTargetData: null, 
+  onboardTargetData: null,
   closingManager: [],
   myOverallTarget: null,
   projectTargets: [],
@@ -531,6 +561,7 @@ const initialState: DataProviderState = {
   }),
   fetchReportingToEmployees: async () => ({ success: false }),
   fetchSaleExecutiveLeads: async () => ({ success: false }),
+  fetchTeamLeaderLeads:async()=>({success:false}),
   fetchTeamLeaderReportingToLeads: async () => ({ success: false }),
   fetchSearchLeads: async () => ({ success: false }),
   fetchDataAnalyzerVisits: async () => ({ success: false }),
@@ -555,11 +586,13 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
-  fetchLineGraphForDA: async () => ({ // Add this
+  fetchLineGraphForDA: async () => ({
+    // Add this
     success: false,
     message: "Not initialized",
   }),
-   fetchOnboardTarget: async () => ({ // Add this
+  fetchOnboardTarget: async () => ({
+    // Add this
     success: false,
     message: "Not initialized",
   }),
@@ -621,8 +654,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
 
-  const [salesDashCount, setSalesDashCount] = useState<DashboardCount | null>(null);
-
+  const [salesDashCount, setSalesDashCount] = useState<DashboardCount | null>(
+    null
+  );
 
   const [leads, setleads] = useState<Lead[]>([]);
 
@@ -640,9 +674,11 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [leadsFunnelGraphForDT, setFunnelChartData] = useState<ChartModel[]>(
     []
   );
-  const [leadsLineGraphForDT, setLineChartData] = useState<ChartModel[]>([]); 
-  const [onboardTargetData, setOnboardTargetData] = useState<OnboardTarget | null>(null); 
-  
+
+  const [leadsLineGraphForDT, setLineChartData] = useState<ChartModel[]>([]);
+  const [onboardTargetData, setOnboardTargetData] =
+    useState<OnboardTarget | null>(null);
+
   const fetchOnboardTarget = async ({
     date = null,
   }: {
@@ -651,7 +687,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = '/api/onboard-target';
+      let url = "/api/onboard-target";
       if (date != null) {
         url += `?date=${date}`;
       }
@@ -683,7 +719,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       return { success: false, message };
     }
   };
-  
+
   const getProjectTargets = async (
     id: string,
     quarter?: number | null,
@@ -1087,6 +1123,126 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       if (project != null) {
         url += "&project=$project";
+      }
+      console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res as PaginationProps;
+
+      setleadInfo(withoutData);
+      if (page > 1) {
+        // setleads((prev) => [...prev, ...res?.data]);
+      } else {
+        setleads(res?.data ?? []);
+      }
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
+
+  //team -leader
+  const fetchTeamLeaderLeads = async ({
+    id = null,
+    query = "",
+    page = 1,
+    limit = 10,
+    status = null,
+    callData = null,
+    cycle = null,
+    order = null,
+    clientstatus = null,
+    leadstatus = null,
+    startDateDeadline = null,
+    endDateDeadline = null,
+    date = null,
+    member = null,
+    status2 = null,
+    channelPartner = null,
+    taskType = null,
+    bulkLead = null,
+    project = null,
+    interval = null,
+
+    propertyType = null,
+  }: FetchTeamLeaderParams): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
+
+    try {
+      let url = `/api/leads-team-leader/${id}?query=${query}&page=${page}&limit=${limit}`;
+      if (status) {
+        url += `&status=${status}`;
+      }
+      if (callData) {
+        url += `&callData=${callData}`;
+      }
+      if (cycle) {
+        url += `&cycle=${cycle}`;
+      }
+      if (order) {
+        url += `&order=${order}`;
+      }
+      if (clientstatus) {
+        url += `&clientstatus=${clientstatus}`;
+      }
+      if (leadstatus) {
+        url += `&leadstatus=${leadstatus}`;
+      }
+      if (startDateDeadline) {
+        url += `&startDateDeadline=${startDateDeadline}`;
+      }
+      if (endDateDeadline) {
+        url += `&endDateDeadline=${endDateDeadline}`;
+      }
+      if (date) {
+        url += `&date=${date}`;
+      }
+      if (member) {
+        url += `&member=${member}`;
+      }
+
+      if (status2) {
+        url += `&status2=${status2}`;
+      }
+      if (channelPartner) {
+        url += `&channelPartner=${channelPartner}`;
+      }
+      if (taskType) {
+        url += `&taskType=${taskType}`;
+      }
+      if (bulkLead != null) {
+        url += "&bulkLead=$bulkLead";
+      }
+
+      if (project != null) {
+        url += "&project=$project";
+      }
+
+      if (interval != null) {
+        url += "&interval=$interval";
+      }
+
+      if (propertyType != null) {
+        url += "&propertyType=$propertyType";
       }
       console.log(url);
       const res = await fetchAdapter(url, {
@@ -1551,12 +1707,12 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         method: "GET",
       });
       const { data, ...withoutData } = res as PaginationProps;
-      console.log("url",url);
+      console.log("url", url);
 
       console.log(data);
       setSearchLeadInfo(withoutData);
       if (page > 1) {
-        // setleads((prev) => [...prev, ...res?.data]);
+        setleads((prev) => [...prev, ...res?.data]);
       } else {
         setleads(res?.data ?? []);
       }
@@ -1739,7 +1895,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       console.log("Fetching line chart data from:", url);
       const res = await fetchAdapter(url, { method: "GET" });
       console.log("Line chart API response:", res);
-      
+
       // Set the line chart data
       setLineChartData(res?.data ?? []);
 
@@ -1772,16 +1928,15 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     leadsChannelPartnerGraphForDT: leadsChannelPartnerGraphForDT,
     leadsFunnelGraphForDT: leadsFunnelGraphForDT,
     leadsLineGraphForDT: leadsLineGraphForDT,
-    onboardTargetData : onboardTargetData,
+    onboardTargetData: onboardTargetData,
     closingManager: closingManager,
     asssignFeedbackInfo: asssignFeedbackInfo,
     myOverallTarget: myOverallTarget,
     projectTargets: projectTargets,
-    
+
     loadingProjectTargets: loadingProjectTargets,
     salesDashCount: salesDashCount,
     getProjectTargets: getProjectTargets,
-
 
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -1789,6 +1944,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setLoadingTestimonial: setLoadingTestimonial,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
+    fetchTeamLeaderLeads:fetchTeamLeaderLeads,
     fetchDataAnalyzerVisits: fetchDataAnalyzerVisits,
     fetchTeamLeaderReportingToLeads: fetchTeamLeaderReportingToLeads,
     getSalesManagerDashBoardCount: getSalesManagerDashBoardCount,
@@ -1802,7 +1958,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchChannelPartnerGraphForDA: fetchChannelPartnerGraphForDA,
     fetchFunnelGraphForDA: fetchFunnelGraphForDA,
     fetchLineGraphForDA: fetchLineGraphForDA,
-    fetchOnboardTarget : fetchOnboardTarget,
+    fetchOnboardTarget: fetchOnboardTarget,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
   };

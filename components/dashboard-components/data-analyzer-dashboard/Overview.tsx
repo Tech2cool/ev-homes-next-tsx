@@ -411,7 +411,8 @@ const SectionTap = () => {
         {/* Horizontal scrollable cards */}
         <div className={styles.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-            <Link href="/data-analyzer/data-analyzer-lead-details" key={index}>
+           <Link href={card.linkHref} key={index}>
+
               <div className={styles.card}>
                 <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
                   {card.icon}

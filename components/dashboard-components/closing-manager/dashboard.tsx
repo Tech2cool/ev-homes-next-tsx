@@ -156,7 +156,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-blue-100",
       gradientFrom: "from-blue-50",
       gradientTo: "to-white",
-      onClick: () => router.push("/lead-details"),
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
+      // onClick: () => router.push("/closing-manager-lead-details"),
     },
     {
       title: "CP Visits",
@@ -167,6 +168,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-green-100",
       gradientFrom: "from-green-50",
       gradientTo: "to-white",
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
     },
     {
       title: "Walk In Visits",
@@ -177,6 +179,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-purple-100",
       gradientFrom: "from-purple-50",
       gradientTo: "to-white",
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
     },
     {
       title: "Booking",
@@ -187,6 +190,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-orange-100",
       gradientFrom: "from-orange-50",
       gradientTo: "to-white",
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
     },
     {
       title: "Internal Leads",
@@ -197,6 +201,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-teal-100",
       gradientFrom: "from-teal-50",
       gradientTo: "to-white",
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
     },
     {
       title: "Bulk Leads",
@@ -207,6 +212,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-pink-100",
       gradientFrom: "from-pink-50",
       gradientTo: "to-white",
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
     },
     {
       title: "Pending",
@@ -217,6 +223,7 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-red-100",
       gradientFrom: "from-red-50",
       gradientTo: "to-white",
+      linkHref: "/closing-manager/closing-manager-lead-details?status=all",
     },
   ];
 
@@ -558,7 +565,7 @@ export function ClosingManagerDashboardHeader({
                 minWidth: "173px", // adjust card width as needed
               }}
             >
-              <Link  href="/lead-details" >
+              <Link href={metric.linkHref} key={index}>
                <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
               </div>

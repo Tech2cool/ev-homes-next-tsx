@@ -35,96 +35,8 @@ import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
 import { IoIosPerson } from "react-icons/io";
-
-
-
-interface Lead {
-  _id: string;
-  prefix?: string;
-  firstName?: string;
-  lastName?: string;
-  countryCode?: string;
-  phoneNumber?: string;
-  altPhoneNumber?: string;
-  email?: string;
-  approvalStatus?: string;
-  clientInterestedStatus?: string;
-  leadType?: string;
-  cycle?: {
-    startDate?: number | string;
-    validTill?: number | string;
-  };
-  taskRef?: {
-    completed?: boolean;
-    assignTo?: {
-      firstName?: string;
-      lastName?: string;
-    };
-  };
-  teamLeader?: {
-    firstName?: string;
-    lastName?: string;
-  };
-  channelPartner?: {
-    firmName?: string;
-  };
-  requirement?: string[];
-  project?: { name: string }[];
-  bookingStatus?: string;
-}
-
-const DUMMY_LEADS: Lead[] = [
-  {
-    _id: "lead-1",
-    prefix: "Mr.",
-    firstName: "Rajesh",
-    lastName: "Sharma",
-    countryCode: "+91",
-    phoneNumber: "9876543210",
-    altPhoneNumber: "9988776655",
-    email: "rajesh.s@example.com",
-    approvalStatus: "approved",
-    clientInterestedStatus: "Hot Lead",
-    leadType: "cp",
-    cycle: { startDate: Date.now() - 86400000 * 5, validTill: Date.now() + 86400000 * 20 },
-    taskRef: { completed: false, assignTo: { firstName: "Akshay", lastName: "K" } },
-    teamLeader: { firstName: "deepak", lastName: "karki" },
-    channelPartner: { firmName: "City Realtors" },
-    requirement: ["2 BHK", "3 BHK Premium"],
-    project: [{ name: "Project Alpha" }, { name: "Project Beta" }],
-    
-  },
-  {
-    _id: "lead-2",
-    prefix: "Ms.",
-    firstName: "Priya",
-    lastName: "Verma",
-    countryCode: "+91",
-    phoneNumber: "8765432109",
-    altPhoneNumber: "8877665544",
-    email: "priya.v@example.com",
-    approvalStatus: "pending",
-    clientInterestedStatus: "Warm Lead",
-    leadType: "walk-in",
-    cycle: { startDate: Date.now() - 86400000 * 10, validTill: Date.now() + 86400000 * 10 },
-    taskRef: { completed: true, assignTo: { firstName: "Sam", lastName: "J" } },
-    teamLeader: { firstName: "ranjana", lastName: "jupta" },
-    requirement: ["1 BHK", "Studio"],
-    project: [{ name: "Project Gamma" }],
-  },
-];
-
-const DUMMY_USER = {
-  _id: 'user-123',
-  firstName: 'Dummy',
-  lastName: 'User'
-};
-
-const DUMMY_LEAD_INFO = {
-  page: 1,
-  totalPages: 1,
-};
-
+import { useData } from "@/providers/dataContext";
+import { useUser } from "@/providers/userContext";
 
 const salesdetilsWrapper = () => {
   return (
@@ -137,10 +49,27 @@ const salesdetilsWrapper = () => {
 export default salesdetilsWrapper;
 
 const Salesdetaispage = () => {
-  const router = useRouter();
+
+   const {
+      searchLeadInfo,
+  
+      channelPartners,
+      leads,
+      fetchTeamLeaderReportingToLeads,
+      employees,
+      getProjects,
+      getRequirements,
+      projects,
+      requirements,
+    } = useData();
+  
+    const router = useRouter();
+    const { user } = useUser();
+    
+
   const visitId = "lead-1"; 
-  const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS); 
-  const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null); 
+  // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS); 
+  const [SelectedLead, setSelectedLead] = useState<Lead | null>(null); 
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showSimilarVisits, setShowSimilarVisits] = useState<boolean>(false);
@@ -164,37 +93,125 @@ const Salesdetaispage = () => {
 
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false); 
-  const leadInfo = DUMMY_LEAD_INFO; 
+  // const leadInfo = DUMMY_LEAD_INFO; 
   const loading = false;
   const loadingLeads = false;
   const fetchingMoreLeads = false;
-  const user = DUMMY_USER;
+  // const user = DUMMY_USER;
 
-  const [filters, setFilters] = useState({
-    visitType: "",
-    leadFilter: "",
-    statusFilter: "",
-    feedbackFilter: "",
-    clientStatus: "",
-    leadStatus: "",
-    cycleStatus: 0,
-    dateFrom: "",
-    dateTo: "",
+  const [selectedFilter, setSelectedFilter] = useState({
+    status: null,
+    callData: null,
+    cycle: null,
+    order: null,
+    interval: null,
+    clientstatus: null,
+    leadstatus: null,
+    startDateDeadline: null,
+    endDateDeadline: null,
+    date: null,
+    status2: null,
+    //  approvalStatus : null,
+    //  stage : null,
+    channelPartner: null,
+    propertyType: null,
+    taskType: null,
+    project: null,
+    bulkLead: null,
+    member: null,
   });
 
-  const handleFiltersChange = (newFilters: typeof filters) => {
-    setFilters(newFilters);
-    console.log("Filters applied (Dummy):", newFilters);
+useEffect(() => {
+    const fetchLeadsBasedOnStatus = async () => {
+      if (user && !loading) {
+        try {
+          await fetchTeamLeaderReportingToLeads({
+            id: user._id,
+            query: "",
+            page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+            limit: 10,
+            status: selectedFilter?.status,
+          });
+        } catch (error) {
+          console.error("Error fetching leads:", error);
+        }
+      }
+    };
 
+    fetchLeadsBasedOnStatus();
+  }, [user, loading, selectedFilter]);
+
+  const loadMoreLeads = useCallback(async () => {
+      if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
+        const nextPage = searchLeadInfo.page + 1;
+        if (nextPage <= searchLeadInfo.totalPages) {
+          await fetchTeamLeaderReportingToLeads({
+            id: user?._id,
+            query: "",
+            page: nextPage,
+            limit: 10,
+            status: selectedFilter?.status,
+          });
+        }
+      }
+    }, [searchLeadInfo, selectedFilter, fetchTeamLeaderReportingToLeads]);
+
+ // Update your scroll handler
+  const handleScroll = useCallback(
+    (e: any) => {
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+      const threshold = 100;
+
+      if (scrollHeight - scrollTop <= clientHeight + threshold) {
+        if (
+          !loadingLeads &&
+          searchLeadInfo?.page &&
+          searchLeadInfo.totalPages &&
+          searchLeadInfo.page < searchLeadInfo.totalPages
+        ) {
+          loadMoreLeads();
+        }
+      }
+    },
+    [loadMoreLeads, loadingLeads, searchLeadInfo]
+  );
+
+  // Fix the lead selection handler
+  const handleVisitSelect = (lead: Lead) => {
+    setSelectedLead(lead);
+    const currentParams = new URLSearchParams(window.location.search);
+    const statusParam = currentParams.get("status");
+
+    let url = `/sales-manager/sales-manager-lead-details?id=${lead._id}`;
+    if (statusParam) {
+      url += `&status=${statusParam}`;
+    }
+
+    router.push(url, { scroll: false });
   };
 
-  const handleCall = useCallback(
-    (lead: any) => {
-      alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
-      console.log("Simulating call to:", lead);
-    },
-    []
-  );
+   const [filters, setFilters] = useState({
+      visitType: "",
+      leadFilter: "",
+      statusFilter: "",
+      feedbackFilter: "",
+      clientStatus: "",
+      leadStatus: "",
+      cycleStatus: 0,
+      dateFrom: "",
+      dateTo: "",
+    });
+
+     const handleFiltersChange = (newFilters: typeof filters) => {
+        setFilters(newFilters);
+        console.log("Filters applied (Dummy):", newFilters);
+      };
+    
+      const handleCall = useCallback((lead: any) => {
+        alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
+        console.log("Simulating call to:", lead);
+      }, []);
+    
 
   useEffect(() => {
     const checkMobile = () => {
@@ -204,39 +221,6 @@ const Salesdetaispage = () => {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-
-  useEffect(() => {
-    if (visitId && leads!.length > 0) {
-      const foundVisit = leads?.find((v: any) => v?._id === visitId);
-      if (foundVisit) {
-        setSelectedLead(foundVisit);
-      }
-    }
-  }, [visitId, leads]);
-
-  const loadMoreLeads = useCallback(
-    (resetPage = false) => {
-      console.log("Load more called (Dummy): No more data to fetch.");
-    },
-    []
-  );
-
-  const fetchLeads = () => {
-    console.log("Fetch leads called (Dummy).");
-  };
-
-  const handleScroll = useCallback(
-    (e: any) => {
-      const { scrollTop, scrollHeight, clientHeight } = e.target;
-      const threshold = 100;
-      if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        console.log("Reached end of scroll (Dummy)");
-        loadMoreLeads(false);
-      }
-    },
-    [loadMoreLeads]
-  );
 
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
     handleScroll,
@@ -309,10 +293,12 @@ const Salesdetaispage = () => {
     }
   };
 
+
   const handleVisitSelect = (SelectedLead: Lead) => {
     router.push(`sales-manager/sales-manager-lead-details?id=${SelectedLead._id}`);
     setShowSidebar(false);
   };
+
 
   const handleBackToList = () => {
     router.push("sales-manager/sales-manager-lead-details");
@@ -366,8 +352,10 @@ const Salesdetaispage = () => {
                 className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
                 onClick={() => {
-                  setSelectedLead(visit);
-                  router.push(`/sales-manager/sales-manager-lead-details?id=${visit._id}`, {
+
+                  handleVisitSelect(visit);
+                  router.push(`/sales-manager-lead-details?id=${visit._id}`, {
+
                     scroll: false,
                   });
                 }}
@@ -464,7 +452,7 @@ const Salesdetaispage = () => {
               <div className={styles.loadMoreContainer}>
                 <button
                   className={styles.loadMoreBtn}
-                  onClick={() => loadMoreLeads(false)}
+                  onClick={() => loadMoreLeads}
                   disabled={loadingRef.current}
                 >
                   {loadingRef.current ? "Loading..." : "Load More"}
@@ -678,7 +666,7 @@ const Salesdetaispage = () => {
             onSave={(updatedVisit: any) => {
               console.log("Saving visit (Dummy):", updatedVisit);
               setSelectedLead(updatedVisit);
-              setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
+              // setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
               setShowEditDialog(false);
             }}
           />
@@ -807,7 +795,7 @@ const Salesdetaispage = () => {
             <div className={styles.loadMoreContainer}>
               <button
                 className={styles.loadMoreBtn}
-                onClick={() => loadMoreLeads(false)}
+                onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
                 {loadingRef.current ? "Loading..." : "Load More"}

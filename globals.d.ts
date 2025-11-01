@@ -225,6 +225,8 @@ interface Lead {
   leadAssignedEmailSent?: boolean;
   feedbackPendingEmailSent?: boolean;
   createdThrough?: string | null;
+  occupation?: string;
+  additionLinRemark?: string;
 }
 
 interface SiteVisit {
