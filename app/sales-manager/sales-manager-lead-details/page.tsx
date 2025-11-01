@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdAddCall, MdCall, MdEmail } from "react-icons/md";
-import styles from "../lead-details/lead-details.module.css";
+import styles from "@/app/super-admin/lead-details/lead-details.module.css";
 import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks, FaBolt, FaFileContract, FaUser } from "react-icons/fa";
 import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
 import QuickAccess from "@/components/lead-details-components/quickaccess"
@@ -293,8 +293,15 @@ useEffect(() => {
     }
   };
 
+
+  const handleVisitSelect = (SelectedLead: Lead) => {
+    router.push(`sales-manager/sales-manager-lead-details?id=${SelectedLead._id}`);
+    setShowSidebar(false);
+  };
+
+
   const handleBackToList = () => {
-    router.push("/sales-manager-lead-details");
+    router.push("sales-manager/sales-manager-lead-details");
   };
 
   const clearFilters = () => {
@@ -345,8 +352,10 @@ useEffect(() => {
                 className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
                 onClick={() => {
+
                   handleVisitSelect(visit);
                   router.push(`/sales-manager-lead-details?id=${visit._id}`, {
+
                     scroll: false,
                   });
                 }}
@@ -698,7 +707,7 @@ useEffect(() => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/sales-manager-lead-details?id=${visit._id}`, {
+                router.push(`/sales-manager/sales-manager-lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -807,7 +816,7 @@ useEffect(() => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/sales-manager-lead-details", { scroll: false });
+              router.push("/sales-manager/sales-manager-lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />

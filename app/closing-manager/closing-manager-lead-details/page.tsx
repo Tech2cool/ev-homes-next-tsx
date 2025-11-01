@@ -367,6 +367,7 @@ const Closingdetaispage = () => {
                   className={`${styles.visitCard} ${
                     SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
+
                   onClick={() => {
                     handleVisitSelect(visit);
                     // Preserve status in navigation
@@ -401,6 +402,7 @@ const Closingdetaispage = () => {
                       <p className={styles.phone}>
                         {visit?.countryCode ?? "91"} {visit?.phoneNumber}
                       </p>
+
                     </div>
                   </div>
                   {/* Task Details */}
@@ -762,7 +764,7 @@ const Closingdetaispage = () => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/closing-manager-lead-details?id=${visit._id}`, {
+                router.push(`/closing-manager/closing-manager-lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -896,7 +898,7 @@ const Closingdetaispage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/closing-manager-lead-details", { scroll: false });
+              router.push("/closing-manager/closing-manager-lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />

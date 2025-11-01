@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import styles from "./list.module.css";
-import Estinatelist from "./estinatelist";
-import EstimateHistoryDetails from "./estimatehistorydetails";
+import styles from "@/components/lead-details-components/estimatesistory/list.module.css";
+import Estinatelist from "@/components/lead-details-components/estimatesistory/estinatelist";
+import EstimateHistoryDetails from "@/components/lead-details-components/estimatesistory/estimatehistorydetails";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
-import Headeres from "./headeres";
+import Headeres from "@/components/lead-details-components/estimatesistory/headeres";
 import ReactDOM from "react-dom";
 
 interface LeadData {
@@ -47,7 +47,7 @@ const EstimateHistory: React.FC = () => {
     setSelectedEstimate(null);
   };
 
-  return ReactDOM.createPortal(
+  return (
     <div className={styles.fullContainer}>
       <Headeres />
 
@@ -84,8 +84,7 @@ const EstimateHistory: React.FC = () => {
           </div>
         </div>
       )}
-    </div>,
-        document.body
+    </div>
   );
 };
 
