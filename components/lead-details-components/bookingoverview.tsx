@@ -5,10 +5,14 @@ import BookingOverviewDialogue from "./BookingOverviewDialogue";
 
 const BookingOverview = () => {
   const [visible, setVisible] = useState(false);
+  const [bookingdetails,setbookingdetails]=useState(false);
 
   return (
+ 
     <>
-      <div className={styles.bosec} onClick={() => setVisible(true)}>
+       {
+      !bookingdetails ?(
+         <div className={styles.bosec} onClick={() => setbookingdetails(true)}>
         <div className={styles.boctn}>
           <div className={styles.bonamerow}>
             <div className={styles.boname}>Deepak Test</div>
@@ -30,11 +34,16 @@ const BookingOverview = () => {
           </div>
         </div>
       </div>
+        
+      ) :
+        <BookingOverviewDialogue onClose={() => setVisible(false)} />
+    }
+     
 
      
-      {visible && (
-        <BookingOverviewDialogue onClose={() => setVisible(false)} />
-      )}
+    
+        
+      
     </>
   );
 };
