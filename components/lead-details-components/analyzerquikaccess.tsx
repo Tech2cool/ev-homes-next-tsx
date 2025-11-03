@@ -9,8 +9,7 @@ import RunningStatus from "./Dailog/runningstatus";
 import { RiUserAddFill } from "react-icons/ri";
 import AddChannelPartner from "./Dailog/addchannelpartner";
 import ReTagLead from "./Dailog/retaglead";
-import TaggingForm from "../dashboard-components/data-analyzer-dashboard/TaggingFrom";
-import Updatelead from "./Dailog/updatelead";
+import { useRouter } from "next/navigation";
 const AnalyzerQuickaccess = () => {
     const [addchannelpatner, setaddchannelpatner] = useState(false);
     const [retag, setretag] = useState(false);
@@ -18,7 +17,10 @@ const AnalyzerQuickaccess = () => {
     const [showrunstatus, setshowrunstatus] = useState(false);
     const [updatelead, setupdatelead] = useState(false);
 
-
+    const router = useRouter();
+    const pagenavigate = () => {
+        router.push("/tagging-form")
+    }
     const actions = [
         { icon: <RiUserAddFill />, label: "Add Channel Partner" },
         { icon: <IoPricetagSharp />, label: "Re-Tag Lead" },
@@ -40,7 +42,7 @@ const AnalyzerQuickaccess = () => {
             setshowrunstatus(true);
         };
         if (label === "Update Lead Details") {
-            setupdatelead(true);
+            return pagenavigate();
         };
 
 
@@ -73,15 +75,6 @@ const AnalyzerQuickaccess = () => {
             {showrunstatus && (
                 <RunningStatus openclick={setshowrunstatus} />
             )}
-
-            {updatelead && (
-                <div >
-                      <Updatelead  openclick={setupdatelead}/>
-                </div>
-              
-            )}
-
-
         </div>
 
     );

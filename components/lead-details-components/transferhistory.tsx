@@ -7,7 +7,7 @@ import { TbArrowsTransferDown } from "react-icons/tb";
 const TransferHistory = () => {
   const visits = [
     {
-      status: "Virtual Meeting",
+      
       teamleader: "Ranjna Gupta",
       date: "05 Sep 25 -> 06 Oct 25 ",
       text: "Trandferred from",
@@ -16,7 +16,7 @@ const TransferHistory = () => {
       
     },
     {
-      status: "Revisit",
+    
       teamleader: "Jaspreet Arora",
       date: "05 Oct 25 -> 16 Nov 25 ",
       text: "Trandferred from",

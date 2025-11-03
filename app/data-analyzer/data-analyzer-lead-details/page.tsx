@@ -47,6 +47,7 @@ import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import AnalyzerQuickaccess from "@/components/lead-details-components/analyzerquikaccess";
+import CPTransferHistory from "@/components/lead-details-components/cptransferhistory";
 
 const dataAnalyzerWrapper = () => {
   return (
@@ -59,7 +60,7 @@ const dataAnalyzerWrapper = () => {
 export default dataAnalyzerWrapper;
 
 const DataAnalyzerdetailspage = () => {
-   const {
+  const {
     searchLeadInfo,
     fetchSearchLeads,
     channelPartners,
@@ -95,8 +96,8 @@ const DataAnalyzerdetailspage = () => {
   const searchParams = useSearchParams();
   // const status = searchParams.get("status");
   // const visitId = searchParams.get("id"); // Get ID from URL if needed
-// console.log("leads from context", leads);
-//   console.log("pagination info", searchLeadInfo);
+  // console.log("leads from context", leads);
+  //   console.log("pagination info", searchLeadInfo);
   const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -111,7 +112,7 @@ const DataAnalyzerdetailspage = () => {
   const [showApprovalDialog, setShowApprovalDialog] = useState<boolean>(false);
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
-   const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("");
 
   const [editFormData, setEditFormData] = useState({});
   const [approvalData, setApprovalData] = useState({
@@ -126,36 +127,36 @@ const DataAnalyzerdetailspage = () => {
 
   //   const user = DUMMY_USER;
 
-    const [selectedFilter, setSelectedFilter] = useState({
-     status : null,
-    callData : null,
-    cycle : null,
-    order : null,
-    interval : null,
-    clientstatus : null,
-    leadstatus : null,
-    startDateDeadline : null,
-    endDateDeadline : null,
-    date : null,
-    status2 : null,
+  const [selectedFilter, setSelectedFilter] = useState({
+    status: null,
+    callData: null,
+    cycle: null,
+    order: null,
+    interval: null,
+    clientstatus: null,
+    leadstatus: null,
+    startDateDeadline: null,
+    endDateDeadline: null,
+    date: null,
+    status2: null,
     //  approvalStatus : null,
     //  stage : null,
-    channelPartner : null,
-    teamLeader : null,
-    taskType : null,
-    member : null,
-    });
+    channelPartner: null,
+    teamLeader: null,
+    taskType: null,
+    member: null,
+  });
 
-// useEffect(() => {
-//   if (visitId && leads && leads.length > 0) {
-//     const foundLead = leads.find((lead: any) => lead._id === visitId);
-//     if (foundLead) {
-//       setSelectedLead(foundLead);
-//     } else {
-//       console.warn(`Lead with id ${visitId} not found in current leads`);
-//     }
-//   }
-// }, [visitId, leads]);
+  // useEffect(() => {
+  //   if (visitId && leads && leads.length > 0) {
+  //     const foundLead = leads.find((lead: any) => lead._id === visitId);
+  //     if (foundLead) {
+  //       setSelectedLead(foundLead);
+  //     } else {
+  //       console.warn(`Lead with id ${visitId} not found in current leads`);
+  //     }
+  //   }
+  // }, [visitId, leads]);
 
   // Fix your fetch call
   useEffect(() => {
@@ -164,7 +165,7 @@ const DataAnalyzerdetailspage = () => {
         try {
           await fetchSearchLeads({
             query: "",
-           page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+            page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
             limit: 10,
             status: selectedFilter?.status,
           });
@@ -197,10 +198,10 @@ const DataAnalyzerdetailspage = () => {
     (e: any) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
       const threshold = 100;
-      
+
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages && 
-            searchLeadInfo.page < searchLeadInfo.totalPages) {
+        if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages &&
+          searchLeadInfo.page < searchLeadInfo.totalPages) {
           loadMoreLeads();
         }
       }
@@ -223,40 +224,40 @@ const DataAnalyzerdetailspage = () => {
   };
 
 
-//   useEffect(() => {
-//     const fetchLeadsBasedOnStatus = async () => {
-//       // console.log("Fetching leads with status:", status);
+  //   useEffect(() => {
+  //     const fetchLeadsBasedOnStatus = async () => {
+  //       // console.log("Fetching leads with status:", status);
 
-//       if (user && !loading) {
-//         try {
-// await           fetchSearchLeads({
-//             query: "",
-//             page: searchLeadInfo?.page,
-//             limit: 10,
-//           status: selectedFilter?.status,
+  //       if (user && !loading) {
+  //         try {
+  // await           fetchSearchLeads({
+  //             query: "",
+  //             page: searchLeadInfo?.page,
+  //             limit: 10,
+  //           status: selectedFilter?.status,
 
-//           });
-//         } catch (error) {
-//           console.error("Error fetching leads:", error);
-//         }
-//       }
-//     };
+  //           });
+  //         } catch (error) {
+  //           console.error("Error fetching leads:", error);
+  //         }
+  //       }
+  //     };
 
-//     fetchLeadsBasedOnStatus();
-//   }, [searchLeadInfo?.page, query, selectedFilter, user]);
+  //     fetchLeadsBasedOnStatus();
+  //   }, [searchLeadInfo?.page, query, selectedFilter, user]);
 
-//   useEffect(() => {
-//     console.log("data analyzer ");
-//     if (user && !loading && !searchLeadInfo) {
-//       console.log("data analyzer 1");
+  //   useEffect(() => {
+  //     console.log("data analyzer ");
+  //     if (user && !loading && !searchLeadInfo) {
+  //       console.log("data analyzer 1");
 
-//       fetchSearchLeads({
-//         query: "",
-//         page: 1,
-//         limit: 10,
-//       });
-//     }
-//   }, [user, loading, searchLeadInfo]);
+  //       fetchSearchLeads({
+  //         query: "",
+  //         page: 1,
+  //         limit: 10,
+  //       });
+  //     }
+  //   }, [user, loading, searchLeadInfo]);
 
   const [filters, setFilters] = useState({
     visitType: "",
@@ -354,7 +355,7 @@ const DataAnalyzerdetailspage = () => {
     const lowerStatus = status?.toLowerCase();
     const bookingStatus = lead?.bookingStatus?.toLowerCase();
 
-    if (lowerStatus.includes("booking") && bookingStatus === "cancelled") {
+    if (lowerStatus.includes("chat") && bookingStatus === "cancelled") {
       return styles.cancelled;
     }
     switch (lowerStatus) {
@@ -438,17 +439,16 @@ const DataAnalyzerdetailspage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-          
+
             {leads?.map((visit: Lead, index: number) => {
               console.log(`Rendering lead ${index}:`, visit);
               return (
                 <div
-                 key={`${visit._id}-${index}`}
-                  className={`${styles.visitCard} ${
-                    SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                  }`}
+                  key={`${visit._id}-${index}`}
+                  className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                    }`}
                   onClick={() => {
-                     handleVisitSelect(visit);
+                    handleVisitSelect(visit);
                     // Preserve status in navigation
                     const currentParams = new URLSearchParams(
                       window.location.search
@@ -520,9 +520,8 @@ const DataAnalyzerdetailspage = () => {
                         <span className={styles.taskTitle}>Task Details</span>
                       </div>
                       <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
-                          visit.taskRef?.assignTo?.lastName ?? ""
-                        }`}
+                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
+                          }`}
                         <span className={styles.status}>
                           <span
                             className={styles.statusText}
@@ -570,18 +569,18 @@ const DataAnalyzerdetailspage = () => {
                 </div>
               );
             })}
-             {searchLeadInfo?.page && searchLeadInfo.totalPages && 
-           searchLeadInfo.page < searchLeadInfo.totalPages && (
-            <div className={styles.loadMoreContainer}>
-              <button
-                className={styles.loadMoreBtn}
-                onClick={loadMoreLeads}
-                disabled={loadingLeads}
-              >
-                {loadingLeads ? "Loading..." : "Load More"}
-              </button>
-            </div>
-            )}
+            {searchLeadInfo?.page && searchLeadInfo.totalPages &&
+              searchLeadInfo.page < searchLeadInfo.totalPages && (
+                <div className={styles.loadMoreContainer}>
+                  <button
+                    className={styles.loadMoreBtn}
+                    onClick={loadMoreLeads}
+                    disabled={loadingLeads}
+                  >
+                    {loadingLeads ? "Loading..." : "Load More"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
 
@@ -656,12 +655,10 @@ const DataAnalyzerdetailspage = () => {
 
                   {activeTab === "taskDetails" && <TaskOverview />}
                   {activeTab === "followup" && <FollowUp />}
-                  {activeTab === "siteVisit" && <VisitHistory />}
-                  {activeTab === "transfer" && <TransferHistory />}
-                  {activeTab === "booking" && (
-                    <div className={styles.tabContent}>
-                      <BookingOverview />
-                    </div>
+                  {activeTab === "cphistory" && <CPTransferHistory />}
+                  {activeTab === "cyclehistory" && <TransferHistory />}
+                  {activeTab === "chat" && (
+                   <div></div>
                   )}
                   {similarVisits.length > 0 && (
                     <div className={styles.similarVisitsSection}>
@@ -685,68 +682,60 @@ const DataAnalyzerdetailspage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "overview" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "access" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "taskDetails" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "followup" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
-
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "siteVisit" ? styles.active : ""
-                      }`}
-                      onClick={() => setActiveTab("siteVisit")}
+                      className={`${styles.navItem} ${activeTab === "cyclehistory" ? styles.active : ""
+                        }`}
+                      onClick={() => setActiveTab("cyclehistory")}
                     >
-                      <FaMapMarkedAlt className={styles.icon} /> Site Visit
-                      History
+                      <FaExchangeAlt className={styles.icon} /> Cycle History
+                    </button>
+                    <button
+                      className={`${styles.navItem} ${activeTab === "cphistory" ? styles.active : ""
+                        }`}
+                      onClick={() => setActiveTab("cphistory")}
+                    >
+                      <FaMapMarkedAlt className={styles.icon} /> CP Transfer History
+                      
                     </button>
 
-                    <button
-                      className={`${styles.navItem} ${
-                        activeTab === "transfer" ? styles.active : ""
-                      }`}
-                      onClick={() => setActiveTab("transfer")}
-                    >
-                      <FaExchangeAlt className={styles.icon} /> Transfer History
-                    </button>
+
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "booking" ? styles.active : ""
-                      }`}
-                      onClick={() => setActiveTab("booking")}
+                      className={`${styles.navItem} ${activeTab === "chat" ? styles.active : ""
+                        }`}
+                      onClick={() => setActiveTab("chat")}
                     >
-                      <FaFileContract className={styles.icon} /> Booking
-                      Overview
+                      <FaFileContract className={styles.icon} /> Chat
                     </button>
                   </div>
                 </div>
@@ -835,7 +824,7 @@ const DataAnalyzerdetailspage = () => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/data-analyzer-lead-details?id=${visit._id}`, {
+                router.push(`/data-analyzer/data-analyzer-lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -891,9 +880,8 @@ const DataAnalyzerdetailspage = () => {
                   </div>
 
                   <span className={styles.taskName}>
-                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
-                      visit.taskRef?.assignTo?.lastName ?? ""
-                    }`}
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
+                      }`}
                     <span className={styles.status}>
                       <span
                         className={styles.statusText}
@@ -969,7 +957,7 @@ const DataAnalyzerdetailspage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/data-analyzer-lead-details", { scroll: false });
+              router.push("/data-analyzer /data-analyzer-lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
@@ -1038,66 +1026,59 @@ const DataAnalyzerdetailspage = () => {
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "overview" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "access" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "taskDetails" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "followup" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "siteVisit" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("siteVisit")}
+                className={`${styles.navItem} ${activeTab === "cphistory" ? styles.active : ""
+                  }`}
+                onClick={() => setActiveTab("cphistory")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "transfer" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("transfer")}
+                className={`${styles.navItem} ${activeTab === "cyclehistory" ? styles.active : ""
+                  }`}
+                onClick={() => setActiveTab("cyclehistory")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "booking" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("booking")}
+                className={`${styles.navItem} ${activeTab === "chat" ? styles.active : ""
+                  }`}
+                onClick={() => setActiveTab("chat")}
               >
-                <FaFileContract className={styles.icon} /> Booking Overview
+                <FaFileContract className={styles.icon} /> Chat
               </button>
             </div>
             {SelectedLead.approvalStatus === "pending" && (
@@ -1128,14 +1109,12 @@ const DataAnalyzerdetailspage = () => {
 
           {activeTab === "followup" && <FollowUp />}
 
-          {activeTab === "siteVisit" && <VisitHistory />}
+          {activeTab === "cphistory" && <CPTransferHistory />}
 
-          {activeTab === "transfer" && <TransferHistory />}
+          {activeTab === "cyclehistory" && <TransferHistory />}
 
-          {activeTab === "booking" && (
-            <div className={styles.tabContent}>
-              <BookingOverview />
-            </div>
+          {activeTab === "chat" && (
+            <div></div>
           )}
           {similarVisits.length > 0 && (
             <div className={styles.similarVisitsSection}>
@@ -1207,7 +1186,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
-          <span className={styles.statusValue}> {dateFormatOnly(visit?.cycle?.validTill) }</span>
+          <span className={styles.statusValue}> {dateFormatOnly(visit?.cycle?.validTill)}</span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.purple}`}
@@ -1300,13 +1279,13 @@ const VisitDetailsContent = ({
                 </div>
               </div>
 
-               <div className={styles.infoItem}>
+              <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
                   <IoPersonSharp size={11} color="#4a84ff" /> Assigned To
                 </label>
                 <p className={styles.infoValue}>
                   {visit?.prefix ?? ""} {visit?.taskRef?.assignTo?.firstName ?? ""}{" "}
-                 {visit?.taskRef?.assignTo?.lastName ?? ""}
+                  {visit?.taskRef?.assignTo?.lastName ?? ""}
                 </p>
               </div>
             </div>
@@ -1335,19 +1314,19 @@ const VisitDetailsContent = ({
                   {visit?.channelPartner?.firmName ?? "NA"}
                 </p>
               </div>
-               <div className={styles.infoItem}>
+              <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
                   <Calendar1 size={12} color="#4a84ff" />
                   CP Tagging Start
                 </label>
-                <p className={styles.infoValue}>{dateFormatOnly(visit?.startDate) }</p>
+                <p className={styles.infoValue}>{dateFormatOnly(visit?.startDate)}</p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
                   <Calendar1 size={12} color="#4a84ff" />
                   CP Tagging End
                 </label>
-                <p className={styles.infoValue}>{dateFormatOnly(visit?.validTill) }</p>
+                <p className={styles.infoValue}>{dateFormatOnly(visit?.validTill)}</p>
               </div>
               <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
                 <label className={styles.infoLabel}>
