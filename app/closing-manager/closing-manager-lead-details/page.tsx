@@ -60,10 +60,11 @@ export default closingdetilsWrapper;
 
 const Closingdetaispage = () => {
   const {
-    searchLeadInfo,
+   leadInfo: searchLeadInfo,
 
     channelPartners,
     leads,
+     loadingLeads,
     fetchTeamLeaderLeads,
     employees,
     getProjects,
@@ -79,7 +80,7 @@ const Closingdetaispage = () => {
   // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
   // const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null);
   const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [setQuery, query] = useState<String>("");
+  const [setQuery, query] = useState<String | "">("");
 
 
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
@@ -106,8 +107,8 @@ const Closingdetaispage = () => {
   const hasMoreRef = useRef(false);
   // const leadInfo = DUMMY_LEAD_INFO;
   const loading = false;
-  const loadingLeads = false;
-  const fetchingMoreLeads = false;
+  // const loadingLeads = false;
+  // const fetchingMoreLeads = false;
   // const user = DUMMY_USER;
 
   const [selectedFilter, setSelectedFilter] = useState({
@@ -183,12 +184,8 @@ const Closingdetaispage = () => {
       const threshold = 100;
 
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        if (
-          !loadingLeads &&
-          searchLeadInfo?.page &&
-          searchLeadInfo.totalPages &&
-          searchLeadInfo.page < searchLeadInfo.totalPages
-        ) {
+        if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages && 
+            searchLeadInfo.page < searchLeadInfo.totalPages) {
           loadMoreLeads();
         }
       }
