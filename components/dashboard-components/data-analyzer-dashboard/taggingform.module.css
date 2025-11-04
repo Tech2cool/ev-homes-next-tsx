@@ -20,9 +20,11 @@
     color: rgb(208, 208, 208);
     width: 95%;
 }
-:global(html.light) .confirm{
-  color: #2c2b2b;
+
+:global(html.light) .confirm {
+    color: #2c2b2b;
 }
+
 .foldericon {
     width: 2.5vw;
     color: rgb(255, 255, 255);
@@ -162,11 +164,13 @@
     border: 1px solid #444444f5;
     padding: 0.5rem;
 }
+
 :global(html.light) .formControl textarea {
     color: #201f1f;
     border: 2px solid #927fbff5;
 
 }
+
 .switch {
     position: relative;
     display: inline-block;
@@ -235,11 +239,13 @@
     color: #333;
     border: 1px solid #ccc;
 }
-:global(html.light) .cancelbtn{
-   background-color: orange;
+
+:global(html.light) .cancelbtn {
+    background-color: orange;
     color: white;
     border: 1px solid #ccc;
 }
+
 .cancelbtn:hover {
     background-color: #e0e0e0;
 }
@@ -258,21 +264,22 @@
     display: flex;
     flex-direction: row;
     padding: 0rem 0.5rem;
-    width: 80%;
+    justify-content: center;
 }
 
 .maincontainer {
-    width: 100%;
+    width: 80%;
     padding: 2rem;
     border-right: 1px solid #252525f5;
     border-left: 1px solid #252525f5;
     overflow-y: auto;
 }
 
-:global(html.light) .maincontainer{
- border-right: 1px solid #5d60cbf5;
+:global(html.light) .maincontainer {
+    border-right: 1px solid #5d60cbf5;
     border-left: 1px solid #5d60cbf5;
 }
+
 .textcontainer {
     display: flex;
     width: 100%;
@@ -331,26 +338,34 @@
     height: auto;
     object-fit: contain;
 }
+.errorMsg {
+  color: #ff4d4f;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
 
 @media screen and (max-width: 850px) {
     .card {
-        flex-direction: column;
+        flex-direction: row;
         gap: 1vh;
         padding-top: 1vh;
         width: 95%;
     }
-:global(html.light) .maincontainer{
- border-right: none;
-    border-left: none;
-}
+
+    :global(html.light) .maincontainer {
+        border-right: none;
+        border-left: none;
+    }
+
     .formControl {
         width: 100%;
     }
 
     .formControl input,
     .formControl select {
-        width: 100%; 
-        box-sizing: border-box; 
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .maincontainer {
@@ -444,4 +459,11 @@
         border-right: none;
         border-left: none;
     }
+}
+@media screen and (max-width: 500px) {
+  .card {
+        flex-direction: column;
+     
+    }
+
 }

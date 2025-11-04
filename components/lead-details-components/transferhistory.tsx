@@ -4,6 +4,7 @@ import styles from "./QuickAccess.module.css";
 import { BiTransferAlt } from "react-icons/bi";
 import { TbArrowsTransferDown } from "react-icons/tb";
 
+
 // Correct interface based on the error - teamLeader is an object
 interface TeamLeader {
   _id?: string;
@@ -48,6 +49,7 @@ const TransferHistory: React.FC<TransferHistoryProps> = ({ cycleHistory = [] }) 
       </div>
     );
   }
+
 
   return (
     <div className={styles.teamplat}>

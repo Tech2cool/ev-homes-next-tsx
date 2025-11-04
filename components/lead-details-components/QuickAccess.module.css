@@ -1,5 +1,5 @@
 .quickAccessContainer {
-  padding:  25px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -7,7 +7,7 @@
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   position: relative;
- height: 90vh;
+  height: 90vh;
 
 }
 
@@ -64,6 +64,7 @@
   letter-spacing: 1px;
   margin-left: 15px;
 }
+
 :global(html.light) .actionButton {
   background: linear-gradient(to bottom, #e7d7ff, #d5c9fc, #e7d7ff);
   border: 1px solid rgba(153, 102, 255, 0.35);
@@ -121,20 +122,41 @@
 }
 
 @keyframes floatWobble {
-  0% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-6px) rotate(-1deg); }
-  50% { transform: translateY(0) rotate(1deg); }
-  75% { transform: translateY(-6px) rotate(-1deg); }
-  100% { transform: translateY(0) rotate(0deg); }
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(0) rotate(1deg);
+  }
+
+  75% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
 }
 
 @keyframes iconPulseWobble {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
 }
 
 :global(html.light) .aiButton {
-   background: linear-gradient(135deg, #B12C00, #EB5B00);
+  background: linear-gradient(135deg, #B12C00, #EB5B00);
 }
 
 :global(html.light) .aiIcon {
@@ -150,69 +172,72 @@
 }
 
 
-@media  (max-width: 562){
+@media (max-width: 562) {
   .quickAccessContainer {
-  padding: 0px;
+    padding: 0px;
 
+  }
+
+  .buttonGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 15px;
+  }
+
+  /* Buttons */
+  .actionButton {
+
+    background: linear-gradient(to bottom, #3a6e76cd, #283060d7, #3a6e76c8);
+    padding: 10px 10px;
+    color: #f7f7f7;
+    margin-left: 0px;
+    height: 10vh;
+  }
+
+  .iconlable {
+    font-size: 13px;
+    font-weight: 400;
+    margin-left: 0px;
+    z-index: 5;
+  }
+
+  .circleicon {
+    background-color: transparent;
+    z-index: 1;
+    left: 2;
+    border: transparent;
+    font-size: 45px;
+    color: rgba(74, 131, 255, 0.421);
+    bottom: 3;
+  }
+
+  :global(html.light) .actionButton {
+    background: linear-gradient(to bottom, #e7d7ff, #d5c9fc, #e7d7ff);
+    border: 1px solid rgba(153, 102, 255, 0.35);
+    color: #2c1a4a;
+    box-shadow: 0 2px 10px rgba(153, 102, 255, 0.25);
+    transition: all 0.3s ease;
+  }
+
+  :global(html.light) .actionButton:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(to bottom, #f0e6ff, #cfc5f3);
+    box-shadow: 0 4px 18px rgba(153, 102, 255, 0.35);
+  }
+
+  :global(html.light) .circleicon {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #6d42d847;
+    box-shadow: none;
+  }
+
+  :global(html.light) .iconlable {
+    color: #290465;
+    font-weight: 500;
+  }
 }
 
-.buttonGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 15px;
-}
-
-/* Buttons */
-.actionButton {
-
-  background: linear-gradient(to bottom, #3a6e76cd, #283060d7, #3a6e76c8);
-  padding: 10px 10px;
-  color: #f7f7f7;
-  margin-left: 0px;
-  height: 10vh;
-}
-
-.iconlable {
-  font-size: 13px;
-  font-weight: 400;
-  margin-left: 0px;
-  z-index: 5;
-}
-.circleicon {
-  background-color: transparent;
-  z-index: 1;
-  left: 2;
-  border: transparent;
-  font-size: 45px;
-  color: rgba(74, 131, 255, 0.421);
-  bottom: 3;
-}
-:global(html.light) .actionButton {
-  background: linear-gradient(to bottom, #e7d7ff, #d5c9fc, #e7d7ff);
-  border: 1px solid rgba(153, 102, 255, 0.35);
-  color: #2c1a4a;
-  box-shadow: 0 2px 10px rgba(153, 102, 255, 0.25);
-  transition: all 0.3s ease;
-}
-
-:global(html.light) .actionButton:hover {
-  transform: translateY(-3px);
-  background: linear-gradient(to bottom, #f0e6ff, #cfc5f3);
-  box-shadow: 0 4px 18px rgba(153, 102, 255, 0.35);
-}
-
-:global(html.light) .circleicon {
-  background: transparent;
-  border: 1px solid transparent;
-  color: #6d42d847;
-  box-shadow: none;
-}
-
-:global(html.light) .iconlable {
-  color: #290465;
-  font-weight: 500;
-}
-}
 /* /////////////// Follow Up /////// */
 .teamplat {
   display: flex;
@@ -274,6 +299,7 @@
 :global(html.light) .icontrans {
   color: #7999f2;
 }
+
 .vlinerun,
 .vline {
   width: 2px;
@@ -283,10 +309,12 @@
   border-radius: 2px;
   margin-top: 6px;
 }
-.vlinerun{
-    background: linear-gradient(to bottom, #bdbfc0 0%, transparent 100%);
+
+.vlinerun {
+  background: linear-gradient(to bottom, #bdbfc0 0%, transparent 100%);
 
 }
+
 .maincot {
   display: flex;
   flex-direction: column;
@@ -526,6 +554,36 @@
   color: #087f23;
 }
 
+.editcnt {
+  display: flex;
+  position: fixed;
+  width: 35px;
+  height: 30px;
+  background-color: #121313;
+  top: 65px;
+  border-radius: 5px;
+  border: 1px solid #201e1e;
+  justify-content: center;
+  align-items: center;
+  color: #f2d563;
+}
+:global(html.light)  .editcnt {
+  background-color: #ffffff;
+    border: 1px solid #ffffff;
+    box-shadow: 0 2 10px rgba(10, 20, 10, 0.277);
+
+}
+@media  (max-width: 1024){
+  .editcnt {
+  top: 130px;
+}
+
+}
+@media  (max-width: 769){
+  .editcnt {
+  top: 65px;
+}
+}
 @media (max-width: 1130px) {
 
   .teamplat {
@@ -590,7 +648,13 @@
   .teamplat {
     padding: 0rem;
   }
+  .editcnt {
+  top: 15px;
+  right: 120px;
+  position: absolute;
+  z-index: 99;
 
+}
   .cont {
     gap: 10px;
   }
@@ -653,35 +717,39 @@
   .maincot {
     padding: 1.3rem 0.5rem 0.3rem 0.5rem;
   }
+
   .call,
   .callgreen {
     font-size: 0.6rem;
   }
-   .lable {
+
+  .lable {
     font-size: 0.8rem;
   }
-  
+
   .circle {
     height: 30px;
     width: 30px;
   }
+
   .icontrans,
-.callicon {
-  font-size: 1.1rem;
-}
-.cont {
-  gap: 10px;
-}
+  .callicon {
+    font-size: 1.1rem;
+  }
+
+  .cont {
+    gap: 10px;
+  }
 }
 
 
 /* ****************Booking overview *********** */
 .bosec {
- height: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   padding: 1rem;
 }
 
@@ -772,6 +840,7 @@
   background: linear-gradient(90deg, #31343c, #23252a);
   transform: translateY(-2px);
 }
+
 :global(html.light) .boctn {
   background: linear-gradient(145deg, #ffffff, #f5f6f8);
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -833,14 +902,15 @@
 
 @media (max-width: 600px) {
   .bosec {
-  width: 100%;
- 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  padding: 0.0rem 0.1rem;
-}
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0.0rem 0.1rem;
+  }
+
   .boctn {
     width: 100%;
     padding: 1rem;
