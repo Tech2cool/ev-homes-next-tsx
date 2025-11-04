@@ -740,9 +740,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `?date=${date}`;
       }
 
-      console.log("Fetching onboard target data from:", url);
+      // console.log("Fetching onboard target data from:", url);
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log("Onboard target API response:", res);
+      // console.log("Onboard target API response:", res);
 
       if (res?.data) {
         const targetData: OnboardTarget = {
@@ -811,7 +811,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       setProjectTargets(transformedProjects);
       return { success: true };
     } catch (err: any) {
-      console.log("Error fetching project targets:", err);
+      // console.log("Error fetching project targets:", err);
       let errorMessage = "Something went wrong";
 
       if (err.response?.data?.message) {
@@ -850,7 +850,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `?${queryParams.toString()}`;
       }
 
-      console.log("Fetching quarter-wise target from:", url);
+      // console.log("Fetching quarter-wise target from:", url);
 
       const res = await fetchAdapter(url, {
         method: "GET",
@@ -866,10 +866,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       const parsedTarget = res.data as OverallTarget;
       setMyOverallTarget(parsedTarget);
 
-      console.log("Quarter-wise target:", parsedTarget);
+      // console.log("Quarter-wise target:", parsedTarget);
       return { success: true, data: parsedTarget };
     } catch (err: any) {
-      console.log(err);
+      // console.log(err);
       let errorMessage = "Something went wrong";
 
       if (err.response?.data?.message) {
@@ -895,18 +895,18 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = `/api/ourProjects`;
+      const url = `/api/ourProjects`;
       const res = await fetchAdapter(url, {
         method: "get",
       });
 
-      console.log(res?.data);
+      // console.log(res?.data);
       setProjects(res?.data ?? []);
       setLoadingProject(false);
 
       return { success: true };
     } catch (err: any) {
-      console.log(err);
+      // console.log(err);
       setError(err.message);
       setLoadingProject(false);
 
@@ -921,17 +921,17 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = `/api/requirements`;
+      const url = `/api/requirements`;
       const res = await fetchAdapter(url, {
         method: "get",
       });
-      let reqs = res?.data?.map((ele: any) => ele?.requirement);
+      const reqs = res?.data?.map((ele: any) => ele?.requirement);
       setRequirements(reqs ?? []);
       setLoadingProject(false);
 
       return { success: true };
     } catch (err: any) {
-      console.log(err);
+      // console.log(err);
       setError(err.message);
       setLoadingProject(false);
 
@@ -945,19 +945,19 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setLoading(true);
     setError("");
     try {
-      let url = `/api/team-insight-reporting-to/${id}`;
+      const url = `/api/team-insight-reporting-to/${id}`;
 
-      console.log("📡 Making API request to:", url);
+      // console.log("📡 Making API request to:", url);
       const res = await fetchAdapter(url, { method: "GET" });
 
-      console.log("✅ API Response received:", res);
-      console.log("📊 Response data:", res?.data);
-      console.log("🔍 Data type:", typeof res?.data);
-      console.log("🔍 Is array?", Array.isArray(res?.data));
+      // console.log("✅ API Response received:", res);
+      // console.log("📊 Response data:", res?.data);
+      // console.log("🔍 Data type:", typeof res?.data);
+      // console.log("🔍 Is array?", Array.isArray(res?.data));
 
       if (res?.data && Array.isArray(res?.data)) {
-        console.log("🎯 Number of teams:", res.data.length);
-        console.log("👥 First team sample:", res.data[0]);
+        // console.log("🎯 Number of teams:", res.data.length);
+        // console.log("👥 First team sample:", res.data[0]);
 
         const teams = res.data.map((team: any) => ({
           _id: team._id || null,
@@ -967,17 +967,17 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
           totalTasks: team.totalTasks || 0,
         }));
 
-        console.log("🏷️ Processed teams:", teams);
+        // console.log("🏷️ Processed teams:", teams);
         setTeamReprotingTo(teams);
       } else {
-        console.log("❌ No data or data is not an array");
+        // console.log("❌ No data or data is not an array");
         setTeamReprotingTo([]);
       }
 
       setLoadingProject(false);
       return { success: true };
     } catch (err: any) {
-      console.log("❌ API Error:", err);
+      // console.log("❌ API Error:", err);
       setError(err.message);
       return { success: false, message: err.message };
     } finally {
@@ -991,17 +991,17 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = `/api/testimonial`;
+      const url = `/api/testimonial`;
       const res = await fetchAdapter(url, {
         method: "get",
       });
 
       setTestimonials(res?.data);
       setLoadingTestimonial(false);
-      console.log(res?.data);
+      // console.log(res?.data);
       return { success: true };
     } catch (err: any) {
-      console.log(err);
+      // console.log(err);
       setError(err.message);
       setLoadingTestimonial(false);
 
@@ -1017,7 +1017,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = `/api/channel-partner`;
+      const url = `/api/channel-partner`;
       const res = await fetchAdapter(url, {
         method: "get",
       });
@@ -1027,7 +1027,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       return { success: true };
     } catch (err: any) {
-      console.log(err);
+      // console.log(err);
       setError(err.message);
       setLoadingChannelPartners(false);
 
@@ -1043,7 +1043,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = `/api/leads-add`;
+      const url = `/api/leads-add`;
 
       // console.log(url);
       const res = await fetchAdapter(url, {
@@ -1055,7 +1055,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       return { success: true, message: res?.message };
     } catch (err: any) {
-      console.log(err);
+      // console.log(err);
       setError(err.message);
       setLoading(false);
 
@@ -1172,7 +1172,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       if (project != null) {
         url += "&project=$project";
       }
-      console.log(url);
+      // console.log(url);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
@@ -1292,7 +1292,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       if (propertyType != null) {
         url += "&propertyType=$propertyType";
       }
-      console.log(url);
+      // console.log(url);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
@@ -1335,7 +1335,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
     try {
       const url = `/api/v2/sales-dashboard-count/${id}`;
-      console.log("Fetching dashboard count from:", url);
+      // console.log("Fetching dashboard count from:", url);
 
       const res = await fetchAdapter(url, {
         method: "GET",
@@ -1366,7 +1366,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   setError("");
 
   try {
-    let url = "/leads-graph";
+    let url = "/api/leads-graph";
     const queryParams = new URLSearchParams();
 
     if (interval) {
@@ -1384,6 +1384,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       url += `?${queryString}`;
     }
 
+
+
     // console.log("Fetching graph data from:", url);
 
     const res = await fetchAdapter(url, {
@@ -1400,11 +1402,14 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
 
     // The graph data should be in res.data according to your Flutter code
+    // console.log(res.data);
     const graphData = res.data as ClosingManagerGraph;
     setAllGraphCount(graphData);
 
     return { success: true };
   } catch (err: any) {
+    // console.log(err);
+
     let errorMessage = "Something went wrong";
 
     if (err.response) {
@@ -1440,7 +1445,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
     try {
       const url = `/api/v2/closing-manager-dashboard-count//${id}`;
-      console.log("Fetching dashboard count from:", url);
+      // console.log("Fetching dashboard count from:", url);
 
       const res = await fetchAdapter(url, {
         method: "GET",
@@ -1600,7 +1605,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&project=${project}`;
       }
 
-      console.log(url);
+      // console.log(url);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
@@ -1648,7 +1653,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&status=${status}`;
       }
 
-      console.log(url);
+      // console.log(url);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
@@ -1660,7 +1665,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       } else {
         setleads(res?.data ?? []);
       }
-      console.log(res);
+      // console.log(res);
       setFetchingMoreLeads(false);
       setLoadingLeads(false);
 
@@ -1701,7 +1706,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&teamLeader=${teamLeader}`;
       }
 
-      console.log("Fetching assign count from hjbhbhjb:", url);
+      // console.log("Fetching assign count from hjbhbhjb:", url);
 
       const res = await fetchAdapter(url, {
         method: "GET",
@@ -1709,9 +1714,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       if (res?.data) {
         setAssignFeedbackInfo(res.data);
-      } else {
-        setAssignFeedbackInfo(res);
       }
+      //  else {
+      //   setAssignFeedbackInfo(res.data);
+      // }
 
       // if (page > 1) {
       //   setleads((prev) => [...prev, ...(res?.data ?? [])]);
@@ -1726,10 +1732,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       return { success: true };
     } catch (err: any) {
-      console.error(
-        "Error fetching assign feedback count:",
-        err.message || err
-      );
+      // console.error(
+      //   "Error fetching assign feedback count:",
+      //   err.message || err
+      // );
 
       setError(err.message || "Something went wrong");
       // setFetchingMoreLeads(false);
@@ -1764,7 +1770,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
-      let url = `/post-sale-leads?query=${query}&page=${page}&limit=${limit}`;
+      let url = `/api/post-sale-leads?query=${query}&page=${page}&limit=${limit}`;
 
       if (project) url += `&project=${project}`;
       if (status) url += `&status=${status}`;
@@ -1773,7 +1779,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       if (startDate) url += `&startDate=${startDate}`;
       if (endDate) url += `&endDate=${endDate}`;
 
-      console.log("API URL:", url);
+      // console.log("API URL:", url);
 
       const res = await fetchAdapter(url, { method: "GET" });
 
@@ -1794,7 +1800,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       return { success: true };
     } catch (err: any) {
-      console.error("Fetch Error =>", err.message);
+      // console.error("Fetch Error =>", err.message);
       setError(err?.message);
       return { success: false, message: err.message };
     } finally {
@@ -1882,14 +1888,14 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       if (taskType != null) {
         url += `&taskType=${taskType}`;
       }
-      console.log(url);
+      // console.log(url);
       const res = await fetchAdapter(url, {
         method: "GET",
       });
       const { data, ...withoutData } = res as PaginationProps;
-      console.log("url", url);
+      // console.log("url", url);
 
-      console.log(data);
+      // console.log(data);
       setSearchLeadInfo(withoutData);
       if (page > 1) {
         setleads((prev) => [...prev, ...res?.data]);
@@ -1943,10 +1949,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&endDate=${endDate}`;
       }
 
-      console.log("Fetching dashboard count from:", url);
+      // console.log("Fetching dashboard count from:", url);
 
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log("res", res);
+      // console.log("res", res);
       setChartData(res?.data ?? []);
 
       return { success: true };
@@ -1987,9 +1993,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&endDate=${endDate}`;
       }
 
-      console.log("Fetching channel partner data from:", url);
+      // console.log("Fetching channel partner data from:", url);
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log("Channel partner API response:", res);
+      // console.log("Channel partner API response:", res);
 
       // Set the channel partner data
       setChannelPartnerChartData(res?.data ?? []);
@@ -2032,9 +2038,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&endDate=${endDate}`;
       }
 
-      console.log("Fetching funnel data from:", url);
+      // console.log("Fetching funnel data from:", url);
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log("Funnel API response:", res);
+      // console.log("Funnel API response:", res);
 
       // Set the funnel data
       setFunnelChartData(res?.data ?? []);
@@ -2072,9 +2078,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `&endDate=${endDate}`;
       }
 
-      console.log("Fetching line chart data from:", url);
+      // console.log("Fetching line chart data from:", url);
       const res = await fetchAdapter(url, { method: "GET" });
-      console.log("Line chart API response:", res);
+      // console.log("Line chart API response:", res);
 
       // Set the line chart data
       setLineChartData(res?.data ?? []);

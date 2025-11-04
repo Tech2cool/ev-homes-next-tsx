@@ -219,7 +219,7 @@ useEffect(() => {
   if (user && !loading) {
     // Initial load with default params
     getAllGraph({
-      interval: selectedFilter || "Monthly", 
+      interval: selectedFilter, 
       startDate,
       endDate,
     });
@@ -337,10 +337,10 @@ useEffect(() => {
       title: "Lead to CP Visit",
      percentage: safeDivision(
       (closingManagerAllGraph?.visitCount ?? 0) * 100,
-      closingManagerAllGraph?.leadCount ?? 1
+      closingManagerAllGraph?.leadCount ?? 0
     ),
-      count1: closingManagerAllGraph?.visitCount ?? 0,
-      count2: closingManagerAllGraph?.leadCount ?? 0,
+    count1: closingManagerAllGraph?.leadCount ?? 0,
+    count2: closingManagerAllGraph?.visitCount ?? 0,
       label1: "Lead",
       label2: "CP Visit",
       color: "#ec4899",
@@ -349,10 +349,10 @@ useEffect(() => {
       title: "CP Visit to Booking",
        percentage: safeDivision(
       (closingManagerAllGraph?.bookingCpCount ?? 0) * 100,
-      closingManagerAllGraph?.visitCount ?? 1
+      closingManagerAllGraph?.visitCount ?? 0
     ),
-      count1: closingManagerAllGraph?.bookingCpCount ?? 0,
-      count2: closingManagerAllGraph?.visitCount ?? 0,
+    count1: closingManagerAllGraph?.visitCount ?? 0,
+      count2: closingManagerAllGraph?.bookingCpCount ?? 0,
       label1: "CP Visit",
       label2: "Booking",
       color: "#10b981",
@@ -361,7 +361,7 @@ useEffect(() => {
       title: "Lead to Booking",
       percentage: safeDivision(
       (closingManagerAllGraph?.bookingCount ?? 0) * 100,
-      closingManagerAllGraph?.leadCount ?? 1
+      closingManagerAllGraph?.leadCount ?? 0
     ),
       count1: closingManagerAllGraph?.leadCount ?? 0,
       count2: closingManagerAllGraph?.bookingCount ?? 0,
@@ -373,10 +373,10 @@ useEffect(() => {
       title: "Walk In to Booking",
      percentage: safeDivision(
       (closingManagerAllGraph?.bookingWalkinCount ?? 0) * 100,
-      closingManagerAllGraph?.visit2Count ?? 1
+      closingManagerAllGraph?.visit2Count ?? 0
     ),
-      count1: closingManagerAllGraph?.bookingWalkinCount ?? 0,
-      count2: closingManagerAllGraph?.visit2Count ?? 0,
+    count1: closingManagerAllGraph?.visit2Count ?? 0,
+      count2: closingManagerAllGraph?.bookingWalkinCount ?? 0,
       label1: "Visit",
       label2: "Booking",
       color: "#f97316",
