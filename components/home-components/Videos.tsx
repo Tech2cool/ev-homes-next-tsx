@@ -83,10 +83,8 @@ import { useData } from "@/providers/dataContext";
 const Videos = () => {
   // const loadingTestimonial = false;
   const [isLeftHovered, setIsLeftHovered] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLeftClicked, setIsLeftClicked] = useState(false);
   const [isRightHovered, setIsRightHovered] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isRightClicked, setIsRightClicked] = useState(false);
   const videoGalleryRef = useRef<HTMLDivElement>(null);
   const scroll = (direction: string) => {

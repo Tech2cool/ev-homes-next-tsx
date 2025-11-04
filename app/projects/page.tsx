@@ -410,7 +410,7 @@ import Projectdesign from "@/components/Allproject/projectdesign";
 import OtherProject from "@/components/Allproject/othorproject";
 import Footer from "@/components/Allproject/footer";
 
-export const projects = [
+ const projects = [
   {
     id: 1,
     title: "EV 10 Marina Bay",

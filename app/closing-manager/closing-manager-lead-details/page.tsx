@@ -79,7 +79,7 @@ const Closingdetaispage = () => {
   // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
   // const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null);
   const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [setQuery, query] = useState<String | "">("");
+  const [setQuery, query] = useState<String>("");
 
 
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);

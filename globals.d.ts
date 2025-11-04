@@ -126,7 +126,7 @@ interface Cycle {
   stage: string | null;
   currentOrder: number;
   currentDays: number;
-  teamLeader: string | null;
+  teamLeader: Lead | null;
   startDate: Date | null;
   validTill: Date | null;
   internalDeadline: string | null;

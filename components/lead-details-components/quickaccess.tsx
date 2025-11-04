@@ -32,7 +32,9 @@ const QuickAccess = () => {
   const pagenavigate =()=>{
     router.push("/estimate-history")
   }
-
+const costsheetnavigate =()=>{
+ router.push("/generate/costsheetgenerator")
+}
 
   const actions = [
     { icon: <MdOutlineRateReview />, label: "Add Feedback" },
@@ -77,6 +79,7 @@ const QuickAccess = () => {
     };
    
     if (label === "Estimate History") return pagenavigate();
+      if (label === "Generate") return costsheetnavigate();
 
   }
   return (
