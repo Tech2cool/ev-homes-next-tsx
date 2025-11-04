@@ -1,7 +1,6 @@
 "use client"
 import React, { useEffect } from "react";
 import styles from "./../forgotpassword.module.css";
-import Lottie from "lottie-react";
 import forgotAnimation from "../../../public/assets/password (1).json"
 import email from "../../../public/assets/email.json"
 import { FiMail } from "react-icons/fi";

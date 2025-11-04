@@ -5,20 +5,6 @@ import { BiTransferAlt } from "react-icons/bi";
 import { TbArrowsTransferDown } from "react-icons/tb";
 
 
-// Correct interface based on the error - teamLeader is an object
-interface TeamLeader {
-  _id?: string;
-  firstName?: string;
-  lastName?: string;
-}
-
-interface Cycle {
-  _id?: string;
-  teamLeader?: TeamLeader | null;
-  startDate?: string | null;
-  validTill?: string | null;
-}
-
 interface TransferHistoryProps {
   cycleHistory?: Cycle[];
 }
@@ -28,10 +14,10 @@ const TransferHistory: React.FC<TransferHistoryProps> = ({ cycleHistory = [] }) 
     if (!dateString) return "NA";
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
+      return date.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       });
     } catch (error) {
       return "Invalid Date";
@@ -42,27 +28,24 @@ const TransferHistory: React.FC<TransferHistoryProps> = ({ cycleHistory = [] }) 
     return (
       <div className={styles.teamplat}>
         <div className={styles.fullList}>
-          <div className={styles.noHistory}>
-            No transfer history available
-          </div>
+          <div className={styles.noHistory}>No transfer history available</div>
         </div>
       </div>
     );
   }
 
-
   return (
     <div className={styles.teamplat}>
       <div className={styles.fullList}>
         {cycleHistory.map((cycle, index) => {
-          // Properly handle teamLeader as an object
-          const teamLeaderName = cycle.teamLeader 
-            ? `${cycle.teamLeader.firstName || ''} ${cycle.teamLeader.lastName || ''}`.trim()
+         const teamLeaderName = cycle.teamLeader 
+            ? `${cycle.teamLeader?.firstName || ''} ${cycle.teamLeader?.lastName || ''}`.trim()
             : "NA";
-          
-          const dateRange = `${formatDateOnly(cycle.startDate)} -> ${formatDateOnly(cycle.validTill)}`;
 
-          // Unique key with fallback
+          const dateRange = `${formatDateOnly(cycle.startDate?.toString())} -> ${formatDateOnly(
+            cycle.validTill?.toString()
+          )}`;
+
           const uniqueKey = cycle._id ? `${cycle._id}-${index}` : `cycle-${index}`;
 
           return (
@@ -76,7 +59,7 @@ const TransferHistory: React.FC<TransferHistoryProps> = ({ cycleHistory = [] }) 
 
               <div className={styles.maincot}>
                 <div className={styles.firstrow}>
-                  <div className={styles.com} style={{alignItems:"center"}}>
+                  <div className={styles.com} style={{ alignItems: "center" }}>
                     <div className={styles.lable}>{teamLeaderName}</div>
                     <div className={styles.call}>
                       <p>{dateRange}</p>
@@ -85,7 +68,7 @@ const TransferHistory: React.FC<TransferHistoryProps> = ({ cycleHistory = [] }) 
                 </div>
 
                 <div className={styles.secrow}>
-                  <div className={styles.tran} style={{letterSpacing:"1px", display:"flex", gap:"10px"}}>
+                  <div className={styles.tran} style={{ letterSpacing: "1px", display: "flex", gap: "10px" }}>
                     <BiTransferAlt className={styles.icontrans} /> 
                     Transferred from
                   </div>

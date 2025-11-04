@@ -106,7 +106,6 @@ useEffect(() => {
     fetchTeamLeaderGraphForDA({ interval: "monthly" });
     fetchAssignFeedbackLeadsCount({ query: "", page: 1, limit: 10 });
   }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [searchLeadInfo]); // ✅ only run once when component mounts
 
 

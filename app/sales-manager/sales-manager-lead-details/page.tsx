@@ -576,7 +576,7 @@ const Salesdetaispage = () => {
                   {activeTab === "siteVisit" && <VisitHistory />}
                   {activeTab === "transfer" && (
                     <TransferHistory
-                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                      cycleHistory={SelectedLead?.cycleHistoryNew }
                     />
                   )}
                   {activeTab === "booking" && (

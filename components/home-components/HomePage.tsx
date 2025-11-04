@@ -12,7 +12,6 @@ import { useData } from "@/providers/dataContext";
 const HomePage = () => {
   const { getProjects } = useData();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     getProjects();
   }, []);
