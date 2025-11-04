@@ -274,12 +274,16 @@ background: black;
   width: 100%;
   height: auto;
   min-height: fit-content;
-  max-width: 550px;
+  max-width: 650px;
   text-align: center;
   transition: all 0.3s ease;
   transition: border-color 1s ease infinite alternate;
 }
-
+@media (min-width:1800px ) {
+  .loginCard {
+  max-width: 800px;
+}
+}
 :global(html.light) .loginCard {
   backdrop-filter: blur(1px);
   border-radius: 25px;

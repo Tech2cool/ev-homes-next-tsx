@@ -142,7 +142,7 @@ const LoginPage = () => {
               team was incredibly supportive and made the entire process a joy!"
             </p>
             <p className={styles.testimonialAuthor}>
-              - Sarah & John D., Happy Homeowners
+              - Rakesh Kacholia., Happy Homeowners
             </p>
           </div>
         </div>
