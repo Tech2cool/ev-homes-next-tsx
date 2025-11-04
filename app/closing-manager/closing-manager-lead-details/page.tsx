@@ -60,11 +60,11 @@ export default closingdetilsWrapper;
 
 const Closingdetaispage = () => {
   const {
-   leadInfo: searchLeadInfo,
+    leadInfo: searchLeadInfo,
 
     channelPartners,
     leads,
-     loadingLeads,
+    loadingLeads,
     fetchTeamLeaderLeads,
     employees,
     getProjects,
@@ -74,14 +74,12 @@ const Closingdetaispage = () => {
   } = useData();
 
   const router = useRouter();
-  const { user } = useUser();
 
   const visitId = "lead-1";
   // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
   // const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null);
   const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [setQuery, query] = useState<String | "">("");
-
 
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -102,11 +100,13 @@ const Closingdetaispage = () => {
     action: "approve",
     remark: "",
   });
+  const { user, loading, getSocket, reconnectSocket } = useUser();
+
+  const socket = getSocket();
 
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
   // const leadInfo = DUMMY_LEAD_INFO;
-  const loading = false;
   // const loadingLeads = false;
   // const fetchingMoreLeads = false;
   // const user = DUMMY_USER;
@@ -184,8 +184,12 @@ const Closingdetaispage = () => {
       const threshold = 100;
 
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages && 
-            searchLeadInfo.page < searchLeadInfo.totalPages) {
+        if (
+          !loadingLeads &&
+          searchLeadInfo?.page &&
+          searchLeadInfo.totalPages &&
+          searchLeadInfo.page < searchLeadInfo.totalPages
+        ) {
           loadMoreLeads();
         }
       }
@@ -224,11 +228,19 @@ const Closingdetaispage = () => {
     console.log("Filters applied (Dummy):", newFilters);
   };
 
-  const handleCall = useCallback((lead: any) => {
-    alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
-    console.log("Simulating call to:", lead);
-  }, []);
-
+  const handleCall = useCallback(
+    (lead: any) => {
+      console.log("Making call to:", lead);
+      socket?.emit("callCustomerWeb", {
+        lead: lead?._id,
+        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
+        type: "call",
+        message: "call",
+        userId: user?._id,
+      });
+    },
+    [socket, user?._id]
+  );
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -364,7 +376,6 @@ const Closingdetaispage = () => {
                   className={`${styles.visitCard} ${
                     SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
-
                   onClick={() => {
                     handleVisitSelect(visit);
                     // Preserve status in navigation
@@ -399,7 +410,6 @@ const Closingdetaispage = () => {
                       <p className={styles.phone}>
                         {visit?.countryCode ?? "91"} {visit?.phoneNumber}
                       </p>
-
                     </div>
                   </div>
                   {/* Task Details */}
@@ -538,7 +548,10 @@ const Closingdetaispage = () => {
                     <button
                       className={styles.verifiedBadge}
                       onClick={() => {
-                        handleCall(SelectedLead);
+                        handleCall({
+                          ...SelectedLead,
+                          phoneNumber: SelectedLead.phoneNumber,
+                        });
                       }}
                     >
                       <MdCall size={15} />
@@ -761,9 +774,12 @@ const Closingdetaispage = () => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/closing-manager/closing-manager-lead-details?id=${visit._id}`, {
-                  scroll: false,
-                });
+                router.push(
+                  `/closing-manager/closing-manager-lead-details?id=${visit._id}`,
+                  {
+                    scroll: false,
+                  }
+                );
               }}
             >
               <div className={styles.leadInfo}>
@@ -895,7 +911,9 @@ const Closingdetaispage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/closing-manager/closing-manager-lead-details", { scroll: false });
+              router.push("/closing-manager/closing-manager-lead-details", {
+                scroll: false,
+              });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
@@ -905,7 +923,10 @@ const Closingdetaispage = () => {
             <button
               className={styles.verifiedBadge}
               onClick={() => {
-                handleCall(SelectedLead);
+                handleCall({
+                  ...SelectedLead,
+                  phoneNumber: SelectedLead.phoneNumber,
+                });
               }}
             >
               <MdCall size={15} />
@@ -1139,7 +1160,9 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
-          <span className={styles.statusValue}>{dateFormatOnly(visit?.cycle?.validTill) }</span>
+          <span className={styles.statusValue}>
+            {dateFormatOnly(visit?.cycle?.validTill)}
+          </span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.purple}`}
@@ -1157,7 +1180,9 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>💡</div>
           <span className={styles.statusLabel}>Lead Status</span>
-          <span className={styles.statusValue}>{visit?.interestedStatus ?? "NA"}</span>
+          <span className={styles.statusValue}>
+            {visit?.interestedStatus ?? "NA"}
+          </span>
         </div>
       </div>
 

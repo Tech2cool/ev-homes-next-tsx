@@ -5,15 +5,21 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdAddCall, MdCall } from "react-icons/md";
 import styles from "./lead-details.module.css";
-import { FaExchangeAlt, FaHistory, FaMapMarkedAlt, FaPhoneAlt, FaTasks } from "react-icons/fa";
+import {
+  FaExchangeAlt,
+  FaHistory,
+  FaMapMarkedAlt,
+  FaPhoneAlt,
+  FaTasks,
+} from "react-icons/fa";
 import { IoLogoWhatsapp, IoPersonSharp } from "react-icons/io5";
-import QuickAccess from "@/components/lead-details-components/quickaccess"
-import TaskOverview from "@/components/lead-details-components/taskoverview"
-import FollowUp from "@/components/lead-details-components/followup"
-import VisitHistory from "@/components/lead-details-components/visithistory"
-import TransferHistory from "@/components/lead-details-components/transferhistory"
-import BookingOverview from "@/components/lead-details-components/bookingoverview"
-import tagIcon from "@/public/images/transfer.png"
+import QuickAccess from "@/components/lead-details-components/quickaccess";
+import TaskOverview from "@/components/lead-details-components/taskoverview";
+import FollowUp from "@/components/lead-details-components/followup";
+import VisitHistory from "@/components/lead-details-components/visithistory";
+import TransferHistory from "@/components/lead-details-components/transferhistory";
+import BookingOverview from "@/components/lead-details-components/bookingoverview";
+import tagIcon from "@/public/images/transfer.png";
 import {
   ArrowLeft,
   Calendar,
@@ -41,7 +47,13 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { MdEmail } from "react-icons/md";
 import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
-import { FaBolt, FaClipboardList, FaFileContract, FaSourcetree, FaUser } from "react-icons/fa6";
+import {
+  FaBolt,
+  FaClipboardList,
+  FaFileContract,
+  FaSourcetree,
+  FaUser,
+} from "react-icons/fa6";
 import { IoIosPerson } from "react-icons/io";
 import { BiSolidCalendarEdit } from "react-icons/bi";
 import { BsFillClockFill } from "react-icons/bs";
@@ -378,8 +390,9 @@ const LeadDetailsPage = () => {
             {leads?.map((visit) => (
               <div
                 key={visit._id}
-                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                  }`}
+                className={`${styles.visitCard} ${
+                  SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                }`}
                 onClick={() => {
                   setSelectedLead(visit);
                   router.push(`/super-admin/lead-details?id=${visit._id}`, {
@@ -392,9 +405,14 @@ const LeadDetailsPage = () => {
                   {/* <div className={styles.clientIcon}>
                     {visit?.firstName?.charAt(0)?.toUpperCase()}
                   </div> */}
-                  <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
+                  <Image
+                    src={tagIcon}
+                    alt="Tag"
+                    className={styles.tagImage}
+                    width={55}
+                    height={20}
+                  />
                   <div className={styles.clientDetails}>
-
                     {/* <p className={styles.trns}>Transferred From</p> */}
                     <p className={styles.trnsname}>Vicky</p>
                     <div className={styles.namecl}>
@@ -409,7 +427,7 @@ const LeadDetailsPage = () => {
 
                 <div className={styles.leadMeta}>
                   <p>
-                    Assign Date : {" "}
+                    Assign Date :{" "}
                     {visit.cycle?.startDate ? (
                       <span>{formatDate(new Date(visit.cycle.startDate))}</span>
                     ) : (
@@ -417,8 +435,7 @@ const LeadDetailsPage = () => {
                     )}
                   </p>
                   <p>
-                    Visit Deadline:
-                    {" "}
+                    Visit Deadline:{" "}
                     {visit.cycle?.validTill ? (
                       <span>{formatDate(new Date(visit.cycle.validTill))}</span>
                     ) : (
@@ -428,14 +445,36 @@ const LeadDetailsPage = () => {
 
                   <div className={styles.taskContainer}>
                     <div className={styles.taskHeader}>
-                      <div className={styles.accentLine} style={{backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                      <div
+                        className={styles.accentLine}
+                        style={{
+                          backgroundColor:
+                            visit?.taskRef?.completed === true
+                              ? "rgb(5, 170, 5)"
+                              : "orange",
+                        }}
+                      ></div>
                       <span className={styles.taskTitle}>Task Details</span>
                     </div>
 
                     <span className={styles.taskName}>
-                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""}`}
+                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                        visit.taskRef?.assignTo?.lastName ?? ""
+                      }`}
                       <span className={styles.status}>
-                        <span className={styles.statusText} style={{ color: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}>{visit?.taskRef?.completed === true ? "COMPLETED" : "PENDING"}</span>
+                        <span
+                          className={styles.statusText}
+                          style={{
+                            color:
+                              visit?.taskRef?.completed === true
+                                ? "rgb(5, 170, 5)"
+                                : "orange",
+                          }}
+                        >
+                          {visit?.taskRef?.completed === true
+                            ? "COMPLETED"
+                            : "PENDING"}
+                        </span>
                         <span className={styles.statusIcon}>⏳</span>
                       </span>
                     </span>
@@ -446,7 +485,6 @@ const LeadDetailsPage = () => {
                       {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
                       {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
                     </div>
-
                   ) : (
                     <span>Not available</span>
                   )}
@@ -464,17 +502,11 @@ const LeadDetailsPage = () => {
                       className={styles.clientStatus}
                     >
                       {visit.leadType === "cp"
-                        ? (visit.channelPartner?.firmName ?? "-")
-                        : (visit.leadType ?? "-")}
+                        ? visit.channelPartner?.firmName ?? "-"
+                        : visit.leadType ?? "-"}
                     </div>
-
-
-
-
                   </div>
                 </div>
-
-
               </div>
             ))}
             {hasMoreRef.current && (
@@ -496,9 +528,6 @@ const LeadDetailsPage = () => {
           {SelectedLead ? (
             <>
               <div className={styles.detailsHeader}>
-
-
-
                 <div className={styles.headerInfo}>
                   <h2 className={styles.detailsTitle}>
                     {SelectedLead.prefix} {SelectedLead.firstName}{" "}
@@ -512,8 +541,6 @@ const LeadDetailsPage = () => {
                     </span>
                   </h2>
                   <div className={styles.actionButtons}>
-
-
                     <button
                       className={styles.editb}
                       onClick={() => {
@@ -521,20 +548,21 @@ const LeadDetailsPage = () => {
                         setShowEditDialog(true);
                       }}
                     >
-
                       <Edit size={15} />
                     </button>
                     <button
                       className={styles.verifiedBadge}
-                      onClick={() => { }}
+                      onClick={() => {
+                        handleCall({
+                          ...SelectedLead,
+                          phoneNumber: SelectedLead.phoneNumber,
+                        });
+                      }}
                     >
                       <MdCall size={15} />
                     </button>
 
-                    <button
-                      className={styles.whatsbtn}
-                      onClick={() => { }}
-                    >
+                    <button className={styles.whatsbtn} onClick={() => {}}>
                       <IoLogoWhatsapp size={15} />
                     </button>
 
@@ -551,31 +579,24 @@ const LeadDetailsPage = () => {
                   </div>
                 </div>
                 {/* Action buttons */}
-
               </div>
               {/* Visit Details Content - Pass handleCall function */}
-              <div className={styles.detsilpart} >
+              <div className={styles.detsilpart}>
                 <div className={styles.detailsContent}>
                   {activeTab === "overview" && (
-                    <VisitDetailsContent visit={SelectedLead} onCall={handleCall} user={user} />
+                    <VisitDetailsContent
+                      visit={SelectedLead}
+                      onCall={handleCall}
+                      user={user}
+                    />
                   )}
 
-                  {activeTab === "access" && (
-                    <QuickAccess />
-                  )}
+                  {activeTab === "access" && <QuickAccess />}
 
-                  {activeTab === "taskDetails" && (
-                    <TaskOverview />
-                  )}
-                  {activeTab === "followup" && (
-                    <FollowUp />
-                  )}
-                  {activeTab === "siteVisit" && (
-                    <VisitHistory />
-                  )}
-                  {activeTab === "transfer" && (
-                    <TransferHistory />
-                  )}
+                  {activeTab === "taskDetails" && <TaskOverview />}
+                  {activeTab === "followup" && <FollowUp />}
+                  {activeTab === "siteVisit" && <VisitHistory />}
+                  {activeTab === "transfer" && <TransferHistory />}
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />
@@ -604,59 +625,72 @@ const LeadDetailsPage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
-
-
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "siteVisit" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
-                      <FaMapMarkedAlt className={styles.icon} /> Site Visit History
+                      <FaMapMarkedAlt className={styles.icon} /> Site Visit
+                      History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "transfer" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        activeTab === "booking" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("booking")}
                     >
-                      <FaFileContract className={styles.icon} /> Booking Overview
+                      <FaFileContract className={styles.icon} /> Booking
+                      Overview
                     </button>
                   </div>
                 </div>
               </div>
-
             </>
           ) : (
             <div className={styles.emptyState}>
@@ -755,11 +789,14 @@ const LeadDetailsPage = () => {
                 });
               }}
             >
-
-
-
               <div className={styles.leadInfo}>
-                <Image src={tagIcon} alt="Tag" className={styles.tagImage} width={55} height={20} />
+                <Image
+                  src={tagIcon}
+                  alt="Tag"
+                  className={styles.tagImage}
+                  width={55}
+                  height={20}
+                />
                 <div className={styles.clientDetails}>
                   {/* <p className={styles.trns}>Transferred From</p> */}
                   <p className={styles.trnsname}>Vicky</p>
@@ -774,7 +811,8 @@ const LeadDetailsPage = () => {
 
               <div className={styles.leadMeta}>
                 <p>
-                  Assign Date: {visit.cycle?.startDate ? (
+                  Assign Date:{" "}
+                  {visit.cycle?.startDate ? (
                     <span>{formatDate(new Date(visit.cycle.startDate))}</span>
                   ) : (
                     <span>Not available</span>
@@ -790,21 +828,40 @@ const LeadDetailsPage = () => {
                 </p>
                 <div className={styles.taskContainer}>
                   <div className={styles.taskHeader}>
-                    <div className={styles.accentLine} style={{backgroundColor: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}></div>
+                    <div
+                      className={styles.accentLine}
+                      style={{
+                        backgroundColor:
+                          visit?.taskRef?.completed === true
+                            ? "rgb(5, 170, 5)"
+                            : "orange",
+                      }}
+                    ></div>
                     <span className={styles.taskTitle}>Task Details</span>
                   </div>
 
                   <span className={styles.taskName}>
-                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""}`}
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                      visit.taskRef?.assignTo?.lastName ?? ""
+                    }`}
                     <span className={styles.status}>
-                      <span className={styles.statusText} style={{ color: visit?.taskRef?.completed === true ? "rgb(5, 170, 5)" : "orange" }}>
-                        {visit.taskRef?.completed === true ? "COMPLETED" : "PENDING"}</span>
+                      <span
+                        className={styles.statusText}
+                        style={{
+                          color:
+                            visit?.taskRef?.completed === true
+                              ? "rgb(5, 170, 5)"
+                              : "orange",
+                        }}
+                      >
+                        {visit.taskRef?.completed === true
+                          ? "COMPLETED"
+                          : "PENDING"}
+                      </span>
                       <span className={styles.statusIcons}>⏳</span>
                     </span>
                   </span>
                 </div>
-
-
 
                 <div className={styles.lastpart}>
                   {visit?.clientInterestedStatus ? (
@@ -820,7 +877,6 @@ const LeadDetailsPage = () => {
                       {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
                       {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
                     </div>
-
                   ) : (
                     <span>Not available</span>
                   )}
@@ -831,8 +887,8 @@ const LeadDetailsPage = () => {
                     className={styles.clientStatus}
                   >
                     {visit.leadType === "cp"
-                      ? (visit.channelPartner?.firmName ?? "-")
-                      : (visit.leadType ?? "-")}
+                      ? visit.channelPartner?.firmName ?? "-"
+                      : visit.leadType ?? "-"}
                   </div>
                 </div>
               </div>
@@ -853,7 +909,6 @@ const LeadDetailsPage = () => {
                     />
                     
                   </div> */}
-
             </div>
           ))}
           {hasMoreRef.current && (
@@ -877,9 +932,6 @@ const LeadDetailsPage = () => {
       {/* Mobile Header */}
 
       <div className={styles.detailsHeader}>
-
-
-
         <div className={styles.headerInfo}>
           <button
             className={styles.backBtn}
@@ -892,20 +944,16 @@ const LeadDetailsPage = () => {
           </button>
 
           <div className={styles.actionButtons}>
-
-
-
-            <button
-              className={styles.verifiedBadge}
-              onClick={() => { }}
-            >
+            <button className={styles.verifiedBadge}   onClick={() => {
+                        handleCall({
+                          ...SelectedLead,
+                          phoneNumber: SelectedLead.phoneNumber,
+                        });
+                      }}>
               <MdCall size={15} />
             </button>
 
-            <button
-              className={styles.whatsbtn}
-              onClick={() => { }}
-            >
+            <button className={styles.whatsbtn} onClick={() => {}}>
               <IoLogoWhatsapp size={15} />
             </button>
 
@@ -914,15 +962,25 @@ const LeadDetailsPage = () => {
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? " " : <Menu className={styles.menuIcon} />}
-
             </button>
 
             {/* Sidebar Overlay */}
-            {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
+            {isOpen && (
+              <div
+                className={styles.overlay}
+                onClick={() => setIsOpen(false)}
+              />
+            )}
 
             {/* Sidebar Panel */}
             <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
-              <div style={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                }}
+              >
                 <button
                   className={styles.editb}
                   onClick={() => {
@@ -930,63 +988,76 @@ const LeadDetailsPage = () => {
                     setShowEditDialog(true);
                   }}
                 >
-
                   <Edit size={15} />
                 </button>
                 <ThemeToggle />
               </div>
 
               <button
-
                 onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 z-50 p-2 lg:hidden" style={{ color: "red" }}
+                className="absolute top-4 right-4 z-50 p-2 lg:hidden"
+                style={{ color: "red" }}
               >
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "overview" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "access" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "taskDetails" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "followup" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "siteVisit" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "transfer" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("transfer")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "booking" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("booking")}
               >
                 <FaFileContract className={styles.icon} /> Booking Overview
@@ -1003,35 +1074,26 @@ const LeadDetailsPage = () => {
             )}
           </div>
         </div>
-
       </div>
-      <div className={styles.detsilpart} >
+      <div className={styles.detsilpart}>
         <div className={styles.detailsContent}>
           {activeTab === "overview" && (
-            <VisitDetailsContent visit={SelectedLead} onCall={handleCall} user={user} />
+            <VisitDetailsContent
+              visit={SelectedLead}
+              onCall={handleCall}
+              user={user}
+            />
           )}
 
-          {activeTab === "access" && (
-            <QuickAccess />
-          )}
+          {activeTab === "access" && <QuickAccess />}
 
-          {activeTab === "taskDetails" && (
-            <TaskOverview />
-          )}
+          {activeTab === "taskDetails" && <TaskOverview />}
 
+          {activeTab === "followup" && <FollowUp />}
 
+          {activeTab === "siteVisit" && <VisitHistory />}
 
-          {activeTab === "followup" && (
-            <FollowUp />
-          )}
-
-          {activeTab === "siteVisit" && (
-            <VisitHistory />
-          )}
-
-          {activeTab === "transfer" && (
-            <TransferHistory />
-          )}
+          {activeTab === "transfer" && <TransferHistory />}
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>
@@ -1057,8 +1119,6 @@ const LeadDetailsPage = () => {
             </div>
           )}
         </div>
-
-
       </div>
 
       {/* Rest of mobile code... */}
@@ -1119,28 +1179,39 @@ const VisitDetailsContent = ({
   return (
     <>
       <div className={styles.infobutton}>
-        <div className={`${styles.statusCard} ${styles.blue}`} style={{ border: "1px solid blue" }}>
+        <div
+          className={`${styles.statusCard} ${styles.blue}`}
+          style={{ border: "1px solid blue" }}
+        >
           <div className={styles.statusIcon}>📅</div>
           <span className={styles.statusLabel}>Status</span>
           <span className={styles.statusValue}>Visit Pending</span>
         </div>
-        <div className={`${styles.statusCard} ${styles.red}`} style={{ border: "1px solid red" }}>
+        <div
+          className={`${styles.statusCard} ${styles.red}`}
+          style={{ border: "1px solid red" }}
+        >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
           <span className={styles.statusValue}>06 Nov 25</span>
         </div>
-        <div className={`${styles.statusCard} ${styles.purple}`} style={{ border: "1px solid purple" }}>
+        <div
+          className={`${styles.statusCard} ${styles.purple}`}
+          style={{ border: "1px solid purple" }}
+        >
           <div className={styles.statusIcon}>👨🏻‍💼</div>
           <span className={styles.statusLabel}>Client Status</span>
           <span className={styles.statusValue}>NA</span>
         </div>
-        <div className={`${styles.statusCard} ${styles.yellow}`} style={{ border: "1px solid yellow" }}>
-          <div className={styles.statusIcon} >💡</div>
+        <div
+          className={`${styles.statusCard} ${styles.yellow}`}
+          style={{ border: "1px solid yellow" }}
+        >
+          <div className={styles.statusIcon}>💡</div>
           <span className={styles.statusLabel}>Lead Status</span>
           <span className={styles.statusValue}>Just-curious</span>
         </div>
       </div>
-
 
       <div className={styles.cardrow}>
         <div className={styles.detailsCard}>
@@ -1151,7 +1222,9 @@ const VisitDetailsContent = ({
           <div className={styles.cardContent}>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><IoPersonSharp size={11} color="#4a84ff" /> Full Name</label>
+                <label className={styles.infoLabel}>
+                  <IoPersonSharp size={11} color="#4a84ff" /> Full Name
+                </label>
                 <p className={styles.infoValue}>
                   {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
                   {visit?.lastName ?? ""}
@@ -1160,12 +1233,15 @@ const VisitDetailsContent = ({
 
               {/* Phone with Call Button */}
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Phone Number</label>
+                <label className={styles.infoLabel}>
+                  <FaPhoneAlt size={11} color="#4a84ff" />
+                  Phone Number
+                </label>
                 <p className={styles.infoValue}>
                   <MdAddCall
                     size={15}
                     color="dodgerblue"
-                    style={{ cursor: "pointer", }}
+                    style={{ cursor: "pointer" }}
                     onClick={() =>
                       onCall({
                         ...visit,
@@ -1176,24 +1252,26 @@ const VisitDetailsContent = ({
                   />
                   {visit?.phoneNumber ?? "NA"}
                 </p>
-
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><MdEmail size={11} color="#4a84ff" />Email</label>
-                <p className={styles.infoValue}>
-
-                  {visit.email ?? "NA"}
-                </p>
+                <label className={styles.infoLabel}>
+                  <MdEmail size={11} color="#4a84ff" />
+                  Email
+                </label>
+                <p className={styles.infoValue}>{visit.email ?? "NA"}</p>
               </div>
 
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><FaPhoneAlt size={11} color="#4a84ff" />Alt Phone</label>
+                <label className={styles.infoLabel}>
+                  <FaPhoneAlt size={11} color="#4a84ff" />
+                  Alt Phone
+                </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
                     <MdAddCall
                       size={15}
                       color="dodgerblue"
-                      style={{ cursor: "pointer", }}
+                      style={{ cursor: "pointer" }}
                       onClick={() =>
                         onCall({
                           ...visit,
@@ -1204,7 +1282,6 @@ const VisitDetailsContent = ({
                     />
                     {visit.countryCode} {visit.altPhoneNumber}
                   </p>
-
                 </div>
               </div>
             </div>
@@ -1219,19 +1296,26 @@ const VisitDetailsContent = ({
           <div className={styles.cardContent}>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Property Type</label>
-                <p className={styles.infoValue}>
-                  NA
-                </p>
+                <label className={styles.infoLabel}>
+                  <IoIosPerson size={12} color="#4a84ff" />
+                  Property Type
+                </label>
+                <p className={styles.infoValue}>NA</p>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><IoIosPerson size={12} color="#4a84ff" />Channel Partner</label>
+                <label className={styles.infoLabel}>
+                  <IoIosPerson size={12} color="#4a84ff" />
+                  Channel Partner
+                </label>
                 <p className={styles.infoValue}>
                   {visit?.channelPartner?.firmName ?? ""}
                 </p>
               </div>
               <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
-                <label className={styles.infoLabel}><PiBuildingApartmentBold size={14} color="#4a84ff" />Apartment Choices</label>
+                <label className={styles.infoLabel}>
+                  <PiBuildingApartmentBold size={14} color="#4a84ff" />
+                  Apartment Choices
+                </label>
                 <div className={styles.choicesList}>
                   {visit.requirement?.map((choice: any, index: number) => (
                     <span key={choice} className={styles.choiceBadge}>
@@ -1241,7 +1325,10 @@ const VisitDetailsContent = ({
                 </div>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}><BsFillBuildingFill size={12} color="#4a84ff" />Projects</label>
+                <label className={styles.infoLabel}>
+                  <BsFillBuildingFill size={12} color="#4a84ff" />
+                  Projects
+                </label>
                 <div className={styles.projectsList}>
                   {visit.project?.map((project: any, index: number) => (
                     <span key={index} className={styles.projectBadge}>
@@ -1255,7 +1342,6 @@ const VisitDetailsContent = ({
         </div>
       </div>
 
-
       <div className={styles.cardrow}>
         {/* Lead Information */}
         <div className={styles.detailsCard}>
@@ -1266,21 +1352,26 @@ const VisitDetailsContent = ({
           <div className={styles.cardContent}>
             <div className={styles.infoGridwork}>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Occupation</label>
-                <p className={styles.infoValue}>
-                  NA
-                </p>
+                <label className={styles.infoLabel}>
+                  {" "}
+                  <Calendar size={14} color="#4a84ff" />
+                  Occupation
+                </label>
+                <p className={styles.infoValue}>NA</p>
               </div>
               <div className={styles.infoItem}>
-                <label className={styles.infoLabel}> <Calendar size={14} color="#4a84ff" />Remark</label>
-                <p className={styles.infoValue}>
-                  NA
-                </p>
+                <label className={styles.infoLabel}>
+                  {" "}
+                  <Calendar size={14} color="#4a84ff" />
+                  Remark
+                </label>
+                <p className={styles.infoValue}>NA</p>
               </div>
-              <div className={styles.infoItem} style={{ flexDirection: "column" }}>
-
+              <div
+                className={styles.infoItem}
+                style={{ flexDirection: "column" }}
+              >
                 <div className={`${styles.infoHeader} ${styles.center}`}>
-
                   <CiLink size={18} color="#4a84ff" />
 
                   <label className={styles.infoLabel}>LinkedIn</label>
@@ -1294,16 +1385,11 @@ const VisitDetailsContent = ({
                     <span>📄 View Document</span>
                   </button>
                 </div>
-
-
               </div>
-
             </div>
           </div>
         </div>
       </div>
-
-
     </>
   );
 };
