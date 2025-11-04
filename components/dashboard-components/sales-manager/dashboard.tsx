@@ -7,7 +7,7 @@ import {
   TrendingUp,
   Users,
   TrendingDown,
-  Link,
+
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
@@ -29,6 +29,7 @@ import { useUser } from "@/providers/userContext";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Timeline20Regular } from "@fluentui/react-icons";
+import Link from "next/link";
 
 interface SalesManagerDashboardHeaderProps {
   userName: string;
@@ -407,16 +408,16 @@ export function SalesManagerDashboardHeader({
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
               style={
                 {
-                  // minWidth: "150px", // adjust card width as needed
+                  minWidth: "173px", // adjust card width as needed
                 }
               }
             >
               <Link href={metric.linkHref} key={index}>
               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
-                
               </div>
               </Link>
+
             </div>
           ))}
         </div>

@@ -1160,7 +1160,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>💡</div>
           <span className={styles.statusLabel}>Lead Status</span>
-          <span className={styles.statusValue}>Just-curious</span>
+          <span className={styles.statusValue}>{visit?.interestedStatus ?? "NA"}</span>
         </div>
       </div>
 

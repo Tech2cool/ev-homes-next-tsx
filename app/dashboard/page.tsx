@@ -11,6 +11,7 @@ import ClosingManagerPage from "../closing-manager/closing-manager-dashboard/pag
 import DataAnalyzerDashboard from "../data-analyzer/data-analyzer-dashboard/page";
 
 import SalesManagerPage from "../sales-manager/sales-manager-dashboard/page";
+import SuperAdminDashboard from "../super-admin/supar-admin-dashboard/page";
 
 const DashboardPage = () => {
   const { user, loading } = useUser();
@@ -22,9 +23,14 @@ const DashboardPage = () => {
     return <DataAnalyzerDashboard />;
   } else if (
     user?.designation?._id === "desg-sales-manager" ||
-    user?.designation?._id === "desg-senior-sales-manager"
+    user?.designation?._id === "desg-senior-sales-manager" ||
+    user?.designation?._id === "desg-sales-executive"
   ) {
     return <SalesManagerPage />;
+  } else if (
+     user?.designation?._id === "desg-app-developer"
+  ) {
+    return <SuperAdminDashboard />;
   }
 
   // if (user?.designation?._id === "desg-data-analyzer") {

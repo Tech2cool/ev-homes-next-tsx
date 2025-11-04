@@ -276,6 +276,18 @@ type TargetProgressData = {
   iconColor: string;
 };
 
+type FetchPostSaleLeadParams = {
+  query?: string;
+  page?: number;
+  limit?: number;
+  project?: string | null;
+  status?: string | null;
+  closingManager?: string | null;
+  date?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+};
+
 //total count
 type SearchLeadParms = {
   query: string;
@@ -330,6 +342,16 @@ type DashboardCount = {
   date: Date | null;
   lead: LeadCount | null;
   task: TaskCount | null;
+};
+
+type ClosingManagerGraph = {
+   leadCount: number | null;
+  bookingCount: number | null;
+  visitCount: number | null;
+  revisitCount: number | null;
+  visit2Count: number | null;
+  bookingWalkinCount: number | null;
+  bookingCpCount: number | null;
 };
 
 type LeadCount = {
@@ -406,11 +428,13 @@ type DataProviderState = {
   closingManager: PaginationProps[];
   leads: Lead[] | null;
   dashCount: DashboardCount | null;
+  closingManagerAllGraph: ClosingManagerGraph | null;
   salesDashCount: DashboardCount | null;
   siteInfo: PaginationProps | null;
   visits: SiteVisit[] | null;
   channelPartners: ChannelPartner[];
   searchLeadInfo: PaginationProps | null;
+  searchPostSaleLeadInfo: PaginationProps | null;
   leadsTeamLeaderGraphForDT: ChartModel[];
   leadsChannelPartnerGraphForDT: ChartModel[];
   leadsFunnelGraphForDT: ChartModel[];
@@ -444,6 +468,10 @@ type DataProviderState = {
     params: SearchLeadParms
   ) => Promise<{ success: boolean; message?: string }>;
 
+  fetchPostSaleLeads: (
+    params: SearchLeadParms
+  ) => Promise<{ success: boolean; message?: string }>;
+
   fetchDataAnalyzerVisits: (
     params: SiteVisitParams
   ) => Promise<{ success: boolean; message?: string }>;
@@ -454,6 +482,12 @@ type DataProviderState = {
 
   getClosingManagerDashBoardCount: (params: {
     id: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
+  getAllGraph: (params?: {
+    interval?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
   fetchAssignFeedbackLeads: (
@@ -532,6 +566,7 @@ const initialState: DataProviderState = {
   teamOverview: [],
   employees: [],
   searchLeadInfo: null,
+  searchPostSaleLeadInfo: null,
   leadInfo: null,
   requirements: [],
   leads: null,
@@ -539,6 +574,7 @@ const initialState: DataProviderState = {
   siteInfo: null,
   visits: null,
   dashCount: null,
+  closingManagerAllGraph: null,
   salesDashCount: null,
   assignInfo: null,
   asssignFeedbackInfo: null,
@@ -561,11 +597,15 @@ const initialState: DataProviderState = {
   }),
   fetchReportingToEmployees: async () => ({ success: false }),
   fetchSaleExecutiveLeads: async () => ({ success: false }),
-  fetchTeamLeaderLeads:async()=>({success:false}),
+  fetchTeamLeaderLeads: async () => ({ success: false }),
   fetchTeamLeaderReportingToLeads: async () => ({ success: false }),
+  fetchPostSaleLeads: async () => ({ success: false }),
+
   fetchSearchLeads: async () => ({ success: false }),
   fetchDataAnalyzerVisits: async () => ({ success: false }),
   getSalesManagerDashBoardCount: async () => ({ success: false }),
+
+  getAllGraph: async () => ({ success: false }),
 
   getClosingManagerDashBoardCount: async () => ({ success: false }),
 
@@ -646,11 +686,17 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     null
   );
 
+  const [searchPostSaleLeadInfo, setPostSaleLeadInfo] =
+    useState<PaginationProps | null>(null);
+
   const [assignInfo, setAssignInfo] = useState<PaginationProps | null>(null);
   const [asssignFeedbackInfo, setAssignFeedbackInfo] =
     useState<TeamLeaderAssignFolloupUp | null>(null);
 
   const [closingManager, setTeamLeaders] = useState<PaginationProps[] | []>([]);
+
+  const [closingManagerAllGraph, setAllGraphCount] =
+    useState<ClosingManagerGraph | null>(null);
 
   const [dashCount, setDashboardCount] = useState<DashboardCount | null>(null);
 
@@ -659,6 +705,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   );
 
   const [leads, setleads] = useState<Lead[]>([]);
+
+  const [postSaleleads, setPostSaleLeads] = useState<Lead[]>([]);
 
   const [loadingVisits, setLoadingVisits] = useState<boolean>(false);
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
@@ -1306,6 +1354,77 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+ const getAllGraph = async ({
+  interval = null,
+  startDate = null,
+  endDate = null,
+}: {
+  interval?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+} = {}): Promise<{ success: boolean; message?: string }> => {
+  setError("");
+
+  try {
+    let url = "/leads-graph";
+    const queryParams = new URLSearchParams();
+
+    if (interval) {
+      queryParams.append("interval", interval);
+    }
+    if (startDate) {
+      queryParams.append("startDate", startDate);
+    }
+    if (endDate) {
+      queryParams.append("endDate", endDate);
+    }
+
+    const queryString = queryParams.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+
+    // console.log("Fetching graph data from:", url);
+
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    // console.log("Graph API response:", res);
+
+    // Check if the response structure matches your Flutter code
+    if (res?.code !== 200) {
+      const errorMessage = res?.message || "Failed to fetch graph data";
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    }
+
+    // The graph data should be in res.data according to your Flutter code
+    const graphData = res.data as ClosingManagerGraph;
+    setAllGraphCount(graphData);
+
+    return { success: true };
+  } catch (err: any) {
+    let errorMessage = "Something went wrong";
+
+    if (err.response) {
+      // Backend response error message
+      errorMessage = err.response?.data?.message || errorMessage;
+    } else {
+      // Other types of errors (network, etc.)
+      errorMessage = err.message || errorMessage;
+    }
+
+    // Prevent literal 'null' from showing
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    setError(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+};
+
   // Function to get dashboard count for a Closing Manager
   const getClosingManagerDashBoardCount = async ({
     id = null,
@@ -1623,6 +1742,67 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const fetchPostSaleLeads = async ({
+    query = "",
+    page = 1,
+    limit = 10,
+    project = null,
+    status = null,
+    closingManager = null,
+    date = null,
+    startDate = null,
+    endDate = null,
+  }: FetchPostSaleLeadParams): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
+
+    try {
+      let url = `/post-sale-leads?query=${query}&page=${page}&limit=${limit}`;
+
+      if (project) url += `&project=${project}`;
+      if (status) url += `&status=${status}`;
+      if (closingManager) url += `&closingManager=${closingManager}`;
+      if (date) url += `&date=${date}`;
+      if (startDate) url += `&startDate=${startDate}`;
+      if (endDate) url += `&endDate=${endDate}`;
+
+      console.log("API URL:", url);
+
+      const res = await fetchAdapter(url, { method: "GET" });
+
+      const { data, ...paginationInfo } = res as PaginationProps;
+
+      // Store pagination meta (like total pages, etc)
+      setPostSaleLeadInfo(paginationInfo);
+
+      // Append when paginating
+      if (page > 1) {
+        setPostSaleLeads((prev) => [...prev, ...(data ?? [])]);
+      } else {
+        setPostSaleLeads(data ?? []);
+      }
+
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      console.error("Fetch Error =>", err.message);
+      setError(err?.message);
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
+
   const fetchSearchLeads = async ({
     query = "",
     page = 1,
@@ -1915,6 +2095,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     employees: employees,
     leadInfo: leadInfo,
     dashCount: dashCount,
+    closingManagerAllGraph: closingManagerAllGraph,
     siteInfo: siteInfo,
     visits: visits,
     leads: leads,
@@ -1922,6 +2103,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchingMoreLeads: fetchingMoreLeads,
     assignInfo: assignInfo,
     searchLeadInfo: searchLeadInfo,
+    searchPostSaleLeadInfo: searchPostSaleLeadInfo,
     requirements: requirements,
     channelPartners: channelPartners,
     leadsTeamLeaderGraphForDT: leadsTeamLeaderGraphForDT,
@@ -1944,11 +2126,12 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setLoadingTestimonial: setLoadingTestimonial,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
-    fetchTeamLeaderLeads:fetchTeamLeaderLeads,
+    fetchTeamLeaderLeads: fetchTeamLeaderLeads,
     fetchDataAnalyzerVisits: fetchDataAnalyzerVisits,
     fetchTeamLeaderReportingToLeads: fetchTeamLeaderReportingToLeads,
     getSalesManagerDashBoardCount: getSalesManagerDashBoardCount,
     fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
+    fetchPostSaleLeads: fetchPostSaleLeads,
     fetchSearchLeads: fetchSearchLeads,
     fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
     getChannelPartners: getChannelPartners,
@@ -1959,6 +2142,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchFunnelGraphForDA: fetchFunnelGraphForDA,
     fetchLineGraphForDA: fetchLineGraphForDA,
     fetchOnboardTarget: fetchOnboardTarget,
+    getAllGraph: getAllGraph,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
   };
