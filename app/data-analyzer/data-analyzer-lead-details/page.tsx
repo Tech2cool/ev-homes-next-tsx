@@ -72,8 +72,6 @@ const DataAnalyzerdetailspage = () => {
     requirements,
   } = useData();
 
-  const { user, loading } = useUser();
-
   const router = useRouter();
   //   const visitId = "lead-1";
   //   const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
@@ -119,7 +117,9 @@ const DataAnalyzerdetailspage = () => {
     action: "approve",
     remark: "",
   });
+  const { user, loading, getSocket, reconnectSocket } = useUser();
 
+  const socket = getSocket();
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
   //   const leadInfo = DUMMY_LEAD_INFO;
@@ -200,8 +200,12 @@ const DataAnalyzerdetailspage = () => {
       const threshold = 100;
 
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages &&
-          searchLeadInfo.page < searchLeadInfo.totalPages) {
+        if (
+          !loadingLeads &&
+          searchLeadInfo?.page &&
+          searchLeadInfo.totalPages &&
+          searchLeadInfo.page < searchLeadInfo.totalPages
+        ) {
           loadMoreLeads();
         }
       }
@@ -222,7 +226,6 @@ const DataAnalyzerdetailspage = () => {
 
     router.push(url, { scroll: false });
   };
-
 
   //   useEffect(() => {
   //     const fetchLeadsBasedOnStatus = async () => {
@@ -276,10 +279,19 @@ const DataAnalyzerdetailspage = () => {
     console.log("Filters applied (Dummy):", newFilters);
   };
 
-  const handleCall = useCallback((lead: any) => {
-    alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
-    console.log("Simulating call to:", lead);
-  }, []);
+  const handleCall = useCallback(
+    (lead: any) => {
+      console.log("Making call to:", lead);
+      socket?.emit("callCustomerWeb", {
+        lead: lead?._id,
+        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
+        type: "call",
+        message: "call",
+        userId: user?._id,
+      });
+    },
+    [socket, user?._id]
+  );
 
   useEffect(() => {
     const checkMobile = () => {
@@ -302,7 +314,6 @@ const DataAnalyzerdetailspage = () => {
   // const loadMoreLeads = useCallback((resetPage = false) => {
   //   console.log("Load more called (Dummy): No more data to fetch.");
   // }, []);
-
 
   // const handleScroll = useCallback(
   //   (e: any) => {
@@ -439,14 +450,14 @@ const DataAnalyzerdetailspage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-
             {leads?.map((visit: Lead, index: number) => {
               console.log(`Rendering lead ${index}:`, visit);
               return (
                 <div
                   key={`${visit._id}-${index}`}
-                  className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                    }`}
+                  className={`${styles.visitCard} ${
+                    SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                  }`}
                   onClick={() => {
                     handleVisitSelect(visit);
                     // Preserve status in navigation
@@ -520,8 +531,9 @@ const DataAnalyzerdetailspage = () => {
                         <span className={styles.taskTitle}>Task Details</span>
                       </div>
                       <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                          }`}
+                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                          visit.taskRef?.assignTo?.lastName ?? ""
+                        }`}
                         <span className={styles.status}>
                           <span
                             className={styles.statusText}
@@ -569,7 +581,8 @@ const DataAnalyzerdetailspage = () => {
                 </div>
               );
             })}
-            {searchLeadInfo?.page && searchLeadInfo.totalPages &&
+            {searchLeadInfo?.page &&
+              searchLeadInfo.totalPages &&
               searchLeadInfo.page < searchLeadInfo.totalPages && (
                 <div className={styles.loadMoreContainer}>
                   <button
@@ -613,7 +626,10 @@ const DataAnalyzerdetailspage = () => {
                     <button
                       className={styles.verifiedBadge}
                       onClick={() => {
-                        handleCall(SelectedLead);
+                        handleCall({
+                          ...SelectedLead,
+                          phoneNumber: SelectedLead.phoneNumber,
+                        });
                       }}
                     >
                       <MdCall size={15} />
@@ -657,9 +673,7 @@ const DataAnalyzerdetailspage = () => {
                   {activeTab === "followup" && <FollowUp />}
                   {activeTab === "cphistory" && <CPTransferHistory />}
                   {activeTab === "cyclehistory" && <TransferHistory />}
-                  {activeTab === "chat" && (
-                   <div></div>
-                  )}
+                  {activeTab === "chat" && <div></div>}
                   {similarVisits.length > 0 && (
                     <div className={styles.similarVisitsSection}>
                       <div
@@ -682,57 +696,62 @@ const DataAnalyzerdetailspage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
                     <button
-                      className={`${styles.navItem} ${activeTab === "cyclehistory" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "cyclehistory" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("cyclehistory")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Cycle History
                     </button>
                     <button
-                      className={`${styles.navItem} ${activeTab === "cphistory" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "cphistory" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("cphistory")}
                     >
-                      <FaMapMarkedAlt className={styles.icon} /> CP Transfer History
-                      
+                      <FaMapMarkedAlt className={styles.icon} /> CP Transfer
+                      History
                     </button>
 
-
-
                     <button
-                      className={`${styles.navItem} ${activeTab === "chat" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "chat" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("chat")}
                     >
                       <FaFileContract className={styles.icon} /> Chat
@@ -824,9 +843,12 @@ const DataAnalyzerdetailspage = () => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/data-analyzer/data-analyzer-lead-details?id=${visit._id}`, {
-                  scroll: false,
-                });
+                router.push(
+                  `/data-analyzer/data-analyzer-lead-details?id=${visit._id}`,
+                  {
+                    scroll: false,
+                  }
+                );
               }}
             >
               <div className={styles.leadInfo}>
@@ -880,8 +902,9 @@ const DataAnalyzerdetailspage = () => {
                   </div>
 
                   <span className={styles.taskName}>
-                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                      }`}
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                      visit.taskRef?.assignTo?.lastName ?? ""
+                    }`}
                     <span className={styles.status}>
                       <span
                         className={styles.statusText}
@@ -957,7 +980,9 @@ const DataAnalyzerdetailspage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/data-analyzer /data-analyzer-lead-details", { scroll: false });
+              router.push("/data-analyzer /data-analyzer-lead-details", {
+                scroll: false,
+              });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
@@ -967,7 +992,10 @@ const DataAnalyzerdetailspage = () => {
             <button
               className={styles.verifiedBadge}
               onClick={() => {
-                handleCall(SelectedLead);
+                handleCall({
+                  ...SelectedLead,
+                  phoneNumber: SelectedLead.phoneNumber,
+                });
               }}
             >
               <MdCall size={15} />
@@ -1026,56 +1054,63 @@ const DataAnalyzerdetailspage = () => {
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "overview" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "access" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "taskDetails" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "followup" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "cphistory" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "cphistory" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("cphistory")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "cyclehistory" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "cyclehistory" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("cyclehistory")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "chat" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "chat" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("chat")}
               >
                 <FaFileContract className={styles.icon} /> Chat
@@ -1113,9 +1148,7 @@ const DataAnalyzerdetailspage = () => {
 
           {activeTab === "cyclehistory" && <TransferHistory />}
 
-          {activeTab === "chat" && (
-            <div></div>
-          )}
+          {activeTab === "chat" && <div></div>}
           {similarVisits.length > 0 && (
             <div className={styles.similarVisitsSection}>
               <div
@@ -1161,8 +1194,6 @@ const VisitDetailsContent = ({
   onCall: (lead: any) => void;
   user: any;
 }) => {
-
-
   const renderValue = (value: any) => {
     if (value === null || value === undefined || value === "")
       return "Not specified";
@@ -1186,7 +1217,10 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
-          <span className={styles.statusValue}> {dateFormatOnly(visit?.cycle?.validTill)}</span>
+          <span className={styles.statusValue}>
+            {" "}
+            {dateFormatOnly(visit?.cycle?.validTill)}
+          </span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.purple}`}
@@ -1284,7 +1318,8 @@ const VisitDetailsContent = ({
                   <IoPersonSharp size={11} color="#4a84ff" /> Assigned To
                 </label>
                 <p className={styles.infoValue}>
-                  {visit?.prefix ?? ""} {visit?.taskRef?.assignTo?.firstName ?? ""}{" "}
+                  {visit?.prefix ?? ""}{" "}
+                  {visit?.taskRef?.assignTo?.firstName ?? ""}{" "}
                   {visit?.taskRef?.assignTo?.lastName ?? ""}
                 </p>
               </div>
@@ -1319,14 +1354,18 @@ const VisitDetailsContent = ({
                   <Calendar1 size={12} color="#4a84ff" />
                   CP Tagging Start
                 </label>
-                <p className={styles.infoValue}>{dateFormatOnly(visit?.startDate)}</p>
+                <p className={styles.infoValue}>
+                  {dateFormatOnly(visit?.startDate)}
+                </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
                   <Calendar1 size={12} color="#4a84ff" />
                   CP Tagging End
                 </label>
-                <p className={styles.infoValue}>{dateFormatOnly(visit?.validTill)}</p>
+                <p className={styles.infoValue}>
+                  {dateFormatOnly(visit?.validTill)}
+                </p>
               </div>
               <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
                 <label className={styles.infoLabel}>

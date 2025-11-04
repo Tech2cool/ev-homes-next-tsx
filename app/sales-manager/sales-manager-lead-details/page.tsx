@@ -60,7 +60,7 @@ export default salesdetilsWrapper;
 
 const Salesdetaispage = () => {
   const {
-   leadInfo: searchLeadInfo,
+    leadInfo: searchLeadInfo,
     channelPartners,
     leads,
     loadingLeads,
@@ -73,7 +73,6 @@ const Salesdetaispage = () => {
   } = useData();
 
   const router = useRouter();
-  const { user } = useUser();
 
   const visitId = "lead-1";
   // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
@@ -97,11 +96,14 @@ const Salesdetaispage = () => {
     action: "approve",
     remark: "",
   });
+  const { user, loading, getSocket, reconnectSocket } = useUser();
+
+  const socket = getSocket();
 
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
   // const leadInfo = DUMMY_LEAD_INFO;
-  const loading = false;
+  // const loading = false;
   // const loadingLeads = false;
   const fetchingMoreLeads = false;
   // const user = DUMMY_USER;
@@ -149,18 +151,18 @@ const Salesdetaispage = () => {
   }, [user, loading, selectedFilter]);
 
   const loadMoreLeads = useCallback(async () => {
- if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
+    if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
       const nextPage = searchLeadInfo.page + 1;
       if (nextPage <= searchLeadInfo.totalPages) {
-      await fetchTeamLeaderReportingToLeads({
-        id: user?._id,
-        query: "",
-        page: nextPage,
-        limit: 10,
-        status: selectedFilter?.status,
-      });
+        await fetchTeamLeaderReportingToLeads({
+          id: user?._id,
+          query: "",
+          page: nextPage,
+          limit: 10,
+          status: selectedFilter?.status,
+        });
+      }
     }
-  }
   }, [searchLeadInfo, selectedFilter, fetchTeamLeaderReportingToLeads]);
 
   const handleScroll = useCallback(
@@ -174,8 +176,12 @@ const Salesdetaispage = () => {
         // const currentPage = searchLeadInfo?.page || 0;
         // const totalPages = searchLeadInfo?.totalPages || 1;
 
-          if (!loadingLeads && searchLeadInfo?.page && searchLeadInfo.totalPages && 
-            searchLeadInfo.page < searchLeadInfo.totalPages) {
+        if (
+          !loadingLeads &&
+          searchLeadInfo?.page &&
+          searchLeadInfo.totalPages &&
+          searchLeadInfo.page < searchLeadInfo.totalPages
+        ) {
           loadMoreLeads();
         }
       }
@@ -214,11 +220,19 @@ const Salesdetaispage = () => {
     console.log("Filters applied (Dummy):", newFilters);
   };
 
-  const handleCall = useCallback((lead: any) => {
-    alert(`Simulating call to: ${lead?.phoneNumber} for lead: ${lead?._id}`);
-    console.log("Simulating call to:", lead);
-  }, []);
-
+  const handleCall = useCallback(
+    (lead: any) => {
+      console.log("Making call to:", lead);
+      socket?.emit("callCustomerWeb", {
+        lead: lead?._id,
+        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
+        type: "call",
+        message: "call",
+        userId: user?._id,
+      });
+    },
+    [socket, user?._id]
+  );
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -391,7 +405,8 @@ const Salesdetaispage = () => {
                         {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                       </div>
                       <p className={styles.phone}>
-                        {visit?.countryCode ?? "91"} {visit?.phoneNumber ?? "No Phone"}
+                        {visit?.countryCode ?? "91"}{" "}
+                        {visit?.phoneNumber ?? "No Phone"}
                       </p>
                     </div>
                   </div>
@@ -531,7 +546,10 @@ const Salesdetaispage = () => {
                     <button
                       className={styles.verifiedBadge}
                       onClick={() => {
-                        handleCall(SelectedLead);
+                        handleCall({
+                          ...SelectedLead,
+                          phoneNumber: SelectedLead.phoneNumber,
+                        });
                       }}
                     >
                       <MdCall size={15} />
@@ -576,7 +594,7 @@ const Salesdetaispage = () => {
                   {activeTab === "siteVisit" && <VisitHistory />}
                   {activeTab === "transfer" && (
                     <TransferHistory
-                      cycleHistory={SelectedLead?.cycleHistoryNew }
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
                     />
                   )}
                   {activeTab === "booking" && (
@@ -905,7 +923,10 @@ const Salesdetaispage = () => {
             <button
               className={styles.verifiedBadge}
               onClick={() => {
-                handleCall(SelectedLead);
+                handleCall({
+                  ...SelectedLead,
+                  phoneNumber: SelectedLead.phoneNumber,
+                });
               }}
             >
               <MdCall size={15} />
@@ -1324,7 +1345,7 @@ const VisitDetailsContent = ({
                   Remark
                 </label>
                 <p className={styles.infoValue}>
-                 {visit?.additionLinRemark ?? "NA"}
+                  {visit?.additionLinRemark ?? "NA"}
                 </p>
               </div>
               <div
