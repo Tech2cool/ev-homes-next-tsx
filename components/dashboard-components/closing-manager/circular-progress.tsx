@@ -43,7 +43,7 @@ export function CircularProgress({
             {label1}
           </span>
           <div className="text-base sm:text-lg font-semibold text-foreground text-center">
-            {count1.toLocaleString()}
+            {count1}
           </div>
         </div>
         
@@ -59,7 +59,7 @@ export function CircularProgress({
             {label2}
           </span>
           <div className="text-base sm:text-lg font-semibold text-foreground text-center">
-            {count2.toLocaleString()}
+            {count2}
           </div>
         </div>
       </div>
