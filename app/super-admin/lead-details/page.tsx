@@ -116,10 +116,31 @@ const LeadDetailsPage = () => {
     dateTo: "",
   });
 
+  const [selectedFilter, setSelectedFilter] = useState({
+      status: null,
+      callData: null,
+      cycle: null,
+      order: null,
+      interval: null,
+      clientstatus: null,
+      leadstatus: null,
+      startDateDeadline: null,
+      endDateDeadline: null,
+      date: null,
+      status2: null,
+      //  approvalStatus : null,
+      //  stage : null,
+      channelPartner: null,
+      teamLeader: null,
+      taskType: null,
+      member: null,
+    });
+
   const { user, loading, getSocket, reconnectSocket } = useUser();
   const {
-    fetchTeamLeaderReportingToLeads,
-    leadInfo,
+    fetchSearchLeads,
+    searchLeadInfo,
+
     leads,
     loadingLeads,
     fetchingMoreLeads,
@@ -130,18 +151,18 @@ const LeadDetailsPage = () => {
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
 
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id ?? null,
-      status: newFilters.visitType || null,
-      status2: newFilters.statusFilter || null,
-      callData: newFilters.feedbackFilter || null,
-      clientstatus: newFilters.clientStatus || null,
-      leadstatus: newFilters.leadStatus || null,
-      cycle: newFilters.cycleStatus || null,
-      startDateDeadline: newFilters.dateFrom || null,
-      endDateDeadline: newFilters.dateTo || null,
-      page: 1,
-    });
+    // fetchSearchLeads({
+    //   id: user?._id ?? null,
+    //   status: newFilters.visitType || null,
+    //   status2: newFilters.statusFilter || null,
+    //   callData: newFilters.feedbackFilter || null,
+    //   clientstatus: newFilters.clientStatus || null,
+    //   leadstatus: newFilters.leadStatus || null,
+    //   cycle: newFilters.cycleStatus || null,
+    //   startDateDeadline: newFilters.dateFrom || null,
+    //   endDateDeadline: newFilters.dateTo || null,
+    //   page: 1,
+    // });
   };
 
   // Function to handle call functionality - can be passed to child components
@@ -174,8 +195,8 @@ const LeadDetailsPage = () => {
   useEffect(() => {
     if (user && !loading) {
       console.log("Initial fetch - visit details");
-      fetchTeamLeaderReportingToLeads({
-        id: user?._id,
+      fetchSearchLeads({
+        // id: user?._id,
         query: searchTerm,
         page: 1,
         limit: 10,
@@ -185,8 +206,8 @@ const LeadDetailsPage = () => {
 
   // Initial data fetch
   useEffect(() => {
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id,
+    fetchSearchLeads({
+      // id: user?._id,
       query: searchTerm,
       page: 1,
       limit: 10,
@@ -194,12 +215,12 @@ const LeadDetailsPage = () => {
   }, [debouncedSearch]);
 
   // Update refs when leadInfo changes
-  useEffect(() => {
-    if (leadInfo) {
-      hasMoreRef.current = (leadInfo.page ?? 0) < (leadInfo.totalPages ?? 0);
-      loadingRef.current = loadingLeads || fetchingMoreLeads;
-    }
-  }, [leadInfo, loadingLeads, fetchingMoreLeads]);
+  // useEffect(() => {
+  //   if (searchLeadInfo) {
+  //     hasMoreRef.current = (searchLeadInfo.page ?? 0) < (searchLeadInfo.totalPages ?? 0);
+  //     loadingRef.current = loadingLeads || fetchingMoreLeads;
+  //   }
+  // }, [searchLeadInfo, loadingLeads, fetchingMoreLeads]);
 
   // Find selected visit when visitId changes
   useEffect(() => {
@@ -211,57 +232,68 @@ const LeadDetailsPage = () => {
     }
   }, [visitId, leads]);
 
+   useEffect(() => {
+      const fetchLeadsBasedOnStatus = async () => {
+        if (user && !loading) {
+          try {
+            await fetchSearchLeads({
+              query: "",
+              page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+              limit: 10,
+              status: selectedFilter?.status,
+            });
+          } catch (error) {
+            console.error("Error fetching leads:", error);
+          }
+        }
+      };
+  
+      fetchLeadsBasedOnStatus();
+    }, [user, loading, selectedFilter]); 
+
   // Fixed loadMoreVisits function
-  const loadMoreLeads = useCallback(
-    (resetPage = false) => {
-      console.log("Load more called", {
-        loadingRef: loadingRef.current,
-        hasMoreRef: hasMoreRef.current,
-        currentPage: leadInfo?.page,
-        totalPages: leadInfo?.totalPages,
-        resetPage,
-      });
-      if (loadingRef.current) {
-        console.log("Already loading, skipping");
-        return;
+  const loadMoreLeads = useCallback(async () => {
+    if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
+      const nextPage = searchLeadInfo.page + 1;
+      if (nextPage <= searchLeadInfo.totalPages) {
+        await fetchSearchLeads({
+          query: "",
+          page: nextPage,
+          limit: 10,
+          status: selectedFilter?.status,
+        });
       }
-      if (!resetPage && !hasMoreRef.current) {
-        console.log("No more pages to load");
-        return;
-      }
+    }
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads]);
 
-      const page = resetPage ? 1 : (leadInfo?.page || 0) + 1;
-      console.log(`Fetching page ${page}`);
-      fetchTeamLeaderReportingToLeads({
-        id: user?._id,
-        query: searchTerm,
-        page: page,
-        limit: 10,
-      });
-    },
-    [leadInfo, fetchTeamLeaderReportingToLeads]
-  );
-
-  const fetchLeads = () => {
-    fetchTeamLeaderReportingToLeads({
-      id: user?._id,
-      ...filters,
-      page: 1,
-    });
-  };
+  // const fetchLeads = () => {
+  //   fetchTeamLeaderReportingToLeads({
+  //     id: user?._id,
+  //     ...filters,
+  //     page: 1,
+  //   });
+  // };
 
   // Fixed scroll handler with debouncing
   const handleScroll = useCallback(
-    (e: any) => {
+     (e: any) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
       const threshold = 100;
+
       if (scrollHeight - scrollTop <= clientHeight + threshold) {
-        console.log("Reached end of scroll");
-        loadMoreLeads(false);
+        if (
+          !loadingLeads &&
+          searchLeadInfo?.page &&
+          searchLeadInfo.totalPages &&
+          searchLeadInfo.page < searchLeadInfo.totalPages
+        ) {
+          loadMoreLeads();
+        }
       }
     },
-    [loadMoreLeads]
+    [loadMoreLeads, loadingLeads, searchLeadInfo]
   );
+
 
   // Debounced scroll handler to prevent excessive calls
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
@@ -344,19 +376,19 @@ const LeadDetailsPage = () => {
     router.push("/super-admin/lead-details");
   };
 
-  const clearFilters = () => {
-    setFilters({
-      visitType: "",
-      leadFilter: "string",
-      statusFilter: "string",
-      feedbackFilter: "string",
-      clientStatus: "string",
-      leadStatus: "string",
-      cycleStatus: 0,
-      dateFrom: "string",
-      dateTo: "string",
-    });
-  };
+  // const clearFilters = () => {
+  //   setFilters({
+  //     visitType: "",
+  //     leadFilter: "string",
+  //     statusFilter: "string",
+  //     feedbackFilter: "string",
+  //     clientStatus: "string",
+  //     leadStatus: "string",
+  //     cycleStatus: 0,
+  //     dateFrom: "string",
+  //     dateTo: "string",
+  //   });
+  // };
 
   // Desktop view - Two panel layout
   if (!isMobile) {
@@ -509,17 +541,19 @@ const LeadDetailsPage = () => {
                 </div>
               </div>
             ))}
-            {hasMoreRef.current && (
-              <div className={styles.loadMoreContainer}>
-                <button
-                  className={styles.loadMoreBtn}
-                  onClick={() => loadMoreLeads(false)}
-                  disabled={loadingRef.current}
-                >
-                  {loadingRef.current ? "Loading..." : "Load More"}
-                </button>
-              </div>
-            )}
+           {searchLeadInfo?.page &&
+              searchLeadInfo.totalPages &&
+              searchLeadInfo.page < searchLeadInfo.totalPages && (
+                <div className={styles.loadMoreContainer}>
+                  <button
+                    className={styles.loadMoreBtn}
+                   onClick={() => loadMoreLeads}
+                    disabled={loadingLeads}
+                  >
+                    {loadingLeads ? "Loading..." : "Load More"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
 
@@ -719,11 +753,11 @@ const LeadDetailsPage = () => {
               dateFrom: "",
               dateTo: "",
             };
-            setFilters(cleared);
-            fetchTeamLeaderReportingToLeads({
-              id: user?._id,
-              page: 1,
-            });
+            // setFilters(cleared);
+            // fetchTeamLeaderReportingToLeads({
+            //   id: user?._id,
+            //   page: 1,
+            // });
           }}
           visits={leads || []}
           resultCount={leads?.length || 0}
@@ -915,7 +949,7 @@ const LeadDetailsPage = () => {
             <div className={styles.loadMoreContainer}>
               <button
                 className={styles.loadMoreBtn}
-                onClick={() => loadMoreLeads(false)}
+                onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
                 {loadingRef.current ? "Loading..." : "Load More"}
