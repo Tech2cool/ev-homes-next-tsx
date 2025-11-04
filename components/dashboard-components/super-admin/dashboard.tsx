@@ -12,6 +12,7 @@ import { CircularProgress } from "../closing-manager/circular-progress";
 import { PiFunnelSimple, PiFunnelSimpleBold } from "react-icons/pi";
 import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
+import Link from "next/link";
 
 const SuperAdminDasboard = () => {
   const {
@@ -107,6 +108,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaUsers />,
       color: "#ad82f2e1",
       bgcolor: "#7c2ff706",
+      linkHref: "/super-admin/lead-details?status=all",
     },
     {
       label: "Visit 1",
@@ -114,6 +116,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaUserTie />,
       color: "#88c08aa8",
       bgcolor: "#4caf4f09",
+      linkHref: "/super-admin/lead-details?status=all",
     },
     {
       label: "Visit 2",
@@ -121,6 +124,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaCarSide />,
       color: "#ce676082",
       bgcolor: "#f4433609",
+      linkHref: "/super-admin/lead-details?status=all",
     },
     {
       label: "Booking",
@@ -128,6 +132,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <IoMdKey />,
       color: "#c0a24aa7",
       bgcolor: "#ffc10709",
+      linkHref: "/super-admin/lead-details?status=all",
     },
     {
       label: "Internal leads",
@@ -135,6 +140,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaUserFriends />,
       color: "#bd58959c",
       bgcolor: "#d4006a09",
+      linkHref: "/super-admin/lead-details?status=all",
     },
     {
       label: "Bulk Leads",
@@ -142,7 +148,9 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaBoxes />,
       color: "#58b1bd9c",
       bgcolor: "#00bbd409",
+      linkHref: "/super-admin/lead-details?status=all",
     },
+    
   ];
 
 //   const dashCount = {
@@ -495,6 +503,7 @@ useEffect(() => {
       <div className={styles.leadsection}>
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
+            <Link href={card.linkHref} key={index}>
             <div className={superstayle.card} key={index}>
               <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
                 {card.icon}
@@ -518,6 +527,7 @@ useEffect(() => {
                 <p className={styles.value}>{card.value}</p>
               </div>
             </div>
+            </Link>
           ))}
         </div>
 
