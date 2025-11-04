@@ -16,7 +16,7 @@
 :global(html.light) .dialogOverlay {
   background: rgba(45, 45, 45, 0.401);
 }
-
+.dialog,
 .dialogBox {
   background: #1e1e1e;
   color: #fff;
@@ -32,7 +32,10 @@
   scrollbar-color: #4a4d4c #222;
   position: relative;
 }
-
+.dialog{
+ width: 60vw;
+}
+:global(html.light) .dialog,
 :global(html.light) .dialogBox {
   background: #ebebeb;
   box-shadow: 0 8px 25px rgba(159, 159, 159, 0.4);
@@ -40,17 +43,17 @@
   scrollbar-color: #a065ff #d8d4e9;
 
 }
-
+.dialog::-webkit-scrollbar,
 .dialogBox::-webkit-scrollbar {
   width: 6px;
 
 }
-
+.dialog::-webkit-scrollbar-thumb ,
 .dialogBox::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #3d4140, #1a1b1c);
   border-radius: 30px;
 }
-
+.dialog::-webkit-scrollbar-track,
 .dialogBox::-webkit-scrollbar-track {
   background: #222;
 }
@@ -399,6 +402,22 @@
   box-shadow: 0 0 10px rgba(30, 0, 255, 0.155);
   width: 200px;
 }
+
+.confirm {
+    display: flex;
+    padding-top: 1rem;
+    justify-content: right;
+    align-items: center;
+    gap: 5px;
+    font-size: 2.2vh;
+    font-weight: 400;
+    color: rgb(208, 208, 208);
+    width: 95%;
+}
+:global(html.light) .confirm{
+  color: #2c2b2b;
+}
+
 @media screen and (max-width: 850px) {
   .mainlable {
     font-size: 2vh;
@@ -408,6 +427,7 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .dialog,
   .dialogBox {
     width: 80vw;
     padding: 1.2rem;
@@ -417,6 +437,7 @@
 
 /* Mobile devices */
 @media screen and (max-width: 768px) {
+  .dialog,
   .dialogBox {
     width: 95vw;
     padding: 1rem;
@@ -474,6 +495,7 @@
 
 /* Extra small screens */
 @media screen and (max-width: 480px) {
+  .dialog,
   .dialogBox {
     padding: 0.8rem;
   }

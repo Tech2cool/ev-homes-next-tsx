@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import styles from "./taggingform.module.css";
 import { FaStar } from "react-icons/fa";
 import Switch from "@mui/material/Switch";
@@ -34,13 +34,13 @@ interface FormState {
 }
 
 
-const TaggingForm = () => {
+const TaggingFormComponent = () => {
     const [startDate, setStartDate] = useState("");
     const [validTill, setValidTill] = useState("");
     const [iConfirm, setIConfirm] = useState(false);
     const [checked, setChecked] = useState(false);
-    const currentTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
-
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
     };
@@ -105,59 +105,41 @@ const TaggingForm = () => {
         setValidTill(validTillDate.format("YYYY-MM-DD"));
     };
 
-   const onSubmit = () => {
-    if (!formData.leadType) {
-        alert("Please select Lead Type");
-        return;
-    }
+    const validateForm = () => {
+        const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstName.trim()) {
-        alert("Please enter First Name");
-        return;
-    }
 
-    if (!formData.lastName.trim()) {
-        alert("Please enter Last Name");
-        return;
-    }
+        if (!formData.leadType) newErrors.leadType = "Please select Lead Type.";
+        if (!formData.firstName) newErrors.firstName = "Please enter First Name.";
+        if (!formData.lastName) newErrors.lastName = "Please enter Last Name";
+        if (!formData.firstName.trim()) newErrors.firstName = "Enter first name.";
+        if (!formData.lastName.trim()) newErrors.lastName = "Enter last name.";
+        if (!formData.phoneNumber.trim() || formData.phoneNumber.length < 10)
+            newErrors.phoneNumber = "Enter a valid 10-digit phone number.";
+        if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email))
+            newErrors.email = "Enter a valid email.";
+        if (formData.projects.length === 0) newErrors.projects = "Select at least one project.";
+        if (formData.requirements.length === 0)
+            newErrors.requirements = "Select at least one requirement.";
+        if (!formData.propertyType)
+            newErrors.propertyType = "Please select property type.";
+        if (!checked) newErrors.checked = "Please confirm the details first";
+        if (!formData.channelPartner) newErrors.channelPartner = "Please select channel Partner.";
+        if (!startDate) newErrors.startDate = "Please select a Tagged Date.";
+        if (!validTill) newErrors.validTill = "Valid Till date cannot be empty.";
+      
 
-    if (!formData.phoneNumber || formData.phoneNumber.length !== 10) {
-        alert("Please enter a valid 10-digit Phone Number");
-        return;
-    }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailRegex.test(formData.email)) {
-        alert("Please enter a valid Email");
-        return;
-    }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    const onSubmit = () => {
 
-    if (!formData.projects || formData.projects.length === 0) {
-        alert("Please select at least one Project");
-        return;
-    }
-    if (!formData.requirements || formData.requirements.length === 0) {
-        alert("Please select at least one Requirement");
-        return;
-    }
+        if (!validateForm()) return;
+        // If all validations pass
+        alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
 
-    if (!formData.propertyType) {
-        alert("Please select Property Type");
-        return;
-    }
-
-    if (!checked) {
-        alert("Please confirm the details first");
-        return;
-    }
-     if (!formData.channelPartner) {
-        alert("Please select channel Partner");
-        return;
-    }
-
-    // If all validations pass
-    alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
-};
+    };
 
 
     const handleCancel = () => {
@@ -177,57 +159,79 @@ const TaggingForm = () => {
         });
         setIConfirm(false);
     };
-    const customSelectStyles = (theme: "dark" | "light") => ({
+    useEffect(() => {
+        if (typeof document !== "undefined") {
+            const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
+            setCurrentTheme(theme);
+
+            // Optional: Listen for theme changes dynamically (if using a theme toggle)
+            const observer = new MutationObserver(() => {
+                const updatedTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
+                setCurrentTheme(updatedTheme);
+            });
+
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
+            return () => observer.disconnect();
+        }
+    }, []);
+    const customSelectStyles = useMemo(() => ({
         control: (base: any) => ({
             ...base,
-            backgroundColor: theme === "dark" ? "#151414f5" : "transparent",
-            borderColor: theme === "dark" ? "#444444f5" : "#927fbff5",
+            backgroundColor: currentTheme === "dark" ? "#151414f5" : "transparent",
+            borderColor: currentTheme === "dark" ? "#444444f5" : "#927fbff5",
             minHeight: "40px",
             borderWidth: "2px",
-            color: theme === "dark" ? "white" : "#201f1f",
+            color: currentTheme === "dark" ? "white" : "#201f1f",
         }),
         menu: (base: any) => ({
             ...base,
-            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            backgroundColor: currentTheme === "dark" ? "#151414f5" : "white",
         }),
         option: (base: any, state: any) => ({
             ...base,
             backgroundColor: state.isSelected
-                ? theme === "dark"
+                ? currentTheme === "dark"
                     ? "#007bff"
                     : "#cce5ff"
                 : state.isFocused
-                    ? theme === "dark"
+                    ? currentTheme === "dark"
                         ? "#e6f0ff"
                         : "#f0f0f0"
-                    : theme === "dark"
+                    : currentTheme === "dark"
                         ? "#fff"
                         : "#fff",
             color: state.isSelected
-                ? theme === "dark"
+                ? currentTheme === "dark"
                     ? "white"
                     : "#201f1f"
                 : "black",
         }),
         multiValue: (base: any) => ({
             ...base,
-            backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
-            color: theme === "dark" ? "white" : "#201f1f",
+            backgroundColor: currentTheme === "dark" ? "#007bff" : "#cce5ff",
+            color: currentTheme === "dark" ? "white" : "#201f1f",
         }),
         multiValueLabel: (base: any) => ({
             ...base,
-            color: theme === "dark" ? "white" : "#201f1f",
+            color: currentTheme === "dark" ? "white" : "#201f1f",
         }),
         multiValueRemove: (base: any) => ({
             ...base,
-            color: theme === "dark" ? "white" : "#201f1f",
+            color: currentTheme === "dark" ? "white" : "#201f1f",
             ":hover": {
                 backgroundColor: "red",
                 color: "white",
             },
         }),
-    });
-
+    }), [currentTheme]);
+    const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
+        <label style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+            {icon}
+            <span>{text}</span>
+            <span style={{ color: "red", fontSize: "15px", marginLeft: "-1px" }}>*</span>
+        </label>
+    );
     return (
         <div className={styles.container}>
             <div className={styles.maincontainer}>
@@ -238,17 +242,19 @@ const TaggingForm = () => {
                     <div className={styles.card}>
                         <div className={styles.formControl}>
                             <label>
-                                <FaStar className={styles.iconcolor} /> Lead Type
+                                <RequiredLabel icon={<FaStar className={styles.iconcolor} />} text=" Lead Type" />
                             </label>
                             <select
                                 value={formData.leadType}
                                 name="leadType"
                                 onChange={onChangeField}
-                            >
+                            >     <option value="">Select Lead Type</option>
                                 <option value="cp">CP</option>
                                 <option value="walk-in">Walk-in</option>
                                 <option value="internal-lead">Internal-lead</option>
                             </select>
+                            {errors.leadType && <p className={styles.errorMsg}>{errors.leadType}</p>}
+
                         </div>
                     </div>
 
@@ -256,7 +262,7 @@ const TaggingForm = () => {
                     <div className={styles.card}>
                         <div className={styles.formControl}>
                             <label>
-                                <IoPersonOutline className={styles.iconcolor} /> Client First Name
+                                <RequiredLabel icon={<IoPersonOutline className={styles.iconcolor} />} text="Client First Name" />
                             </label>
                             <input
                                 type="text"
@@ -264,10 +270,13 @@ const TaggingForm = () => {
                                 name="firstName"
                                 onChange={onChangeField}
                             />
+                            {errors.firstName && <p className={styles.errorMsg}>{errors.firstName}</p>}
+
                         </div>
                         <div className={styles.formControl}>
                             <label>
-                                < IoPersonOutline className={styles.iconcolor} /> Client Last Name
+                                <RequiredLabel icon={<IoPersonOutline className={styles.iconcolor} />} text="Client Last Name" />
+
                             </label>
                             <input
                                 type="text"
@@ -275,10 +284,12 @@ const TaggingForm = () => {
                                 name="lastName"
                                 onChange={onChangeField}
                             />
+                            {errors.lastName && <p className={styles.errorMsg}>{errors.lastName}</p>}
+
                         </div>
                         <div className={styles.formControl}>
                             <label>
-                                <MdOutlineEmail className={styles.iconcolor} /> Email
+                                <RequiredLabel icon={<MdOutlineEmail className={styles.iconcolor} />} text="Email" />
                             </label>
                             <input
                                 type="email"
@@ -286,6 +297,7 @@ const TaggingForm = () => {
                                 name="email"
                                 onChange={onChangeField}
                             />
+                            {errors.email && <p className={styles.errorMsg}>{errors.email}</p>}
                         </div>
                     </div>
 
@@ -293,7 +305,7 @@ const TaggingForm = () => {
                     <div className={styles.card}>
                         <div className={styles.formControl}>
                             <label>
-                                <MdOutlinePhoneInTalk className={styles.iconcolor} /> Phone Number *
+                                <RequiredLabel icon={<MdOutlinePhoneInTalk className={styles.iconcolor} />} text="Phone Number" />
                             </label>
                             <input
                                 type="tel"
@@ -303,6 +315,8 @@ const TaggingForm = () => {
                                 placeholder="Enter 10-digit phone"
                                 maxLength={10}
                             />
+                            {errors.phoneNumber && <p className={styles.errorMsg}>{errors.phoneNumber}</p>}
+
                         </div>
                         <div className={styles.formControl}>
                             <label>
@@ -326,7 +340,7 @@ const TaggingForm = () => {
                             onClick={() => tagdateRef.current?.showPicker()}
                         >
                             <label>
-                                <IoIosCalendar className={styles.iconcolor} /> Tagged Date
+                                <RequiredLabel icon={<IoIosCalendar className={styles.iconcolor} />} text="Tagged Date" />
                             </label>
                             <input
                                 ref={tagdateRef}
@@ -334,6 +348,7 @@ const TaggingForm = () => {
                                 onChange={onChangeStartDate}
                                 type="date"
                             />
+                             {errors.startDate && <p className={styles.errorMsg}>{errors.startDate}</p>}
                         </div>
                         <div
                             className={styles.formControl}
@@ -343,6 +358,8 @@ const TaggingForm = () => {
                                 <IoMdCalendar className={styles.iconcolor} /> Valid Till
                             </label>
                             <input ref={validTillRef} type="date" value={validTill} disabled />
+                                {errors.validTill && <p className={styles.errorMsg}>{errors.validTill}</p>}
+
                         </div>
                     </div>
 
@@ -350,7 +367,7 @@ const TaggingForm = () => {
                     <div className={styles.card}>
                         <div className={styles.formControl}>
                             <label>
-                                <BsBuildingFill className={styles.iconcolor} /> Projects
+                                <RequiredLabel icon={<BsBuildingFill className={styles.iconcolor} />} text="Projects" />
                             </label>
                             <Select
                                 isMulti
@@ -362,12 +379,14 @@ const TaggingForm = () => {
                                         projects: [...selected],
                                     }));
                                 }}
-                                styles={customSelectStyles(currentTheme)}
+                                styles={customSelectStyles}
                             />
+                            {errors.projects && <p className={styles.errorMsg}>{errors.projects}</p>}
                         </div>
                         <div className={styles.formControl}>
                             <label>
-                                <BsBuildingFill className={styles.iconcolor} /> Requirements
+                                <RequiredLabel icon={<BsBuildingFill className={styles.iconcolor} />} text="Requirements" />
+
                             </label>
                             <Select
                                 isMulti
@@ -380,13 +399,15 @@ const TaggingForm = () => {
                                         requirements: [...selected], // spread into a mutable array
                                     }));
                                 }}
-                                styles={customSelectStyles(currentTheme)}
+                                styles={customSelectStyles}
                             />
+                            {errors.requirements && <p className={styles.errorMsg}>{errors.requirements}</p>}
 
                         </div>
                         <div className={styles.formControl}>
                             <label>
-                                <FaStar className={styles.iconcolor} /> Property Type
+                                <RequiredLabel icon={<FaStar className={styles.iconcolor} />} text="Property Type" />
+
                             </label>
                             <select
                                 value={formData.propertyType}
@@ -397,6 +418,8 @@ const TaggingForm = () => {
                                 <option value="residential">Residential</option>
                                 <option value="commercial">Commercial</option>
                             </select>
+                            {errors.propertyType && <p className={styles.errorMsg}>{errors.propertyType}</p>}
+
                         </div>
                     </div>
 
@@ -436,15 +459,18 @@ const TaggingForm = () => {
                     <div className={styles.card} >
                         <div className={styles.formControl}>
                             <label>
-                                <IoPersonOutline className={styles.iconcolor} /> Channel Partner
+                                <RequiredLabel icon={<IoPersonOutline className={styles.iconcolor} />} text="Channel Partner" />
+
                             </label>
                             <Select
                                 options={channelPartnerOptions}
                                 value={formData.channelPartner}
                                 onChange={(val) => setFormData((prev) => ({ ...prev, channelPartner: val }))}
                                 isClearable
-                                styles={customSelectStyles(currentTheme)}
+                                styles={customSelectStyles}
                             />
+                            {errors.channelPartner && <p className={styles.errorMsg}>{errors.channelPartner}</p>}
+
                         </div>
                     </div>
                 </div>
@@ -460,6 +486,8 @@ const TaggingForm = () => {
                         color="primary"
                     />
                     <span>{checked ? "YES" : "NO"}</span>
+                    {errors.checked && <p className={styles.errorMsg}>{errors.checked}</p>}
+
                 </div>
 
                 {/* Buttons */}
@@ -478,4 +506,4 @@ const TaggingForm = () => {
     );
 };
 
-export default TaggingForm;
+export default TaggingFormComponent;
