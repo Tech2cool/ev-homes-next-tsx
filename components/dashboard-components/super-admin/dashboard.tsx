@@ -21,6 +21,8 @@ const SuperAdminDasboard = () => {
     asssignFeedbackInfo,
     closingManagerAllGraph,
     ranking,
+    projects,
+    getProjects,
     getRankingTurns,
     fetchSearchLeads,
     fetchPostSaleLeads,
@@ -96,6 +98,12 @@ const SuperAdminDasboard = () => {
       getRankingTurns();
     }
   }, [user, loading, ranking]);
+
+  useEffect(() => {
+    if (user && !loading && !projects) {
+      getProjects();
+    }
+  }, [user, loading, projects]);
 
   useEffect(() => {
     if (user && !loading && !searchPostSaleLeadInfo) {
@@ -339,10 +347,10 @@ const SuperAdminDasboard = () => {
     if (!denominator || denominator === 0) return 0;
     return +(numerator / denominator).toFixed(1);
   };
-  const projectOptions = [
-    { value: "p1", label: "EV 23 Malibu West" },
-    { value: "p2", label: "EV 10 Marina Bay" },
-  ];
+  // const projectOptions = [
+  //   { value: "p1", label: "EV 23 Malibu West" },
+  //   { value: "p2", label: "EV 10 Marina Bay" },
+  // ];
   const metrics = [
     {
       title: "Lead to CP Visit",
@@ -447,9 +455,10 @@ const SuperAdminDasboard = () => {
               }
             >
               <option value="">Select Project</option>
-              {projectOptions.map((option: any, index: number) => (
-                <option key={index} value={option.value}>
-                  {option.label}
+
+              {projects.map((option: OurProject, index: number) => (
+                <option key={index} value={option._id ?? ""}>
+                  {option.name ?? ""}
                 </option>
               ))}
             </select>
