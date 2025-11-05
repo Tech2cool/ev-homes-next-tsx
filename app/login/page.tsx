@@ -2,8 +2,7 @@
 import type React from "react";
 import { useState } from "react";
 import styles from "./login.module.css";
-import { Mail, Lock, ArrowRight, Phone, MessageSquareText } from "lucide-react"; // Using Lucide React icons
-import { redirect } from "next/navigation";
+import { Mail, Lock, ArrowRight } from "lucide-react"; // Using Lucide React icons
 import { useUser } from "@/providers/userContext";
 import Navbar from "../../components/home-components/HomeNavbar";
 import { MdOutlineEmail, MdPassword } from "react-icons/md";
@@ -60,11 +59,8 @@ const LoginPage = () => {
     // console.log("Login result:", result);
     // const desg = result
     if (result.success) {
-  
       router.push("/dashboard");
     } else {
-
-
       setLoginMessage(result.message || "Login failed.");
     }
 

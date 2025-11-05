@@ -123,28 +123,56 @@
 //   );
 // }
 
-
-
-
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, Calendar, ClipboardList, Home, LayoutDashboard, Package, Users } from "lucide-react";
+import {
+  Bell,
+  Calendar,
+  ClipboardList,
+  Home,
+  LayoutDashboard,
+  Package,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { redirect, usePathname } from "next/navigation";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
+import { useUser } from "@/providers/userContext";
+import { BiExit } from "react-icons/bi";
 export function DashboardSidebar() {
+
   const { theme } = useTheme();
   const pathname = usePathname();
-   const { state } = useSidebar();  // desktop collapsible state
+  const { state } = useSidebar(); // desktop collapsible state
+  const { user, logout } = useUser();
 
   const [windowWidth, setWindowWidth] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const logoutUser = async () => {
+    //
+    logout();
+    redirect("/login");
+  };
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -152,8 +180,6 @@ export function DashboardSidebar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-
 
   const navigationItems = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -167,24 +193,26 @@ export function DashboardSidebar() {
   const isMobile = windowWidth < 1024;
   // ----------------- DESKTOP SIDEBAR -----------------
   const desktopSidebar = (
-     <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon">
       <SidebarHeader className="p-4 flex flex-col items-center gap-2">
         <div className="flex w-full justify-end">
           <SidebarTrigger className="-mr-2" />
         </div>
         <Avatar className="h-10 w-10">
-          <AvatarImage
-            src="/placeholder.svg?height=64&width=64"
-            alt="User Avatar"
-          />
-          <AvatarFallback>JD</AvatarFallback>
+          <AvatarImage src={user?.profilePic ?? "."} alt="User Avatar" />
+          <AvatarFallback>
+            {`${user?.firstName ?? "??"}`?.substring(0, 1)}
+            {`${user?.lastName ?? "??"}`?.substring(0, 1)}
+          </AvatarFallback>
         </Avatar>
         {/* Conditionally render user info based on sidebar state */}
         {state === "expanded" && (
           <div className="text-center w-full">
-            <h3 className="font-semibold text-lg truncate">John Doe</h3>
+            <h3 className="font-semibold text-lg truncate">
+              {user?.firstName ?? "?"} {user?.lastName ?? "?"}
+            </h3>
             <p className="text-sm text-muted-foreground truncate">
-              Sales Manager
+              {user?.designation?.designation ?? "Unkown"}
             </p>
           </div>
         )}
@@ -230,12 +258,24 @@ export function DashboardSidebar() {
           </Button>
           {state === "expanded" && <ThemeToggle />}
         </SidebarGroup>
+        <SidebarGroup>
+          <Button
+            onClick={() => logoutUser()}
+            variant="outline"
+            className="w-full bg-transparent"
+            style={{ color: "red" }}
+            size={state === "collapsed" ? "icon" : "default"}
+          >
+            <BiExit
+              color="red"
+              className={state === "collapsed" ? "h-4 w-4" : "mr-2 h-4 w-4"}
+            />
+            {state === "expanded" && "Logout"}
+          </Button>
+        </SidebarGroup>
       </SidebarContent>
-      {/* <SidebarFooter className="p-4 flex flex-col gap-2">
-      </SidebarFooter> */}
     </Sidebar>
   );
-
 
   const mobileSidebar = (
     <>
@@ -249,20 +289,23 @@ export function DashboardSidebar() {
 
       {mobileOpen && (
         <div className="fixed inset-0 z-40 flex lg:hidden">
-
           <div
             className="fixed inset-0 bg-black/30 dark:bg-black/50"
             onClick={() => setMobileOpen(false)}
           />
 
-
           <div
-            className={`relative flex flex-col h-full w-64 shadow-md transition-all duration-300
-                        ${theme === "dark" ? "bg-[var(--sidebar)] text-gray-100" : "bg-[var(--sidebar)] text-gray-900"}`}
+            className={`relative flex flex-col h-full w-64 shadow-md transition-all duration-300 ${
+              theme === "dark"
+                ? "bg-[var(--sidebar)] text-gray-100"
+                : "bg-[var(--sidebar)] text-gray-900"
+            }`}
           >
-
-            <SidebarHeader className={`p-4 flex flex-col items-center gap-2 border-b
-                                        ${theme === "dark" ? "border-gray-700" : "border-gray-200"}`}>
+            <SidebarHeader
+              className={`p-4 flex flex-col items-center gap-2 border-b ${
+                theme === "dark" ? "border-gray-700" : "border-gray-200"
+              }`}
+            >
               <Button
                 variant="ghost"
                 onClick={() => setMobileOpen(false)}
@@ -270,31 +313,57 @@ export function DashboardSidebar() {
               >
                 ✕
               </Button>
-              <Avatar className={`h-10 w-10  ${theme === "dark" ? "bg-gray-600" : "bg-gray-600"}`}>
-                <AvatarImage src="/placeholder.svg?height=64&width=64" alt="User Avatar" />
-                <AvatarFallback>JD</AvatarFallback>
+              <Avatar
+                className={`h-10 w-10  ${
+                  theme === "dark" ? "bg-gray-600" : "bg-gray-600"
+                }`}
+              >
+                <AvatarImage src={user?.profilePic ?? ""} alt="User Avatar" />
+                <AvatarFallback>
+                  {`${user?.firstName ?? "??"}`?.substring(0, 1)}
+                  {`${user?.lastName ?? "??"}`?.substring(0, 1)}
+                </AvatarFallback>
               </Avatar>
+
               <div className="text-center w-full">
-                <h3 className="font-semibold text-lg truncate">John Doe</h3>
-                <p className={`text-sm truncate ${theme === "dark" ? "text-gray-400" : "text-muted-foreground"}`}>Sales Manager</p>
+                <h3 className="font-semibold text-lg truncate">
+                  {user?.firstName ?? "?"} {user?.lastName ?? "?"}
+                </h3>
+                <p
+                  className={`text-sm truncate ${
+                    theme === "dark" ? "text-gray-400" : "text-muted-foreground"
+                  }`}
+                >
+                  {user?.designation?.designation ?? "Unkown"}
+                </p>
               </div>
             </SidebarHeader>
 
-            <div className={` p-2 overflow-y-auto border-b
-                                        ${theme === "dark" ? "border-gray-700" : "border-gray-200"}`}>
-              <h4 className={`px-2 text-sm mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>Navigation</h4>
+            <div
+              className={` p-2 overflow-y-auto border-b ${
+                theme === "dark" ? "border-gray-700" : "border-gray-200"
+              }`}
+            >
+              <h4
+                className={`px-2 text-sm mb-2 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Navigation
+              </h4>
               <nav className="flex flex-col gap-1">
                 {navigationItems.map((item) => (
                   <Link
                     key={item.title}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-2 p-2 rounded
-                                ${pathname === item.href
-                        ? theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+                    className={`flex items-center gap-2 p-2 rounded ${
+                      pathname === item.href
+                        ? theme === "dark"
+                          ? "bg-gray-700"
+                          : "bg-gray-200"
                         : ""
-                      } 
-                                hover:bg-gray-100 dark:hover:bg-gray-800`}
+                    } hover:bg-gray-100 dark:hover:bg-gray-800`}
                   >
                     <item.icon size={17} />
                     <span>{item.title}</span>
@@ -303,13 +372,35 @@ export function DashboardSidebar() {
               </nav>
             </div>
 
-
             {/* Footer */}
             <div className="p-2 flex flex-col gap-2">
-              <Button className={`flex items-center gap-2 ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-gray-200 text-gray-900"}`}>
+              <Button
+                className={`flex items-center gap-2 ${
+                  theme === "dark"
+                    ? "bg-gray-800 text-gray-100"
+                    : "bg-gray-200 text-gray-900"
+                }`}
+              >
                 <Bell /> Notifications
               </Button>
               <ThemeToggle />
+              <SidebarGroup>
+                <Button
+                  onClick={() => logoutUser()}
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  style={{ color: "red" }}
+                  size={state === "collapsed" ? "icon" : "default"}
+                >
+                  <BiExit
+                    color="red"
+                    className={
+                      state === "collapsed" ? "h-4 w-4" : "mr-2 h-4 w-4"
+                    }
+                  />
+                  Logout
+                </Button>
+              </SidebarGroup>
             </div>
           </div>
         </div>
@@ -318,9 +409,11 @@ export function DashboardSidebar() {
   );
   return (
     <>
-
       {!isMobile && (
-        <Sidebar collapsible="icon" className="hidden lg:flex fixed h-full z-30">
+        <Sidebar
+          collapsible="icon"
+          className="hidden lg:flex fixed h-full z-30"
+        >
           {desktopSidebar}
         </Sidebar>
       )}
