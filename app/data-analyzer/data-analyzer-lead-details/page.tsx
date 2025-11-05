@@ -48,6 +48,7 @@ import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import AnalyzerQuickaccess from "@/components/lead-details-components/analyzerquikaccess";
 import CPTransferHistory from "@/components/lead-details-components/cptransferhistory";
+import useDebounce from "@/hooks/useDebounce";
 
 const dataAnalyzerWrapper = () => {
   return (
@@ -120,8 +121,30 @@ const DataAnalyzerdetailspage = () => {
   const { user, loading, getSocket, reconnectSocket } = useUser();
 
   const socket = getSocket();
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
+
+    const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    if (user && !loading) {
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: selectedFilter?.status,
+        // Add other filter parameters as needed
+      });
+    }
+  }, [debouncedSearchQuery, user, loading]);
+
+
   //   const leadInfo = DUMMY_LEAD_INFO;
   //   const loading = false;
 
@@ -164,7 +187,7 @@ const DataAnalyzerdetailspage = () => {
       if (user && !loading) {
         try {
           await fetchSearchLeads({
-            query: "",
+            query: searchQuery,
             page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
             limit: 10,
             status: selectedFilter?.status,
@@ -184,14 +207,14 @@ const DataAnalyzerdetailspage = () => {
       const nextPage = searchLeadInfo.page + 1;
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchSearchLeads({
-          query: "",
+          query: searchQuery,
           page: nextPage,
           limit: 10,
           status: selectedFilter?.status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads]);
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, searchQuery]);
 
   // Update your scroll handler
   const handleScroll = useCallback(
@@ -302,6 +325,18 @@ const DataAnalyzerdetailspage = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Initial data fetch
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("Initial fetch - visit details");
+      fetchSearchLeads({
+        // id: user?._id,
+        query: searchQuery,
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [user, loading]);
   // useEffect(() => {
   //   if (visitId && leads!.length > 0) {
   //     const foundVisit = leads?.find((v: any) => v?._id === visitId);
@@ -435,8 +470,8 @@ const DataAnalyzerdetailspage = () => {
                 <input
                   type="text"
                   placeholder="Search leads..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className={styles.searchInput}
                 />
               </div>
@@ -590,7 +625,7 @@ const DataAnalyzerdetailspage = () => {
                     onClick={loadMoreLeads}
                     disabled={loadingLeads}
                   >
-                    {loadingLeads ? "Loading..." : "Load More"}
+                    {loadingLeads ? "Loading..." : ""}
                   </button>
                 </div>
               )}
@@ -638,7 +673,17 @@ const DataAnalyzerdetailspage = () => {
                     <button
                       className={styles.whatsbtn}
                       onClick={() => {
-                        alert("Simulating WhatsApp chat.");
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
                       }}
                     >
                       <IoLogoWhatsapp size={15} />
@@ -822,8 +867,8 @@ const DataAnalyzerdetailspage = () => {
               <input
                 type="text"
                 placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className={styles.searchInput}
               />
             </div>
@@ -962,7 +1007,7 @@ const DataAnalyzerdetailspage = () => {
                 onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
-                {loadingRef.current ? "Loading..." : "Load More"}
+                {loadingRef.current ? "Loading..." : ""}
               </button>
             </div>
           )}
@@ -1004,7 +1049,17 @@ const DataAnalyzerdetailspage = () => {
             <button
               className={styles.whatsbtn}
               onClick={() => {
-                alert("Simulating WhatsApp chat.");
+                console.log("clicked 1");
+
+                socket?.emit("callCustomerWeb", {
+                  lead: SelectedLead?._id,
+                  phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                  type: "whatsapp",
+                  message: "hey",
+                  userId: user?._id,
+                });
+
+                console.log("clicked 2");
               }}
             >
               <IoLogoWhatsapp size={15} />

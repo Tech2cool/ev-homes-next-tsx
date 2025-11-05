@@ -47,6 +47,7 @@ import { IoIosPerson } from "react-icons/io";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
+import useDebounce from "@/hooks/useDebounce";
 
 const closingdetilsWrapper = () => {
   return (
@@ -59,22 +60,6 @@ const closingdetilsWrapper = () => {
 export default closingdetilsWrapper;
 
 const Closingdetaispage = () => {
-  const {
-    leadInfo: searchLeadInfo,
-
-    channelPartners,
-    leads,
-    loadingLeads,
-    fetchTeamLeaderLeads,
-    employees,
-    getProjects,
-    getRequirements,
-    projects,
-    requirements,
-  } = useData();
-
-  const router = useRouter();
-
   const visitId = "lead-1";
   // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
   // const [SelectedLead, setSelectedLead] = useState<Lead | null>(DUMMY_LEADS[0] || null);
@@ -100,16 +85,29 @@ const Closingdetaispage = () => {
     action: "approve",
     remark: "",
   });
-  const { user, loading, getSocket, reconnectSocket } = useUser();
 
-  const socket = getSocket();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
   // const leadInfo = DUMMY_LEAD_INFO;
   // const loadingLeads = false;
   // const fetchingMoreLeads = false;
   // const user = DUMMY_USER;
+
+    const [filters, setFilters] = useState({
+    visitType: "",
+    leadFilter: "",
+    statusFilter: "",
+    feedbackFilter: "",
+    clientStatus: "",
+    leadStatus: "",
+    cycleStatus: 0,
+    dateFrom: "",
+    dateTo: "",
+  });
 
   const [selectedFilter, setSelectedFilter] = useState({
     status: null,
@@ -133,13 +131,92 @@ const Closingdetaispage = () => {
     member: null,
   });
 
+    const { user, loading, getSocket, reconnectSocket } = useUser();
+
+   const {
+    leadInfo: searchLeadInfo,
+    channelPartners,
+    leads,
+    loadingLeads,
+    fetchTeamLeaderLeads,
+    employees,
+    getProjects,
+    getRequirements,
+    projects,
+    requirements,
+  } = useData();
+
+  const router = useRouter();
+    const socket = getSocket();
+
+   const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    if (user && !loading) {
+      
+      fetchTeamLeaderLeads({
+              id: user?._id,
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: selectedFilter?.status,
+        // Add other filter parameters as needed
+      });
+    }
+  }, [debouncedSearchQuery, user, loading]);
+
+    const handleFiltersChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+    console.log("Filters applied (Dummy):", newFilters);
+  };
+  
+
+  const handleCall = useCallback(
+    (lead: any) => {
+      console.log("Making call to:", lead);
+      socket?.emit("callCustomerWeb", {
+        lead: lead?._id,
+        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
+        type: "call",
+        message: "call",
+        userId: user?._id,
+      });
+    },
+    [socket, user?._id]
+  );
+
+     useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+    reconnectSocket();
+  }, []);
+
+    // Initial data fetch
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("Initial fetch - visit details");
+      fetchTeamLeaderLeads({
+        id: user?._id,
+        query: searchQuery,
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [user, loading]);
+
   useEffect(() => {
     const fetchLeadsBasedOnStatus = async () => {
       if (user && !loading) {
         try {
           await fetchTeamLeaderLeads({
             id: user._id,
-            query: "",
+            query: searchQuery,
             page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
             limit: 10,
             status: selectedFilter?.status,
@@ -153,14 +230,15 @@ const Closingdetaispage = () => {
     fetchLeadsBasedOnStatus();
   }, [user, loading, selectedFilter]); // Remove searchLeadInfo?.page from dependencies
 
-  // useEffect(() => {
-  //   if (visitId && leads!.length > 0) {
-  //     const foundVisit = leads?.find((v: any) => v?._id === visitId);
-  //     if (foundVisit) {
-  //       setSelectedLead(foundVisit);
-  //     }
-  //   }
-  // }, [visitId, leads]);
+ 
+  useEffect(() => {
+    if (visitId && leads!.length > 0) {
+      const foundVisit = leads?.find((v: any) => v?._id === visitId);
+      if (foundVisit) {
+        setSelectedLead(foundVisit);
+      }
+    }
+  }, [visitId, leads]);
 
   const loadMoreLeads = useCallback(async () => {
     if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
@@ -168,14 +246,14 @@ const Closingdetaispage = () => {
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchTeamLeaderLeads({
           id: user?._id,
-          query: "",
+          query: searchQuery,
           page: nextPage,
           limit: 10,
           status: selectedFilter?.status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchTeamLeaderLeads]);
+  }, [searchLeadInfo, selectedFilter, fetchTeamLeaderLeads, searchQuery]);
 
   // Update your scroll handler
   const handleScroll = useCallback(
@@ -210,45 +288,6 @@ const Closingdetaispage = () => {
 
     router.push(url, { scroll: false });
   };
-
-  const [filters, setFilters] = useState({
-    visitType: "",
-    leadFilter: "",
-    statusFilter: "",
-    feedbackFilter: "",
-    clientStatus: "",
-    leadStatus: "",
-    cycleStatus: 0,
-    dateFrom: "",
-    dateTo: "",
-  });
-
-  const handleFiltersChange = (newFilters: typeof filters) => {
-    setFilters(newFilters);
-    console.log("Filters applied (Dummy):", newFilters);
-  };
-
-  const handleCall = useCallback(
-    (lead: any) => {
-      console.log("Making call to:", lead);
-      socket?.emit("callCustomerWeb", {
-        lead: lead?._id,
-        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
-        type: "call",
-        message: "call",
-        userId: user?._id,
-      });
-    },
-    [socket, user?._id]
-  );
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
     handleScroll,
@@ -353,8 +392,8 @@ const Closingdetaispage = () => {
                 <input
                   type="text"
                   placeholder="Search leads..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className={styles.searchInput}
                 />
               </div>
@@ -377,7 +416,7 @@ const Closingdetaispage = () => {
                     SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
                   onClick={() => {
-                    handleVisitSelect(visit);
+                    setSelectedLead(visit);
                     // Preserve status in navigation
                     const currentParams = new URLSearchParams(
                       window.location.search
@@ -512,7 +551,7 @@ const Closingdetaispage = () => {
                     onClick={loadMoreLeads}
                     disabled={loadingLeads}
                   >
-                    {loadingLeads ? "Loading..." : "Load More"}
+                    {loadingLeads ? "Loading..." : ""}
                   </button>
                 </div>
               )}
@@ -557,10 +596,20 @@ const Closingdetaispage = () => {
                       <MdCall size={15} />
                     </button>
 
-                    <button
+                   <button
                       className={styles.whatsbtn}
                       onClick={() => {
-                        alert("Simulating WhatsApp chat.");
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
                       }}
                     >
                       <IoLogoWhatsapp size={15} />
@@ -753,8 +802,8 @@ const Closingdetaispage = () => {
               <input
                 type="text"
                 placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className={styles.searchInput}
               />
             </div>
@@ -893,7 +942,7 @@ const Closingdetaispage = () => {
                 onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
-                {loadingRef.current ? "Loading..." : "Load More"}
+                {loadingRef.current ? "Loading..." : ""}
               </button>
             </div>
           )}
@@ -932,14 +981,24 @@ const Closingdetaispage = () => {
               <MdCall size={15} />
             </button>
 
-            <button
-              className={styles.whatsbtn}
-              onClick={() => {
-                alert("Simulating WhatsApp chat.");
-              }}
-            >
-              <IoLogoWhatsapp size={15} />
-            </button>
+             <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
+                      <IoLogoWhatsapp size={15} />
+                    </button>
 
             <button
               className={styles.menuBtn}

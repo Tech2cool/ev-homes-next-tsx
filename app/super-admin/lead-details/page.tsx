@@ -61,6 +61,7 @@ import { MdAssignment } from "react-icons/md";
 import { SiGoogletasks } from "react-icons/si";
 import { FaAddressBook } from "react-icons/fa";
 import { CiLink } from "react-icons/ci";
+import { dateFormatOnly } from "@/hooks/useDateFormat";
 
 const VisitDetailWrapper = () => {
   return (
@@ -99,7 +100,9 @@ const LeadDetailsPage = () => {
     remark: "",
   });
 
-  const debouncedSearch = useDebounce(searchTerm, 500);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(true);
 
@@ -117,36 +120,51 @@ const LeadDetailsPage = () => {
   });
 
   const [selectedFilter, setSelectedFilter] = useState({
-      status: null,
-      callData: null,
-      cycle: null,
-      order: null,
-      interval: null,
-      clientstatus: null,
-      leadstatus: null,
-      startDateDeadline: null,
-      endDateDeadline: null,
-      date: null,
-      status2: null,
-      //  approvalStatus : null,
-      //  stage : null,
-      channelPartner: null,
-      teamLeader: null,
-      taskType: null,
-      member: null,
-    });
+    status: null,
+    callData: null,
+    cycle: null,
+    order: null,
+    interval: null,
+    clientstatus: null,
+    leadstatus: null,
+    startDateDeadline: null,
+    endDateDeadline: null,
+    date: null,
+    status2: null,
+    //  approvalStatus : null,
+    //  stage : null,
+    channelPartner: null,
+    teamLeader: null,
+    taskType: null,
+    member: null,
+  });
 
   const { user, loading, getSocket, reconnectSocket } = useUser();
   const {
     fetchSearchLeads,
     searchLeadInfo,
-
     leads,
     loadingLeads,
     fetchingMoreLeads,
   } = useData();
 
   const socket = getSocket();
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    if (user && !loading) {
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: selectedFilter?.status,
+        // Add other filter parameters as needed
+      });
+    }
+  }, [debouncedSearchQuery, user, loading]);
 
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -197,7 +215,7 @@ const LeadDetailsPage = () => {
       console.log("Initial fetch - visit details");
       fetchSearchLeads({
         // id: user?._id,
-        query: searchTerm,
+        query: searchQuery,
         page: 1,
         limit: 10,
       });
@@ -205,14 +223,14 @@ const LeadDetailsPage = () => {
   }, [user, loading]);
 
   // Initial data fetch
-  useEffect(() => {
-    fetchSearchLeads({
-      // id: user?._id,
-      query: searchTerm,
-      page: 1,
-      limit: 10,
-    });
-  }, [debouncedSearch]);
+  // useEffect(() => {
+  //   fetchSearchLeads({
+  //     // id: user?._id,
+  //     query: searchTerm,
+  //     page: 1,
+  //     limit: 10,
+  //   });
+  // }, [debouncedSearch]);
 
   // Update refs when leadInfo changes
   // useEffect(() => {
@@ -232,24 +250,24 @@ const LeadDetailsPage = () => {
     }
   }, [visitId, leads]);
 
-   useEffect(() => {
-      const fetchLeadsBasedOnStatus = async () => {
-        if (user && !loading) {
-          try {
-            await fetchSearchLeads({
-              query: "",
-              page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
-              limit: 10,
-              status: selectedFilter?.status,
-            });
-          } catch (error) {
-            console.error("Error fetching leads:", error);
-          }
+  useEffect(() => {
+    const fetchLeadsBasedOnStatus = async () => {
+      if (user && !loading) {
+        try {
+          await fetchSearchLeads({
+            query: searchQuery,
+            page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+            limit: 10,
+            status: selectedFilter?.status,
+          });
+        } catch (error) {
+          console.error("Error fetching leads:", error);
         }
-      };
-  
-      fetchLeadsBasedOnStatus();
-    }, [user, loading, selectedFilter]); 
+      }
+    };
+
+    fetchLeadsBasedOnStatus();
+  }, [user, loading, selectedFilter]);
 
   // Fixed loadMoreVisits function
   const loadMoreLeads = useCallback(async () => {
@@ -257,14 +275,14 @@ const LeadDetailsPage = () => {
       const nextPage = searchLeadInfo.page + 1;
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchSearchLeads({
-          query: "",
+          query: searchQuery,
           page: nextPage,
           limit: 10,
           status: selectedFilter?.status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads]);
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, searchQuery]);
 
   // const fetchLeads = () => {
   //   fetchTeamLeaderReportingToLeads({
@@ -276,7 +294,7 @@ const LeadDetailsPage = () => {
 
   // Fixed scroll handler with debouncing
   const handleScroll = useCallback(
-     (e: any) => {
+    (e: any) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
       const threshold = 100;
 
@@ -293,7 +311,6 @@ const LeadDetailsPage = () => {
     },
     [loadMoreLeads, loadingLeads, searchLeadInfo]
   );
-
 
   // Debounced scroll handler to prevent excessive calls
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
@@ -390,7 +407,7 @@ const LeadDetailsPage = () => {
   //   });
   // };
 
-  // Desktop view - Two panel layout
+  // Desktop view (list and details)
   if (!isMobile) {
     return (
       <div className={styles.desktopContainer}>
@@ -404,8 +421,8 @@ const LeadDetailsPage = () => {
                 <input
                   type="text"
                   placeholder="Search leads..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className={styles.searchInput}
                 />
               </div>
@@ -541,16 +558,16 @@ const LeadDetailsPage = () => {
                 </div>
               </div>
             ))}
-           {searchLeadInfo?.page &&
+            {searchLeadInfo?.page &&
               searchLeadInfo.totalPages &&
               searchLeadInfo.page < searchLeadInfo.totalPages && (
                 <div className={styles.loadMoreContainer}>
                   <button
                     className={styles.loadMoreBtn}
-                   onClick={() => loadMoreLeads}
+                    onClick={() => loadMoreLeads}
                     disabled={loadingLeads}
                   >
-                    {loadingLeads ? "Loading..." : "Load More"}
+                    {loadingLeads ? "Loading..." : ""}
                   </button>
                 </div>
               )}
@@ -596,7 +613,22 @@ const LeadDetailsPage = () => {
                       <MdCall size={15} />
                     </button>
 
-                    <button className={styles.whatsbtn} onClick={() => {}}>
+                    <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
                       <IoLogoWhatsapp size={15} />
                     </button>
 
@@ -779,10 +811,7 @@ const LeadDetailsPage = () => {
     );
   }
 
-  // Mobile views remain the same but also pass handleCall to VisitDetailsContent
-  // ... rest of your mobile code with similar changes
-
-  // Show detail view when visitId exists
+  // Mobile view (details)
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
@@ -794,8 +823,8 @@ const LeadDetailsPage = () => {
               <input
                 type="text"
                 placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className={styles.searchInput}
               />
             </div>
@@ -952,7 +981,7 @@ const LeadDetailsPage = () => {
                 onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
-                {loadingRef.current ? "Loading..." : "Load More"}
+                {loadingRef.current ? "Loading..." : ""}
               </button>
             </div>
           )}
@@ -961,6 +990,7 @@ const LeadDetailsPage = () => {
     );
   }
 
+  // Mobile view (details)
   return (
     <div className={styles.container}>
       {/* Mobile Header */}
@@ -978,18 +1008,36 @@ const LeadDetailsPage = () => {
           </button>
 
           <div className={styles.actionButtons}>
-            <button className={styles.verifiedBadge}   onClick={() => {
-                        handleCall({
-                          ...SelectedLead,
-                          phoneNumber: SelectedLead.phoneNumber,
-                        });
-                      }}>
+            <button
+              className={styles.verifiedBadge}
+              onClick={() => {
+                handleCall({
+                  ...SelectedLead,
+                  phoneNumber: SelectedLead.phoneNumber,
+                });
+              }}
+            >
               <MdCall size={15} />
             </button>
 
-            <button className={styles.whatsbtn} onClick={() => {}}>
-              <IoLogoWhatsapp size={15} />
-            </button>
+            <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
+                      <IoLogoWhatsapp size={15} />
+                    </button>
 
             <button
               className={styles.menuBtn}
@@ -1219,7 +1267,7 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>📅</div>
           <span className={styles.statusLabel}>Status</span>
-          <span className={styles.statusValue}>Visit Pending</span>
+          <span className={styles.statusValue}>{visit?.stage ?? "NA"}</span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.red}`}
@@ -1227,7 +1275,10 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>⏰</div>
           <span className={styles.statusLabel}>Visit Deadline</span>
-          <span className={styles.statusValue}>06 Nov 25</span>
+          <span className={styles.statusValue}>
+            {" "}
+            {dateFormatOnly(visit?.cycle?.validTill)}
+          </span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.purple}`}
@@ -1235,7 +1286,10 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>👨🏻‍💼</div>
           <span className={styles.statusLabel}>Client Status</span>
-          <span className={styles.statusValue}>NA</span>
+          <span className={styles.statusValue}>
+            {" "}
+            {visit?.clientInterestedStatus ?? "NA"}
+          </span>
         </div>
         <div
           className={`${styles.statusCard} ${styles.yellow}`}
@@ -1243,7 +1297,10 @@ const VisitDetailsContent = ({
         >
           <div className={styles.statusIcon}>💡</div>
           <span className={styles.statusLabel}>Lead Status</span>
-          <span className={styles.statusValue}>Just-curious</span>
+          <span className={styles.statusValue}>
+            {" "}
+            {visit?.interestedStatus ?? "NA"}
+          </span>
         </div>
       </div>
 
@@ -1391,7 +1448,7 @@ const VisitDetailsContent = ({
                   <Calendar size={14} color="#4a84ff" />
                   Occupation
                 </label>
-                <p className={styles.infoValue}>NA</p>
+                <p className={styles.infoValue}> {visit?.occupation ?? "NA"}</p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
@@ -1399,7 +1456,10 @@ const VisitDetailsContent = ({
                   <Calendar size={14} color="#4a84ff" />
                   Remark
                 </label>
-                <p className={styles.infoValue}>NA</p>
+                <p className={styles.infoValue}>
+                  {" "}
+                  {visit?.additionLinRemark ?? "NA"}
+                </p>
               </div>
               <div
                 className={styles.infoItem}

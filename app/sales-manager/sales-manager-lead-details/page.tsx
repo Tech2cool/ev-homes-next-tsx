@@ -47,6 +47,7 @@ import { IoIosPerson } from "react-icons/io";
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
+import useDebounce from "@/hooks/useDebounce";
 
 const salesdetilsWrapper = () => {
   return (
@@ -100,6 +101,9 @@ const Salesdetaispage = () => {
 
   const socket = getSocket();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
   // const leadInfo = DUMMY_LEAD_INFO;
@@ -130,13 +134,26 @@ const Salesdetaispage = () => {
     member: null,
   });
 
+  // Initial data fetch
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("Initial fetch - visit details");
+      fetchTeamLeaderReportingToLeads({
+        id: user?._id,
+        query: searchQuery,
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [user, loading]);
+
   useEffect(() => {
     const fetchLeadsBasedOnStatus = async () => {
       if (user && !loading) {
         try {
           await fetchTeamLeaderReportingToLeads({
             id: user._id,
-            query: "",
+            query: searchQuery,
             page: (searchLeadInfo?.page ?? 0) + 1,
             limit: 10,
             status: selectedFilter?.status,
@@ -156,14 +173,19 @@ const Salesdetaispage = () => {
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchTeamLeaderReportingToLeads({
           id: user?._id,
-          query: "",
+          query: searchQuery,
           page: nextPage,
           limit: 10,
           status: selectedFilter?.status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchTeamLeaderReportingToLeads]);
+  }, [
+    searchLeadInfo,
+    selectedFilter,
+    fetchTeamLeaderReportingToLeads,
+    searchQuery,
+  ]);
 
   const handleScroll = useCallback(
     (e: any) => {
@@ -215,6 +237,23 @@ const Salesdetaispage = () => {
     dateTo: "",
   });
 
+    const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    if (user && !loading) {
+      fetchTeamLeaderReportingToLeads({
+        id: user?._id,
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: selectedFilter?.status,
+        // Add other filter parameters as needed
+      });
+    }
+  }, [debouncedSearchQuery, user, loading]);
+
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
     console.log("Filters applied (Dummy):", newFilters);
@@ -233,6 +272,7 @@ const Salesdetaispage = () => {
     },
     [socket, user?._id]
   );
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -240,6 +280,7 @@ const Salesdetaispage = () => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
+    reconnectSocket();
   }, []);
 
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
@@ -350,8 +391,8 @@ const Salesdetaispage = () => {
                 <input
                   type="text"
                   placeholder="Search leads..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className={styles.searchInput}
                 />
               </div>
@@ -510,7 +551,7 @@ const Salesdetaispage = () => {
                     onClick={loadMoreLeads}
                     disabled={loadingLeads}
                   >
-                    {loadingLeads ? "Loading..." : "Load More"}
+                    {loadingLeads ? "Loading..." : ""}
                   </button>
                 </div>
               )}
@@ -555,10 +596,20 @@ const Salesdetaispage = () => {
                       <MdCall size={15} />
                     </button>
 
-                    <button
+                 <button
                       className={styles.whatsbtn}
                       onClick={() => {
-                        alert("Simulating WhatsApp chat.");
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
                       }}
                     >
                       <IoLogoWhatsapp size={15} />
@@ -753,8 +804,8 @@ const Salesdetaispage = () => {
               <input
                 type="text"
                 placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className={styles.searchInput}
               />
             </div>
@@ -893,7 +944,7 @@ const Salesdetaispage = () => {
                 onClick={() => loadMoreLeads}
                 disabled={loadingRef.current}
               >
-                {loadingRef.current ? "Loading..." : "Load More"}
+                {loadingRef.current ? "Loading..." : ""}
               </button>
             </div>
           )}
@@ -932,14 +983,24 @@ const Salesdetaispage = () => {
               <MdCall size={15} />
             </button>
 
-            <button
-              className={styles.whatsbtn}
-              onClick={() => {
-                alert("Simulating WhatsApp chat.");
-              }}
-            >
-              <IoLogoWhatsapp size={15} />
-            </button>
+           <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: SelectedLead?._id,
+                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
+                      <IoLogoWhatsapp size={15} />
+                    </button>
 
             <button
               className={styles.menuBtn}
