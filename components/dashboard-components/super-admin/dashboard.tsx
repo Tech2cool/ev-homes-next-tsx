@@ -20,7 +20,8 @@ const SuperAdminDasboard = () => {
     searchPostSaleLeadInfo,
     asssignFeedbackInfo,
     closingManagerAllGraph,
-
+    ranking,
+    getRankingTurns,
     fetchSearchLeads,
     fetchPostSaleLeads,
     fetchAssignFeedbackLeadsCount,
@@ -59,8 +60,7 @@ const SuperAdminDasboard = () => {
     project: "",
   });
   const [startDate, setStartDate] = useState<string | null>(null);
-const [endDate, setEndDate] = useState<string | null>(null);
-
+  const [endDate, setEndDate] = useState<string | null>(null);
 
   useEffect(() => {
     if (user && !loading) {
@@ -90,6 +90,12 @@ const [endDate, setEndDate] = useState<string | null>(null);
       });
     }
   }, [user, loading, searchLeadInfo]);
+
+  useEffect(() => {
+    if (user && !loading && !ranking) {
+      getRankingTurns();
+    }
+  }, [user, loading, ranking]);
 
   useEffect(() => {
     if (user && !loading && !searchPostSaleLeadInfo) {
@@ -150,24 +156,23 @@ const [endDate, setEndDate] = useState<string | null>(null);
       bgcolor: "#00bbd409",
       linkHref: "/super-admin/lead-details?status=all",
     },
-    
   ];
 
-//   const dashCount = {
-//     name: "Deepak Karki",
-//     task: { pending: 5 },
-//     lead: {
-//       total: 120,
-//       visit1: 80,
-//       visit2: 40,
-//       booking: 25,
-//       internalLeadCount: 10,
-//       bulkCount: 5,
-//       pending: 15,
-//       bookingCp: 20,
-//       bookingWalkIn: 5,
-//     },
-//   };
+  //   const dashCount = {
+  //     name: "Deepak Karki",
+  //     task: { pending: 5 },
+  //     lead: {
+  //       total: 120,
+  //       visit1: 80,
+  //       visit2: 40,
+  //       booking: 25,
+  //       internalLeadCount: 10,
+  //       bulkCount: 5,
+  //       pending: 15,
+  //       bookingCp: 20,
+  //       bookingWalkIn: 5,
+  //     },
+  //   };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -193,46 +198,44 @@ const [endDate, setEndDate] = useState<string | null>(null);
     return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
 
-//  useEffect(() => {
-//   if (user && !loading) {
-//     if (!selectedFilter && !startDate && !endDate) return;
-//     getAllGraph({
-//       interval: selectedFilter,
-//       startDate,
-//       endDate,
-//     });
-//   }
-// }, [user, loading, selectedFilter, startDate, endDate]);
+  //  useEffect(() => {
+  //   if (user && !loading) {
+  //     if (!selectedFilter && !startDate && !endDate) return;
+  //     getAllGraph({
+  //       interval: selectedFilter,
+  //       startDate,
+  //       endDate,
+  //     });
+  //   }
+  // }, [user, loading, selectedFilter, startDate, endDate]);
 
+  //  useEffect(() => {
+  //   if (user && !loading) {
+  //     console.log("Fetching graph data with params:", {
+  //       interval: selectedFilter,
+  //       startDate,
+  //       endDate
+  //     });
 
+  //     getAllGraph({
+  //       interval: selectedFilter,
+  //       startDate,
+  //       endDate,
+  //     });
+  //   }
+  // }, [user, loading, selectedFilter, startDate, endDate]);
 
-//  useEffect(() => {
-//   if (user && !loading) {
-//     console.log("Fetching graph data with params:", {
-//       interval: selectedFilter,
-//       startDate,
-//       endDate
-//     });
-    
-//     getAllGraph({
-//       interval: selectedFilter,
-//       startDate,
-//       endDate,
-//     });
-//   }
-// }, [user, loading, selectedFilter, startDate, endDate]);
-
-// Add this for initial load
-useEffect(() => {
-  if (user && !loading) {
-    // Initial load with default params
-    getAllGraph({
-      interval: selectedFilter, 
-      startDate,
-      endDate,
-    });
-  }
-}, [user, loading]); 
+  // Add this for initial load
+  useEffect(() => {
+    if (user && !loading) {
+      // Initial load with default params
+      getAllGraph({
+        interval: selectedFilter,
+        startDate,
+        endDate,
+      });
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     const visitScroll = () => {
@@ -343,23 +346,23 @@ useEffect(() => {
   const metrics = [
     {
       title: "Lead to CP Visit",
-     percentage: safeDivision(
-      (closingManagerAllGraph?.visitCount ?? 0) * 100,
-      closingManagerAllGraph?.leadCount ?? 0
-    ),
-    count1: closingManagerAllGraph?.leadCount ?? 0,
-    count2: closingManagerAllGraph?.visitCount ?? 0,
+      percentage: safeDivision(
+        (closingManagerAllGraph?.visitCount ?? 0) * 100,
+        closingManagerAllGraph?.leadCount ?? 0
+      ),
+      count1: closingManagerAllGraph?.leadCount ?? 0,
+      count2: closingManagerAllGraph?.visitCount ?? 0,
       label1: "Lead",
       label2: "CP Visit",
       color: "#ec4899",
     },
     {
       title: "CP Visit to Booking",
-       percentage: safeDivision(
-      (closingManagerAllGraph?.bookingCpCount ?? 0) * 100,
-      closingManagerAllGraph?.visitCount ?? 0
-    ),
-    count1: closingManagerAllGraph?.visitCount ?? 0,
+      percentage: safeDivision(
+        (closingManagerAllGraph?.bookingCpCount ?? 0) * 100,
+        closingManagerAllGraph?.visitCount ?? 0
+      ),
+      count1: closingManagerAllGraph?.visitCount ?? 0,
       count2: closingManagerAllGraph?.bookingCpCount ?? 0,
       label1: "CP Visit",
       label2: "Booking",
@@ -368,9 +371,9 @@ useEffect(() => {
     {
       title: "Lead to Booking",
       percentage: safeDivision(
-      (closingManagerAllGraph?.bookingCount ?? 0) * 100,
-      closingManagerAllGraph?.leadCount ?? 0
-    ),
+        (closingManagerAllGraph?.bookingCount ?? 0) * 100,
+        closingManagerAllGraph?.leadCount ?? 0
+      ),
       count1: closingManagerAllGraph?.leadCount ?? 0,
       count2: closingManagerAllGraph?.bookingCount ?? 0,
       label1: "Lead",
@@ -379,11 +382,11 @@ useEffect(() => {
     },
     {
       title: "Walk In to Booking",
-     percentage: safeDivision(
-      (closingManagerAllGraph?.bookingWalkinCount ?? 0) * 100,
-      closingManagerAllGraph?.visit2Count ?? 0
-    ),
-    count1: closingManagerAllGraph?.visit2Count ?? 0,
+      percentage: safeDivision(
+        (closingManagerAllGraph?.bookingWalkinCount ?? 0) * 100,
+        closingManagerAllGraph?.visit2Count ?? 0
+      ),
+      count1: closingManagerAllGraph?.visit2Count ?? 0,
       count2: closingManagerAllGraph?.bookingWalkinCount ?? 0,
       label1: "Visit",
       label2: "Booking",
@@ -480,21 +483,19 @@ useEffect(() => {
         </div>
       </div>
       <div className={superstayle.rank}>
-        <div className={superstayle.rankItem}>
-          <span className={superstayle.medal}>🥇</span>
-          <span className={superstayle.name}>Ranjana</span>
-          <span className={superstayle.score}>1264</span>
-        </div>
-        <div className={superstayle.rankItem}>
-          <span className={superstayle.medal}>🥈</span>
-          <span className={superstayle.name}>Jaspreet</span>
-          <span className={superstayle.score}>967</span>
-        </div>
-        <div className={superstayle.rankItem}>
-          <span className={superstayle.medal}>🥉</span>
-          <span className={superstayle.name}>Deepak</span>
-          <span className={superstayle.score}>859</span>
-        </div>
+        {ranking?.ranking?.slice(0, 3).map((item, index) => (
+          <div key={item.user?._id || index} className={superstayle.rankItem}>
+            <span className={superstayle.medal}>
+              {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+            </span>
+
+            <span className={superstayle.name}>
+              {`${item.user?.firstName ?? ""} ${item.user?.lastName ?? ""}`}
+            </span>
+
+            <span className={superstayle.score}>{item.score ?? 0}</span>
+          </div>
+        ))}
       </div>
 
       <div className={styles.headtitle}>
@@ -504,29 +505,29 @@ useEffect(() => {
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
             <Link href={card.linkHref} key={index}>
-            <div className={superstayle.card} key={index}>
-              <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
-                {card.icon}
-              </div>
-              <div className={styles.cardContent}>
-                <div className={styles.topRow}>
-                  <div
-                    className={styles.iconContainer}
-                    style={{ color: card.color }}
-                  >
-                    {card.icon}
-                  </div>
-                  <div
-                    className={styles.arrowContainer}
-                    style={{ color: card.color }}
-                  >
-                    <FaArrowRight />
-                  </div>
+              <div className={superstayle.card} key={index}>
+                <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
+                  {card.icon}
                 </div>
-                <p className={styles.label}>{card.label}</p>
-                <p className={styles.value}>{card.value}</p>
+                <div className={styles.cardContent}>
+                  <div className={styles.topRow}>
+                    <div
+                      className={styles.iconContainer}
+                      style={{ color: card.color }}
+                    >
+                      {card.icon}
+                    </div>
+                    <div
+                      className={styles.arrowContainer}
+                      style={{ color: card.color }}
+                    >
+                      <FaArrowRight />
+                    </div>
+                  </div>
+                  <p className={styles.label}>{card.label}</p>
+                  <p className={styles.value}>{card.value}</p>
+                </div>
               </div>
-            </div>
             </Link>
           ))}
         </div>
