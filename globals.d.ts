@@ -121,6 +121,35 @@ interface CallHistory {
   edited: boolean | null;
 }
 
+interface Task {
+  id?: string;
+  assignTo?: Employee;
+  assignBy?: Employee;
+  lead?: Lead;
+  visit?: SiteVisit;
+  booking?: PostSaleLead;
+  name?: string;
+  details?: string;
+  type?: string;
+  remark?: string;
+  
+  assignDate?: string; 
+  completed?: boolean;
+  completedDate?: string;
+  deadline?: string;
+  
+  remindMe?: boolean;
+  reminderDate?: string;
+  reminderDescription?: string;
+
+  transferTaskFrom?: Employee;
+  transferReason?: string;
+
+  reminderType?: string;
+  reminderDueDate?: string;
+  reminderCompleted?: boolean;
+}
+
 interface Cycle {
   _id?: string;
   stage: string | null;
@@ -209,6 +238,7 @@ interface Lead {
   clientInterestedStatus?: string | null;
   clientStatus?: string;
   clientRef?: string | null;
+  taskRef?: Task;
   status?: string;
   siteVisitInterested?: boolean;
   siteVisitInterestedDate?: string | null;

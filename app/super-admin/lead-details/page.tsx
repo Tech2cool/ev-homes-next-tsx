@@ -84,6 +84,7 @@ const LeadDetailsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
+  const status = searchParams.get("status");
 
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
@@ -154,17 +155,42 @@ const LeadDetailsPage = () => {
     setSearchQuery(query);
   };
 
+  // Sync with URL status parameter
+  // useEffect(() => {
+  //   if (status) {
+  //     console.log("URL status changed:", status);
+  //     setSelectedFilter(prev => ({
+  //       ...prev,
+  //       status: status === "all" ? null : status
+  //     }));
+  //   }
+  // }, [status]);
+
+  // Initial data fetch with status from URL
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("Initial fetch with status:", status);
+
+      fetchSearchLeads({
+        query: searchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+      });
+    }
+  }, [user, loading, status]);
+
   useEffect(() => {
     if (user && !loading) {
       fetchSearchLeads({
-        query: debouncedSearchQuery,
+        query: searchQuery,
         page: 1,
         limit: 10,
-        status: selectedFilter?.status,
+        status: status === "all" ? null : status,
         // Add other filter parameters as needed
       });
     }
-  }, [debouncedSearchQuery, user, loading]);
+  }, [searchQuery, user, loading, status]);
 
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -210,17 +236,6 @@ const LeadDetailsPage = () => {
   }, []);
 
   // Initial data fetch
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("Initial fetch - visit details");
-      fetchSearchLeads({
-        // id: user?._id,
-        query: searchQuery,
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading]);
 
   // Initial data fetch
   // useEffect(() => {
@@ -250,24 +265,24 @@ const LeadDetailsPage = () => {
     }
   }, [visitId, leads]);
 
-  useEffect(() => {
-    const fetchLeadsBasedOnStatus = async () => {
-      if (user && !loading) {
-        try {
-          await fetchSearchLeads({
-            query: searchQuery,
-            page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
-            limit: 10,
-            status: selectedFilter?.status,
-          });
-        } catch (error) {
-          console.error("Error fetching leads:", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchLeadsBasedOnStatus = async () => {
+  //     if (user && !loading) {
+  //       try {
+  //         await fetchSearchLeads({
+  //           query: searchQuery,
+  //           page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+  //           limit: 10,
+  //           status: selectedFilter?.status,
+  //         });
+  //       } catch (error) {
+  //         console.error("Error fetching leads:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchLeadsBasedOnStatus();
-  }, [user, loading, selectedFilter]);
+  //   fetchLeadsBasedOnStatus();
+  // }, [user, loading, selectedFilter]);
 
   // Fixed loadMoreVisits function
   const loadMoreLeads = useCallback(async () => {
@@ -278,7 +293,7 @@ const LeadDetailsPage = () => {
           query: searchQuery,
           page: nextPage,
           limit: 10,
-          status: selectedFilter?.status,
+          status: status === "all" ? null : status,
         });
       }
     }
@@ -436,9 +451,9 @@ const LeadDetailsPage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {leads?.map((visit) => (
+            {leads?.map((visit, index) => (
               <div
-                key={visit._id}
+                key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
                 className={`${styles.visitCard} ${
                   SelectedLead?._id === visit._id ? styles.selectedCard : ""
                 }`}
@@ -659,10 +674,16 @@ const LeadDetailsPage = () => {
 
                   {activeTab === "access" && <QuickAccess />}
 
-                  {activeTab === "taskDetails" && <TaskOverview />}
+                  {activeTab === "taskDetails" && (
+                    <TaskOverview task={SelectedLead?.taskRef} />
+                  )}
                   {activeTab === "followup" && <FollowUp />}
                   {activeTab === "siteVisit" && <VisitHistory />}
-                  {activeTab === "transfer" && <TransferHistory />}
+                  {activeTab === "transfer" && (
+                    <TransferHistory
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                    />
+                  )}
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />
@@ -1021,23 +1042,23 @@ const LeadDetailsPage = () => {
             </button>
 
             <button
-                      className={styles.whatsbtn}
-                      onClick={() => {
-                        console.log("clicked 1");
+              className={styles.whatsbtn}
+              onClick={() => {
+                console.log("clicked 1");
 
-                        socket?.emit("callCustomerWeb", {
-                          lead: SelectedLead?._id,
-                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
-                          type: "whatsapp",
-                          message: "hey",
-                          userId: user?._id,
-                        });
+                socket?.emit("callCustomerWeb", {
+                  lead: SelectedLead?._id,
+                  phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                  type: "whatsapp",
+                  message: "hey",
+                  userId: user?._id,
+                });
 
-                        console.log("clicked 2");
-                      }}
-                    >
-                      <IoLogoWhatsapp size={15} />
-                    </button>
+                console.log("clicked 2");
+              }}
+            >
+              <IoLogoWhatsapp size={15} />
+            </button>
 
             <button
               className={styles.menuBtn}

@@ -13,6 +13,7 @@ import { PiFunnelSimple, PiFunnelSimpleBold } from "react-icons/pi";
 import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SuperAdminDasboard = () => {
   const {
@@ -27,6 +28,7 @@ const SuperAdminDasboard = () => {
     getAllGraph,
   } = useData();
   const { user, loading } = useUser();
+  const router = useRouter();
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,8 +61,7 @@ const SuperAdminDasboard = () => {
     project: "",
   });
   const [startDate, setStartDate] = useState<string | null>(null);
-const [endDate, setEndDate] = useState<string | null>(null);
-
+  const [endDate, setEndDate] = useState<string | null>(null);
 
   useEffect(() => {
     if (user && !loading) {
@@ -82,14 +83,15 @@ const [endDate, setEndDate] = useState<string | null>(null);
   }, [asssignFeedbackInfo]);
 
   useEffect(() => {
-    if (user && !loading && !searchLeadInfo) {
-      fetchSearchLeads({
-        query: "",
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading, searchLeadInfo]);
+    if (!user || loading) return;
+
+    fetchSearchLeads({
+      page: 1,
+      limit: 10,
+      query: "",
+      status: status === "all" ? null : status,
+    });
+  }, [user, loading, status]);
 
   useEffect(() => {
     if (user && !loading && !searchPostSaleLeadInfo) {
@@ -108,7 +110,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaUsers />,
       color: "#ad82f2e1",
       bgcolor: "#7c2ff706",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "all",
     },
     {
       label: "Visit 1",
@@ -116,7 +118,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaUserTie />,
       color: "#88c08aa8",
       bgcolor: "#4caf4f09",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "visit",
     },
     {
       label: "Visit 2",
@@ -124,7 +126,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaCarSide />,
       color: "#ce676082",
       bgcolor: "#f4433609",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "visit2",
     },
     {
       label: "Booking",
@@ -132,7 +134,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <IoMdKey />,
       color: "#c0a24aa7",
       bgcolor: "#ffc10709",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "booking",
     },
     {
       label: "Internal leads",
@@ -140,7 +142,7 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaUserFriends />,
       color: "#bd58959c",
       bgcolor: "#d4006a09",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "internal-lead",
     },
     {
       label: "Bulk Leads",
@@ -148,26 +150,42 @@ const [endDate, setEndDate] = useState<string | null>(null);
       icon: <FaBoxes />,
       color: "#58b1bd9c",
       bgcolor: "#00bbd409",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "bulk-lead",
     },
-    
   ];
+const handleCardClick = async (status: any) => {
+  console.log("Card clicked with status:", status);
+  
+  const apiStatus = status === "all" ? null : status;
+  console.log("API status parameter:", apiStatus);
+  
+  // Fetch the filtered leads
+  await fetchSearchLeads({
+    page: 1,
+    limit: 10,
+    query: "",
+    status: apiStatus,
+  });
 
-//   const dashCount = {
-//     name: "Deepak Karki",
-//     task: { pending: 5 },
-//     lead: {
-//       total: 120,
-//       visit1: 80,
-//       visit2: 40,
-//       booking: 25,
-//       internalLeadCount: 10,
-//       bulkCount: 5,
-//       pending: 15,
-//       bookingCp: 20,
-//       bookingWalkIn: 5,
-//     },
-//   };
+  // Pass the filtered data via router state
+   router.push(`/super-admin/lead-details?status=${status}`);
+};
+
+  //   const dashCount = {
+  //     name: "Deepak Karki",
+  //     task: { pending: 5 },
+  //     lead: {
+  //       total: 120,
+  //       visit1: 80,
+  //       visit2: 40,
+  //       booking: 25,
+  //       internalLeadCount: 10,
+  //       bulkCount: 5,
+  //       pending: 15,
+  //       bookingCp: 20,
+  //       bookingWalkIn: 5,
+  //     },
+  //   };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -193,46 +211,44 @@ const [endDate, setEndDate] = useState<string | null>(null);
     return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
 
-//  useEffect(() => {
-//   if (user && !loading) {
-//     if (!selectedFilter && !startDate && !endDate) return;
-//     getAllGraph({
-//       interval: selectedFilter,
-//       startDate,
-//       endDate,
-//     });
-//   }
-// }, [user, loading, selectedFilter, startDate, endDate]);
+  //  useEffect(() => {
+  //   if (user && !loading) {
+  //     if (!selectedFilter && !startDate && !endDate) return;
+  //     getAllGraph({
+  //       interval: selectedFilter,
+  //       startDate,
+  //       endDate,
+  //     });
+  //   }
+  // }, [user, loading, selectedFilter, startDate, endDate]);
 
+  //  useEffect(() => {
+  //   if (user && !loading) {
+  //     console.log("Fetching graph data with params:", {
+  //       interval: selectedFilter,
+  //       startDate,
+  //       endDate
+  //     });
 
+  //     getAllGraph({
+  //       interval: selectedFilter,
+  //       startDate,
+  //       endDate,
+  //     });
+  //   }
+  // }, [user, loading, selectedFilter, startDate, endDate]);
 
-//  useEffect(() => {
-//   if (user && !loading) {
-//     console.log("Fetching graph data with params:", {
-//       interval: selectedFilter,
-//       startDate,
-//       endDate
-//     });
-    
-//     getAllGraph({
-//       interval: selectedFilter,
-//       startDate,
-//       endDate,
-//     });
-//   }
-// }, [user, loading, selectedFilter, startDate, endDate]);
-
-// Add this for initial load
-useEffect(() => {
-  if (user && !loading) {
-    // Initial load with default params
-    getAllGraph({
-      interval: selectedFilter, 
-      startDate,
-      endDate,
-    });
-  }
-}, [user, loading]); 
+  // Add this for initial load
+  useEffect(() => {
+    if (user && !loading) {
+      // Initial load with default params
+      getAllGraph({
+        interval: selectedFilter,
+        startDate,
+        endDate,
+      });
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     const visitScroll = () => {
@@ -343,23 +359,23 @@ useEffect(() => {
   const metrics = [
     {
       title: "Lead to CP Visit",
-     percentage: safeDivision(
-      (closingManagerAllGraph?.visitCount ?? 0) * 100,
-      closingManagerAllGraph?.leadCount ?? 0
-    ),
-    count1: closingManagerAllGraph?.leadCount ?? 0,
-    count2: closingManagerAllGraph?.visitCount ?? 0,
+      percentage: safeDivision(
+        (closingManagerAllGraph?.visitCount ?? 0) * 100,
+        closingManagerAllGraph?.leadCount ?? 0
+      ),
+      count1: closingManagerAllGraph?.leadCount ?? 0,
+      count2: closingManagerAllGraph?.visitCount ?? 0,
       label1: "Lead",
       label2: "CP Visit",
       color: "#ec4899",
     },
     {
       title: "CP Visit to Booking",
-       percentage: safeDivision(
-      (closingManagerAllGraph?.bookingCpCount ?? 0) * 100,
-      closingManagerAllGraph?.visitCount ?? 0
-    ),
-    count1: closingManagerAllGraph?.visitCount ?? 0,
+      percentage: safeDivision(
+        (closingManagerAllGraph?.bookingCpCount ?? 0) * 100,
+        closingManagerAllGraph?.visitCount ?? 0
+      ),
+      count1: closingManagerAllGraph?.visitCount ?? 0,
       count2: closingManagerAllGraph?.bookingCpCount ?? 0,
       label1: "CP Visit",
       label2: "Booking",
@@ -368,9 +384,9 @@ useEffect(() => {
     {
       title: "Lead to Booking",
       percentage: safeDivision(
-      (closingManagerAllGraph?.bookingCount ?? 0) * 100,
-      closingManagerAllGraph?.leadCount ?? 0
-    ),
+        (closingManagerAllGraph?.bookingCount ?? 0) * 100,
+        closingManagerAllGraph?.leadCount ?? 0
+      ),
       count1: closingManagerAllGraph?.leadCount ?? 0,
       count2: closingManagerAllGraph?.bookingCount ?? 0,
       label1: "Lead",
@@ -379,11 +395,11 @@ useEffect(() => {
     },
     {
       title: "Walk In to Booking",
-     percentage: safeDivision(
-      (closingManagerAllGraph?.bookingWalkinCount ?? 0) * 100,
-      closingManagerAllGraph?.visit2Count ?? 0
-    ),
-    count1: closingManagerAllGraph?.visit2Count ?? 0,
+      percentage: safeDivision(
+        (closingManagerAllGraph?.bookingWalkinCount ?? 0) * 100,
+        closingManagerAllGraph?.visit2Count ?? 0
+      ),
+      count1: closingManagerAllGraph?.visit2Count ?? 0,
       count2: closingManagerAllGraph?.bookingWalkinCount ?? 0,
       label1: "Visit",
       label2: "Booking",
@@ -503,11 +519,16 @@ useEffect(() => {
       <div className={styles.leadsection}>
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-            <Link href={card.linkHref} key={index}>
-            <div className={superstayle.card} key={index}>
+            <div
+              className={superstayle.card}
+              key={index}
+              onClick={() => handleCardClick(card.status)}
+              style={{ cursor: "pointer" }} // ✅ Makes card clickable UI
+            >
               <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
                 {card.icon}
               </div>
+
               <div className={styles.cardContent}>
                 <div className={styles.topRow}>
                   <div
@@ -516,6 +537,7 @@ useEffect(() => {
                   >
                     {card.icon}
                   </div>
+
                   <div
                     className={styles.arrowContainer}
                     style={{ color: card.color }}
@@ -523,12 +545,24 @@ useEffect(() => {
                     <FaArrowRight />
                   </div>
                 </div>
+
                 <p className={styles.label}>{card.label}</p>
                 <p className={styles.value}>{card.value}</p>
               </div>
             </div>
-            </Link>
           ))}
+        </div>
+
+        <div className={styles.hint}>
+          <div className={styles.hintcontainer}>
+            <span className={styles.starWrapper}>
+              «
+              <span className={styles.star} ref={starRef}>
+                ✦︎
+              </span>
+              »
+            </span>
+          </div>
         </div>
 
         <div className={styles.hint}>

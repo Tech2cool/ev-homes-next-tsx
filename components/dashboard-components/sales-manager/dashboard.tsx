@@ -109,7 +109,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-green-100",
       gradientFrom: "from-green-50",
       gradientTo: "to-white",
-      linkHref: "/sales-manager/sales-manager-lead-details?status=all",
+      linkHref: "/sales-manager/sales-manager-lead-details?status=visit-done",
     },
     {
       title: "Walk In Visits",
