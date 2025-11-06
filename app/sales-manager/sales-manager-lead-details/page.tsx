@@ -49,7 +49,7 @@ import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import useDebounce from "@/hooks/useDebounce";
 
-const salesdetilsWrapper = () => {
+const SalesDetailsWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Salesdetaispage />
@@ -57,7 +57,7 @@ const salesdetilsWrapper = () => {
   );
 };
 
-export default salesdetilsWrapper;
+export default SalesDetailsWrapper;
 
 const Salesdetaispage = () => {
   const {
@@ -217,7 +217,7 @@ const Salesdetaispage = () => {
     const currentParams = new URLSearchParams(window.location.search);
     const statusParam = currentParams.get("status");
 
-    let url = `/sales-manager/sales-manager-lead-details?id=${lead._id}`;
+    let url = `/lead-details?id=${lead._id}`;
     if (statusParam) {
       url += `&status=${statusParam}`;
     }
@@ -359,9 +359,9 @@ const Salesdetaispage = () => {
   //   setShowSidebar(false);
   // };
 
-  const handleBackToList = () => {
-    router.push("/sales-manager/sales-manager-lead-details");
-  };
+  // const handleBackToList = () => {
+  //   router.push("/sales-manager/sales-manager-lead-details");
+  // };
 
   const clearFilters = () => {
     setFilters({
@@ -422,7 +422,7 @@ const Salesdetaispage = () => {
                     );
                     const statusParam = currentParams.get("status");
 
-                    let url = `/sales-manager/sales-manager-lead-details?id=${visit._id}`;
+                    let url = `/lead-details?id=${visit._id}`;
                     if (statusParam) {
                       url += `&status=${statusParam}`;
                     }
@@ -826,7 +826,7 @@ const Salesdetaispage = () => {
               onClick={() => {
                 setSelectedLead(visit);
                 router.push(
-                  `/sales-manager/sales-manager-lead-details?id=${visit._id}`,
+                  `/lead-details?id=${visit._id}`,
                   {
                     scroll: false,
                   }
