@@ -348,7 +348,7 @@ type DashboardCount = {
 };
 
 type ClosingManagerGraph = {
-   leadCount: number | null;
+  leadCount: number | null;
   bookingCount: number | null;
   visitCount: number | null;
   revisitCount: number | null;
@@ -447,10 +447,12 @@ type DataProviderState = {
   myOverallTarget: OverallTarget | null;
   projectTargets: ProjectTargetData[];
   loadingProjectTargets: boolean;
+  ranking: RankingTurn|null;
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
+  getRankingTurns: () => Promise<{ success: boolean; message?: string }>;
   getChannelPartners: () => Promise<{ success: boolean; message?: string }>;
   fetchReportingToEmployees: (
     id: string,
@@ -591,8 +593,11 @@ const initialState: DataProviderState = {
   myOverallTarget: null,
   projectTargets: [],
   loadingProjectTargets: false,
+  ranking: null,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
+  getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
+
   getTestimonals: async () => ({ success: false, message: "Not initialized" }),
   getChannelPartners: async () => ({
     success: false,
@@ -663,10 +668,13 @@ const dataProviderContext =
 export function DataProvider({ children, ...props }: DataProviderProps) {
   const [projects, setProjects] = useState<OurProject[]>([]);
   const [requirements, setRequirements] = useState<string[]>([]);
+  const [ranking, setRanking] = useState<RankingTurn|null>(null);
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loadingTestimonial, setLoadingTestimonial] = useState<boolean>(false);
   const [loadingProject, setLoadingProject] = useState<boolean>(false);
+  const [loadingRanking, setLoadingRanking] = useState<boolean>(false);
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
@@ -1357,81 +1365,79 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
- const getAllGraph = async ({
-  interval = null,
-  startDate = null,
-  endDate = null,
-}: {
-  interval?: string | null;
-  startDate?: string | null;
-  endDate?: string | null;
-} = {}): Promise<{ success: boolean; message?: string }> => {
-  setError("");
+  const getAllGraph = async ({
+    interval = null,
+    startDate = null,
+    endDate = null,
+  }: {
+    interval?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  } = {}): Promise<{ success: boolean; message?: string }> => {
+    setError("");
 
-  try {
-    let url = "/api/leads-graph";
-    const queryParams = new URLSearchParams();
+    try {
+      let url = "/api/leads-graph";
+      const queryParams = new URLSearchParams();
 
-    if (interval) {
-      queryParams.append("interval", interval);
-    }
-    if (startDate) {
-      queryParams.append("startDate", startDate);
-    }
-    if (endDate) {
-      queryParams.append("endDate", endDate);
-    }
+      if (interval) {
+        queryParams.append("interval", interval);
+      }
+      if (startDate) {
+        queryParams.append("startDate", startDate);
+      }
+      if (endDate) {
+        queryParams.append("endDate", endDate);
+      }
 
-    const queryString = queryParams.toString();
-    if (queryString) {
-      url += `?${queryString}`;
-    }
+      const queryString = queryParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
 
+      // console.log("Fetching graph data from:", url);
 
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
 
-    // console.log("Fetching graph data from:", url);
+      // console.log("Graph API response:", res);
 
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
+      // Check if the response structure matches your Flutter code
+      if (res?.code !== 200) {
+        const errorMessage = res?.message || "Failed to fetch graph data";
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+      }
 
-    // console.log("Graph API response:", res);
+      // The graph data should be in res.data according to your Flutter code
+      // console.log(res.data);
+      const graphData = res.data as ClosingManagerGraph;
+      setAllGraphCount(graphData);
 
-    // Check if the response structure matches your Flutter code
-    if (res?.code !== 200) {
-      const errorMessage = res?.message || "Failed to fetch graph data";
+      return { success: true };
+    } catch (err: any) {
+      // console.log(err);
+
+      let errorMessage = "Something went wrong";
+
+      if (err.response) {
+        // Backend response error message
+        errorMessage = err.response?.data?.message || errorMessage;
+      } else {
+        // Other types of errors (network, etc.)
+        errorMessage = err.message || errorMessage;
+      }
+
+      // Prevent literal 'null' from showing
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
       setError(errorMessage);
       return { success: false, message: errorMessage };
     }
-
-    // The graph data should be in res.data according to your Flutter code
-    // console.log(res.data);
-    const graphData = res.data as ClosingManagerGraph;
-    setAllGraphCount(graphData);
-
-    return { success: true };
-  } catch (err: any) {
-    // console.log(err);
-
-    let errorMessage = "Something went wrong";
-
-    if (err.response) {
-      // Backend response error message
-      errorMessage = err.response?.data?.message || errorMessage;
-    } else {
-      // Other types of errors (network, etc.)
-      errorMessage = err.message || errorMessage;
-    }
-
-    // Prevent literal 'null' from showing
-    if (errorMessage.trim().toLowerCase() === "null") {
-      errorMessage = "Something went wrong";
-    }
-
-    setError(errorMessage);
-    return { success: false, message: errorMessage };
-  }
-};
+  };
 
   // Function to get dashboard count for a Closing Manager
   const getClosingManagerDashBoardCount = async ({
@@ -2096,6 +2102,37 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  //ranking turns
+  const getRankingTurns = async () => {
+    setLoadingRanking(true);
+    setError("");
+    console.log("calling this 1");
+    try {
+      const url = `/api/turn-ranking`;
+      const res = await fetchAdapter(url, {
+        method: "get",
+      });
+      console.log(url);
+
+      // console.log(res?.data);
+
+      const data = res?.data; 
+      setRanking(data);
+      setLoadingRanking(false);
+
+      return { success: true };
+    } catch (err: any) {
+      // console.log(err);
+      setError(err.message);
+      setLoadingRanking(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoadingRanking(false);
+    }
+  }; 
+
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2127,6 +2164,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
     loadingProjectTargets: loadingProjectTargets,
     salesDashCount: salesDashCount,
+    ranking: ranking,
     getProjectTargets: getProjectTargets,
 
     getProjects: getProjects,
@@ -2154,6 +2192,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getAllGraph: getAllGraph,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
+    getRankingTurns: getRankingTurns,
   };
 
   return (

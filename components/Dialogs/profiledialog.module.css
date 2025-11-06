@@ -1,0 +1,553 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+  z-index: 1000;
+}
+
+.container {
+  background: rgb(246, 246, 246);
+  padding: 20px;
+  width: fit-content;
+  height: auto;
+  border-radius: 12px;
+  position: relative;
+  margin-left: auto;
+  margin-right: 5vw;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1vh;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.profileImage {
+  width: 10vw;
+  height: 10vw;
+  border-radius: 50%;
+  background-color: #ddd;
+  border: 2px solid #999;
+}
+
+.userInfo {
+  text-align: center;
+}
+
+.userName {
+  margin: 5px 0;
+  font-size: 1.8vw;
+  font-weight: bold;
+  color: black;
+}
+
+.userDesignation {
+  font-size: 1.1vw;
+  color: #666;
+}
+
+.personalInfoSection,
+.reportingInfoSection,
+.contactInfoSection,
+.leaveInfoSection {
+  background: linear-gradient(to top left, #f5f5f5, #fffafa);
+  border-radius: 12px;
+  padding: 2vh;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.personalInfoSection:hover,
+.reportingInfoSection:hover,
+.contactInfoSection:hover,
+.leaveInfoSection:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.personalInfoSection {
+  margin-left: 1vw;
+  margin-right: 1vw;
+  width: 22vw;
+}
+
+.reportingInfoSection,
+.contactInfoSection {
+  margin-left: 1vw;
+  margin-right: 1vw;
+  width: 21vw;
+  height: 20vh;
+}
+
+.leaveInfoSection {
+  margin-left: 1vw;
+  margin-right: 1vw;
+  width: 47vw;
+}
+
+.sectionHeading {
+  font-size: 1.4vw;
+  font-weight: 600;
+  margin-bottom: 2vh;
+  color: #002b70;
+  border-left: 4px solid #002b70;
+  padding-left: 10px;
+  background-color: #e8f0ff;
+  border-radius: 4px;
+}
+
+.infoRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed #ccc;
+  font-size: 2.2vh;
+  color: #444;
+  gap: 0.2vw;
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.infoRow span:first-child {
+  font-weight: 500;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 10px;
+}
+
+.perRepoContainer {
+  display: flex;
+}
+
+.repoSection {
+  display: flex;
+  gap: 10px;
+}
+
+.reportingToImage {
+  width: 2vw;
+  height: 2vw;
+  border-radius: 50%;
+  background-color: #ddd;
+  border: 2px solid #999;
+}
+
+.repoInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.repoContContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profileActions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.customButtonOrange,
+.customButtonBlue,
+.customButtonRed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 25px;
+  padding: 6px 12px;
+  width: 9vw;
+  transition: 0.3s ease;
+}
+
+.customButtonOrange {
+  border: 2px solid orange;
+  background-color: rgba(255, 165, 0, 0.1);
+}
+.customButtonOrange:hover {
+  background-color: rgba(255, 165, 0, 0.2);
+}
+
+.customButtonBlue {
+  border: 2px solid #2196f3;
+  background-color: rgba(33, 150, 243, 0.1);
+}
+.customButtonBlue:hover {
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+.customButtonRed {
+  border: 2px solid red;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+.customButtonRed:hover {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.iconCircleOrange,
+.iconCircleBlue,
+.iconCircleRed {
+  width: 2vw;
+  height: 2vw;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2vh;
+}
+
+.iconCircleOrange {
+  border: 2px solid orange;
+  color: orange;
+}
+.iconCircleBlue {
+  border: 2px solid #2196f3;
+  color: #2196f3;
+}
+.iconCircleRed {
+  border: 2px solid red;
+  color: red;
+}
+
+.textBoxOrange,
+.textBoxBlue,
+.textBoxRed {
+  font-size: 1vw;
+  font-weight: 500;
+}
+
+.textBoxOrange {
+  color: orange;
+}
+.textBoxBlue {
+  color: #2196f3;
+}
+.textBoxRed {
+  color: red;
+}
+
+.userInfoMobile {
+  display: none;
+}
+
+.profileActionsMobileWrapper {
+  display: none;
+}
+
+@media screen and (max-width: 616px) {
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px;
+    height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .profileContainer {
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding-top: 12vw;
+  }
+
+  .profileSection {
+    position: relative;
+    background: url("/images/buildingforDescription.jpg") no-repeat center
+      center/cover;
+    border-radius: 6vw;
+    width: 85vw;
+    height: 25vw;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 12vw;
+  }
+
+  .profileImage {
+    position: absolute;
+    bottom: -12vw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25vw;
+    height: 25vw;
+    border-radius: 50%;
+    background-color: #ddd;
+    border: 4px solid white;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .userInfoDesktop {
+    display: none;
+  }
+  .userInfoMobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .userName {
+    font-size: 4vw;
+    font-weight: bold;
+  }
+
+  .userDesignation {
+    font-size: 3vw;
+    color: #555;
+  }
+
+  .rightSection {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+  .personalInfoSection {
+    width: 80vw !important;
+    margin: 0px 0;
+    margin-bottom: 2vh;
+  }
+
+  .perRepoContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .profileContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sectionHeading {
+    font-size: 5vw;
+    margin-bottom: 1vh;
+    padding-left: 2vw;
+  }
+
+  .infoRow {
+    font-size: 2.1vh;
+    color: #444;
+    gap: 0.2vw;
+  }
+
+  .leaveInfoSection,
+  .contactInfoSection,
+  .reportingInfoSection {
+    width: 80vw !important;
+    margin: 0px 0;
+    margin-top: 1vh;
+  }
+
+  .leaveInfoSection {
+    margin-bottom: 1vh;
+  }
+
+  .reportingToImage {
+    width: 10vw;
+    height: 10vw;
+  }
+
+  .profileActionsWrapper{
+    display: none;
+  }
+
+  .profileActionsMobileWrapper{
+    display: flex;
+    
+    
+  }
+  .profileActionsMobile{
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+    margin-bottom:2vh;
+  }
+
+  .customOrange,
+  .customBlue,
+  .customRed {
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+    cursor: pointer;
+    border-radius: 25px;
+    padding: 6px 12px;
+    width: 30vw;
+    transition: 0.3s ease;
+  }
+
+  .customOrange {
+    border: 2px solid orange;
+    background-color: rgba(255, 165, 0, 0.1);
+  }
+  .customOrange:hover {
+    background-color: rgba(255, 165, 0, 0.2);
+  }
+
+  .customBlue {
+    border: 2px solid #2196f3;
+    background-color: rgba(33, 150, 243, 0.1);
+  }
+  .customBlue:hover {
+    background-color: rgba(33, 150, 243, 0.2);
+  }
+
+  .customRed {
+    border: 2px solid red;
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+  .customRed:hover {
+    background-color: rgba(255, 0, 0, 0.2);
+  }
+
+  .iconCirOrange,
+  .iconCirBlue,
+  .iconCirRed {
+    width: 5vw;
+    height: 5vw;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vh;
+  }
+
+  .iconCirOrange {
+    border: 2px solid orange;
+    color: orange;
+  }
+  .iconCirBlue {
+    border: 2px solid #2196f3;
+    color: #2196f3;
+  }
+  .iconCirRed {
+    border: 2px solid red;
+    color: red;
+  }
+
+  .textOrange,
+  .textBlue,
+  .textRed {
+    font-size: 3vw;
+    font-weight: 500;
+  }
+
+  .textOrange {
+    color: orange;
+  }
+  .textBlue {
+    color: #2196f3;
+  }
+  .textRed {
+    color: red;
+  }
+}
+:global(html.dark) .overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+:global(html.dark) .container {
+  background: #1e1e1e;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+
+:global(html.dark) .userName {
+  color: #f5f5f5;
+}
+
+:global(html.dark) .userDesignation {
+  color: #b0b0b0;
+}
+
+:global(html.dark) .personalInfoSection,
+:global(html.dark) .reportingInfoSection,
+:global(html.dark) .contactInfoSection,
+:global(html.dark) .leaveInfoSection {
+  background: #2a2a2a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:global(html.dark) .sectionHeading {
+  color: #80b3ff;
+  border-left: 4px solid #80b3ff;
+  background-color: #1a1a1ab1;
+}
+
+:global(html.dark) .infoRow {
+  color: #ccc;
+  border-bottom: 1px dashed #444;
+}
+
+:global(html.dark) .customButtonOrange {
+  border: 2px solid orange;
+  background-color: rgba(255, 165, 0, 0.2);
+}
+
+:global(html.dark) .customButtonBlue {
+  border: 2px solid #2196f3;
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+:global(html.dark) .customButtonRed {
+  border: 2px solid red;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+:global(html.dark) .textBoxOrange {
+  color: orange;
+}
+
+:global(html.dark) .textBoxBlue {
+  color: #2196f3;
+}
+
+:global(html.dark) .textBoxRed {
+  color: red;
+}

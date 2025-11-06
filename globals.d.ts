@@ -100,7 +100,7 @@ interface Division {
 interface CallNote {
   _id?: string;
   note: string | null;
-  date: string; // ISO date string
+  date: string; 
   channelPartner: string | null;
 }
 
@@ -372,3 +372,33 @@ interface LineChartData {
   month: string;
   leads: number;
 }
+
+
+ interface RankingTurn {
+  id?: string;
+  period?: Period;
+  startDate?: string;  
+  endDate?: string;    
+  ranking?: RankTurn[]|null;
+  timeline?: RankTurn[]|null;
+}
+
+ interface Period {
+  id?: string;
+  period?: string;
+  startDate?: string; 
+  endDate?: string;   
+}
+
+ interface RankTurn {
+  id?: string;
+  user?: Employee | null; 
+  rank?: number;
+  leadsShouldRecieve?: number;
+  leadsGiven?: number;
+  score?: number;
+  isMyTurn?: boolean;
+  leads: string[];
+}
+
+

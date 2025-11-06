@@ -50,7 +50,18 @@
   align-items: center;
   z-index: 1001;
 }
-
+.icon {
+  font-size: 3vh;
+  cursor: pointer;
+  color: white;
+  transition: color 0.3s;
+}
+:global(html.light) .icon{
+  color: rgb(29, 28, 28);
+}
+.icon:hover {
+  color: #f4a261;
+}
 .logoImage {
   height: auto;
   transition: transform var(--transition-fast);

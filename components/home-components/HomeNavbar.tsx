@@ -4,6 +4,8 @@ import styles from "./navbar.module.css";
 import Link from "next/link";
 import { ThemeToggle } from "../ThemeToggle";
 import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
+import ProfileDialogBox from "@/components/Dialogs/Profiledialog";
 
 const imageSrc = "/images/evhomeslogo_1.webp";
 
@@ -11,6 +13,7 @@ const HomeNavbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openProfileDialog, setOpenProfileDialog] = useState(false);
 
   // scroll blur effect
   useEffect(() => {
@@ -45,84 +48,94 @@ const HomeNavbar = () => {
   };
 
   return (
-    <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
-      <div className={styles.navContainer}>
-        <div className={styles.logo}>
-          <Image
-            src={imageSrc || "/placeholder.svg"}
-            alt="EV Homes Logo"
-            width={140}
-            height={45}
-            priority
-            quality={90}
-            className={styles.logoImage}
-          />
-        </div>
+    <>
+      <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
+        <div className={styles.navContainer}>
+          <div className={styles.logo}>
+            <Image
+              src={imageSrc || "/placeholder.svg"}
+              alt="EV Homes Logo"
+              width={140}
+              height={45}
+              priority
+              quality={90}
+              className={styles.logoImage}
+            />
+          </div>
 
-        <ul
-          className={`${styles.navLinks} ${
-            isMobileMenuOpen ? styles.mobileMenuOpen : ""
-          }`}
-        >
-          <li
-            className={
-              !activeSection || activeSection === "home" ? styles.active : ""
-            }
+          <ul
+            className={`${styles.navLinks} ${isMobileMenuOpen ? styles.mobileMenuOpen : ""
+              }`}
           >
-            <Link href="/" className={styles.navLink}>
-              <span>Home</span>
-            </Link>
-          </li>
-          <li className={activeSection === "projects" ? styles.active : ""}>
-            <Link href="/projects" className={styles.navLink}>
-              <span>Projects</span>
-            </Link>
-          </li>
-          <li className={activeSection === "gallery" ? styles.active : ""}>
-            <Link href="#gallery" className={styles.navLink}>
-              <span>Gallery</span>
-            </Link>
-          </li>
-          <li className={activeSection === "videos" ? styles.active : ""}>
-            <Link href="#videos" className={styles.navLink}>
-              <span>Videos</span>
-            </Link>
-          </li>
-          <li className={activeSection === "about" ? styles.active : ""}>
-            <Link href="/contact" className={styles.navLink}>
-              <span>About Us</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/login"
-              className={`${styles.navLink} ${styles.loginBtn}`}
+            <li
+              className={
+                !activeSection || activeSection === "home" ? styles.active : ""
+              }
             >
-              <span>Login</span>
-            </Link>
-          </li>
-          <li className={styles.themeToggleWrapper}>
-            <ThemeToggle />
-          </li>
-        </ul>
+              <Link href="/" className={styles.navLink}>
+                <span>Home</span>
+              </Link>
+            </li>
+            <li className={activeSection === "projects" ? styles.active : ""}>
+              <Link href="/projects" className={styles.navLink}>
+                <span>Projects</span>
+              </Link>
+            </li>
+            <li className={activeSection === "gallery" ? styles.active : ""}>
+              <Link href="#gallery" className={styles.navLink}>
+                <span>Gallery</span>
+              </Link>
+            </li>
+            <li className={activeSection === "videos" ? styles.active : ""}>
+              <Link href="#videos" className={styles.navLink}>
+                <span>Videos</span>
+              </Link>
+            </li>
+            <li className={activeSection === "about" ? styles.active : ""}>
+              <Link href="/contact" className={styles.navLink}>
+                <span>About Us</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/login"
+                className={`${styles.navLink} ${styles.loginBtn}`}
+              >
+                <span>Login</span>
+              </Link>
+            </li>
+            <li className={styles.themeToggleWrapper}>
+              <ThemeToggle />
+            </li>
+            <FaUserCircle
+              className={styles.icon}
+              onClick={() => setOpenProfileDialog(true)}
+            />
+          </ul>
 
-        <button
-          className={styles.mobileMenuToggle}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle mobile menu"
-        >
-          <span
-            className={`${styles.hamburger} ${
-              isMobileMenuOpen ? styles.hamburgerOpen : ""
-            }`}
+          <button
+            className={styles.mobileMenuToggle}
+            onClick={toggleMobileMenu}
+            aria-label="Toggle mobile menu"
           >
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
-      </div>
-    </nav>
+            <span
+              className={`${styles.hamburger} ${isMobileMenuOpen ? styles.hamburgerOpen : ""
+                }`}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+        </div>
+      </nav>
+      <ProfileDialogBox
+        isOpen={openProfileDialog}
+        onClose={() => setOpenProfileDialog(false)}
+      />
+    </>
+
+
   );
 };
 

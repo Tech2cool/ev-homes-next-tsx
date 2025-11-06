@@ -21,7 +21,10 @@ const SuperAdminDasboard = () => {
     searchPostSaleLeadInfo,
     asssignFeedbackInfo,
     closingManagerAllGraph,
-
+    ranking,
+    projects,
+    getProjects,
+    getRankingTurns,
     fetchSearchLeads,
     fetchPostSaleLeads,
     fetchAssignFeedbackLeadsCount,
@@ -92,6 +95,18 @@ const SuperAdminDasboard = () => {
       status: status === "all" ? null : status,
     });
   }, [user, loading, status]);
+
+  useEffect(() => {
+    if (user && !loading && !ranking) {
+      getRankingTurns();
+    }
+  }, [user, loading, ranking]);
+
+  useEffect(() => {
+    if (user && !loading && !projects) {
+      getProjects();
+    }
+  }, [user, loading, projects]);
 
   useEffect(() => {
     if (user && !loading && !searchPostSaleLeadInfo) {
@@ -167,9 +182,11 @@ const handleCardClick = async (status: any) => {
     status: apiStatus,
   });
 
+
   // Pass the filtered data via router state
    router.push(`/super-admin/lead-details?status=${status}`);
 };
+
 
   //   const dashCount = {
   //     name: "Deepak Karki",
@@ -352,10 +369,10 @@ const handleCardClick = async (status: any) => {
     if (!denominator || denominator === 0) return 0;
     return +(numerator / denominator).toFixed(1);
   };
-  const projectOptions = [
-    { value: "p1", label: "EV 23 Malibu West" },
-    { value: "p2", label: "EV 10 Marina Bay" },
-  ];
+  // const projectOptions = [
+  //   { value: "p1", label: "EV 23 Malibu West" },
+  //   { value: "p2", label: "EV 10 Marina Bay" },
+  // ];
   const metrics = [
     {
       title: "Lead to CP Visit",
@@ -460,9 +477,10 @@ const handleCardClick = async (status: any) => {
               }
             >
               <option value="">Select Project</option>
-              {projectOptions.map((option: any, index: number) => (
-                <option key={index} value={option.value}>
-                  {option.label}
+
+              {projects.map((option: OurProject, index: number) => (
+                <option key={index} value={option._id ?? ""}>
+                  {option.name ?? ""}
                 </option>
               ))}
             </select>
@@ -496,21 +514,19 @@ const handleCardClick = async (status: any) => {
         </div>
       </div>
       <div className={superstayle.rank}>
-        <div className={superstayle.rankItem}>
-          <span className={superstayle.medal}>🥇</span>
-          <span className={superstayle.name}>Ranjana</span>
-          <span className={superstayle.score}>1264</span>
-        </div>
-        <div className={superstayle.rankItem}>
-          <span className={superstayle.medal}>🥈</span>
-          <span className={superstayle.name}>Jaspreet</span>
-          <span className={superstayle.score}>967</span>
-        </div>
-        <div className={superstayle.rankItem}>
-          <span className={superstayle.medal}>🥉</span>
-          <span className={superstayle.name}>Deepak</span>
-          <span className={superstayle.score}>859</span>
-        </div>
+        {ranking?.ranking?.slice(0, 3).map((item, index) => (
+          <div key={item.user?._id || index} className={superstayle.rankItem}>
+            <span className={superstayle.medal}>
+              {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+            </span>
+
+            <span className={superstayle.name}>
+              {`${item.user?.firstName ?? ""} ${item.user?.lastName ?? ""}`}
+            </span>
+
+            <span className={superstayle.score}>{item.score ?? 0}</span>
+          </div>
+        ))}
       </div>
 
       <div className={styles.headtitle}>
@@ -519,6 +535,7 @@ const handleCardClick = async (status: any) => {
       <div className={styles.leadsection}>
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
+
             <div
               className={superstayle.card}
               key={index}
@@ -543,13 +560,18 @@ const handleCardClick = async (status: any) => {
                     style={{ color: card.color }}
                   >
                     <FaArrowRight />
+
                   </div>
+                  <p className={styles.label}>{card.label}</p>
+                  <p className={styles.value}>{card.value}</p>
                 </div>
+
 
                 <p className={styles.label}>{card.label}</p>
                 <p className={styles.value}>{card.value}</p>
               </div>
             </div>
+
           ))}
         </div>
 
