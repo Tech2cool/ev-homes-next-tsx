@@ -138,7 +138,7 @@ const HomeNavbar = () => {
             onClick={toggleMobileMenu}
             aria-label="Toggle mobile menu"
           >
-            {/* <span
+            <span
               className={`${styles.hamburger} ${
                 isMobileMenuOpen ? styles.hamburgerOpen : ""
               }`}
@@ -146,7 +146,8 @@ const HomeNavbar = () => {
               <span></span>
               <span></span>
               <span></span>
-            </span> */}
+              
+            </span>
           </button>
         </div>
       </nav>
