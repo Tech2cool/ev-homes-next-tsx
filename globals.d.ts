@@ -50,6 +50,8 @@ interface Testimonial {
 
 //employee
 interface Employee {
+  alternatePhoneNumber(alternatePhoneNumber: any): unknown;
+  alternatePhoneNumber: any;
   _id?: string | null;
   prefix?: string | null;
   email?: string | null;
@@ -106,7 +108,7 @@ interface CallNote {
 
 interface CallHistory {
   _id?: string;
-  caller: string | null;
+  caller: Employee;
   callDate: string;
   document: string | null;
   recording: string | null;
@@ -226,7 +228,7 @@ interface Lead {
   firstVisit?: boolean;
   visitDate?: string | null;
   revisitDate?: string | null;
-  visitRef?: string | null;
+  visitRef?: SiteVisit;
   taskRef?: Task | null;
   revisitStatus?: string;
   revisitRef?: string | null;
