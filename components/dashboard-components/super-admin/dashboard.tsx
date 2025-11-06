@@ -184,7 +184,7 @@ const handleCardClick = async (status: any) => {
 
 
   // Pass the filtered data via router state
-   router.push(`/super-admin/lead-details?status=${status}`);
+   router.push(`/lead-details?status=${status}`);
 };
 
 

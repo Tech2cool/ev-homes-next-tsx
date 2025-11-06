@@ -68,7 +68,7 @@ interface Employee {
   address?: string | null;
   bloodGroup?: string | null;
   maritalStatus?: string | null;
-  department?: string | Department;
+  department?: Department;
   designation?: Designation;
   division?: Division;
   reportingTo?: Employee;
