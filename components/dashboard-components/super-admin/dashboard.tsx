@@ -562,8 +562,8 @@ const handleCardClick = async (status: any) => {
                     <FaArrowRight />
 
                   </div>
-                  <p className={styles.label}>{card.label}</p>
-                  <p className={styles.value}>{card.value}</p>
+                  {/* <p className={styles.label}>{card.label}</p>
+                  <p className={styles.value}>{card.value}</p> */}
                 </div>
 
 

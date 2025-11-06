@@ -172,7 +172,7 @@ const LeadDetailsPage = () => {
       console.log("Initial fetch with status:", status);
 
       fetchSearchLeads({
-        query: searchQuery,
+        query: debouncedSearchQuery,
         page: 1,
         limit: 10,
         status: status === "all" ? null : status,
@@ -183,14 +183,14 @@ const LeadDetailsPage = () => {
   useEffect(() => {
     if (user && !loading) {
       fetchSearchLeads({
-        query: searchQuery,
+        query: debouncedSearchQuery,
         page: 1,
         limit: 10,
         status: status === "all" ? null : status,
         // Add other filter parameters as needed
       });
     }
-  }, [searchQuery, user, loading, status]);
+  }, [debouncedSearchQuery, user, loading, status]);
 
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -290,14 +290,14 @@ const LeadDetailsPage = () => {
       const nextPage = searchLeadInfo.page + 1;
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchSearchLeads({
-          query: searchQuery,
+          query: debouncedSearchQuery,
           page: nextPage,
           limit: 10,
           status: status === "all" ? null : status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, searchQuery]);
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery]);
 
   // const fetchLeads = () => {
   //   fetchTeamLeaderReportingToLeads({
