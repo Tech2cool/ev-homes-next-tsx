@@ -46,11 +46,32 @@
 }
 
 .profileImage {
-  width: 10vw;
-  height: 10vw;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageCircle {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background-color: #ddd;
-  border: 2px solid #999;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.fallbackIcon {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ddd; /* fallback background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 42px; /* Icon size */
+  color: #555; /* Icon color */
 }
 
 .userInfo {
@@ -162,6 +183,27 @@
   border: 2px solid #999;
 }
 
+.imageCircleSmall {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Icon fallback circle */
+.fallbackIconSmall {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1vw; /* Adjust icon size */
+  color: #555;
+}
 .repoInfo {
   display: flex;
   flex-direction: column;
@@ -487,6 +529,7 @@
   .textRed {
     color: red;
   }
+  
 }
 :global(html.dark) .overlay {
   background: rgba(0, 0, 0, 0.8);
