@@ -1,49 +1,41 @@
 "use client";
-
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import styles from "./dashboard.module.css";
-import {} from "lucide-react";
-import DashboardSalesPage from "@/components/dashboard-components/sales/dashboard";
+import { useState, useEffect } from "react";
 import { useUser } from "@/providers/userContext";
-import DataAnalyzerDashboardPage from "@/components/dashboard-components/data-analyzer/dashboard";
 import ClosingManagerPage from "../closing-manager/closing-manager-dashboard/page";
 import DataAnalyzerDashboard from "../data-analyzer/data-analyzer-dashboard/page";
-
 import SalesManagerPage from "../sales-manager/sales-manager-dashboard/page";
 import SuperAdminDashboard from "../super-admin/supar-admin-dashboard/page";
+import ErrorPage from "@/components/ErrorPage";
 
-const DashboardPage = () => {
+export default function DashboardPage() {
   const { user, loading } = useUser();
+  const [mounted, setMounted] = useState(false);
 
-  // console.log("user ",user);
-  if (loading) return;
+  useEffect(() => setMounted(true), []);
 
-  if (user?.designation?._id === "desg-data-analyzer") {
-    return <DataAnalyzerDashboard />;
-  } else if (
-    user?.designation?._id === "desg-sales-manager" ||
-    user?.designation?._id === "desg-senior-sales-manager" ||
-    user?.designation?._id === "desg-sales-executive"
-  ) {
-    return <SalesManagerPage />;
-  } else if (
-     user?.designation?._id === "desg-app-developer"
-  ) {
-    return <SuperAdminDashboard />;
+  // wait for hydration
+  if (!mounted) return null;
+
+  if (loading) return null; // optional if SSR handles it fully
+
+  if (!user || !user.designation?._id) {
+    return <ErrorPage message="User not found or invalid role." />;
   }
 
-  // if (user?.designation?._id === "desg-data-analyzer") {
-  //      return <DataAnalyzerDashboard />;
-  // } else if (user?.designation?._id === "desg-sales-executive") {
-  //      return <SalesManagerPage />;
-  // }
-  else {
-    return <ClosingManagerPage />;
+  switch (user.designation._id) {
+    case "desg-data-analyzer":
+      return <DataAnalyzerDashboard />;
+    case "desg-sales-manager":
+    case "desg-senior-sales-manager":
+    case "desg-sales-executive":
+      return <SalesManagerPage />;
+    case "desg-app-developer":
+      return <SuperAdminDashboard />;
+    case "desg-senior-closing-manager":
+    case "desg-site-head":
+    case "desg-post-sales-head":
+      return <ClosingManagerPage />;
+    default:
+      return <ErrorPage message="Unauthorized role detected." />;
   }
-  // else let them stay on this page
-
-  //
-};
-
-export default DashboardPage;
+}
