@@ -495,6 +495,11 @@ type DataProviderState = {
     endDate?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
+   getSiteVisitHistoryByPhone: (
+    phoneNumber: Number, 
+    altPhoneNumber?: Number
+  ) => Promise<{ success: boolean; message?: string}>;
+
   fetchAssignFeedbackLeads: (
     params: AssignParms
   ) => Promise<{ success: boolean; message?: string }>;
@@ -614,6 +619,11 @@ const initialState: DataProviderState = {
   getSalesManagerDashBoardCount: async () => ({ success: false }),
 
   getAllGraph: async () => ({ success: false }),
+
+   getSiteVisitHistoryByPhone: async () => ({ 
+    success: false, 
+    message: "Not initialized" 
+  }),
 
   getClosingManagerDashBoardCount: async () => ({ success: false }),
 
@@ -737,6 +747,34 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [leadsLineGraphForDT, setLineChartData] = useState<ChartModel[]>([]);
   const [onboardTargetData, setOnboardTargetData] =
     useState<OnboardTarget | null>(null);
+
+  const getSiteVisitHistoryByPhone = async (
+  phoneNumber: Number, 
+  altPhoneNumber?: Number
+): Promise<{ success: boolean; message?: string }> => {
+  setError("");
+
+  try {
+    const response = await fetchAdapter('/api/site-visits-by-phone', {
+      method: 'POST',
+      body: JSON.stringify({ phoneNumber, altPhoneNumber }),
+    });
+
+    if (response?.code !== 200) {
+      return { success: false, message: response?.message };
+    }
+
+    const reqs = response?.data || [];
+    setVisits(reqs); // ✅ update state
+
+    return { success: true };
+  } catch (err: any) {
+    const errorMessage = err.message || "Something went wrong";
+    setError(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+};
+
 
   const fetchOnboardTarget = async ({
     date = null,
@@ -2190,6 +2228,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchLineGraphForDA: fetchLineGraphForDA,
     fetchOnboardTarget: fetchOnboardTarget,
     getAllGraph: getAllGraph,
+     getSiteVisitHistoryByPhone: getSiteVisitHistoryByPhone,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
     getRankingTurns: getRankingTurns,

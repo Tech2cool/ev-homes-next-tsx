@@ -459,10 +459,12 @@ const LeadDetailsPage = () => {
                 }`}
                 onClick={() => {
                   setSelectedLead(visit);
+
                   // router.push(`/super-admin/lead-details?id=${visit._id}`, {
                   //   scroll: false,
                   // });
-                     router.push(`/lead-details?id=${visit._id}`, {
+                     router.push(`/lead-details?status=${status}&id=${visit._id}`, {
+
                     scroll: false,
                   });
                 }}
@@ -651,7 +653,7 @@ const LeadDetailsPage = () => {
                     </button>
 
                     <ThemeToggle />
-                    {SelectedLead.approvalStatus === "pending" && (
+                    {/* {SelectedLead.approvalStatus === "pending" && (
                       <button
                         className={styles.approveBtn}
                         onClick={() => setShowApprovalDialog(true)}
@@ -659,7 +661,7 @@ const LeadDetailsPage = () => {
                         <Check className={styles.btnIcon} />
                         Approve/Reject
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 {/* Action buttons */}
@@ -680,8 +682,8 @@ const LeadDetailsPage = () => {
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
                   )}
-                  {activeTab === "followup" && <FollowUp />}
-                  {activeTab === "siteVisit" && <VisitHistory />}
+                  {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
+                  {activeTab === "siteVisit" && <VisitHistory lead={SelectedLead} />}
                   {activeTab === "transfer" && (
                     <TransferHistory
                       cycleHistory={SelectedLead?.cycleHistoryNew}
@@ -871,7 +873,9 @@ const LeadDetailsPage = () => {
               // }`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/lead-details?id=${visit._id}`, {
+
+                router.push(`/lead-details?status=${status}&id=${visit._id}`, {
+
                   scroll: false,
                 });
               }}
@@ -1025,7 +1029,11 @@ const LeadDetailsPage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/lead-details", { scroll: false });
+
+         router.push(`/lead-details?status=${status}&id=${visit._id}`, {
+                  scroll: false,
+                });
+
             }}
           >
             <ArrowLeft className={styles.backIcon} />
@@ -1193,13 +1201,19 @@ const LeadDetailsPage = () => {
 
           {activeTab === "access" && <QuickAccess />}
 
-          {activeTab === "taskDetails" && <TaskOverview />}
+          {activeTab === "taskDetails" && (
+                    <TaskOverview task={SelectedLead?.taskRef} />
+                  )}
 
-          {activeTab === "followup" && <FollowUp />}
+          {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
 
           {activeTab === "siteVisit" && <VisitHistory />}
 
-          {activeTab === "transfer" && <TransferHistory />}
+          {activeTab === "transfer" && (
+                    <TransferHistory
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                    />
+                  )}
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>
