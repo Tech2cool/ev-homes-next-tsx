@@ -13,6 +13,7 @@ import { PiFunnelSimple, PiFunnelSimpleBold } from "react-icons/pi";
 import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SuperAdminDasboard = () => {
   const {
@@ -30,6 +31,7 @@ const SuperAdminDasboard = () => {
     getAllGraph,
   } = useData();
   const { user, loading } = useUser();
+  const router = useRouter();
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,14 +86,15 @@ const SuperAdminDasboard = () => {
   }, [asssignFeedbackInfo]);
 
   useEffect(() => {
-    if (user && !loading && !searchLeadInfo) {
-      fetchSearchLeads({
-        query: "",
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading, searchLeadInfo]);
+    if (!user || loading) return;
+
+    fetchSearchLeads({
+      page: 1,
+      limit: 10,
+      query: "",
+      status: status === "all" ? null : status,
+    });
+  }, [user, loading, status]);
 
   useEffect(() => {
     if (user && !loading && !ranking) {
@@ -122,7 +125,7 @@ const SuperAdminDasboard = () => {
       icon: <FaUsers />,
       color: "#ad82f2e1",
       bgcolor: "#7c2ff706",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "all",
     },
     {
       label: "Visit 1",
@@ -130,7 +133,7 @@ const SuperAdminDasboard = () => {
       icon: <FaUserTie />,
       color: "#88c08aa8",
       bgcolor: "#4caf4f09",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "visit",
     },
     {
       label: "Visit 2",
@@ -138,7 +141,7 @@ const SuperAdminDasboard = () => {
       icon: <FaCarSide />,
       color: "#ce676082",
       bgcolor: "#f4433609",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "visit2",
     },
     {
       label: "Booking",
@@ -146,7 +149,7 @@ const SuperAdminDasboard = () => {
       icon: <IoMdKey />,
       color: "#c0a24aa7",
       bgcolor: "#ffc10709",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "booking",
     },
     {
       label: "Internal leads",
@@ -154,7 +157,7 @@ const SuperAdminDasboard = () => {
       icon: <FaUserFriends />,
       color: "#bd58959c",
       bgcolor: "#d4006a09",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "internal-lead",
     },
     {
       label: "Bulk Leads",
@@ -162,9 +165,28 @@ const SuperAdminDasboard = () => {
       icon: <FaBoxes />,
       color: "#58b1bd9c",
       bgcolor: "#00bbd409",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "bulk-lead",
     },
   ];
+const handleCardClick = async (status: any) => {
+  console.log("Card clicked with status:", status);
+  
+  const apiStatus = status === "all" ? null : status;
+  console.log("API status parameter:", apiStatus);
+  
+  // Fetch the filtered leads
+  await fetchSearchLeads({
+    page: 1,
+    limit: 10,
+    query: "",
+    status: apiStatus,
+  });
+
+
+  // Pass the filtered data via router state
+   router.push(`/super-admin/lead-details?status=${status}`);
+};
+
 
   //   const dashCount = {
   //     name: "Deepak Karki",
@@ -513,32 +535,56 @@ const SuperAdminDasboard = () => {
       <div className={styles.leadsection}>
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-            <Link href={card.linkHref} key={index}>
-              <div className={superstayle.card} key={index}>
-                <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
-                  {card.icon}
-                </div>
-                <div className={styles.cardContent}>
-                  <div className={styles.topRow}>
-                    <div
-                      className={styles.iconContainer}
-                      style={{ color: card.color }}
-                    >
-                      {card.icon}
-                    </div>
-                    <div
-                      className={styles.arrowContainer}
-                      style={{ color: card.color }}
-                    >
-                      <FaArrowRight />
-                    </div>
+
+            <div
+              className={superstayle.card}
+              key={index}
+              onClick={() => handleCardClick(card.status)}
+              style={{ cursor: "pointer" }} // ✅ Makes card clickable UI
+            >
+              <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
+                {card.icon}
+              </div>
+
+              <div className={styles.cardContent}>
+                <div className={styles.topRow}>
+                  <div
+                    className={styles.iconContainer}
+                    style={{ color: card.color }}
+                  >
+                    {card.icon}
+                  </div>
+
+                  <div
+                    className={styles.arrowContainer}
+                    style={{ color: card.color }}
+                  >
+                    <FaArrowRight />
+
                   </div>
                   <p className={styles.label}>{card.label}</p>
                   <p className={styles.value}>{card.value}</p>
                 </div>
+
+
+                <p className={styles.label}>{card.label}</p>
+                <p className={styles.value}>{card.value}</p>
               </div>
-            </Link>
+            </div>
+
           ))}
+        </div>
+
+        <div className={styles.hint}>
+          <div className={styles.hintcontainer}>
+            <span className={styles.starWrapper}>
+              «
+              <span className={styles.star} ref={starRef}>
+                ✦︎
+              </span>
+              »
+            </span>
+          </div>
         </div>
 
         <div className={styles.hint}>
