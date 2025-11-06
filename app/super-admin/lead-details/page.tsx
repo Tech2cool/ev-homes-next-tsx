@@ -63,7 +63,7 @@ import { FaAddressBook } from "react-icons/fa";
 import { CiLink } from "react-icons/ci";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const VisitDetailWrapper = () => {
+const SuperAdminWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <LeadDetailsPage />
@@ -71,7 +71,7 @@ const VisitDetailWrapper = () => {
   );
 };
 
-export default VisitDetailWrapper;
+export default SuperAdminWrapper;
 
 const LeadDetailsPage = () => {
   const router = useRouter();
@@ -399,14 +399,14 @@ const LeadDetailsPage = () => {
     }
   };
 
-  const handleVisitSelect = (SelectedLead: Lead) => {
-    router.push(`/super-admin/lead-details?id=${SelectedLead._id}`);
-    setShowSidebar(false);
-  };
+  // const handleVisitSelect = (SelectedLead: Lead) => {
+  //   router.push(`/super-admin/lead-details?id=${SelectedLead._id}`);
+  //   setShowSidebar(false);
+  // };
 
-  const handleBackToList = () => {
-    router.push("/super-admin/lead-details");
-  };
+  // const handleBackToList = () => {
+  //   router.push("/super-admin/lead-details");
+  // };
 
   // const clearFilters = () => {
   //   setFilters({
@@ -459,7 +459,10 @@ const LeadDetailsPage = () => {
                 }`}
                 onClick={() => {
                   setSelectedLead(visit);
-                  router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                  // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                  //   scroll: false,
+                  // });
+                     router.push(`/lead-details?id=${visit._id}`, {
                     scroll: false,
                   });
                 }}
@@ -868,7 +871,7 @@ const LeadDetailsPage = () => {
               // }`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                router.push(`/lead-details?id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -1022,7 +1025,7 @@ const LeadDetailsPage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/super-admin/lead-details", { scroll: false });
+              router.push("/lead-details", { scroll: false });
             }}
           >
             <ArrowLeft className={styles.backIcon} />
