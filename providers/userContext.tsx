@@ -1,12 +1,9 @@
 "use client";
 
 import fetchAdapter from "@/adapter/fetchAdapter";
-import { redirect } from "next/navigation";
-
 import React from "react";
-import { createContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-
 
 type UserProviderProps = {
   children: React.ReactNode;
@@ -54,7 +51,9 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const pUser = JSON.parse(storedUser);
+      setUser(pUser);
+      reAuthUser();
     }
   }, []);
 
@@ -107,6 +106,21 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
     };
   }, [user]);
 
+  const reAuthUser = async () => {
+    try {
+      const res = await fetch("/api-auth/reauth", { cache: "no-store" });
+      if (!res.ok) {
+        setUser(null);
+      } else {
+        const data = await res.json();
+        setUser(data);
+      }
+    } catch (err) {
+      console.error("Reauth failed:", err);
+      setUser(null);
+    }
+  };
+
   const login = async (
     email: string,
     password: string
@@ -121,7 +135,7 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-        console.log(res);
+      console.log(res);
       if (res.code != 200) {
         setError(res?.message);
         return { success: false, message: res?.message };
@@ -131,13 +145,13 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
       }
 
       setUser(res?.data);
-  // if (res?.data.designation?._id === "desg-data-analyzer") {
-  //       redirect("/dashboard");
-  //     } else {
-  //       redirect("/closing-manager-dasboard");
-  //     }
+      // if (res?.data.designation?._id === "desg-data-analyzer") {
+      //       redirect("/dashboard");
+      //     } else {
+      //       redirect("/closing-manager-dasboard");
+      //     }
 
-      console.log(res.data );
+      console.log(res.data);
       return { success: true, ...res.data };
     } catch (err: any) {
       setError(err.message);
@@ -160,8 +174,8 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
   };
 
   const updateUser = (newUser: Employee | null) => {
-    setUser(newUser); 
-  }
+    setUser(newUser);
+  };
 
   const value = {
     user: user,
@@ -172,7 +186,7 @@ export const UserProvider = ({ children, ...props }: UserProviderProps) => {
     login: login,
     logout: logout,
     setLoading: setLoading,
-    updateUser:updateUser,
+    updateUser: updateUser,
   };
 
   return (
