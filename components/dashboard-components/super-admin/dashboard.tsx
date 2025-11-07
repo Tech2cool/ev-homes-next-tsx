@@ -25,7 +25,7 @@ const SuperAdminDasboard = () => {
     projects,
     getProjects,
     getRankingTurns,
-    fetchSearchLeads,
+    getAllData,
     fetchPostSaleLeads,
     fetchAssignFeedbackLeadsCount,
     getAllGraph,
@@ -74,6 +74,7 @@ const SuperAdminDasboard = () => {
         query: "",
         page: 1,
         limit: 10,
+        
       });
     }
   }, [user, loading]);
@@ -88,13 +89,15 @@ const SuperAdminDasboard = () => {
   useEffect(() => {
     if (!user || loading) return;
 
-    fetchSearchLeads({
+    getAllData({
       page: 1,
       limit: 10,
       query: "",
-      status: status === "all" ? null : status,
+      interval:selectedFilter,
+      startDate,
+      endDate,
     });
-  }, [user, loading, status]);
+  }, [user, loading,selectedFilter]);
 
   useEffect(() => {
     if (user && !loading && !ranking) {
@@ -103,20 +106,21 @@ const SuperAdminDasboard = () => {
   }, [user, loading, ranking]);
 
   useEffect(() => {
-    if (user && !loading && !projects) {
+    if (user && !loading && projects.length === 0) {
       getProjects();
     }
-  }, [user, loading, projects]);
+  }, [user, loading, projects.length]);
 
   useEffect(() => {
-    if (user && !loading && !searchPostSaleLeadInfo) {
+    if (user && !loading) {
       fetchPostSaleLeads({
         query: "",
         page: 1,
         limit: 10,
+        project: selectproject.project != "" ? selectproject.project : null,
       });
     }
-  }, [user, loading, searchPostSaleLeadInfo]);
+  }, [user, loading, selectproject.project]);
 
   const cardsData = [
     {
@@ -168,25 +172,11 @@ const SuperAdminDasboard = () => {
       status: "bulk-lead",
     },
   ];
-const handleCardClick = async (status: any) => {
-  console.log("Card clicked with status:", status);
-  
-  const apiStatus = status === "all" ? null : status;
-  console.log("API status parameter:", apiStatus);
-  
-  // Fetch the filtered leads
-  await fetchSearchLeads({
-    page: 1,
-    limit: 10,
-    query: "",
-    status: apiStatus,
-  });
-
-
-  // Pass the filtered data via router state
-   router.push(`/lead-details?status=${status}`);
-};
-
+  const handleCardClick = async (status?: String) => {
+    const apiStatus = status === "all" ? null : status;
+    // Pass the filtered data via router state
+    router.push(`/lead-details?status=${apiStatus}`);
+  };
 
   //   const dashCount = {
   //     name: "Deepak Karki",
@@ -265,7 +255,7 @@ const handleCardClick = async (status: any) => {
         endDate,
       });
     }
-  }, [user, loading]);
+  }, [user, loading, selectedFilter]);
 
   useEffect(() => {
     const visitScroll = () => {
@@ -446,7 +436,7 @@ const handleCardClick = async (status: any) => {
     },
   ];
 
-  const filters = ["Monthly", "Quarterly", "Semi-Annually", "Annually"];
+  const filters = ["monthly", "quarterly", "semi-annually", "annually"];
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -469,12 +459,12 @@ const handleCardClick = async (status: any) => {
           <div className={superstayle.formControl}>
             <select
               value={selectproject.project}
-              onChange={(e) =>
+              onChange={(e) => {
                 setSelectproject((prev) => ({
                   ...prev,
                   project: e.target.value,
-                }))
-              }
+                }));
+              }}
             >
               <option value="">Select Project</option>
 
@@ -535,7 +525,6 @@ const handleCardClick = async (status: any) => {
       <div className={styles.leadsection}>
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-
             <div
               className={superstayle.card}
               key={index}
@@ -560,18 +549,15 @@ const handleCardClick = async (status: any) => {
                     style={{ color: card.color }}
                   >
                     <FaArrowRight />
-
                   </div>
                   {/* <p className={styles.label}>{card.label}</p>
                   <p className={styles.value}>{card.value}</p> */}
                 </div>
 
-
                 <p className={styles.label}>{card.label}</p>
                 <p className={styles.value}>{card.value}</p>
               </div>
             </div>
-
           ))}
         </div>
 

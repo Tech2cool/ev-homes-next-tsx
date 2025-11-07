@@ -314,6 +314,19 @@ type SearchLeadParms = {
   taskType?: string | null;
 };
 
+
+//total count
+type AllLeadParms = {
+  query: string;
+  page?: number;
+  limit?: number;
+  status?: string | null;
+  interval?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  teamLeader?: string | null;
+};
+
 // types.ts or wherever you define your types
 
 type LeadsReportingToParams = {
@@ -472,9 +485,13 @@ type DataProviderState = {
   fetchSearchLeads: (
     params: SearchLeadParms
   ) => Promise<{ success: boolean; message?: string }>;
+    getAllData: (
+    params: AllLeadParms
+  ) => Promise<{ success: boolean; message?: string }>;
+
 
   fetchPostSaleLeads: (
-    params: SearchLeadParms
+    params: FetchPostSaleLeadParams
   ) => Promise<{ success: boolean; message?: string }>;
 
   fetchDataAnalyzerVisits: (
@@ -615,6 +632,7 @@ const initialState: DataProviderState = {
   fetchPostSaleLeads: async () => ({ success: false }),
 
   fetchSearchLeads: async () => ({ success: false }),
+  getAllData: async () => ({ success: false }),
   fetchDataAnalyzerVisits: async () => ({ success: false }),
   getSalesManagerDashBoardCount: async () => ({ success: false }),
 
@@ -1433,7 +1451,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
         url += `?${queryString}`;
       }
 
-      // console.log("Fetching graph data from:", url);
+      console.log("Fetching graph data from:", url);
 
       const res = await fetchAdapter(url, {
         method: "GET",
@@ -1826,7 +1844,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       if (startDate) url += `&startDate=${startDate}`;
       if (endDate) url += `&endDate=${endDate}`;
 
-      // console.log("API URL:", url);
+      console.log("API URL:", url);
 
       const res = await fetchAdapter(url, { method: "GET" });
 
@@ -1956,6 +1974,64 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     } catch (err: any) {
       setError(err.message);
       setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setFetchingMoreLeads(false);
+      setLoadingLeads(false);
+    }
+  };
+
+
+    const getAllData = async ({
+    query = "",
+    page = 1,
+    limit = 20,
+    status = null,
+    interval = null,
+    startDate = null,
+    endDate = null,
+    teamLeader = null,
+  }: AllLeadParms): Promise<{ success: boolean; message?: string }> => {
+    if (page === 1) {
+      setLoadingLeads(true);
+    } else {
+      setFetchingMoreLeads(true);
+    }
+    setError("");
+
+    try {
+      let url = `/api/leads-data?query=${query}&page=${page}&limit=${limit}`;
+      if (status != null) {
+        url += `&status=${status}`;
+      }
+      if (interval != null) {
+        url += `&interval=${interval}`;
+      }
+      if (startDate != null) {
+        url += `&startDate=${startDate}`;
+      }
+      if (endDate != null) {
+        url += `&endDate=${endDate}`;
+      }
+      if (teamLeader != null) {
+        url += `&teamLeader=${teamLeader}`;
+      }
+      // console.log(url);
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+      const { data, ...withoutData } = res as PaginationProps;
+      // console.log("url", url);
+
+      // console.log(data);
+      setSearchLeadInfo(withoutData);
+      setLoadingLeads(false);
+
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
       setLoadingLeads(false);
 
       return { success: false, message: err.message };
@@ -2218,6 +2294,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
     fetchPostSaleLeads: fetchPostSaleLeads,
     fetchSearchLeads: fetchSearchLeads,
+    getAllData:getAllData,
     fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
     getChannelPartners: getChannelPartners,
     getTeamOverview: getTeamOverview,

@@ -3,11 +3,7 @@ import SuperAdminDasboard from "@/components/dashboard-components/super-admin/da
 import React from "react";
 
 const SuperAdminDashboard = () => {
-  return (  
-    
-     <SuperAdminDasboard />
-   
-  );
+  return <SuperAdminDasboard />;
 };
 
 export default SuperAdminDashboard;
