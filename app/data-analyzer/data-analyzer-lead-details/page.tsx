@@ -50,7 +50,7 @@ import AnalyzerQuickaccess from "@/components/lead-details-components/analyzerqu
 import CPTransferHistory from "@/components/lead-details-components/cptransferhistory";
 import useDebounce from "@/hooks/useDebounce";
 
-const dataAnalyzerWrapper = () => {
+const DataAnalyzerWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <DataAnalyzerdetailspage />
@@ -58,7 +58,7 @@ const dataAnalyzerWrapper = () => {
   );
 };
 
-export default dataAnalyzerWrapper;
+export default DataAnalyzerWrapper;
 
 const DataAnalyzerdetailspage = () => {
   const {
@@ -242,7 +242,7 @@ const DataAnalyzerdetailspage = () => {
     const currentParams = new URLSearchParams(window.location.search);
     const statusParam = currentParams.get("status");
 
-    let url = `/data-analyzer/data-analyzer-lead-details?id=${lead._id}`;
+    let url = `/lead-details?id=${lead._id}`;
     if (statusParam) {
       url += `&status=${statusParam}`;
     }
@@ -501,7 +501,7 @@ const DataAnalyzerdetailspage = () => {
                     );
                     const statusParam = currentParams.get("status");
 
-                    let url = `/data-analyzer/data-analyzer-lead-details?id=${visit._id}`;
+                    let url = `/lead-details?id=${visit._id}`;
                     if (statusParam) {
                       url += `&status=${statusParam}`;
                     }

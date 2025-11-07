@@ -4,8 +4,9 @@ import styles from "./navbar.module.css";
 import Link from "next/link";
 import { ThemeToggle } from "../ThemeToggle";
 import Image from "next/image";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUser, FaUserCircle } from "react-icons/fa";
 import ProfileDialogBox from "@/components/Dialogs/Profiledialog";
+import { useUser } from "@/providers/userContext";
 
 const imageSrc = "/images/evhomeslogo_1.webp";
 
@@ -13,7 +14,9 @@ const HomeNavbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [openProfileDialog, setOpenProfileDialog] = useState(false);
+  const { user } = useUser();
 
   // scroll blur effect
   useEffect(() => {
@@ -64,8 +67,9 @@ const HomeNavbar = () => {
           </div>
 
           <ul
-            className={`${styles.navLinks} ${isMobileMenuOpen ? styles.mobileMenuOpen : ""
-              }`}
+            className={`${styles.navLinks} ${
+              isMobileMenuOpen ? styles.mobileMenuOpen : ""
+            }`}
           >
             <li
               className={
@@ -101,21 +105,49 @@ const HomeNavbar = () => {
                 <span>About Us</span>
               </Link>
             </li>
-            <li>
-              <Link
-                href="/login"
-                className={`${styles.navLink} ${styles.loginBtn}`}
-              >
-                <span>Login</span>
-              </Link>
-            </li>
+                          {!user ? (
+                <li>
+                  <Link
+                    href="/login"
+                    className={`${styles.navLink} ${styles.loginBtn}`}
+                  >
+                    <span>Login</span>
+                  </Link>
+                </li>
+              ) : (
+                <>
+                  <li>
+                    <Link
+                      href="/dashboard"
+                      className={`${styles.navLink}`}
+                    >
+                      <span>Dashboard</span>
+                    </Link>
+                  </li>
+
+                  <li
+                    className={styles.userIconWrapper}
+                    onClick={() => setOpenProfileDialog(true)} // ✅ correct
+                  >
+                    <FaUserCircle className={styles.userIcon} />
+                  </li>
+                </>
+              )}
+
+            <ul>
+
+              <ProfileDialogBox
+                isOpen={openProfileDialog}
+                onClose={() => setOpenProfileDialog(false)}
+              />
+            </ul>
             <li className={styles.themeToggleWrapper}>
               <ThemeToggle />
             </li>
-            <FaUserCircle
+            {/* <FaUserCircle
               className={styles.icon}
               onClick={() => setOpenProfileDialog(true)}
-            />
+            /> */}
           </ul>
 
           <button
@@ -124,8 +156,9 @@ const HomeNavbar = () => {
             aria-label="Toggle mobile menu"
           >
             <span
-              className={`${styles.hamburger} ${isMobileMenuOpen ? styles.hamburgerOpen : ""
-                }`}
+              className={`${styles.hamburger} ${
+                isMobileMenuOpen ? styles.hamburgerOpen : ""
+              }`}
             >
               <span></span>
               <span></span>
@@ -139,8 +172,6 @@ const HomeNavbar = () => {
         onClose={() => setOpenProfileDialog(false)}
       />
     </>
-
-
   );
 };
 

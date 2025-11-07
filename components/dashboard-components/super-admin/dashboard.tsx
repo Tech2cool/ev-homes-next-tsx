@@ -13,6 +13,7 @@ import { PiFunnelSimple, PiFunnelSimpleBold } from "react-icons/pi";
 import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SuperAdminDasboard = () => {
   const {
@@ -24,12 +25,13 @@ const SuperAdminDasboard = () => {
     projects,
     getProjects,
     getRankingTurns,
-    fetchSearchLeads,
+    getAllData,
     fetchPostSaleLeads,
     fetchAssignFeedbackLeadsCount,
     getAllGraph,
   } = useData();
   const { user, loading } = useUser();
+  const router = useRouter();
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,6 +74,7 @@ const SuperAdminDasboard = () => {
         query: "",
         page: 1,
         limit: 10,
+        
       });
     }
   }, [user, loading]);
@@ -84,14 +87,17 @@ const SuperAdminDasboard = () => {
   }, [asssignFeedbackInfo]);
 
   useEffect(() => {
-    if (user && !loading && !searchLeadInfo) {
-      fetchSearchLeads({
-        query: "",
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading, searchLeadInfo]);
+    if (!user || loading) return;
+
+    getAllData({
+      page: 1,
+      limit: 10,
+      query: "",
+      interval:selectedFilter,
+      startDate,
+      endDate,
+    });
+  }, [user, loading,selectedFilter]);
 
   useEffect(() => {
     if (user && !loading && !ranking) {
@@ -100,20 +106,21 @@ const SuperAdminDasboard = () => {
   }, [user, loading, ranking]);
 
   useEffect(() => {
-    if (user && !loading && !projects) {
+    if (user && !loading && projects.length === 0) {
       getProjects();
     }
-  }, [user, loading, projects]);
+  }, [user, loading, projects.length]);
 
   useEffect(() => {
-    if (user && !loading && !searchPostSaleLeadInfo) {
+    if (user && !loading) {
       fetchPostSaleLeads({
         query: "",
         page: 1,
         limit: 10,
+        project: selectproject.project != "" ? selectproject.project : null,
       });
     }
-  }, [user, loading, searchPostSaleLeadInfo]);
+  }, [user, loading, selectproject.project]);
 
   const cardsData = [
     {
@@ -122,7 +129,7 @@ const SuperAdminDasboard = () => {
       icon: <FaUsers />,
       color: "#ad82f2e1",
       bgcolor: "#7c2ff706",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "all",
     },
     {
       label: "Visit 1",
@@ -130,7 +137,7 @@ const SuperAdminDasboard = () => {
       icon: <FaUserTie />,
       color: "#88c08aa8",
       bgcolor: "#4caf4f09",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "visit",
     },
     {
       label: "Visit 2",
@@ -138,7 +145,7 @@ const SuperAdminDasboard = () => {
       icon: <FaCarSide />,
       color: "#ce676082",
       bgcolor: "#f4433609",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "visit2",
     },
     {
       label: "Booking",
@@ -146,7 +153,7 @@ const SuperAdminDasboard = () => {
       icon: <IoMdKey />,
       color: "#c0a24aa7",
       bgcolor: "#ffc10709",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "booking",
     },
     {
       label: "Internal leads",
@@ -154,7 +161,7 @@ const SuperAdminDasboard = () => {
       icon: <FaUserFriends />,
       color: "#bd58959c",
       bgcolor: "#d4006a09",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "internal-lead",
     },
     {
       label: "Bulk Leads",
@@ -162,9 +169,14 @@ const SuperAdminDasboard = () => {
       icon: <FaBoxes />,
       color: "#58b1bd9c",
       bgcolor: "#00bbd409",
-      linkHref: "/super-admin/lead-details?status=all",
+      status: "bulk-lead",
     },
   ];
+  const handleCardClick = async (status?: String) => {
+    const apiStatus = status === "all" ? null : status;
+    // Pass the filtered data via router state
+    router.push(`/lead-details?status=${apiStatus}`);
+  };
 
   //   const dashCount = {
   //     name: "Deepak Karki",
@@ -243,7 +255,7 @@ const SuperAdminDasboard = () => {
         endDate,
       });
     }
-  }, [user, loading]);
+  }, [user, loading, selectedFilter]);
 
   useEffect(() => {
     const visitScroll = () => {
@@ -424,7 +436,7 @@ const SuperAdminDasboard = () => {
     },
   ];
 
-  const filters = ["Monthly", "Quarterly", "Semi-Annually", "Annually"];
+  const filters = ["monthly", "quarterly", "semi-annually", "annually"];
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -447,12 +459,12 @@ const SuperAdminDasboard = () => {
           <div className={superstayle.formControl}>
             <select
               value={selectproject.project}
-              onChange={(e) =>
+              onChange={(e) => {
                 setSelectproject((prev) => ({
                   ...prev,
                   project: e.target.value,
-                }))
-              }
+                }));
+              }}
             >
               <option value="">Select Project</option>
 
@@ -513,32 +525,52 @@ const SuperAdminDasboard = () => {
       <div className={styles.leadsection}>
         <div className={superstayle.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-            <Link href={card.linkHref} key={index}>
-              <div className={superstayle.card} key={index}>
-                <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
-                  {card.icon}
-                </div>
-                <div className={styles.cardContent}>
-                  <div className={styles.topRow}>
-                    <div
-                      className={styles.iconContainer}
-                      style={{ color: card.color }}
-                    >
-                      {card.icon}
-                    </div>
-                    <div
-                      className={styles.arrowContainer}
-                      style={{ color: card.color }}
-                    >
-                      <FaArrowRight />
-                    </div>
-                  </div>
-                  <p className={styles.label}>{card.label}</p>
-                  <p className={styles.value}>{card.value}</p>
-                </div>
+            <div
+              className={superstayle.card}
+              key={index}
+              onClick={() => handleCardClick(card.status)}
+              style={{ cursor: "pointer" }} // ✅ Makes card clickable UI
+            >
+              <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
+                {card.icon}
               </div>
-            </Link>
+
+              <div className={styles.cardContent}>
+                <div className={styles.topRow}>
+                  <div
+                    className={styles.iconContainer}
+                    style={{ color: card.color }}
+                  >
+                    {card.icon}
+                  </div>
+
+                  <div
+                    className={styles.arrowContainer}
+                    style={{ color: card.color }}
+                  >
+                    <FaArrowRight />
+                  </div>
+                  {/* <p className={styles.label}>{card.label}</p>
+                  <p className={styles.value}>{card.value}</p> */}
+                </div>
+
+                <p className={styles.label}>{card.label}</p>
+                <p className={styles.value}>{card.value}</p>
+              </div>
+            </div>
           ))}
+        </div>
+
+        <div className={styles.hint}>
+          <div className={styles.hintcontainer}>
+            <span className={styles.starWrapper}>
+              «
+              <span className={styles.star} ref={starRef}>
+                ✦︎
+              </span>
+              »
+            </span>
+          </div>
         </div>
 
         <div className={styles.hint}>

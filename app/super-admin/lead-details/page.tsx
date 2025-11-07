@@ -63,7 +63,7 @@ import { FaAddressBook } from "react-icons/fa";
 import { CiLink } from "react-icons/ci";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 
-const VisitDetailWrapper = () => {
+const SuperAdminWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <LeadDetailsPage />
@@ -71,7 +71,7 @@ const VisitDetailWrapper = () => {
   );
 };
 
-export default VisitDetailWrapper;
+export default SuperAdminWrapper;
 
 const LeadDetailsPage = () => {
   const router = useRouter();
@@ -84,6 +84,7 @@ const LeadDetailsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
+  const status = searchParams.get("status");
 
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
@@ -154,17 +155,42 @@ const LeadDetailsPage = () => {
     setSearchQuery(query);
   };
 
+  // Sync with URL status parameter
+  // useEffect(() => {
+  //   if (status) {
+  //     console.log("URL status changed:", status);
+  //     setSelectedFilter(prev => ({
+  //       ...prev,
+  //       status: status === "all" ? null : status
+  //     }));
+  //   }
+  // }, [status]);
+
+  // Initial data fetch with status from URL
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("Initial fetch with status:", status);
+
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+      });
+    }
+  }, [user, loading, status]);
+
   useEffect(() => {
     if (user && !loading) {
       fetchSearchLeads({
         query: debouncedSearchQuery,
         page: 1,
         limit: 10,
-        status: selectedFilter?.status,
+        status: status === "all" ? null : status,
         // Add other filter parameters as needed
       });
     }
-  }, [debouncedSearchQuery, user, loading]);
+  }, [debouncedSearchQuery, user, loading, status]);
 
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -210,17 +236,6 @@ const LeadDetailsPage = () => {
   }, []);
 
   // Initial data fetch
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("Initial fetch - visit details");
-      fetchSearchLeads({
-        // id: user?._id,
-        query: searchQuery,
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading]);
 
   // Initial data fetch
   // useEffect(() => {
@@ -250,24 +265,24 @@ const LeadDetailsPage = () => {
     }
   }, [visitId, leads]);
 
-  useEffect(() => {
-    const fetchLeadsBasedOnStatus = async () => {
-      if (user && !loading) {
-        try {
-          await fetchSearchLeads({
-            query: searchQuery,
-            page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
-            limit: 10,
-            status: selectedFilter?.status,
-          });
-        } catch (error) {
-          console.error("Error fetching leads:", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchLeadsBasedOnStatus = async () => {
+  //     if (user && !loading) {
+  //       try {
+  //         await fetchSearchLeads({
+  //           query: searchQuery,
+  //           page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+  //           limit: 10,
+  //           status: selectedFilter?.status,
+  //         });
+  //       } catch (error) {
+  //         console.error("Error fetching leads:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchLeadsBasedOnStatus();
-  }, [user, loading, selectedFilter]);
+  //   fetchLeadsBasedOnStatus();
+  // }, [user, loading, selectedFilter]);
 
   // Fixed loadMoreVisits function
   const loadMoreLeads = useCallback(async () => {
@@ -275,14 +290,14 @@ const LeadDetailsPage = () => {
       const nextPage = searchLeadInfo.page + 1;
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchSearchLeads({
-          query: searchQuery,
+          query: debouncedSearchQuery,
           page: nextPage,
           limit: 10,
-          status: selectedFilter?.status,
+          status: status === "all" ? null : status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, searchQuery]);
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery]);
 
   // const fetchLeads = () => {
   //   fetchTeamLeaderReportingToLeads({
@@ -384,14 +399,14 @@ const LeadDetailsPage = () => {
     }
   };
 
-  const handleVisitSelect = (SelectedLead: Lead) => {
-    router.push(`/super-admin/lead-details?id=${SelectedLead._id}`);
-    setShowSidebar(false);
-  };
+  // const handleVisitSelect = (SelectedLead: Lead) => {
+  //   router.push(`/super-admin/lead-details?id=${SelectedLead._id}`);
+  //   setShowSidebar(false);
+  // };
 
-  const handleBackToList = () => {
-    router.push("/super-admin/lead-details");
-  };
+  // const handleBackToList = () => {
+  //   router.push("/super-admin/lead-details");
+  // };
 
   // const clearFilters = () => {
   //   setFilters({
@@ -436,15 +451,20 @@ const LeadDetailsPage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {leads?.map((visit) => (
+            {leads?.map((visit, index) => (
               <div
-                key={visit._id}
+                key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
                 className={`${styles.visitCard} ${
                   SelectedLead?._id === visit._id ? styles.selectedCard : ""
                 }`}
                 onClick={() => {
                   setSelectedLead(visit);
-                  router.push(`/super-admin/lead-details?id=${visit._id}`, {
+
+                  // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                  //   scroll: false,
+                  // });
+                     router.push(`/lead-details?status=${status}&id=${visit._id}`, {
+
                     scroll: false,
                   });
                 }}
@@ -633,7 +653,7 @@ const LeadDetailsPage = () => {
                     </button>
 
                     <ThemeToggle />
-                    {SelectedLead.approvalStatus === "pending" && (
+                    {/* {SelectedLead.approvalStatus === "pending" && (
                       <button
                         className={styles.approveBtn}
                         onClick={() => setShowApprovalDialog(true)}
@@ -641,7 +661,7 @@ const LeadDetailsPage = () => {
                         <Check className={styles.btnIcon} />
                         Approve/Reject
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 {/* Action buttons */}
@@ -659,10 +679,16 @@ const LeadDetailsPage = () => {
 
                   {activeTab === "access" && <QuickAccess />}
 
-                  {activeTab === "taskDetails" && <TaskOverview />}
-                  {activeTab === "followup" && <FollowUp />}
-                  {activeTab === "siteVisit" && <VisitHistory />}
-                  {activeTab === "transfer" && <TransferHistory />}
+                  {activeTab === "taskDetails" && (
+                    <TaskOverview task={SelectedLead?.taskRef} />
+                  )}
+                  {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
+                  {activeTab === "siteVisit" && <VisitHistory lead={SelectedLead} />}
+                  {activeTab === "transfer" && (
+                    <TransferHistory
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                    />
+                  )}
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />
@@ -847,7 +873,9 @@ const LeadDetailsPage = () => {
               // }`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/super-admin/lead-details?id=${visit._id}`, {
+
+                router.push(`/lead-details?status=${status}&id=${visit._id}`, {
+
                   scroll: false,
                 });
               }}
@@ -1001,7 +1029,11 @@ const LeadDetailsPage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/super-admin/lead-details", { scroll: false });
+
+         router.push(`/lead-details?status=${status}&id=${visit._id}`, {
+                  scroll: false,
+                });
+
             }}
           >
             <ArrowLeft className={styles.backIcon} />
@@ -1021,23 +1053,23 @@ const LeadDetailsPage = () => {
             </button>
 
             <button
-                      className={styles.whatsbtn}
-                      onClick={() => {
-                        console.log("clicked 1");
+              className={styles.whatsbtn}
+              onClick={() => {
+                console.log("clicked 1");
 
-                        socket?.emit("callCustomerWeb", {
-                          lead: SelectedLead?._id,
-                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
-                          type: "whatsapp",
-                          message: "hey",
-                          userId: user?._id,
-                        });
+                socket?.emit("callCustomerWeb", {
+                  lead: SelectedLead?._id,
+                  phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                  type: "whatsapp",
+                  message: "hey",
+                  userId: user?._id,
+                });
 
-                        console.log("clicked 2");
-                      }}
-                    >
-                      <IoLogoWhatsapp size={15} />
-                    </button>
+                console.log("clicked 2");
+              }}
+            >
+              <IoLogoWhatsapp size={15} />
+            </button>
 
             <button
               className={styles.menuBtn}
@@ -1169,13 +1201,19 @@ const LeadDetailsPage = () => {
 
           {activeTab === "access" && <QuickAccess />}
 
-          {activeTab === "taskDetails" && <TaskOverview />}
+          {activeTab === "taskDetails" && (
+                    <TaskOverview task={SelectedLead?.taskRef} />
+                  )}
 
-          {activeTab === "followup" && <FollowUp />}
+          {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
 
           {activeTab === "siteVisit" && <VisitHistory />}
 
-          {activeTab === "transfer" && <TransferHistory />}
+          {activeTab === "transfer" && (
+                    <TransferHistory
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                    />
+                  )}
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>

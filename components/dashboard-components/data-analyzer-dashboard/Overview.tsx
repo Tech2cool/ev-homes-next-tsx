@@ -70,7 +70,7 @@ const SectionTap = () => {
     {
       label: "Total Leads",
       value: searchLeadInfo?.totalItems ?? 0,
-      linkHref: "/data-analyzer/data-analyzer-lead-details?status=all",
+      linkHref: "/lead-details?status=all",
       status: "all",
       icon: <FaUsers />,
       color: "#ad82f2ff",
@@ -80,7 +80,9 @@ const SectionTap = () => {
     {
       label: "Approved",
       value: searchLeadInfo?.approvedCount ?? 0,
-      linkHref: "/data-analyzer/data-analyzer-lead-details?status=approved",
+
+      linkHref:"/lead-details?status=approved",
+
       status: "approved",
       icon: <FaCheck />,
       color: "#88c08aa8",
@@ -91,7 +93,9 @@ const SectionTap = () => {
     {
       label: "Rejected",
       value: searchLeadInfo?.rejectedCount ?? 0,
-      linkHref: "/data-analyzer/data-analyzer-lead-details?status=rejected",
+
+       linkHref:"/lead-details?status=rejected",
+
       status: "rejected",
       icon: <FaTimes />,
       color: "#ce676082",
@@ -101,7 +105,9 @@ const SectionTap = () => {
     {
       label: "Pending",
       value: searchLeadInfo?.pendingCount ?? 0,
-      linkHref: "/data-analyzer/data-analyzer-lead-details?status=pending",
+
+      linkHref:"/lead-details?status=pending",
+
       status: "pending",
       icon: <FaClock />,
       color: "#c0a24aa7",
@@ -111,7 +117,9 @@ const SectionTap = () => {
     {
       label: "Bulk Lead",
       value: searchLeadInfo?.bulkCount ?? 0,
-      linkHref: "/data-analyzer/data-analyzer-lead-details?status=bulk",
+
+      linkHref:"/lead-details?status=bulk",
+
       status: "bulk",
       icon: <FaBoxes />,
       color: "#58b1bd9c",

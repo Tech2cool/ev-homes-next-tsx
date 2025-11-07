@@ -185,11 +185,11 @@ export function DashboardSidebar() {
   const navigationItems = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { title: "Attendance", href: "/attandance", icon: Calendar },
-    { title: "Leads", href: "/dashboard/leads", icon: Users },
-    { title: "Visits", href: "/dashboard/visits", icon: Home },
-    { title: "Tasks", href: "/dashboard/tasks", icon: ClipboardList },
-    { title: "Inventory", href: "/dashboard/inventory", icon: Package },
-    { title: "My Reminders", href: "/dashboard/reminders", icon: Calendar },
+    { title: "Leads", href: "/lead-details", icon: Users },
+    { title: "Visits", href: "/visit-details", icon: Home },
+    { title: "Tasks", href: "/tasks", icon: ClipboardList },
+    { title: "Inventory", href: "/inventory", icon: Package },
+    { title: "My Reminders", href: "/reminders", icon: Calendar },
   ];
   const isMobile = windowWidth < 1024;
   // ----------------- DESKTOP SIDEBAR -----------------

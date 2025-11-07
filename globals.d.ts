@@ -50,6 +50,8 @@ interface Testimonial {
 
 //employee
 interface Employee {
+  alternatePhoneNumber(alternatePhoneNumber: any): unknown;
+  alternatePhoneNumber: any;
   _id?: string | null;
   prefix?: string | null;
   email?: string | null;
@@ -66,7 +68,7 @@ interface Employee {
   address?: string | null;
   bloodGroup?: string | null;
   maritalStatus?: string | null;
-  department?: string | Department;
+  department?: Department;
   designation?: Designation;
   division?: Division;
   reportingTo?: Employee;
@@ -106,7 +108,7 @@ interface CallNote {
 
 interface CallHistory {
   _id?: string;
-  caller: string | null;
+  caller: Employee;
   callDate: string;
   document: string | null;
   recording: string | null;
@@ -119,6 +121,35 @@ interface CallHistory {
   reminderType: string | null;
   notes: CallNote[];
   edited: boolean | null;
+}
+
+interface Task {
+  id?: string;
+  assignTo?: Employee;
+  assignBy?: Employee;
+  lead?: Lead;
+  visit?: SiteVisit;
+  booking?: PostSaleLead;
+  name?: string;
+  details?: string;
+  type?: string;
+  remark?: string;
+  
+  assignDate?: string; 
+  completed?: boolean;
+  completedDate?: string;
+  deadline?: string;
+  
+  remindMe?: boolean;
+  reminderDate?: string;
+  reminderDescription?: string;
+
+  transferTaskFrom?: Employee;
+  transferReason?: string;
+
+  reminderType?: string;
+  reminderDueDate?: string;
+  reminderCompleted?: boolean;
 }
 
 interface Cycle {
@@ -197,7 +228,7 @@ interface Lead {
   firstVisit?: boolean;
   visitDate?: string | null;
   revisitDate?: string | null;
-  visitRef?: string | null;
+  visitRef?: SiteVisit;
   taskRef?: Task | null;
   revisitStatus?: string;
   revisitRef?: string | null;
@@ -209,6 +240,7 @@ interface Lead {
   clientInterestedStatus?: string | null;
   clientStatus?: string;
   clientRef?: string | null;
+  taskRef?: Task;
   status?: string;
   siteVisitInterested?: boolean;
   siteVisitInterestedDate?: string | null;

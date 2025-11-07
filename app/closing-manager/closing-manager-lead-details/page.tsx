@@ -49,7 +49,7 @@ import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import useDebounce from "@/hooks/useDebounce";
 
-const closingdetilsWrapper = () => {
+const ClosingDetailsWrapper = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Closingdetaispage />
@@ -57,7 +57,7 @@ const closingdetilsWrapper = () => {
   );
 };
 
-export default closingdetilsWrapper;
+export default ClosingDetailsWrapper;
 
 const Closingdetaispage = () => {
   const visitId = "lead-1";
@@ -281,7 +281,7 @@ const Closingdetaispage = () => {
     const currentParams = new URLSearchParams(window.location.search);
     const statusParam = currentParams.get("status");
 
-    let url = `/closing-manager/closing-manager-lead-details?id=${lead._id}`;
+    let url = `/lead-details?id=${lead._id}`;
     if (statusParam) {
       url += `&status=${statusParam}`;
     }
@@ -361,7 +361,7 @@ const Closingdetaispage = () => {
   };
 
   const handleBackToList = () => {
-    router.push("/closing-manager-lead-details");
+    router.push("/lead-details");
   };
 
   const clearFilters = () => {
@@ -423,7 +423,7 @@ const Closingdetaispage = () => {
                     );
                     const statusParam = currentParams.get("status");
 
-                    let url = `/closing-manager/closing-manager-lead-details?id=${visit._id}`;
+                    let url = `/lead-details?id=${visit._id}`;
                     if (statusParam) {
                       url += `&status=${statusParam}`;
                     }
@@ -824,7 +824,7 @@ const Closingdetaispage = () => {
               onClick={() => {
                 setSelectedLead(visit);
                 router.push(
-                  `/closing-manager/closing-manager-lead-details?id=${visit._id}`,
+                  `/lead-details?id=${visit._id}`,
                   {
                     scroll: false,
                   }
@@ -960,7 +960,7 @@ const Closingdetaispage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/closing-manager/closing-manager-lead-details", {
+              router.push("/lead-details", {
                 scroll: false,
               });
             }}
