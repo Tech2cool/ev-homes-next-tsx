@@ -18,6 +18,7 @@ import Report from "./Report";
 import { useUser } from "@/providers/userContext";
 import { useData } from "@/providers/dataContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SectionTap = () => {
   const {
@@ -31,102 +32,8 @@ const SectionTap = () => {
     fetchOnboardTarget,
   } = useData();
   const { user, loading } = useUser();
-
-  useEffect(() => {
-    if (user && !loading && !searchLeadInfo) {
-      fetchSearchLeads({
-        query: "",
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading, searchLeadInfo]);
-
-  useEffect(() => {
-    if (user && !loading) {
-      // console.log("use effect dashboard");
-      // getClosingManagerDashBoardCount({ id: user?._id ?? null });
-      fetchAssignFeedbackLeadsCount({
-        query: "",
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading]);
-
-  useEffect(() => {
-    if (user && !loading) {
-      // console.log("use effect dashboard");
-      fetchDataAnalyzerVisits({
-        query: "",
-        page: 1,
-        limit: 10,
-        // Add other parameters as needed
-      });
-    }
-  }, []);
-
-  const cardsData = [
-    {
-      label: "Total Leads",
-      value: searchLeadInfo?.totalItems ?? 0,
-      linkHref: "/lead-details?status=all",
-      status: "all",
-      icon: <FaUsers />,
-      color: "#ad82f2ff",
-      iconcolor: "#00024a87",
-       bgcolor: ["#324effff", "#99adffff"]
-    },
-    {
-      label: "Approved",
-      value: searchLeadInfo?.approvedCount ?? 0,
-
-      linkHref:"/lead-details?status=approved",
-
-      status: "approved",
-      icon: <FaCheck />,
-      color: "#88c08aa8",
-      iconcolor: "#88c08aa8",
-      lighticoncolor: "#88c08aa8",
-      bgcolor: ["#5A70F7", "#6A83EA"]
-    },
-    {
-      label: "Rejected",
-      value: searchLeadInfo?.rejectedCount ?? 0,
-
-       linkHref:"/lead-details?status=rejected",
-
-      status: "rejected",
-      icon: <FaTimes />,
-      color: "#ce676082",
-       iconcolor: "#88c08aa8",
-       bgcolor: ["#5A70F7", "#6A83EA"]
-    },
-    {
-      label: "Pending",
-      value: searchLeadInfo?.pendingCount ?? 0,
-
-      linkHref:"/lead-details?status=pending",
-
-      status: "pending",
-      icon: <FaClock />,
-      color: "#c0a24aa7",
-       iconcolor: "#88c08aa8",
-       bgcolor: ["#5A70F7", "#6A83EA"]
-    },
-    {
-      label: "Bulk Lead",
-      value: searchLeadInfo?.bulkCount ?? 0,
-
-      linkHref:"/lead-details?status=bulk",
-
-      status: "bulk",
-      icon: <FaBoxes />,
-      color: "#58b1bd9c",
-       iconcolor: "#88c08aa8",
-      bgcolor: ["#5A70F7", "#6A83EA"]
-    },
-  ];
+  const router = useRouter();
+ 
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -147,6 +54,9 @@ const SectionTap = () => {
   ];
   const [showMonths, setShowMonths] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
   const visitscrollRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -160,6 +70,99 @@ const SectionTap = () => {
       console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
     }
   }, [asssignFeedbackInfo]);
+
+ 
+
+  useEffect(() => {
+    if (user && !loading) {
+      // console.log("use effect dashboard");
+      // getClosingManagerDashBoardCount({ id: user?._id ?? null });
+      fetchAssignFeedbackLeadsCount({
+        query: "",
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [user, loading]);
+
+  useEffect(() => {
+    if (user && !loading) {
+      // console.log("use effect dashboard");
+      fetchDataAnalyzerVisits({
+        query: "",
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, []);
+
+  const cardsData = [
+    {
+      label: "Total Leads",
+      value: searchLeadInfo?.totalItems ?? 0,
+      // linkHref: "/lead-details?status=all",
+      status: "all",
+      icon: <FaUsers />,
+      color: "#ad82f2ff",
+      iconcolor: "#00024a87",
+      bgcolor: ["#324effff", "#99adffff"],
+    },
+    {
+      label: "Approved",
+      value: searchLeadInfo?.approvedCount ?? 0,
+
+      // linkHref:"/lead-details?status=approved",
+
+      status: "approved",
+      icon: <FaCheck />,
+      color: "#88c08aa8",
+      iconcolor: "#88c08aa8",
+      lighticoncolor: "#88c08aa8",
+      bgcolor: ["#5A70F7", "#6A83EA"],
+    },
+    {
+      label: "Rejected",
+      value: searchLeadInfo?.rejectedCount ?? 0,
+
+      //  linkHref:"/lead-details?status=rejected",
+
+      status: "rejected",
+      icon: <FaTimes />,
+      color: "#ce676082",
+      iconcolor: "#88c08aa8",
+      bgcolor: ["#5A70F7", "#6A83EA"],
+    },
+    {
+      label: "Pending",
+      value: searchLeadInfo?.pendingCount ?? 0,
+
+      // linkHref:"/lead-details?status=pending",
+
+      status: "pending",
+      icon: <FaClock />,
+      color: "#c0a24aa7",
+      iconcolor: "#88c08aa8",
+      bgcolor: ["#5A70F7", "#6A83EA"],
+    },
+    {
+      label: "Bulk Lead",
+      value: searchLeadInfo?.bulkCount ?? 0,
+
+      // linkHref:"/lead-details?status=bulk",
+
+      status: "bulk",
+      icon: <FaBoxes />,
+      color: "#58b1bd9c",
+      iconcolor: "#88c08aa8",
+      bgcolor: ["#5A70F7", "#6A83EA"],
+    },
+  ];
+
+   const handleCardClick = async (status?: String) => {
+    const apiStatus = status === "all" ? null : status;
+    // Pass the filtered data via router state
+    router.push(`/lead-details?status=${apiStatus}`);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -175,14 +178,25 @@ const SectionTap = () => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
-        }px`;
+      wrapper.style.left = `${
+        scrollPercent * (hintWidth - wrapper.offsetWidth)
+      }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
     scrollRef.current?.addEventListener("scroll", handleScroll);
     return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
+
+   useEffect(() => {
+    if (!user || loading) return;
+    fetchSearchLeads({
+      page: 1,
+      limit: 10,
+      query: "",
+    });
+  }, [user, loading]);
+  
   useEffect(() => {
     const visitScroll = () => {
       const scrollEl = visitscrollRef.current;
@@ -197,8 +211,9 @@ const SectionTap = () => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
-        }px`;
+      wrapper.style.left = `${
+        scrollPercent * (hintWidth - wrapper.offsetWidth)
+      }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -233,12 +248,13 @@ const SectionTap = () => {
   // ];
   const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
-      name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"
+        name: `${item.teamLeader?.firstName ?? "Team"} ${
+          item.teamLeader?.lastName ?? "Leader"
         }`,
-      feedback: item.notFollowUpCount ?? 0,
-      tasks: item.notAssignedCount ?? 0,
-      border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
-    }))
+        feedback: item.notFollowUpCount ?? 0,
+        tasks: item.notAssignedCount ?? 0,
+        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+      }))
     : [];
 
   const toggleBottomSheet = (index: number) => {
@@ -422,37 +438,34 @@ const SectionTap = () => {
         {/* Horizontal scrollable cards */}
         <div className={styles.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-            <Link href={card.linkHref} key={index}>
-
-              <div className={styles.card} style={{
-                background:
-                  document.documentElement.classList.contains("light")
-                    ? `linear-gradient(135deg, ${card.bgcolor[0]}, ${card.bgcolor[1]})`
-                    : "#090909",
-              }}>
-                <div className={styles.bgIcon} style={{ color: card.iconcolor }}>
-                  {card.icon}
-                </div>
-                <div className={styles.cardContent}>
-                  <div className={styles.topRow}>
-                    <div
-                      className={styles.iconContainer}
-                      style={{ color: card.color }}
-                    >
-                      {card.icon}
-                    </div>
-                    <div
-                      className={styles.arrowContainer}
-                      style={{ color: card.color }}
-                    >
-                      <FaArrowRight />
-                    </div>
-                  </div>
-                  <p className={styles.label}>{card.label}</p>
-                  <p className={styles.value}>{card.value}</p>
-                </div>
+            <div
+              className={styles.card}
+              key={index}
+              onClick={() => handleCardClick(card.status)}
+              style={{ cursor: "pointer" }} // ✅ Makes card clickable UI
+            >
+              <div className={styles.bgIcon} style={{ color: card.iconcolor }}>
+                {card.icon}
               </div>
-            </Link>
+              <div className={styles.cardContent}>
+                <div className={styles.topRow}>
+                  <div
+                    className={styles.iconContainer}
+                    style={{ color: card.color }}
+                  >
+                    {card.icon}
+                  </div>
+                  <div
+                    className={styles.arrowContainer}
+                    style={{ color: card.color }}
+                  >
+                    <FaArrowRight />
+                  </div>
+                </div>
+                <p className={styles.label}>{card.label}</p>
+                <p className={styles.value}>{card.value}</p>
+              </div>
+            </div>
           ))}
         </div>
 
@@ -655,8 +668,9 @@ const SectionTap = () => {
         {assignFeedbackcard.map((card, index) => (
           <div key={index} className={styles.cardWrapper}>
             <div
-              className={`${styles.cardtarget} ${activeCard === index ? styles.cardActive : ""
-                }`}
+              className={`${styles.cardtarget} ${
+                activeCard === index ? styles.cardActive : ""
+              }`}
               onClick={() => toggleBottomSheet(index)}
             >
               <h3>{card.name}</h3>
@@ -672,8 +686,9 @@ const SectionTap = () => {
             </div>
 
             <div
-              className={`${styles.bottomSheet} ${activeCard === index ? styles.show : ""
-                }`}
+              className={`${styles.bottomSheet} ${
+                activeCard === index ? styles.show : ""
+              }`}
             >
               <div className={styles.sheetItem}>
                 <p className={styles.sheetLabel}>Feedback Pending</p>

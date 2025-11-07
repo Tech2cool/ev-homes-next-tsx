@@ -80,7 +80,13 @@ const HomeNavbar = () => {
                 <span>Home</span>
               </Link>
             </li>
-            
+
+            <li className={activeSection === "dashboard" ? styles.active : ""}>
+              <Link href="/Dashboard" className={styles.navLink}>
+                <span>Dashbord</span>
+              </Link>
+            </li>
+
             <li className={activeSection === "projects" ? styles.active : ""}>
               <Link href="/projects" className={styles.navLink}>
                 <span>Projects</span>
@@ -101,37 +107,33 @@ const HomeNavbar = () => {
                 <span>About Us</span>
               </Link>
             </li>
-                          {!user ? (
+            {!user ? (
+              <li>
+                <Link
+                  href="/login"
+                  className={`${styles.navLink} ${styles.loginBtn}`}
+                >
+                  <span>Login</span>
+                </Link>
+              </li>
+            ) : (
+              <>
                 <li>
-                  <Link
-                    href="/login"
-                    className={`${styles.navLink} ${styles.loginBtn}`}
-                  >
-                    <span>Login</span>
+                  <Link href="/dashboard" className={`${styles.navLink}`}>
+                    <span>Dashboard</span>
                   </Link>
                 </li>
-              ) : (
-                <>
-                  <li>
-                    <Link
-                      href="/dashboard"
-                      className={`${styles.navLink}`}
-                    >
-                      <span>Dashboard</span>
-                    </Link>
-                  </li>
 
-                  <li
-                    className={styles.userIconWrapper}
-                    onClick={() => setOpenProfileDialog(true)} // ✅ correct
-                  >
-                    <FaUserCircle className={styles.userIcon} />
-                  </li>
-                </>
-              )}
+                <li
+                  className={styles.userIconWrapper}
+                  onClick={() => setOpenProfileDialog(true)} // ✅ correct
+                >
+                  <FaUserCircle className={styles.userIcon} />
+                </li>
+              </>
+            )}
 
             <ul>
-
               <ProfileDialogBox
                 isOpen={openProfileDialog}
                 onClose={() => setOpenProfileDialog(false)}
