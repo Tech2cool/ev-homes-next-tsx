@@ -61,18 +61,6 @@ const DataAnalyzerWrapper = () => {
 export default DataAnalyzerWrapper;
 
 const DataAnalyzerdetailspage = () => {
-  const {
-    searchLeadInfo,
-    fetchSearchLeads,
-    channelPartners,
-    leads,
-    loadingLeads,
-    getProjects,
-    getRequirements,
-    projects,
-    requirements,
-  } = useData();
-
   const router = useRouter();
   //   const visitId = "lead-1";
   //   const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
@@ -93,6 +81,7 @@ const DataAnalyzerdetailspage = () => {
   // });
   // console.log(mapLead);
   const searchParams = useSearchParams();
+    const visitId = searchParams.get("id");
   // const status = searchParams.get("status");
   // const visitId = searchParams.get("id"); // Get ID from URL if needed
   // console.log("leads from context", leads);
@@ -112,43 +101,19 @@ const DataAnalyzerdetailspage = () => {
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [query, setQuery] = useState("");
+    const status = searchParams.get("status");
 
   const [editFormData, setEditFormData] = useState({});
   const [approvalData, setApprovalData] = useState({
     action: "approve",
     remark: "",
   });
-  const { user, loading, getSocket, reconnectSocket } = useUser();
-
-  const socket = getSocket();
 
   const [searchQuery, setSearchQuery] = useState("");
 
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(false);
-
-    const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  useEffect(() => {
-    if (user && !loading) {
-      fetchSearchLeads({
-        query: debouncedSearchQuery,
-        page: 1,
-        limit: 10,
-        status: selectedFilter?.status,
-        // Add other filter parameters as needed
-      });
-    }
-  }, [debouncedSearchQuery, user, loading]);
-
-
-  //   const leadInfo = DUMMY_LEAD_INFO;
-  //   const loading = false;
-
-  //   const user = DUMMY_USER;
 
   const [selectedFilter, setSelectedFilter] = useState({
     status: null,
@@ -168,7 +133,96 @@ const DataAnalyzerdetailspage = () => {
     teamLeader: null,
     taskType: null,
     member: null,
+    propertyType: null,
   });
+
+  const { user, loading, getSocket, reconnectSocket } = useUser();
+
+  const {
+    searchLeadInfo,
+    fetchSearchLeads,
+    channelPartners,
+    leads,
+    loadingLeads,
+    getProjects,
+    getRequirements,
+    projects,
+    requirements,
+  } = useData();
+
+  const socket = getSocket();
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleApplyFilters = useCallback(
+    (filterParams: any) => {
+      // Reset to page 1 when applying new filters
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+        ...filterParams, // Spread the filter parameters
+      });
+    },
+    [debouncedSearchQuery, status, fetchSearchLeads]
+  );
+
+  // Function to clear all filters
+  const handleClearFilters = useCallback(() => {
+    setFilters({
+      visitType: "",
+      leadFilter: "",
+      statusFilter: "",
+      feedbackFilter: "",
+      clientStatus: "",
+      leadStatus: "",
+      cycleStatus: 0,
+      dateFrom: "",
+      dateTo: "",
+    });
+
+    // Fetch without any filters
+    fetchSearchLeads({
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+    });
+  }, [debouncedSearchQuery, status, fetchSearchLeads]);
+
+  // Initial data fetch with status from URL
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("Initial fetch with status:", status);
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+      });
+    }
+  }, [user, loading, status]);
+
+  useEffect(() => {
+    if (user && !loading) {
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+        //  ...selectedFilter,
+        // Add other filter parameters as needed
+      });
+    }
+  }, [debouncedSearchQuery, user, loading, status]);
+
+  //   const leadInfo = DUMMY_LEAD_INFO;
+  //   const loading = false;
+
+  //   const user = DUMMY_USER;
 
   // useEffect(() => {
   //   if (visitId && leads && leads.length > 0) {
@@ -182,24 +236,24 @@ const DataAnalyzerdetailspage = () => {
   // }, [visitId, leads]);
 
   // Fix your fetch call
-  useEffect(() => {
-    const fetchLeadsBasedOnStatus = async () => {
-      if (user && !loading) {
-        try {
-          await fetchSearchLeads({
-            query: searchQuery,
-            page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
-            limit: 10,
-            status: selectedFilter?.status,
-          });
-        } catch (error) {
-          console.error("Error fetching leads:", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchLeadsBasedOnStatus = async () => {
+  //     if (user && !loading) {
+  //       try {
+  //         await fetchSearchLeads({
+  //           query: searchQuery,
+  //           page: (searchLeadInfo?.page ?? 0) + 1, // Start from page 1
+  //           limit: 10,
+  //           status: selectedFilter?.status,
+  //         });
+  //       } catch (error) {
+  //         console.error("Error fetching leads:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchLeadsBasedOnStatus();
-  }, [user, loading, selectedFilter]); // Remove searchLeadInfo?.page from dependencies
+  //   fetchLeadsBasedOnStatus();
+  // }, [user, loading, selectedFilter]); 
 
   // Fix the loadMore function
   const loadMoreLeads = useCallback(async () => {
@@ -207,14 +261,14 @@ const DataAnalyzerdetailspage = () => {
       const nextPage = searchLeadInfo.page + 1;
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchSearchLeads({
-          query: searchQuery,
+          query: debouncedSearchQuery,
           page: nextPage,
           limit: 10,
-          status: selectedFilter?.status,
+          status: status === "all" ? null : status,
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, searchQuery]);
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery, status]);
 
   // Update your scroll handler
   const handleScroll = useCallback(
@@ -300,6 +354,14 @@ const DataAnalyzerdetailspage = () => {
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
     console.log("Filters applied (Dummy):", newFilters);
+
+    fetchSearchLeads({
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+      ...newFilters,
+    });
   };
 
   const handleCall = useCallback(
@@ -323,20 +385,29 @@ const DataAnalyzerdetailspage = () => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
+    reconnectSocket();
   }, []);
 
+    useEffect(() => {
+      if (visitId && leads!.length > 0) {
+        const foundVisit = leads?.find((v: any) => v?._id === visitId);
+        if (foundVisit) {
+          setSelectedLead(foundVisit);
+        }
+      }
+    }, [visitId, leads]);
   // Initial data fetch
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("Initial fetch - visit details");
-      fetchSearchLeads({
-        // id: user?._id,
-        query: searchQuery,
-        page: 1,
-        limit: 10,
-      });
-    }
-  }, [user, loading]);
+  // useEffect(() => {
+  //   if (user && !loading) {
+  //     console.log("Initial fetch - visit details");
+  //     fetchSearchLeads({
+  //       // id: user?._id,
+  //       query: searchQuery,
+  //       page: 1,
+  //       limit: 10,
+  //     });
+  //   }
+  // }, [user, loading]);
   // useEffect(() => {
   //   if (visitId && leads!.length > 0) {
   //     const foundVisit = leads?.find((v: any) => v?._id === visitId);
@@ -485,30 +556,23 @@ const DataAnalyzerdetailspage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {leads?.map((visit: Lead, index: number) => {
-              console.log(`Rendering lead ${index}:`, visit);
-              return (
-                <div
-                  key={`${visit._id}-${index}`}
-                  className={`${styles.visitCard} ${
-                    SelectedLead?._id === visit._id ? styles.selectedCard : ""
+             {leads?.map((visit, index) => (
+              <div
+                key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
                   }`}
-                  onClick={() => {
-                    handleVisitSelect(visit);
-                    // Preserve status in navigation
-                    const currentParams = new URLSearchParams(
-                      window.location.search
-                    );
-                    const statusParam = currentParams.get("status");
+                onClick={() => {
+                  setSelectedLead(visit);
 
-                    let url = `/lead-details?id=${visit._id}`;
-                    if (statusParam) {
-                      url += `&status=${statusParam}`;
-                    }
+                  // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                  //   scroll: false,
+                  // });
+                  router.push(`/lead-details?status=${status}&id=${visit._id}`, {
 
-                    router.push(url, { scroll: false });
-                  }}
-                >
+                    scroll: false,
+                  });
+                }}
+              >
                   <div className={styles.tag}></div>
                   <div className={styles.leadInfo}>
                     <Image
@@ -614,8 +678,8 @@ const DataAnalyzerdetailspage = () => {
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              )
+            )}
             {searchLeadInfo?.page &&
               searchLeadInfo.totalPages &&
               searchLeadInfo.page < searchLeadInfo.totalPages && (
@@ -819,22 +883,9 @@ const DataAnalyzerdetailspage = () => {
           onClose={() => setShowFilterDialog(false)}
           onOpenChange={setShowFilterDialog}
           filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={() => {
-            const cleared = {
-              visitType: "",
-              leadFilter: "",
-              statusFilter: "",
-              feedbackFilter: "",
-              clientStatus: "",
-              leadStatus: "",
-              cycleStatus: 0,
-              dateFrom: "",
-              dateTo: "",
-            };
-            setFilters(cleared);
-            console.log("Filters cleared and data refresh simulated.");
-          }}
+          onFiltersChange={setFilters}
+          onClearFilters={handleClearFilters}
+          onApplyFilters={handleApplyFilters} // Pass the apply function
           visits={leads || []}
           resultCount={leads?.length || 0}
         />
@@ -1393,7 +1444,7 @@ const VisitDetailsContent = ({
                   <IoIosPerson size={12} color="#4a84ff" />
                   Property Type
                 </label>
-                <p className={styles.infoValue}>NA</p>
+                <p className={styles.infoValue}> {visit?.propertyType ?? "NA"}</p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>

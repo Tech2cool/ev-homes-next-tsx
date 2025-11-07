@@ -138,7 +138,7 @@ const LeadDetailsPage = () => {
     teamLeader: null,
     taskType: null,
     member: null,
-     propertyType: null,
+    propertyType: null,
   });
 
   const { user, loading, getSocket, reconnectSocket } = useUser();
