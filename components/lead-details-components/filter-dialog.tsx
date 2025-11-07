@@ -1,41 +1,61 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/components/visit-components/filterDialog.module.css";
+import { PaginationProps } from "@mui/material/Pagination";
 
-const VISIT_TYPES = [
-  "",
-  "Pending",
-  "visit-done", 
-  "revisit-done",
-  "Visit Pending",
-  "Revisit Pending",
-  "Line up",
-];
+const VISIT_TYPE_MAP: { [key: string]: string } = {
+  "All": "all",
+  "Pending": "pending",
+  "visit-done": "visit-done", 
+  "revisit-done": "revisit-done",
+  "Visit Pending": "visit-pending",
+  "Revisit Pending": "revisit-pending",
+  "Line up": "line-up",
+};
 
-const LEAD_FILTER = ["", "Live lead", "Transfer Lead"];
+const LEAD_FILTER_MAP: { [key: string]: string } = {
+  "Live lead": "live-lead",
+  "Transfer Lead": "transfer-lead",
+};
 
-const STATUS_FILTER = ["", "Assigned", "Not Assigned"];
+const STATUS_FILTER_MAP: { [key: string]: string } = {
+  "Assigned": "assigned",
+  "Not Assigned": "not-assigned",
+  "Feedback pending" : "feedback-pending",
+};
 
-const FEEDBACK_FILTER = [
-  "",
-  "Call Connected",
-  "Call Disconnected", 
-  "Call Not Received",
-  "Call Not Reachable",
-  "Call Busy",
-  "Call Abrupt",
-];
+const FEEDBACK_FILTER_MAP: { [key: string]: string } = {
+  "Call Connected": "Call Connected",
+  "Call Disconnected": "Call Disconnected", 
+  "Call Not Received": "Call Not Received",
+  "Call Not Reachable": "Call Not Reachable",
+  "Call Busy": "Call Busy",
+  "Call Abrupt": "Call Abrupt",
+};
 
-const CLIENT_STATUS = ["", "interested", "not-interested", "DND", "moderate"];
+const CLIENT_STATUS_MAP: { [key: string]: string } = {
+  "interested": "interested",
+  "not-interested": "not-interested", 
+  "DND": "DND",
+  "moderate": "moderate",
+};
 
-const LEAD_STATUS = [
-  "",
-  "just-curious",
-  "in-progress", 
-  "supposed-to-visit",
-  "lost",
-];
+const LEAD_STATUS_MAP: { [key: string]: string } = {
+  "just-curious": "just-curious",
+  "in-progress": "in-progress",
+  "supposed-to-visit": "supposed-to-visit",
+  "lost": "lost",
+};
 
-const CYCLE_STATUS = ["", "120", "60", "30"];
+const CYCLE_STATUS_MAP: { [key: string]: number } = {
+  "120": 120,
+  "60": 60,
+  "30": 30,
+};
+
+const PROPERTY_TYPE_MAP: { [key: string]: string } = {
+  "Residential": "Residential",
+  "Commercial": "Commercial",
+};
 
 interface FilterDialogProps {
   open: boolean;
@@ -56,6 +76,7 @@ interface FilterDialogProps {
   onClearFilters: () => void;
   visits: any[];
   resultCount: number;
+  onApplyFilters: (filterParams: any) => void; // Add this prop
 }
 
 export function LeadFilterDialog({ 
@@ -67,11 +88,11 @@ export function LeadFilterDialog({
   onClearFilters,
   visits,
   resultCount,
+  onApplyFilters, // Receive the apply function
 }: FilterDialogProps) {
   const [datePreset, setDatePreset] = useState("today");
   const [localFilters, setLocalFilters] = useState(filters);
 
-  // Update local filters when props change
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
@@ -105,7 +126,6 @@ export function LeadFilterDialog({
         dateTo = today.toISOString().split('T')[0];
         break;
       case "custom":
-        // Don't change dates for custom
         return;
       default:
         break;
@@ -117,8 +137,22 @@ export function LeadFilterDialog({
     }
   };
 
-  const  applyFilters = () => {
-    onFiltersChange(localFilters);
+  const applyFilters = () => {
+    // Convert UI filters to API parameters
+    const apiFilters = {
+      status: VISIT_TYPE_MAP[localFilters.visitType as keyof typeof VISIT_TYPE_MAP],
+      taskType: LEAD_FILTER_MAP[localFilters.leadFilter as keyof typeof LEAD_FILTER_MAP],
+      status2: STATUS_FILTER_MAP[localFilters.statusFilter as keyof typeof STATUS_FILTER_MAP],
+      callData: FEEDBACK_FILTER_MAP[localFilters.feedbackFilter as keyof typeof FEEDBACK_FILTER_MAP],
+      clientstatus: CLIENT_STATUS_MAP[localFilters.clientStatus as keyof typeof CLIENT_STATUS_MAP],
+      leadstatus: LEAD_STATUS_MAP[localFilters.leadStatus as keyof typeof LEAD_STATUS_MAP],
+      cycle: CYCLE_STATUS_MAP[localFilters.cycleStatus.toString() as keyof typeof CYCLE_STATUS_MAP],
+      startDateDeadline: localFilters.dateFrom || null,
+      endDateDeadline: localFilters.dateTo || null,
+    };
+
+    // Call the parent function to apply filters
+    onApplyFilters(apiFilters);
     onClose();
   };
 
@@ -160,6 +194,7 @@ export function LeadFilterDialog({
         </div>
 
         <div className={styles.content}>
+          {/* Keep all your existing JSX structure */}
           <div className={styles.fieldGroup}>
             <label>Visit Type</label>
             <select
@@ -168,7 +203,7 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Visit Types</option>
-              {VISIT_TYPES.slice(1).map((type) => (
+              {Object.keys(VISIT_TYPE_MAP).filter(key => key).map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -184,7 +219,7 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Lead Types</option>
-              {LEAD_FILTER.slice(1).map((type) => (
+              {Object.keys(LEAD_FILTER_MAP).filter(key => key).map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -192,6 +227,7 @@ export function LeadFilterDialog({
             </select>
           </div>
 
+          {/* Add similar mapping for other filter types */}
           <div className={styles.fieldGroup}>
             <label>Status Filter</label>
             <select
@@ -200,7 +236,7 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Statuses</option>
-              {STATUS_FILTER.slice(1).map((type) => (
+              {Object.keys(STATUS_FILTER_MAP).filter(key => key).map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -216,7 +252,7 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Feedback Types</option>
-              {FEEDBACK_FILTER.slice(1).map((status) => (
+              {Object.keys(FEEDBACK_FILTER_MAP).filter(key => key).map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>
@@ -232,7 +268,7 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Client Statuses</option>
-              {CLIENT_STATUS.slice(1).map((status) => (
+              {Object.keys(CLIENT_STATUS_MAP).filter(key => key).map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>
@@ -248,7 +284,7 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Lead Statuses</option>
-              {LEAD_STATUS.slice(1).map((status) => (
+              {Object.keys(LEAD_STATUS_MAP).filter(key => key).map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>
@@ -263,10 +299,10 @@ export function LeadFilterDialog({
               onChange={(e) => handleChange("cycleStatus", e.target.value)}
               className={styles.select}
             >
-              <option value="">All Cycle Statuses</option>
-              {CYCLE_STATUS.slice(1).map((status) => (
-                <option key={status} value={status}>
-                  {status} days
+              <option value={0}>All Cycle Statuses</option>
+              {Object.keys(CYCLE_STATUS_MAP).filter(key => key).map((days) => (
+                <option key={days} value={days}>
+                  {days} days
                 </option>
               ))}
             </select>
