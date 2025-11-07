@@ -8,7 +8,6 @@ import { UserProvider } from "@/providers/userContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cookies } from "next/headers";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -43,10 +42,12 @@ export default async function RootLayout({
           enableSystem={true}
         >
           <UserProvider>
-            <DataProvider> <SidebarProvider defaultOpen={defaultOpen}>
-              {children}
-                </SidebarProvider>
-              </DataProvider>
+            <DataProvider>
+              {" "}
+              <SidebarProvider defaultOpen={defaultOpen}>
+                {children}
+              </SidebarProvider>
+            </DataProvider>
           </UserProvider>
           {/* <DataProvider>
             <SidebarProvider defaultOpen={defaultOpen}>
@@ -54,7 +55,6 @@ export default async function RootLayout({
 
             </SidebarProvider>
           </DataProvider> */}
-
         </ThemeProvider>
       </body>
     </html>
