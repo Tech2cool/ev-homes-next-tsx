@@ -259,6 +259,7 @@ interface Lead {
   createdThrough?: string | null;
   occupation?: string;
   additionLinRemark?: string;
+  propertyType?: string;
 }
 
 interface SiteVisit {
