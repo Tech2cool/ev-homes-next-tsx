@@ -1175,6 +1175,7 @@
 }
 
 /* Navbar layout */
+.bookingnavbar,
 .navbar {
   display: flex;
   flex-direction: column;
@@ -1187,12 +1188,16 @@
 
   padding: 15px 6px;
 }
-
+.bookingnavbar{
+   justify-content: start;
+   gap: 2rem;
+}
 /* Scrollbar */
+.bookingnavbar::-webkit-scrollbar,
 .navbar::-webkit-scrollbar {
   width: 5px;
 }
-
+.bookingnavbar::-webkit-scrollbar-thumb,
 .navbar::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #4a84ff, #2e5ede);
   border-radius: 10px;
@@ -1676,7 +1681,7 @@
     border: 1px solid rgba(14, 14, 14, 0.08);
 
   }
-
+.bookingnavbar,
   .navbar {
     flex-direction: row;
     height: 100%;
@@ -2090,3 +2095,4 @@
 :global(html.light) .status{
   color: #ffaa2a;
 }
+

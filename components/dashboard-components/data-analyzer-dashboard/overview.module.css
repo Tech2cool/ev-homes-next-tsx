@@ -37,9 +37,9 @@
 }
 
 :global(html.light) .card {
-  background: #ffffffde;
+  background: #fffdff;
 
-  box-shadow: 0 4px 20px #01043333;
+  box-shadow: 0 2px 20px #01043333;
 }
 
 .card::before {

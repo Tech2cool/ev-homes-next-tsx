@@ -1,0 +1,439 @@
+.visitCard {
+  background-color: #222;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: none;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+@media  (max-width) {
+  .visitCard {
+
+  padding: 10px;
+}
+}
+.selectedCard {
+  border-left-color: #007bff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nameBlock {
+  display: flex;
+  align-items: center;
+}
+
+.initialsCircle {
+  background-color: #3f51b5;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.clientName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.clientPhone {
+  font-size: 14px;
+  color: #999;
+}
+
+.statusBlock {
+  text-align: right;
+}
+
+.dateText {
+  font-size: 12px;
+  color: #9189f1;
+}
+
+.confirmButton {
+  background-color: #444444a6;
+  color: #9da2e5;
+  border: 1px solid #9999996f;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+
+.statusTimeline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px 0px 5px 0px;
+}
+
+.statusItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 80px;
+  flex-grow: 0;
+}
+
+.statusLabel {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
+  white-space: nowrap;
+}
+
+.labelActive {
+  color: #388e3c;
+}
+
+.statusIcon {
+  font-size: 21px;
+  color: #b0bec5;
+  background-color: #b0bec543;
+padding: 4px;
+border-radius: 4px;
+}
+
+.iconDone {
+  color: #388e3c;
+  background-color: #388e3c3b;
+}
+
+
+.connector {
+
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 5px;
+}
+
+.dashIcon {
+  font-size: 20px;
+  color: #ccc;
+  
+}
+
+.connectorDone .dashIcon {
+  color: #388e3c;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.label {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(224, 221, 221);
+  padding-left: 10px;
+}
+.gridItem{
+  padding: 1px 7px;
+  background: #323131d9;
+    border-radius: 3px;
+   
+    box-shadow: inset 0 1px 2px #ffffff0d, 0 2px 6px #0000004d;
+}
+
+
+:global(html.light) .visitCard {
+  background-color: #ffffff;
+  border-left: 5px solid transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+:global(html.light) .selectedCard {
+  border-left-color: #007bff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+:global(html.light) .clientName {
+  color: #222;
+}
+
+:global(html.light) .clientPhone {
+  color: #555;
+}
+
+:global(html.light) .dateText {
+  color: #6a5acd;
+}
+
+:global(html.light) .confirmButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+:global(html.light) .statusLabel {
+  color: #888;
+}
+
+:global(html.light) .labelActive {
+  color: #2e7d32;
+}
+
+:global(html.light) .statusIcon {
+  color: #666;
+  background-color: #f0f0f0;
+}
+
+:global(html.light) .iconDone {
+  color: #2e7d32;
+  background-color: #c8e6c9;
+}
+
+:global(html.light) .dashIcon {
+  color: #aaa;
+}
+
+:global(html.light) .connectorDone .dashIcon {
+  color: #2e7d32;
+}
+
+:global(html.light) .gridItem {
+  background: #f9f9f9;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px #ffffff, 0 1px 3px #0000000d;
+  border: 1px solid #d8d7d7;
+}
+
+:global(html.light) .label {
+  color: #777;
+}
+
+:global(html.light) .value {
+  color: #222;
+}
+.visitContainer {
+  background: #111;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  color: #eee;
+  transition: background 0.3s, color 0.3s;
+}
+
+.headerRow {
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+.subtitle {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  gap:5px
+}
+
+.email {
+  font-size: 13px;
+  color: #999;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.infoItem {
+  background: #222;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: inset 0 1px 2px #ffffff0d, 0 1px 4px #0000004d;
+}
+
+.cardlabel {
+  font-size: 13px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.cardvalue {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+.iconbg {
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconChannelPartner {
+  background-color: rgba(76, 175, 80, 0.15); 
+  color: #4caf50; 
+}
+
+.iconLeadReceived {
+  background-color: rgba(33, 150, 243, 0.15); 
+  color: #2196f3; 
+}
+
+.iconTeamLeader {
+  background-color: rgba(255, 152, 0, 0.15); 
+  color: #ff9800; 
+}
+
+.iconRevisitDate {
+  background-color: rgba(156, 39, 176, 0.15); 
+  color: #9c27b0; 
+}
+
+.iconBookingDate {
+  background-color: rgba(244, 67, 54, 0.15); 
+  color: #f44336; 
+}
+.iconParkingr {
+  background-color: rgba(76, 54, 244, 0.15); 
+  color: #3c36f4; 
+}
+.iconFlatCost {
+  background-color: rgba(54, 238, 244, 0.15); 
+  color: #36e1f4; 
+}
+.iconFlatCost {
+  background-color: rgba(54, 238, 244, 0.15); 
+  color: #36e1f4; 
+}
+/* Light Theme Overrides */
+:global(html.light) .visitContainer {
+  background: #fff;
+  color: #222;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+:global(html.light) .infoItem {
+  background: #f8f8f8;
+  box-shadow: inset 0 1px 2px #ffffff, 0 1px 3px rgba(0,0,0,0.05);
+}
+
+:global(html.light) .title {
+  color: #222;
+}
+
+:global(html.light) .subtitle {
+  color: #555;
+}
+
+:global(html.light) .cardlabel {
+  color: #666;
+}
+
+:global(html.light) .cardvalue {
+  color: #111;
+}
+
+:global(html.light) .iconChannelPartner {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+}
+
+:global(html.light) .iconLeadReceived {
+  background-color: rgba(33, 150, 243, 0.15);
+  color: #2196f3;
+}
+
+:global(html.light) .iconTeamLeader {
+  background-color: rgba(255, 152, 0, 0.15);
+  color: #ff9800;
+}
+
+:global(html.light) .iconRevisitDate {
+  background-color: rgba(156, 39, 176, 0.15);
+  color: #9c27b0;
+}
+
+:global(html.light) .iconBookingDate {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #f44336;
+}
+
+:global(html.light) .iconbg {
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+:global(html.light) .infoItemChannelPartner {
+  background-color: #e8f5e9;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+:global(html.light) .infoItemLeadReceived {
+  background-color: #e3f2fd;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+:global(html.light) .infoItemTeamLeader {
+  background-color: #fff3e0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+:global(html.light) .infoItemRevisitDate {
+  background-color: #f3e5f5; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+:global(html.light) .infoItemBookingDate {
+  background-color: #ffebee; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+:global(html.light) .infoItemFlatCost {
+  background-color: #daf6e0; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+:global(html.light) .infoItemParkingr {
+  background-color: #dcdaf6; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
