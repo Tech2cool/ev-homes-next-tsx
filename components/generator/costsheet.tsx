@@ -2,15 +2,15 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import styles from "@/components/dashboard-components/data-analyzer-dashboard/taggingform.module.css";
-import cardstyles from "@/components/lead-details-components/Dailog/dailog.module.css"
-import { FaBuilding, FaCalendarAlt, FaStar } from "react-icons/fa";
-import Switch from "@mui/material/Switch";
+import cardstyles from "@/components/lead-details-components/Dailog/bookingdailog.module.css"
 
+import { FaBuilding, FaCalendarAlt, FaStar } from "react-icons/fa";
+import { BiRupee } from "react-icons/bi";
 import { IoPersonOutline } from "react-icons/io5";
 import { LuBuilding2 } from "react-icons/lu";
 import { FaArrowUpFromGroundWater } from "react-icons/fa6";
 import { TbHexagonNumber1Filled } from "react-icons/tb";
-import { BiRupee } from "react-icons/bi";
+import { AiFillPicture } from "react-icons/ai";
 
 interface FormState {
   projecttype: string;
@@ -28,16 +28,12 @@ interface FormState {
   landmark: string;
   pincode: string;
   town: string;
-  letterdate?: string;
-
+  letterdate: string;
+  bookingForm: File | null;
 }
 
-
 const CostSheet = () => {
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
-
   const [formData, setFormData] = useState<FormState>({
     projecttype: "",
     propertyType: "",
@@ -55,13 +51,21 @@ const CostSheet = () => {
     pincode: "",
     town: "",
     letterdate: "",
-
+    bookingForm: null,
   });
 
-  const onChangeField = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const onChangeField = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData((prev) => ({ ...prev, bookingForm: file }));
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.projecttype) newErrors.projecttype = "Please select Project.";
@@ -69,29 +73,21 @@ const CostSheet = () => {
     if (!formData.blug) newErrors.blug = "Blug selection is required";
     if (!formData.floor) newErrors.floor = "Floor selection is required";
     if (!formData.unit) newErrors.unit = "Unit selection is required";
-    if (!formData.prefix) newErrors.prefix = "select title";
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "Please enter First Name";
-    }
-    if (!formData.stampper) {
-      newErrors.stampper = "Enter Stamp Duty Percentage";
-    }
-    if (!formData.reference) newErrors.reference = "Please enter Reference number"
-    if (!formData.aInclusiveamount) {
-      newErrors.aInclusiveamount = "Enter All Inclusive Amount";
-    }
+    if (!formData.prefix) newErrors.prefix = "Select title";
+    if (!formData.firstName.trim()) newErrors.firstName = "Please enter First Name";
+    if (!formData.stampper) newErrors.stampper = "Enter Stamp Duty Percentage";
+    if (!formData.reference) newErrors.reference = "Please enter Reference number";
+    if (!formData.aInclusiveamount) newErrors.aInclusiveamount = "Enter All Inclusive Amount";
+    if (!formData.letterdate) newErrors.letterdate = "Please select Letter Date";
+    if (!formData.bookingForm) newErrors.bookingForm = "Please upload booking form";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
   const onSubmit = () => {
-
     if (!validateForm()) return;
-    alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
-
+    alert("Form submitted successfully:\n" + JSON.stringify(formData, null, 2));
   };
-
 
   const handleCancel = () => {
     setFormData({
@@ -111,75 +107,11 @@ const CostSheet = () => {
       pincode: "",
       town: "",
       letterdate: "",
-
+      bookingForm: null,
     });
-
+    setErrors({});
   };
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
-      setCurrentTheme(theme);
 
-      const observer = new MutationObserver(() => {
-        const updatedTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
-        setCurrentTheme(updatedTheme);
-      });
-
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-
-      return () => observer.disconnect();
-    }
-  }, []);
-  const customSelectStyles = useMemo(() => ({
-    control: (base: any) => ({
-      ...base,
-      backgroundColor: currentTheme === "dark" ? "#151414f5" : "transparent",
-      borderColor: currentTheme === "dark" ? "#444444f5" : "#927fbff5",
-      minHeight: "40px",
-      borderWidth: "2px",
-      color: currentTheme === "dark" ? "white" : "#201f1f",
-    }),
-    menu: (base: any) => ({
-      ...base,
-      backgroundColor: currentTheme === "dark" ? "#151414f5" : "white",
-    }),
-    option: (base: any, state: any) => ({
-      ...base,
-      backgroundColor: state.isSelected
-        ? currentTheme === "dark"
-          ? "#007bff"
-          : "#cce5ff"
-        : state.isFocused
-          ? currentTheme === "dark"
-            ? "#e6f0ff"
-            : "#f0f0f0"
-          : currentTheme === "dark"
-            ? "#fff"
-            : "#fff",
-      color: state.isSelected
-        ? currentTheme === "dark"
-          ? "white"
-          : "#201f1f"
-        : "black",
-    }),
-    multiValue: (base: any) => ({
-      ...base,
-      backgroundColor: currentTheme === "dark" ? "#007bff" : "#cce5ff",
-      color: currentTheme === "dark" ? "white" : "#201f1f",
-    }),
-    multiValueLabel: (base: any) => ({
-      ...base,
-      color: currentTheme === "dark" ? "white" : "#201f1f",
-    }),
-    multiValueRemove: (base: any) => ({
-      ...base,
-      color: currentTheme === "dark" ? "white" : "#201f1f",
-      ":hover": {
-        backgroundColor: "red",
-        color: "white",
-      },
-    }),
-  }), [currentTheme]);
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
     <label style={{ display: "flex", alignItems: "center", gap: "3px" }}>
       {icon}
@@ -444,66 +376,78 @@ const CostSheet = () => {
               />
             </div>
           </div>
-          <div className={styles.card}>
+          <div className={styles.card} >
             <div className={styles.formControl}>
               <label>
-                <FaCalendarAlt className={styles.iconcolor} />Letter Date
+                <RequiredLabel icon={<FaCalendarAlt className={styles.iconcolor} />} text="Letter Date" />
               </label>
               <input
                 type="date"
                 name="letterdate"
-                value={(formData as any).letterdate || ""}
+                value={formData.letterdate}
                 onChange={onChangeField}
+                className={styles.inputField}
               />
+              {errors.letterdate && <p className={styles.errorMsg}>{errors.letterdate}</p>}
             </div>
-            <div></div>
+
+            <div className={styles.formControl}>
+              <label>
+                <RequiredLabel icon={<AiFillPicture className={styles.iconcolor} />} text="Upload Booking Form" />
+              </label>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+                className={styles.inputField}
+              />
+              {formData.bookingForm && (
+                <p style={{ marginTop: "5px", fontSize: "14px", color: "#555" }}>
+                  Uploaded: {formData.bookingForm.name}
+                </p>
+              )}
+              {errors.bookingForm && <p className={styles.errorMsg}>{errors.bookingForm}</p>}
+            </div>
           </div>
-          <div className={cardstyles.infoSection}>
-            <div className={cardstyles.infoCard}>
-              <h4 className={cardstyles.cardTitle}>Client Details</h4>
-              <div className={cardstyles.infoRow}>
-                <span className={cardstyles.infoLabel}>Client Name:</span>
-                <span className={cardstyles.infoValue}>Rahul Sharma</span>
-              </div>
-              <div className={cardstyles.infoRow}>
-                <span className={cardstyles.infoLabel}>Phone Number:</span>
-                <span className={cardstyles.infoValue}>+91 9876543210</span>
-              </div>
-              <div className={cardstyles.infoRow}>
-                <span className={cardstyles.infoLabel}>Channel Partner:</span>
-                <span className={cardstyles.infoValue}>Elite Realty</span>
-              </div>
-              <div className={cardstyles.infoRow}>
-                <span className={cardstyles.infoLabel}>Site Visit Date:</span>
-                <span className={cardstyles.infoValue}>12 Oct 2025</span>
-              </div>
+        </div>
+        <div className={styles.cpheadline}>Cost Sheet</div>
+        <div className={styles.infocard}>
+          <div className={cardstyles.infoCard}>
+            <h4 className={cardstyles.cardTitle}>💰 Cost Sheet Summary</h4>
+            <p className={cardstyles.cardSubtitle}>
+              Details of payments made toward the cost sheet including agreement, GST, and stamp duty.
+            </p>
+
+            <div className={cardstyles.infoRow}>
+              <span className={cardstyles.infoLabel}>Agreement Value</span>
+              <span className={cardstyles.infoValue}>₹ 80,00,000</span>
 
             </div>
-
-            <div className={cardstyles.infoCard}>
-              <h4 className={cardstyles.cardTitle}>Team Leader Details</h4>
-              <div className={cardstyles.infoRow}>
-                <span className={cardstyles.infoLabel}>Name:</span>
-                <span className={cardstyles.infoValue}>Snehal Mehta</span>
-              </div>
-              <div className={cardstyles.infoRow}>
-                <span className={cardstyles.infoLabel}>Gmail:</span>
-                <span className={cardstyles.infoValue}>snehal@evgroup.co.in</span>
-              </div>
-
+            <div className={cardstyles.infoRow}>
+              <span className={cardstyles.infoLabel}>Registration Amount</span>
+              <span className={cardstyles.infoValue}>₹ 5,00,000</span>
+            </div>
+            <div className={cardstyles.infoRow}>
+              <span className={cardstyles.infoLabel}>Gst Amount</span>
+              <span className={cardstyles.infoValue}>₹ 30,000</span>
+            </div>
+            <div className={cardstyles.infoRow}>
+              <span className={cardstyles.infoLabel}>Stamp Duty Amount</span>
+              <span className={cardstyles.infoValue}>₹ 1,45,236</span>
+            </div>
+            <div className={cardstyles.infoRow}>
+              <span className={cardstyles.infoLabel}>Stamp Duty Rounded</span>
+              <span className={cardstyles.infoValue}>₹ 1,45,236</span>
             </div>
           </div>
         </div>
 
-
-
-
-        <div className={styles.buttoncontainer}>
+        <div className={styles.buttoncontainer} style={{marginTop:"30px"}}>
           <button className={styles.cancelbtn} onClick={handleCancel}>
-            Cancel
+            Generate Cost Sheet PDF
           </button>
           <button className={styles.submitbtn} onClick={onSubmit}>
-            Submit
+            Download PDF
           </button>
         </div>
       </div>

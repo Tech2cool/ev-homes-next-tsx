@@ -80,11 +80,7 @@ const HomeNavbar = () => {
                 <span>Home</span>
               </Link>
             </li>
-             <li className={activeSection === "dashboard" ? styles.active : ""}>
-              <Link href="/Dashboard" className={styles.navLink}>
-                <span>Dashbord</span>
-              </Link>
-            </li>
+            
             <li className={activeSection === "projects" ? styles.active : ""}>
               <Link href="/projects" className={styles.navLink}>
                 <span>Projects</span>
