@@ -48,9 +48,6 @@ interface PaginationProps {
   data?: any;
 }
 
-
-
-
 type FetchLeadsParams = {
   id?: string | null | undefined;
   query?: string;
@@ -72,6 +69,7 @@ type FetchLeadsParams = {
   taskType?: string | null;
   bulkLead?: string | null;
   project?: string | null;
+  propertyType: string | null;
 };
 
 type FetchTeamLeaderParams = {
@@ -293,7 +291,7 @@ type FetchPostSaleLeadParams = {
 
 //total count
 type SearchLeadParms = {
-  query: string;
+  query?: string;
   page?: number;
   limit?: number;
   status?: string | null;
@@ -312,6 +310,7 @@ type SearchLeadParms = {
   channelPartner?: string | null;
   teamLeader?: string | null;
   taskType?: string | null;
+  propertyType?: string | null;
 };
 
 
@@ -349,6 +348,7 @@ type LeadsReportingToParams = {
   taskType?: string | null;
   bulkLead?: string | null;
   project?: string | null;
+  propertyType: string | null;
 };
 
 type DashboardCount = {
@@ -460,7 +460,7 @@ type DataProviderState = {
   myOverallTarget: OverallTarget | null;
   projectTargets: ProjectTargetData[];
   loadingProjectTargets: boolean;
-  ranking: RankingTurn|null;
+  ranking: RankingTurn | null;
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
@@ -512,10 +512,10 @@ type DataProviderState = {
     endDate?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
-   getSiteVisitHistoryByPhone: (
-    phoneNumber: Number, 
+  getSiteVisitHistoryByPhone: (
+    phoneNumber: Number,
     altPhoneNumber?: Number
-  ) => Promise<{ success: boolean; message?: string}>;
+  ) => Promise<{ success: boolean; message?: string }>;
 
   fetchAssignFeedbackLeads: (
     params: AssignParms
@@ -638,9 +638,9 @@ const initialState: DataProviderState = {
 
   getAllGraph: async () => ({ success: false }),
 
-   getSiteVisitHistoryByPhone: async () => ({ 
-    success: false, 
-    message: "Not initialized" 
+  getSiteVisitHistoryByPhone: async () => ({
+    success: false,
+    message: "Not initialized",
   }),
 
   getClosingManagerDashBoardCount: async () => ({ success: false }),
@@ -696,7 +696,7 @@ const dataProviderContext =
 export function DataProvider({ children, ...props }: DataProviderProps) {
   const [projects, setProjects] = useState<OurProject[]>([]);
   const [requirements, setRequirements] = useState<string[]>([]);
-  const [ranking, setRanking] = useState<RankingTurn|null>(null);
+  const [ranking, setRanking] = useState<RankingTurn | null>(null);
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loadingTestimonial, setLoadingTestimonial] = useState<boolean>(false);
@@ -767,32 +767,31 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     useState<OnboardTarget | null>(null);
 
   const getSiteVisitHistoryByPhone = async (
-  phoneNumber: Number, 
-  altPhoneNumber?: Number
-): Promise<{ success: boolean; message?: string }> => {
-  setError("");
+    phoneNumber: Number,
+    altPhoneNumber?: Number
+  ): Promise<{ success: boolean; message?: string }> => {
+    setError("");
 
-  try {
-    const response = await fetchAdapter('/api/site-visits-by-phone', {
-      method: 'POST',
-      body: JSON.stringify({ phoneNumber, altPhoneNumber }),
-    });
+    try {
+      const response = await fetchAdapter("/api/site-visits-by-phone", {
+        method: "POST",
+        body: JSON.stringify({ phoneNumber, altPhoneNumber }),
+      });
 
-    if (response?.code !== 200) {
-      return { success: false, message: response?.message };
+      if (response?.code !== 200) {
+        return { success: false, message: response?.message };
+      }
+
+      const reqs = response?.data || [];
+      setVisits(reqs); // ✅ update state
+
+      return { success: true };
+    } catch (err: any) {
+      const errorMessage = err.message || "Something went wrong";
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
     }
-
-    const reqs = response?.data || [];
-    setVisits(reqs); // ✅ update state
-
-    return { success: true };
-  } catch (err: any) {
-    const errorMessage = err.message || "Something went wrong";
-    setError(errorMessage);
-    return { success: false, message: errorMessage };
-  }
-};
-
+  };
 
   const fetchOnboardTarget = async ({
     date = null,
@@ -1894,6 +1893,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     channelPartner = null,
     teamLeader = null,
     taskType = null,
+    propertyType = null,
   }: SearchLeadParms): Promise<{ success: boolean; message?: string }> => {
     if (page === 1) {
       setLoadingLeads(true);
@@ -1936,6 +1936,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       }
       if (date != null) {
         url += `&date=${date}`;
+      }
+      if (propertyType != null) {
+        url += `&propertyType=${propertyType}`;
       }
 
       // if (approvalStatus != null) {
@@ -2230,7 +2233,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       // console.log(res?.data);
 
-      const data = res?.data; 
+      const data = res?.data;
       setRanking(data);
       setLoadingRanking(false);
 
@@ -2244,8 +2247,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     } finally {
       setLoadingRanking(false);
     }
-  }; 
-
+  };
 
   const value = {
     projects: projects,
@@ -2305,7 +2307,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchLineGraphForDA: fetchLineGraphForDA,
     fetchOnboardTarget: fetchOnboardTarget,
     getAllGraph: getAllGraph,
-     getSiteVisitHistoryByPhone: getSiteVisitHistoryByPhone,
+    getSiteVisitHistoryByPhone: getSiteVisitHistoryByPhone,
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
     getRankingTurns: getRankingTurns,

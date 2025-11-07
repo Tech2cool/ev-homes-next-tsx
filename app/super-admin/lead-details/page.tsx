@@ -138,6 +138,7 @@ const LeadDetailsPage = () => {
     teamLeader: null,
     taskType: null,
     member: null,
+     propertyType: null,
   });
 
   const { user, loading, getSocket, reconnectSocket } = useUser();
@@ -166,11 +167,45 @@ const LeadDetailsPage = () => {
   //   }
   // }, [status]);
 
+    // Function to handle filter application
+  const handleApplyFilters = useCallback((filterParams: any) => {
+    // Reset to page 1 when applying new filters
+    fetchSearchLeads({
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+      ...filterParams, // Spread the filter parameters
+    });
+  }, [debouncedSearchQuery, status, fetchSearchLeads]);
+
+  // Function to clear all filters
+  const handleClearFilters = useCallback(() => {
+    setFilters({
+      visitType: "",
+      leadFilter: "",
+      statusFilter: "",
+      feedbackFilter: "",
+      clientStatus: "",
+      leadStatus: "",
+      cycleStatus: 0,
+      dateFrom: "",
+      dateTo: "",
+    });
+    
+    // Fetch without any filters
+    fetchSearchLeads({
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+    });
+  }, [debouncedSearchQuery, status, fetchSearchLeads]);
+
   // Initial data fetch with status from URL
-  useEffect(() => {
+   useEffect(() => {
     if (user && !loading) {
       console.log("Initial fetch with status:", status);
-
       fetchSearchLeads({
         query: debouncedSearchQuery,
         page: 1,
@@ -187,10 +222,12 @@ const LeadDetailsPage = () => {
         page: 1,
         limit: 10,
         status: status === "all" ? null : status,
+        //  ...selectedFilter,
         // Add other filter parameters as needed
       });
     }
   }, [debouncedSearchQuery, user, loading, status]);
+  
 
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -207,6 +244,14 @@ const LeadDetailsPage = () => {
     //   endDateDeadline: newFilters.dateTo || null,
     //   page: 1,
     // });
+     // Apply filters with search
+    fetchSearchLeads({
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+      ...newFilters,
+    });
   };
 
   // Function to handle call functionality - can be passed to child components
@@ -292,12 +337,13 @@ const LeadDetailsPage = () => {
         await fetchSearchLeads({
           query: debouncedSearchQuery,
           page: nextPage,
-          limit: 10,
+          limit: 10,  
           status: status === "all" ? null : status,
+
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery]);
+  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery, status]);
 
   // const fetchLeads = () => {
   //   fetchTeamLeaderReportingToLeads({
@@ -784,33 +830,17 @@ const LeadDetailsPage = () => {
         </div>
 
         {/* Filter Dialog */}
-        <LeadFilterDialog
-          open={showFilterDialog}
-          onClose={() => setShowFilterDialog(false)}
-          onOpenChange={setShowFilterDialog}
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={() => {
-            const cleared = {
-              visitType: "",
-              leadFilter: "",
-              statusFilter: "",
-              feedbackFilter: "",
-              clientStatus: "",
-              leadStatus: "",
-              cycleStatus: 0,
-              dateFrom: "",
-              dateTo: "",
-            };
-            // setFilters(cleared);
-            // fetchTeamLeaderReportingToLeads({
-            //   id: user?._id,
-            //   page: 1,
-            // });
-          }}
-          visits={leads || []}
-          resultCount={leads?.length || 0}
-        />
+       <LeadFilterDialog
+        open={showFilterDialog}
+        onClose={() => setShowFilterDialog(false)}
+        onOpenChange={setShowFilterDialog}
+        filters={filters}
+        onFiltersChange={setFilters}
+        onClearFilters={handleClearFilters}
+        onApplyFilters={handleApplyFilters} // Pass the apply function
+        visits={leads || []}
+        resultCount={leads?.length || 0}
+      />
 
         {/* Edit Dialog */}
         {showEditDialog && (
@@ -1017,6 +1047,7 @@ const LeadDetailsPage = () => {
         <div className={styles.headerInfo}>
           <button
             className={styles.backBtn}
+
             // onClick={() => {
             //   setSelectedLead(null);
 
@@ -1025,6 +1056,7 @@ const LeadDetailsPage = () => {
             //   });
 
             // }}
+
           >
             <ArrowLeft className={styles.backIcon} />
           </button>
