@@ -6,12 +6,11 @@ import DataAnalyzerDashboard from "../data-analyzer/data-analyzer-dashboard/page
 import SalesManagerPage from "../sales-manager/sales-manager-dashboard/page";
 import SuperAdminDashboard from "../super-admin/supar-admin-dashboard/page";
 import ErrorPage from "@/components/ErrorPage";
+import { useMounted } from "../../hooks/useMounted";
 
 export default function DashboardPage() {
   const { user, loading } = useUser();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
 
   // wait for hydration
   if (!mounted) return null;

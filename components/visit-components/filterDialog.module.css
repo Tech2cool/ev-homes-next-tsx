@@ -104,6 +104,11 @@
     border: 1px solid #1d1d1d;
 
 }
+:global(html.dark) .fieldGroup input[type="date"]  {
+  background-color: #141414;
+    border: 1px solid #1d1d1d;
+
+}
 .fieldGroup select:focus,
 .fieldGroup input[type="date"]:focus {
   border-color: #6c5ce7;
@@ -114,6 +119,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .actions {

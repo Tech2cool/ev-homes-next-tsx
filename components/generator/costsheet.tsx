@@ -459,42 +459,42 @@ const CostSheet = () => {
             <div></div>
           </div>
           <div className={cardstyles.infoSection}>
-                    <div className={cardstyles.infoCard}>
-                        <h4 className={cardstyles.cardTitle}>Client Details</h4>
-                        <div className={cardstyles.infoRow}>
-                            <span className={cardstyles.infoLabel}>Client Name:</span>
-                            <span className={cardstyles.infoValue}>Rahul Sharma</span>
-                        </div>
-                        <div className={cardstyles.infoRow}>
-                            <span className={cardstyles.infoLabel}>Phone Number:</span>
-                            <span className={cardstyles.infoValue}>+91 9876543210</span>
-                        </div>
-                        <div className={cardstyles.infoRow}>
-                            <span className={cardstyles.infoLabel}>Channel Partner:</span>
-                            <span className={cardstyles.infoValue}>Elite Realty</span>
-                        </div>
-                        <div className={cardstyles.infoRow}>
-                            <span className={cardstyles.infoLabel}>Site Visit Date:</span>
-                            <span className={cardstyles.infoValue}>12 Oct 2025</span>
-                        </div>
+            <div className={cardstyles.infoCard}>
+              <h4 className={cardstyles.cardTitle}>Client Details</h4>
+              <div className={cardstyles.infoRow}>
+                <span className={cardstyles.infoLabel}>Client Name:</span>
+                <span className={cardstyles.infoValue}>Rahul Sharma</span>
+              </div>
+              <div className={cardstyles.infoRow}>
+                <span className={cardstyles.infoLabel}>Phone Number:</span>
+                <span className={cardstyles.infoValue}>+91 9876543210</span>
+              </div>
+              <div className={cardstyles.infoRow}>
+                <span className={cardstyles.infoLabel}>Channel Partner:</span>
+                <span className={cardstyles.infoValue}>Elite Realty</span>
+              </div>
+              <div className={cardstyles.infoRow}>
+                <span className={cardstyles.infoLabel}>Site Visit Date:</span>
+                <span className={cardstyles.infoValue}>12 Oct 2025</span>
+              </div>
 
-                    </div>
+            </div>
 
-                    <div className={cardstyles.infoCard}>
-                        <h4 className={cardstyles.cardTitle}>Team Leader Details</h4>
-                        <div className={cardstyles.infoRow}>
-                            <span className={cardstyles.infoLabel}>Name:</span>
-                            <span className={cardstyles.infoValue}>Snehal Mehta</span>
-                        </div>
-                        <div className={cardstyles.infoRow}>
-                            <span className={cardstyles.infoLabel}>Gmail:</span>
-                            <span className={cardstyles.infoValue}>snehal@evgroup.co.in</span>
-                        </div>
+            <div className={cardstyles.infoCard}>
+              <h4 className={cardstyles.cardTitle}>Team Leader Details</h4>
+              <div className={cardstyles.infoRow}>
+                <span className={cardstyles.infoLabel}>Name:</span>
+                <span className={cardstyles.infoValue}>Snehal Mehta</span>
+              </div>
+              <div className={cardstyles.infoRow}>
+                <span className={cardstyles.infoLabel}>Gmail:</span>
+                <span className={cardstyles.infoValue}>snehal@evgroup.co.in</span>
+              </div>
 
-                    </div>
-                </div>
+            </div>
+          </div>
         </div>
-              
+
 
 
 
