@@ -100,8 +100,7 @@ const HomeNavbar = () => {
                 <span>About Us</span>
               </Link>
             </li>
-            <ul>
-              {!user ? (
+                          {!user ? (
                 <li>
                   <Link
                     href="/login"
@@ -111,13 +110,26 @@ const HomeNavbar = () => {
                   </Link>
                 </li>
               ) : (
-                <li
-                  className={styles.userIconWrapper}
-                  onClick={() => setOpenProfileDialog(true)} // ✅ correct
-                >
-                  <FaUserCircle className={styles.userIcon} />
-                </li>
+                <>
+                  <li>
+                    <Link
+                      href="/dashboard"
+                      className={`${styles.navLink}`}
+                    >
+                      <span>Dashboard</span>
+                    </Link>
+                  </li>
+
+                  <li
+                    className={styles.userIconWrapper}
+                    onClick={() => setOpenProfileDialog(true)} // ✅ correct
+                  >
+                    <FaUserCircle className={styles.userIcon} />
+                  </li>
+                </>
               )}
+
+            <ul>
 
               <ProfileDialogBox
                 isOpen={openProfileDialog}
@@ -146,7 +158,6 @@ const HomeNavbar = () => {
               <span></span>
               <span></span>
               <span></span>
-              
             </span>
           </button>
         </div>
