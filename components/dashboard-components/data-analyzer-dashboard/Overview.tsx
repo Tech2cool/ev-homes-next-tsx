@@ -73,44 +73,50 @@ const SectionTap = () => {
       linkHref: "/data-analyzer/data-analyzer-lead-details?status=all",
       status: "all",
       icon: <FaUsers />,
-      color: "#ad82f2e1",
-      bgcolor: "#7c2ff706",
+      color: "#ad82f2ff",
+      iconcolor: "#00024a87",
+       bgcolor: ["#324effff", "#99adffff"]
     },
     {
       label: "Approved",
       value: searchLeadInfo?.approvedCount ?? 0,
-      linkHref:"/data-analyzer/data-analyzer-lead-details?status=approved",
+      linkHref: "/data-analyzer/data-analyzer-lead-details?status=approved",
       status: "approved",
       icon: <FaCheck />,
       color: "#88c08aa8",
-      bgcolor: "#4caf4f09",
+      iconcolor: "#88c08aa8",
+      lighticoncolor: "#88c08aa8",
+      bgcolor: ["#5A70F7", "#6A83EA"]
     },
     {
       label: "Rejected",
       value: searchLeadInfo?.rejectedCount ?? 0,
-       linkHref:"/data-analyzer/data-analyzer-lead-details?status=rejected",
+      linkHref: "/data-analyzer/data-analyzer-lead-details?status=rejected",
       status: "rejected",
-       icon: <FaTimes />,
+      icon: <FaTimes />,
       color: "#ce676082",
-      bgcolor: "#f4433609",
+       iconcolor: "#88c08aa8",
+       bgcolor: ["#5A70F7", "#6A83EA"]
     },
     {
       label: "Pending",
       value: searchLeadInfo?.pendingCount ?? 0,
-      linkHref:"/data-analyzer/data-analyzer-lead-details?status=pending",
+      linkHref: "/data-analyzer/data-analyzer-lead-details?status=pending",
       status: "pending",
       icon: <FaClock />,
       color: "#c0a24aa7",
-      bgcolor: "#ffc10709",
+       iconcolor: "#88c08aa8",
+       bgcolor: ["#5A70F7", "#6A83EA"]
     },
     {
       label: "Bulk Lead",
       value: searchLeadInfo?.bulkCount ?? 0,
-      linkHref:"/data-analyzer/data-analyzer-lead-details?status=bulk",
+      linkHref: "/data-analyzer/data-analyzer-lead-details?status=bulk",
       status: "bulk",
       icon: <FaBoxes />,
       color: "#58b1bd9c",
-      bgcolor: "#00bbd409",
+       iconcolor: "#88c08aa8",
+      bgcolor: ["#5A70F7", "#6A83EA"]
     },
   ];
 
@@ -161,9 +167,8 @@ const SectionTap = () => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${
-        scrollPercent * (hintWidth - wrapper.offsetWidth)
-      }px`;
+      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
+        }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -184,9 +189,8 @@ const SectionTap = () => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${
-        scrollPercent * (hintWidth - wrapper.offsetWidth)
-      }px`;
+      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
+        }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -221,13 +225,12 @@ const SectionTap = () => {
   // ];
   const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
-        name: `${item.teamLeader?.firstName ?? "Team"} ${
-          item.teamLeader?.lastName ?? "Leader"
+      name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"
         }`,
-        feedback: item.notFollowUpCount ?? 0,
-        tasks: item.notAssignedCount ?? 0,
-        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
-      }))
+      feedback: item.notFollowUpCount ?? 0,
+      tasks: item.notAssignedCount ?? 0,
+      border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+    }))
     : [];
 
   const toggleBottomSheet = (index: number) => {
@@ -411,10 +414,15 @@ const SectionTap = () => {
         {/* Horizontal scrollable cards */}
         <div className={styles.tapsection} ref={scrollRef}>
           {cardsData.map((card, index) => (
-           <Link href={card.linkHref} key={index}>
+            <Link href={card.linkHref} key={index}>
 
-              <div className={styles.card}>
-                <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
+              <div className={styles.card} style={{
+                background:
+                  document.documentElement.classList.contains("light")
+                    ? `linear-gradient(135deg, ${card.bgcolor[0]}, ${card.bgcolor[1]})`
+                    : "#090909",
+              }}>
+                <div className={styles.bgIcon} style={{ color: card.iconcolor }}>
                   {card.icon}
                 </div>
                 <div className={styles.cardContent}>
@@ -639,9 +647,8 @@ const SectionTap = () => {
         {assignFeedbackcard.map((card, index) => (
           <div key={index} className={styles.cardWrapper}>
             <div
-              className={`${styles.cardtarget} ${
-                activeCard === index ? styles.cardActive : ""
-              }`}
+              className={`${styles.cardtarget} ${activeCard === index ? styles.cardActive : ""
+                }`}
               onClick={() => toggleBottomSheet(index)}
             >
               <h3>{card.name}</h3>
@@ -657,9 +664,8 @@ const SectionTap = () => {
             </div>
 
             <div
-              className={`${styles.bottomSheet} ${
-                activeCard === index ? styles.show : ""
-              }`}
+              className={`${styles.bottomSheet} ${activeCard === index ? styles.show : ""
+                }`}
             >
               <div className={styles.sheetItem}>
                 <p className={styles.sheetLabel}>Feedback Pending</p>
