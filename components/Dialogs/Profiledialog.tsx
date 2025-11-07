@@ -100,6 +100,17 @@ const ProfileDialogBox: React.FC<ProfileDialogBoxProps> = ({
             <div className={styles.userDesignation}>
               {user?.designation?.designation}
             </div>
+            <div className={styles.mobilebutton}>
+              <div className={styles.iconCircleOrange}>
+                <FaUserEdit />
+              </div>
+              <div className={styles.iconCircleBlue}>
+                <FaKey />
+              </div>
+              <div className={styles.iconCircleRed} onClick={onClickLogout}>
+                <FaSignOutAlt />
+              </div>
+            </div>
           </div>
 
           {/* Right Section */}
@@ -181,7 +192,6 @@ const ProfileDialogBox: React.FC<ProfileDialogBoxProps> = ({
               </div>
             </div>
 
-            {/* Leave Info */}
             <div className={styles.leaveInfoSection}>
               <h3 className={styles.sectionHeading}>Leave Information</h3>
               <div className={styles.infoRow}>
