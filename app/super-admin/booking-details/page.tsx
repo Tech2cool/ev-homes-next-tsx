@@ -491,7 +491,7 @@ const BookingDetails = () => {
                     <div className={styles.visitsList} >
                         {dummyLeads.map((lead) => (
                             <div
-
+                                key={lead._id}
                                 className={bookstyle.visitCard}
                                 onClick={() => {
                                     setSelectedLead(lead);
