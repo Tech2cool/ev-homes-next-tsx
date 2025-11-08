@@ -74,7 +74,6 @@ const SuperAdminDasboard = () => {
         query: "",
         page: 1,
         limit: 10,
-        
       });
     }
   }, [user, loading]);
@@ -93,11 +92,11 @@ const SuperAdminDasboard = () => {
       page: 1,
       limit: 10,
       query: "",
-      interval:selectedFilter,
+      interval: selectedFilter,
       startDate,
       endDate,
     });
-  }, [user, loading,selectedFilter]);
+  }, [user, loading, selectedFilter]);
 
   useEffect(() => {
     if (user && !loading && !ranking) {
@@ -176,6 +175,12 @@ const SuperAdminDasboard = () => {
     const apiStatus = status === "all" ? null : status;
     // Pass the filtered data via router state
     router.push(`/lead-details?status=${apiStatus}`);
+  };
+
+  const handleBookingClick = async (status?: String) => {
+    const apiStatus = status === "all" ? null : status;
+    // Pass the filtered data via router state
+    router.push(`/super-admin/booking-details?status=${apiStatus}`);
   };
 
   //   const dashCount = {
@@ -592,7 +597,12 @@ const SuperAdminDasboard = () => {
       <div className={styles.visitsection}>
         <div className={styles.viewrow} ref={visitscrollRef}>
           {visitData.map((item) => (
-            <div key={item.id} className={styles.viewcontainer}>
+            <div
+              key={item.id}
+              className={styles.viewcontainer}
+              onClick={() => handleBookingClick("all")} // ← Add this
+              style={{ cursor: "pointer" }} // optional for pointer cursor
+            >
               <div className={styles.numsec}>{item.count}</div>
               <p>{item.label}</p>
             </div>
