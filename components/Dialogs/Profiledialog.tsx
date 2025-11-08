@@ -5,6 +5,7 @@ import styles from "./profiledialog.module.css";
 import { FaUserEdit, FaKey, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { useUser } from "@/providers/userContext";
 import { redirect } from "next/navigation";
+import { useData } from "@/providers/dataContext";
 
 interface ProfileDialogBoxProps {
   isOpen: boolean;
@@ -15,7 +16,8 @@ const ProfileDialogBox: React.FC<ProfileDialogBoxProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { user, logout } = useUser(); // ✅ Hook moved INSIDE component
+  const { user, logout } = useUser();
+  const { leaveCount, getShiftInfoByUserId } = useData(); 
 
   const onClickLogout = () => {
     //
@@ -29,6 +31,12 @@ const ProfileDialogBox: React.FC<ProfileDialogBoxProps> = ({
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+
+
+    useEffect(() => {
+      getShiftInfoByUserId(user?._id??"");
+    }, []);
+
 
   if (!isOpen || !user) return null;
 
@@ -195,13 +203,13 @@ const ProfileDialogBox: React.FC<ProfileDialogBoxProps> = ({
             <div className={styles.leaveInfoSection}>
               <h3 className={styles.sectionHeading}>Leave Information</h3>
               <div className={styles.infoRow}>
-                <span>Paid Leave : </span> <span>5</span>
+                <span>Paid Leave : </span> <span>{leaveCount?.paidLeave??""}</span>
               </div>
               <div className={styles.infoRow}>
-                <span>Casual Leave : </span> <span>3</span>
+                <span>Casual Leave : </span> <span>{leaveCount?.casualLeave??""}</span>
               </div>
               <div className={styles.infoRow}>
-                <span>Compensatory Leave : </span> <span>2</span>
+                <span>Compensatory Leave : </span> <span>{leaveCount?.compensatoryoff??""}</span>
               </div>
             </div>
           </div>
