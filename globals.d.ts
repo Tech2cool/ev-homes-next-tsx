@@ -404,4 +404,36 @@ interface LineChartData {
   leads: string[];
 }
 
+interface EmployeeShiftInfoModel {
+  id?: string;
+  userId?: Employee;
+  shift?: Shift;
+  faceId?: FaceId;
+  currentDate?: Date;
+  totalLateDays?: number;
+  totalLeaves?: number;
+  paidLeave?: number;
+  graceDays?: number;
+  casualLeave?: number;
+  compensatoryoff?: number;
+  regularization?: number;
+  undertime?: number;
+  overtime?: number;
+  payable?: boolean;
+}
 
+interface Shift {
+  id?: string;
+  shiftName?: string;
+  type?: string;
+  timeIn?: string;
+  timeOut?: string;
+  workingHours?: number;      
+  graceTime?: number;         
+  graceDays?: number;          
+  multiTimeInOut?: boolean;
+  status?: string;
+  absentHours?: number;        
+  employees: Employee[];      
+  regularizationDays?: number; 
+}

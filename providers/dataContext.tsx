@@ -313,7 +313,6 @@ type SearchLeadParms = {
   propertyType?: string | null;
 };
 
-
 //total count
 type AllLeadParms = {
   query: string;
@@ -461,6 +460,7 @@ type DataProviderState = {
   projectTargets: ProjectTargetData[];
   loadingProjectTargets: boolean;
   ranking: RankingTurn | null;
+  leaveCount:EmployeeShiftInfoModel | null;
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
@@ -485,10 +485,9 @@ type DataProviderState = {
   fetchSearchLeads: (
     params: SearchLeadParms
   ) => Promise<{ success: boolean; message?: string }>;
-    getAllData: (
+  getAllData: (
     params: AllLeadParms
   ) => Promise<{ success: boolean; message?: string }>;
-
 
   fetchPostSaleLeads: (
     params: FetchPostSaleLeadParams
@@ -582,6 +581,10 @@ type DataProviderState = {
   ) => Promise<{ success: boolean; message?: string }>;
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
+
+  getShiftInfoByUserId:(
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -616,6 +619,7 @@ const initialState: DataProviderState = {
   projectTargets: [],
   loadingProjectTargets: false,
   ranking: null,
+  leaveCount:null,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -688,6 +692,11 @@ const initialState: DataProviderState = {
   }),
 
   getTeamOverview: async () => ({ success: false, message: "Not initialized" }),
+
+
+getShiftInfoByUserId: async () => ({ success: false, message: "Not initialized" }),
+
+
 };
 
 const dataProviderContext =
@@ -765,6 +774,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [leadsLineGraphForDT, setLineChartData] = useState<ChartModel[]>([]);
   const [onboardTargetData, setOnboardTargetData] =
     useState<OnboardTarget | null>(null);
+
+  const [leaveCount, setLeaveCount] = useState<EmployeeShiftInfoModel | null>(
+    null
+  );
 
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
@@ -1986,8 +1999,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-
-    const getAllData = async ({
+  const getAllData = async ({
     query = "",
     page = 1,
     limit = 20,
@@ -2249,6 +2261,57 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const getShiftInfoByUserId = async (
+    id: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: EmployeeShiftInfoModel | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetchAdapter(`/api/shift-info-by-user-id/${id}`, {
+        method: "GET",
+      });
+
+      // Your API structure: { data: {...} }
+      const data = response?.data;
+
+      console.log(data);
+
+      if (response?.code !== 200) {
+        return {
+          success: false,
+          message: response?.message || "Failed to fetch target",
+        };
+      }
+
+      const parsedTarget = data as EmployeeShiftInfoModel;
+      setLeaveCount(parsedTarget);
+      return { success: true, data: parsedTarget };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      // Prevent literal 'null' from showing
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2281,6 +2344,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     loadingProjectTargets: loadingProjectTargets,
     salesDashCount: salesDashCount,
     ranking: ranking,
+    leaveCount:leaveCount,
     getProjectTargets: getProjectTargets,
 
     getProjects: getProjects,
@@ -2296,7 +2360,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
     fetchPostSaleLeads: fetchPostSaleLeads,
     fetchSearchLeads: fetchSearchLeads,
-    getAllData:getAllData,
+    getAllData: getAllData,
     fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
     getChannelPartners: getChannelPartners,
     getTeamOverview: getTeamOverview,
@@ -2311,6 +2375,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
     getRankingTurns: getRankingTurns,
+    getShiftInfoByUserId:getShiftInfoByUserId,
   };
 
   return (
