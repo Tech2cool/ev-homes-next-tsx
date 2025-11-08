@@ -1444,7 +1444,7 @@ const VisitDetailsContent = ({
                   <IoIosPerson size={12} color="#4a84ff" />
                   Property Type
                 </label>
-                <p className={styles.infoValue}>NA</p>
+                <p className={styles.infoValue}>{visit?.propertyType ?? "NA"}</p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>

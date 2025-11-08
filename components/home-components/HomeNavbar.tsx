@@ -81,11 +81,14 @@ const HomeNavbar = () => {
               </Link>
             </li>
 
-            <li className={activeSection === "dashboard" ? styles.active : ""}>
-              <Link href="/Dashboard" className={styles.navLink}>
-                <span>Dashbord</span>
-              </Link>
-            </li>
+     {user && (
+  <li className={activeSection === "dashboard" ? styles.active : ""}>
+    <Link href="/dashboard" className={styles.navLink}>
+      <span>Dashboard</span>
+    </Link>
+  </li>
+)}
+
 
             <li className={activeSection === "projects" ? styles.active : ""}>
               <Link href="/projects" className={styles.navLink}>
@@ -107,31 +110,30 @@ const HomeNavbar = () => {
                 <span>About Us</span>
               </Link>
             </li>
-            {!user ? (
-              <li>
-                <Link
-                  href="/login"
-                  className={`${styles.navLink} ${styles.loginBtn}`}
-                >
-                  <span>Login</span>
-                </Link>
-              </li>
-            ) : (
-              <>
+            <ul>
+              {!user ? (
                 <li>
-                  <Link href="/dashboard" className={`${styles.navLink}`}>
-                    <span>Dashboard</span>
+                  <Link
+                    href="/login"
+                    className={`${styles.navLink} ${styles.loginBtn}`}
+                  >
+                    <span>Login</span>
                   </Link>
                 </li>
-
+              ) : (
                 <li
                   className={styles.userIconWrapper}
                   onClick={() => setOpenProfileDialog(true)} // ✅ correct
                 >
                   <FaUserCircle className={styles.userIcon} />
                 </li>
-              </>
-            )}
+              )}
+
+              <ProfileDialogBox
+                isOpen={openProfileDialog}
+                onClose={() => setOpenProfileDialog(false)}
+              />
+            </ul>
 
             <ul>
               <ProfileDialogBox

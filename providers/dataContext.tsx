@@ -347,7 +347,7 @@ type LeadsReportingToParams = {
   taskType?: string | null;
   bulkLead?: string | null;
   project?: string | null;
-  propertyType: string | null;
+  propertyType?: string | null;
 };
 
 type DashboardCount = {
@@ -1622,6 +1622,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     taskType = null,
     bulkLead = null,
     project = null,
+    propertyType = null,
   }: LeadsReportingToParams): Promise<{
     success: boolean;
     message?: string;
@@ -1680,6 +1681,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       }
       if (project != null) {
         url += `&project=${project}`;
+      }
+      if (propertyType != null) {
+        url += `&propertyType=${propertyType}`;
       }
 
       // console.log(url);

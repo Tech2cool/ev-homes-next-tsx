@@ -89,7 +89,7 @@ export function ClosingManagerDashboardHeader({
   useEffect(() => {
     if (user && !loading) {
       console.log("use effect dashboard");
-      getClosingManagerDashBoardCount({ id: user?._id ?? null });
+      getClosingManagerDashBoardCount({ id: user?._id ?? "" });
       fetchAssignFeedbackLeadsCount({
         query: "",
         page: 1,
@@ -144,6 +144,12 @@ export function ClosingManagerDashboardHeader({
       .toUpperCase();
   }, [displayName]);
 
+  const handleCardClick = async (status?: String) => {
+    const apiStatus = status === "all" ? null : status;
+    // Pass the filtered data via router state
+    router.push(`/lead-details?status=${apiStatus}`);
+  };
+
   const [showDate, setshowDate] = useState(false);
 
   const salesoverview = [
@@ -156,7 +162,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-blue-100",
       gradientFrom: "from-blue-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "all",
+      // linkHref: "/lead-details?status=all",
       // onClick: () => router.push("/closing-manager-lead-details"),
     },
     {
@@ -168,7 +175,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-green-100",
       gradientFrom: "from-green-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "visit-done",
+      // linkHref: "/lead-details?status=all",
     },
     {
       title: "Walk In Visits",
@@ -179,7 +187,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-purple-100",
       gradientFrom: "from-purple-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "visit2",
+      // linkHref: "/lead-details?status=all",
     },
     {
       title: "Booking",
@@ -190,7 +199,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-orange-100",
       gradientFrom: "from-orange-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "booking-done",
+      // linkHref: "/lead-details?status=all",
     },
     {
       title: "Internal Leads",
@@ -201,7 +211,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-teal-100",
       gradientFrom: "from-teal-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "internal-lead",
+      // linkHref: "/lead-details?status=all",
     },
     {
       title: "Bulk Leads",
@@ -212,7 +223,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-pink-100",
       gradientFrom: "from-pink-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "bulk-lead",     
+      // linkHref: "/lead-details?status=all",
     },
     {
       title: "Pending",
@@ -223,7 +235,8 @@ export function ClosingManagerDashboardHeader({
       iconBg: "bg-red-100",
       gradientFrom: "from-red-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "pending",
+      // linkHref: "/lead-details?status=all",
     },
   ];
 
@@ -558,18 +571,17 @@ export function ClosingManagerDashboardHeader({
         >
           {salesoverview.map((metric, index) => (
 
-            <div
+             <div
               key={index}
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
-              style={{
-                minWidth: "173px", // adjust card width as needed
-              }}
+               onClick={() => handleCardClick(metric.status)}
+              style={{ cursor: "pointer", minWidth: "173px" }} // ✅ Makes card clickable UI
             >
-              <Link href={metric.linkHref} key={index}>
+             
                <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
               </div>
-              </Link>
+              
              
             </div>
 

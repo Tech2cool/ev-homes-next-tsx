@@ -30,11 +30,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Timeline20Regular } from "@fluentui/react-icons";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface SalesManagerDashboardHeaderProps {
   userName: string;
-  pendingText?: string; // e.g., "You have 369 pending tasks"
-  lastSyncText?: string; // e.g., "24 Sep 25 10:45 pm"
+  pendingText?: string; 
+  lastSyncText?: string; 
   avatarUrl?: string;
   className?: string;
   onSyncNow?: () => void;
@@ -55,11 +56,13 @@ export function SalesManagerDashboardHeader({
     fetchAssignFeedbackLeadsCount,
   } = useData();
   const { user, loading } = useUser();
+    const router = useRouter();
+  
 
   useEffect(() => {
     if (user && !loading) {
       console.log("use effect dashboard");
-      getSalesManagerDashBoardCount({ id: user?._id ??"" });
+      getSalesManagerDashBoardCount({ id: user?._id ??""});
       fetchAssignFeedbackLeadsCount({
         query: "",
         page: 1,
@@ -98,7 +101,8 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-blue-100",
       gradientFrom: "from-blue-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "all",
+    
     },
     {
       title: "CP Visits",
@@ -109,7 +113,8 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-green-100",
       gradientFrom: "from-green-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=visit-done",
+      status: "visit-done",
+    
     },
     {
       title: "Walk In Visits",
@@ -120,7 +125,8 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-purple-100",
       gradientFrom: "from-purple-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "visit2",
+      
     },
     {
       title: "Booking",
@@ -131,7 +137,8 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-orange-100",
       gradientFrom: "from-orange-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "booking-done",
+     
     },
     {
       title: "Internal Leads",
@@ -142,7 +149,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-teal-100",
       gradientFrom: "from-teal-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "internal-lead",
     },
     {
       title: "Bulk Leads",
@@ -153,7 +160,7 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-pink-100",
       gradientFrom: "from-pink-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "bulk-lead",
     },
     {
       title: "Pending",
@@ -164,9 +171,14 @@ export function SalesManagerDashboardHeader({
       iconBg: "bg-red-100",
       gradientFrom: "from-red-50",
       gradientTo: "to-white",
-      linkHref: "/lead-details?status=all",
+      status: "pending",
     },
   ];
+    const handleCardClick = async (status?: String) => {
+    const apiStatus = status === "all" ? null : status;
+    // Pass the filtered data via router state
+    router.push(`/lead-details?status=${apiStatus}`);
+  };
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [activeCard2, setActiveCard2] = useState<number | null>(null);
@@ -174,6 +186,11 @@ export function SalesManagerDashboardHeader({
   const assignPendingRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+    const [showFilter, setShowFilter] = useState(false);
+
+    const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+   const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
 
   type QuickAction = {
     label: string;
@@ -406,17 +423,13 @@ export function SalesManagerDashboardHeader({
             <div
               key={index}
               className={`${styles.metricCardWrapper} flex-shrink-0 snap-center`}
-              style={
-                {
-                  minWidth: "173px", // adjust card width as needed
-                }
-              }
+               onClick={() => handleCardClick(metric.status)}
+              style={{ cursor: "pointer", minWidth: "173px" }} // ✅ Makes card clickable UI
             >
-              <Link href={metric.linkHref} key={index}>
+            
               <div className={styles.metricCardContent}>
                 <MetricCard {...metric} />
               </div>
-              </Link>
 
             </div>
           ))}
