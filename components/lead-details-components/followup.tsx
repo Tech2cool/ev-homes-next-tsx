@@ -19,7 +19,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-        hour12: true
+        hour12: true,
       });
     } catch (error) {
       return "Invalid Date";
@@ -29,36 +29,42 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
   // Helper function to get caller name from caller object
   const getCallerName = (caller: any) => {
     if (!caller) return "Unknown";
-    
+
     // If caller is a string, return it directly
-    if (typeof caller === 'string') return caller;
-    
+    if (typeof caller === "string") return caller;
+
     // If caller is an object with name properties
-    if (typeof caller === 'object') {
-      return `${caller.firstName || ''} ${caller.lastName || ''}`.trim() || "Unknown Caller";
+    if (typeof caller === "object") {
+      return (
+        `${caller.firstName || ""} ${caller.lastName || ""}`.trim() ||
+        "Unknown Caller"
+      );
     }
-    
+
     return "Unknown";
   };
 
   // Combine callHistory and followupHistory for display
   const getFollowUpData = () => {
     const history: any[] = [];
-    
+
     // Add call history entries
     if (lead?.callHistory && lead.callHistory.length > 0) {
       lead.callHistory.forEach((call) => {
         history.push({
-          type: 'call',
+          type: "call",
           data: call,
-          name: `${call.caller.firstName || ''} ${call.caller.lastName || ''}`.trim() || "Customer",
+          name:
+            `${call?.caller?.firstName || ""} ${
+              call?.caller?.lastName || ""
+            }`.trim() || "Customer",
           status: call.interestedStatus || call.stage || "No Status",
           callType: call.remark || "Call",
           date: formatDateTime(call.callDate),
           feedback: call.feedback || call.feedback || "No feedback provided",
           icon: <IoCall />,
           isVisit: false,
-          caller: getCallerName(call.caller) // Use helper function here
+          caller: getCallerName(call.caller), // Use helper function here
         });
       });
     }
@@ -67,16 +73,20 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
     if (lead?.followupHistory && lead.followupHistory.length > 0) {
       lead.followupHistory.forEach((followup) => {
         history.push({
-          type: 'followup',
+          type: "followup",
           data: followup,
-          name: `${followup.caller.firstName || ''} ${followup.caller.lastName || ''}`.trim() || "Customer",
+          name:
+            `${followup.caller.firstName || ""} ${
+              followup.caller.lastName || ""
+            }`.trim() || "Customer",
           status: followup.interestedStatus || followup.stage || "Follow Up",
           callType: followup.remark || "Follow Up",
           date: formatDateTime(followup.callDate),
-          feedback: followup.feedback || followup.feedback || "No feedback provided",
+          feedback:
+            followup.feedback || followup.feedback || "No feedback provided",
           icon: <IoCall />,
           isVisit: false,
-          caller: getCallerName(followup.caller) // Use helper function here
+          caller: getCallerName(followup.caller), // Use helper function here
         });
       });
     }
@@ -84,15 +94,16 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
     // Add site visit entry if applicable
     if (lead?.visitStatus === "scheduled" || lead?.visitDate) {
       history.push({
-        type: 'visit',
+        type: "visit",
         status: "Completed",
         siteVisit: "Site Visit",
         visits: "Visits",
         date: formatDateTime(lead.visitDate),
         cpFeedback: lead.remark || "CP confirmed site visit scheduled.",
-        evFeedback: lead.followupStatus || "EV team assigned for visit coordination.",
+        evFeedback:
+          lead.followupStatus || "EV team assigned for visit coordination.",
         icon: <FaHome />,
-        isVisit: true
+        isVisit: true,
       });
     }
 
@@ -126,11 +137,9 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
                 className={`${styles.circle} ${
                   item.isVisit ? styles.visitCircle : ""
                 }`}
-              > 
+              >
                 {React.cloneElement(item.icon, {
-                  className: item.isVisit
-                    ? styles.homeicon
-                    : styles.callicon,
+                  className: item.isVisit ? styles.homeicon : styles.callicon,
                 })}
               </div>
 
@@ -175,7 +184,9 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
                 <>
                   <div className={styles.firstrow}>
                     <div className={styles.com}>
-                      <div className={styles.lable}>{item.siteVisit ?? "NA"}</div>
+                      <div className={styles.lable}>
+                        {item.siteVisit ?? "NA"}
+                      </div>
                       <div className={styles.callgreen}>
                         <p>{item.visits ?? "NA"}</p>
                       </div>
@@ -185,12 +196,20 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
 
                   <div className={styles.secrow}>
                     <div className={styles.feedback}>CP Feedback</div>
-                    <div className={styles.conts}>{lead?.visitRef?.cpfeedback ?? "NA"}</div>
+                    <div className={styles.conts}>
+                      {lead?.visitRef?.cpfeedback?.trim()
+                        ? lead.visitRef.cpfeedback
+                        : "No Feedback provided"}
+                    </div>
                   </div>
 
                   <div className={styles.secrow}>
                     <div className={styles.feedback}>EV Feedback</div>
-                    <div className={styles.conts}>{lead?.visitRef?.feedback ?? "NA"}</div>
+                    <div className={styles.conts}>
+                       {lead?.visitRef?.feedback?.trim()
+                        ? lead.visitRef.feedback
+                        : "No Feedback provided"}
+                    </div>
                   </div>
                 </>
               )}

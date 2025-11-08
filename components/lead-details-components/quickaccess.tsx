@@ -1,7 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import styles from "./QuickAccess.module.css";
-import { MdAssignment, MdMeetingRoom, MdOutlineRateReview } from "react-icons/md";
+import {
+  MdAssignment,
+  MdMeetingRoom,
+  MdOutlineRateReview,
+} from "react-icons/md";
 import { IoCarSport, IoReceipt } from "react-icons/io5";
 import { HiKey } from "react-icons/hi2";
 import { FaLinkedin, FaReceipt } from "react-icons/fa6";
@@ -19,6 +23,7 @@ import ScheduleMeeting from "./Dailog/schedulemeeting";
 import RunningStatus from "./Dailog/runningstatus";
 import AddBooking from "./Dailog/addbooking";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/providers/userContext";
 const QuickAccess = () => {
   const [showfb, setshowfb] = useState(false);
   const [showsite, setshowsite] = useState(false);
@@ -28,13 +33,14 @@ const QuickAccess = () => {
   const [showmeeting, setshowmeeting] = useState(false);
   const [showrunstatus, setshowrunstatus] = useState(false);
   const [showaddbooking, setshowaddbooking] = useState(false);
-  const router= useRouter();
-  const pagenavigate =()=>{
-    router.push("/estimate-history")
-  }
-const costsheetnavigate =()=>{
- router.push("/generate/costsheetgenerator")
-}
+  const router = useRouter();
+  const { user } = useUser();
+  const pagenavigate = () => {
+    router.push("/estimate-history");
+  };
+  const costsheetnavigate = () => {
+    router.push("/generate/costsheetgenerator");
+  };
 
   const actions = [
     { icon: <MdOutlineRateReview />, label: "Add Feedback" },
@@ -54,80 +60,72 @@ const costsheetnavigate =()=>{
   const handleClick = (label: string) => {
     if (label === "Add Feedback") {
       setshowfb(true);
-    };
+    }
     if (label === "Add Visit") {
       setshowsite(true);
-    };
+    }
     if (label === "Assign Task") {
       setshowtask(true);
-    };
+    }
     if (label === "LinkedIn Update") {
       setshowlinkdin(true);
-    };
+    }
     if (label === "Cancel Booking") {
       setshowcancelbooking(true);
-    };
+    }
 
     if (label === "Schedule Meeting") {
       setshowmeeting(true);
-    };
+    }
     if (label === "Lead Running Status") {
       setshowrunstatus(true);
-    };
+    }
     if (label === "Add Booking") {
       setshowaddbooking(true);
-    };
-   
-    if (label === "Estimate History") return pagenavigate();
-      if (label === "Generate") return costsheetnavigate();
+    }
 
-  }
+    if (label === "Estimate History") return pagenavigate();
+    if (label === "Generate") return costsheetnavigate();
+  };
   return (
     <div className={styles.quickAccessContainer}>
       <h3 className={styles.title}>⚡ Quick Access</h3>
 
       <div className={styles.buttonGrid}>
-        {actions.map((action, index) => (
-          <button key={index} className={styles.actionButton} onClick={() => handleClick(action.label)}>
-            <div className={styles.circleicon}>{action.icon}</div>
-            <div className={styles.iconlable}>{action.label}</div>
-          </button>
-        ))}
+        {actions.map((action, index) =>
+          user?.designation?._id === "desg-sales-manager" ||
+          (user?.designation?._id === "desg-sales-executive" &&
+            [
+              "Schedule Meeting", 
+              "Cancel Booking",
+              "Brokerage Calculator",
+            ].includes(action.label)) ? null : (
+            <button
+              key={index}
+              className={styles.actionButton}
+              onClick={() => handleClick(action.label)}
+            >
+              <div className={styles.circleicon}>{action.icon}</div>
+              <div className={styles.iconlable}>{action.label}</div>
+            </button>
+          )
+        )}
       </div>
 
       <button className={styles.aiButton}>
         <FaRobot className={styles.aiIcon} />
       </button>
 
-      {showfb && (
-        <AddFeedBaack openclick={setshowfb} />
-      )}
-      {showsite && (
-        <SiteVisit openclick={setshowsite} />
-      )}
-      {showtask && (
-        <AssignTask openclick={setshowtask} />
-      )}
-      {showlinkdin && (
-        <LinkdinUpdate openclick={setshowlinkdin} />
-      )}
-      {showcancelboking && (
-        <CancelBooking openclick={setshowcancelbooking} />
-      )}
-      {showmeeting && (
-        <ScheduleMeeting openclick={setshowmeeting} />
-      )}
-      {showrunstatus && (
-        <RunningStatus openclick={setshowrunstatus} />
-      )}
+      {showfb && <AddFeedBaack openclick={setshowfb} />}
+      {showsite && <SiteVisit openclick={setshowsite} />}
+      {showtask && <AssignTask openclick={setshowtask} />}
+      {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin} />}
+      {showcancelboking && <CancelBooking openclick={setshowcancelbooking} />}
+      {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
+      {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
 
-      {showaddbooking && (
-        <AddBooking openclick={setshowaddbooking} />
-      )}
-      
-
+      {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
     </div>
-
   );
 };
 

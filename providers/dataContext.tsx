@@ -313,7 +313,6 @@ type SearchLeadParms = {
   propertyType?: string | null;
 };
 
-
 //total count
 type AllLeadParms = {
   query: string;
@@ -348,7 +347,7 @@ type LeadsReportingToParams = {
   taskType?: string | null;
   bulkLead?: string | null;
   project?: string | null;
-  propertyType: string | null;
+  propertyType?: string | null;
 };
 
 type DashboardCount = {
@@ -485,10 +484,9 @@ type DataProviderState = {
   fetchSearchLeads: (
     params: SearchLeadParms
   ) => Promise<{ success: boolean; message?: string }>;
-    getAllData: (
+  getAllData: (
     params: AllLeadParms
   ) => Promise<{ success: boolean; message?: string }>;
-
 
   fetchPostSaleLeads: (
     params: FetchPostSaleLeadParams
@@ -1609,6 +1607,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     taskType = null,
     bulkLead = null,
     project = null,
+    propertyType = null,
   }: LeadsReportingToParams): Promise<{
     success: boolean;
     message?: string;
@@ -1667,6 +1666,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       }
       if (project != null) {
         url += `&project=${project}`;
+      }
+      if (propertyType != null) {
+        url += `&propertyType=${propertyType}`;
       }
 
       // console.log(url);
@@ -1986,8 +1988,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-
-    const getAllData = async ({
+  const getAllData = async ({
     query = "",
     page = 1,
     limit = 20,
@@ -2296,7 +2297,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     fetchAssignFeedbackLeads: fetchAssignFeedbackLeads,
     fetchPostSaleLeads: fetchPostSaleLeads,
     fetchSearchLeads: fetchSearchLeads,
-    getAllData:getAllData,
+    getAllData: getAllData,
     fetchAssignFeedbackLeadsCount: fetchAssignFeedbackLeadsCount,
     getChannelPartners: getChannelPartners,
     getTeamOverview: getTeamOverview,

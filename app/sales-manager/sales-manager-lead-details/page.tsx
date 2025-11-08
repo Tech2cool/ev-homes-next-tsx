@@ -60,22 +60,13 @@ const SalesDetailsWrapper = () => {
 export default SalesDetailsWrapper;
 
 const Salesdetaispage = () => {
-  const {
-    leadInfo: searchLeadInfo,
-    channelPartners,
-    leads,
-    loadingLeads,
-    fetchTeamLeaderReportingToLeads,
-    employees,
-    getProjects,
-    getRequirements,
-    projects,
-    requirements,
-  } = useData();
-
   const router = useRouter();
+  // const visitId = "lead-1";
+  const searchParams = useSearchParams();
 
-  const visitId = "lead-1";
+  const visitId = searchParams.get("id");
+  const status = searchParams.get("status");
+
   // const [leads, setLeads] = useState<Lead[]>(DUMMY_LEADS);
   const [SelectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [similarVisits, setSimilarVisits] = useState<Lead[]>([]);
@@ -97,9 +88,6 @@ const Salesdetaispage = () => {
     action: "approve",
     remark: "",
   });
-  const { user, loading, getSocket, reconnectSocket } = useUser();
-
-  const socket = getSocket();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -109,8 +97,20 @@ const Salesdetaispage = () => {
   // const leadInfo = DUMMY_LEAD_INFO;
   // const loading = false;
   // const loadingLeads = false;
-  const fetchingMoreLeads = false;
+  // const fetchingMoreLeads = false;
   // const user = DUMMY_USER;
+
+  const [filters, setFilters] = useState({
+    visitType: "",
+    leadFilter: "",
+    statusFilter: "",
+    feedbackFilter: "",
+    clientStatus: "",
+    leadStatus: "",
+    cycleStatus: 0,
+    dateFrom: "",
+    dateTo: "",
+  });
 
   const [selectedFilter, setSelectedFilter] = useState({
     status: null,
@@ -134,38 +134,143 @@ const Salesdetaispage = () => {
     member: null,
   });
 
+  const { user, loading, getSocket, reconnectSocket } = useUser();
+
+  const {
+    leadInfo: searchLeadInfo,
+    channelPartners,
+    leads,
+    loadingLeads,
+    fetchTeamLeaderReportingToLeads,
+    employees,
+    getProjects,
+    getRequirements,
+    projects,
+    requirements,
+  } = useData();
+
+  const socket = getSocket();
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleApplyFilters = useCallback(
+    (filterParams: any) => {
+      // Reset to page 1 when applying new filters
+      fetchTeamLeaderReportingToLeads({
+        id: user?._id,
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+        ...filterParams, // Spread the filter parameters
+      });
+    },
+    [debouncedSearchQuery, status, fetchTeamLeaderReportingToLeads]
+  );
+  console.log(searchLeadInfo
+  );
+
+  // Function to clear all filters
+  const handleClearFilters = useCallback(() => {
+    setFilters({
+      visitType: "",
+      leadFilter: "",
+      statusFilter: "",
+      feedbackFilter: "",
+      clientStatus: "",
+      leadStatus: "",
+      cycleStatus: 0,
+      dateFrom: "",
+      dateTo: "",
+    });
+
+    // Fetch without any filters
+    fetchTeamLeaderReportingToLeads({
+      id: user?._id,
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+    });
+  }, [debouncedSearchQuery, status, fetchTeamLeaderReportingToLeads]);
+
   // Initial data fetch
   useEffect(() => {
     if (user && !loading) {
-      console.log("Initial fetch - visit details");
+      console.log("Initial fetch with status:", status);
       fetchTeamLeaderReportingToLeads({
         id: user?._id,
-        query: searchQuery,
+        query: debouncedSearchQuery,
         page: 1,
         limit: 10,
+        status: status === "all" ? null : status,
       });
     }
-  }, [user, loading]);
+  }, [user, loading, status]);
 
   useEffect(() => {
-    const fetchLeadsBasedOnStatus = async () => {
-      if (user && !loading) {
-        try {
-          await fetchTeamLeaderReportingToLeads({
-            id: user._id,
-            query: searchQuery,
-            page: (searchLeadInfo?.page ?? 0) + 1,
-            limit: 10,
-            status: selectedFilter?.status,
-          });
-        } catch (error) {
-          console.error("Error fetching leads:", error);
-        }
-      }
-    };
+    if (user && !loading) {
+      fetchTeamLeaderReportingToLeads({
+        id: user?._id,
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+        //  ...selectedFilter,
+        // Add other filter parameters as needed
+      });
+    }
+  }, [debouncedSearchQuery, user, loading, status]);
 
-    fetchLeadsBasedOnStatus();
-  }, [user, loading, selectedFilter]);
+  const handleFiltersChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+
+    fetchTeamLeaderReportingToLeads({
+      id: user?._id,
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      status: status === "all" ? null : status,
+      ...newFilters,
+    });
+    // console.log("Filters applied (Dummy):", newFilters);
+  };
+
+  const handleCall = useCallback(
+    (lead: any) => {
+      console.log("Making call to:", lead);
+      socket?.emit("callCustomerWeb", {
+        lead: lead?._id,
+        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
+        type: "call",
+        message: "call",
+        userId: user?._id,
+      });
+    },
+    [socket, user?._id]
+  );
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+    reconnectSocket();
+  }, []);
+
+  // Find selected visit when visitId changes
+  useEffect(() => {
+    if (visitId && leads!.length > 0) {
+      const foundVisit = leads?.find((v: any) => v?._id === visitId);
+      if (foundVisit) {
+        setSelectedLead(foundVisit);
+      }
+    }
+  }, [visitId, leads]);
 
   const loadMoreLeads = useCallback(async () => {
     if (searchLeadInfo && searchLeadInfo.page && searchLeadInfo.totalPages) {
@@ -173,10 +278,10 @@ const Salesdetaispage = () => {
       if (nextPage <= searchLeadInfo.totalPages) {
         await fetchTeamLeaderReportingToLeads({
           id: user?._id,
-          query: searchQuery,
+          query: debouncedSearchQuery,
           page: nextPage,
           limit: 10,
-          status: selectedFilter?.status,
+          status: status === "all" ? null : status,
         });
       }
     }
@@ -184,8 +289,29 @@ const Salesdetaispage = () => {
     searchLeadInfo,
     selectedFilter,
     fetchTeamLeaderReportingToLeads,
-    searchQuery,
+    debouncedSearchQuery,
+    status,
   ]);
+
+  // useEffect(() => {
+  //   const fetchLeadsBasedOnStatus = async () => {
+  //     if (user && !loading) {
+  //       try {
+  //         await fetchTeamLeaderReportingToLeads({
+  //           id: user._id,
+  //           query: searchQuery,
+  //           page: (searchLeadInfo?.page ?? 0) + 1,
+  //           limit: 10,
+  //           status: selectedFilter?.status,
+  //         });
+  //       } catch (error) {
+  //         console.error("Error fetching leads:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchLeadsBasedOnStatus();
+  // }, [user, loading, selectedFilter]);
 
   const handleScroll = useCallback(
     (e: any) => {
@@ -212,76 +338,31 @@ const Salesdetaispage = () => {
   );
 
   // Fix the lead selection handler
-  const handleVisitSelect = (lead: Lead) => {
-    setSelectedLead(lead);
-    const currentParams = new URLSearchParams(window.location.search);
-    const statusParam = currentParams.get("status");
+  // const handleVisitSelect = (lead: Lead) => {
+  //   setSelectedLead(lead);
+  //   const currentParams = new URLSearchParams(window.location.search);
+  //   const statusParam = currentParams.get("status");
 
-    let url = `/lead-details?id=${lead._id}`;
-    if (statusParam) {
-      url += `&status=${statusParam}`;
-    }
+  //   let url = `/lead-details?id=${lead._id}`;
+  //   if (statusParam) {
+  //     url += `&status=${statusParam}`;
+  //   }
 
-    router.push(url, { scroll: false });
-  };
+  //   router.push(url, { scroll: false });
+  // };
 
-  const [filters, setFilters] = useState({
-    visitType: "",
-    leadFilter: "",
-    statusFilter: "",
-    feedbackFilter: "",
-    clientStatus: "",
-    leadStatus: "",
-    cycleStatus: 0,
-    dateFrom: "",
-    dateTo: "",
-  });
-
-    const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  useEffect(() => {
-    if (user && !loading) {
-      fetchTeamLeaderReportingToLeads({
-        id: user?._id,
-        query: debouncedSearchQuery,
-        page: 1,
-        limit: 10,
-        status: selectedFilter?.status,
-        // Add other filter parameters as needed
-      });
-    }
-  }, [debouncedSearchQuery, user, loading]);
-
-  const handleFiltersChange = (newFilters: typeof filters) => {
-    setFilters(newFilters);
-    console.log("Filters applied (Dummy):", newFilters);
-  };
-
-  const handleCall = useCallback(
-    (lead: any) => {
-      console.log("Making call to:", lead);
-      socket?.emit("callCustomerWeb", {
-        lead: lead?._id,
-        phoneNumber: `${lead?.countryCode}${lead?.phoneNumber}`,
-        type: "call",
-        message: "call",
-        userId: user?._id,
-      });
-    },
-    [socket, user?._id]
-  );
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-    reconnectSocket();
-  }, []);
+  // useEffect(() => {
+  //   if (user && !loading) {
+  //     fetchTeamLeaderReportingToLeads({
+  //       id: user?._id,
+  //       query: debouncedSearchQuery,
+  //       page: 1,
+  //       limit: 10,
+  //       status: selectedFilter?.status,
+  //       // Add other filter parameters as needed
+  //     });
+  //   }
+  // }, [debouncedSearchQuery, user, loading]);
 
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
     handleScroll,
@@ -406,142 +487,133 @@ const Salesdetaispage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {leads?.map((visit: Lead, index: number) => {
-              console.log(`Rendering lead ${index}:`, visit);
-              return (
-                <div
-                  key={`${visit._id}-${index}`}
-                  className={`${styles.visitCard} ${
-                    SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                  }`}
-                  onClick={() => {
-                    handleVisitSelect(visit);
-                    // Preserve status in navigation
-                    const currentParams = new URLSearchParams(
-                      window.location.search
-                    );
-                    const statusParam = currentParams.get("status");
+            {leads?.map((visit, index) => (
+              <div
+                key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+                className={`${styles.visitCard} ${
+                  SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                }`}
+                onClick={() => {
+                  setSelectedLead(visit);
 
-                    let url = `/lead-details?id=${visit._id}`;
-                    if (statusParam) {
-                      url += `&status=${statusParam}`;
+                  // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                  //   scroll: false,
+                  // });
+                  router.push(
+                    `/lead-details?status=${status}&id=${visit._id}`,
+                    {
+                      scroll: false,
                     }
-
-                    router.push(url, { scroll: false });
-                  }}
-                >
-                  <div className={styles.tag}></div>
-                  <div className={styles.leadInfo}>
-                    <Image
-                      src={tagIcon}
-                      alt="Tag"
-                      className={styles.tagImage}
-                      width={55}
-                      height={20}
-                    />
-                    <div className={styles.clientDetails}>
-                      {/* <p className={styles.trns}>Transferred From</p> */}
-                      <p className={styles.trnsname}>Vicky</p>
-                      <div className={styles.namecl}>
-                        {visit?.firstName ?? ""} {visit?.lastName ?? ""}
-                      </div>
-                      <p className={styles.phone}>
-                        {visit?.countryCode ?? "91"}{" "}
-                        {visit?.phoneNumber ?? "No Phone"}
-                      </p>
+                  );
+                }}
+              >
+                <div className={styles.tag}></div>
+                <div className={styles.leadInfo}>
+                  <Image
+                    src={tagIcon}
+                    alt="Tag"
+                    className={styles.tagImage}
+                    width={55}
+                    height={20}
+                  />
+                  <div className={styles.clientDetails}>
+                    {/* <p className={styles.trns}>Transferred From</p> */}
+                    <p className={styles.trnsname}>Vicky</p>
+                    <div className={styles.namecl}>
+                      {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                     </div>
+                    <p className={styles.phone}>
+                      {visit?.countryCode ?? "91"}{" "}
+                      {visit?.phoneNumber ?? "No Phone"}
+                    </p>
                   </div>
-                  {/* Task Details */}
+                </div>
+                {/* Task Details */}
 
-                  <div className={styles.leadMeta}>
-                    <p>
-                      Assign Date :{" "}
-                      {visit.cycle?.startDate ? (
-                        <span>
-                          {formatDate(new Date(visit.cycle.startDate))}
-                        </span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </p>
-                    <p>
-                      Visit Deadline:{" "}
-                      {visit.cycle?.validTill ? (
-                        <span>
-                          {formatDate(new Date(visit.cycle.validTill))}
-                        </span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </p>
+                <div className={styles.leadMeta}>
+                  <p>
+                    Assign Date :{" "}
+                    {visit.cycle?.startDate ? (
+                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </p>
+                  <p>
+                    Visit Deadline:{" "}
+                    {visit.cycle?.validTill ? (
+                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </p>
 
-                    <div className={styles.taskContainer}>
-                      <div className={styles.taskHeader}>
-                        <div
-                          className={styles.accentLine}
+                  <div className={styles.taskContainer}>
+                    <div className={styles.taskHeader}>
+                      <div
+                        className={styles.accentLine}
+                        style={{
+                          backgroundColor:
+                            visit?.taskRef?.completed === true
+                              ? "rgb(5, 170, 5)"
+                              : "orange",
+                        }}
+                      ></div>
+                      <span className={styles.taskTitle}>Task Details</span>
+                    </div>
+
+                    <span className={styles.taskName}>
+                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                        visit.taskRef?.assignTo?.lastName ?? ""
+                      }`}
+                      <span className={styles.status}>
+                        <span
+                          className={styles.statusText}
                           style={{
-                            backgroundColor:
+                            color:
                               visit?.taskRef?.completed === true
                                 ? "rgb(5, 170, 5)"
                                 : "orange",
                           }}
-                        ></div>
-                        <span className={styles.taskTitle}>Task Details</span>
-                      </div>
-
-                      <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
-                          visit.taskRef?.assignTo?.lastName ?? ""
-                        }`}
-                        <span className={styles.status}>
-                          <span
-                            className={styles.statusText}
-                            style={{
-                              color:
-                                visit?.taskRef?.completed === true
-                                  ? "rgb(5, 170, 5)"
-                                  : "orange",
-                            }}
-                          >
-                            {visit?.taskRef?.completed === true
-                              ? "COMPLETED"
-                              : "PENDING"}
-                          </span>
-                          <span className={styles.statusIcon}>⏳</span>
+                        >
+                          {visit?.taskRef?.completed === true
+                            ? "COMPLETED"
+                            : "PENDING"}
                         </span>
+                        <span className={styles.statusIcon}>⏳</span>
                       </span>
+                    </span>
+                  </div>
+
+                  {visit.teamLeader ? (
+                    <div className={styles.assignby}>
+                      {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
+                      {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
                     </div>
+                  ) : (
+                    <span>Not available</span>
+                  )}
 
-                    {visit.teamLeader ? (
-                      <div className={styles.assignby}>
-                        {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
-                        {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                  <div className={styles.lastpart}>
+                    {visit?.clientInterestedStatus ? (
+                      <div className={styles.clientStatus}>
+                        {visit?.clientInterestedStatus}
                       </div>
-                    ) : (
-                      <span>Not available</span>
-                    )}
-
-                    <div className={styles.lastpart}>
-                      {visit?.clientInterestedStatus ? (
-                        <div className={styles.clientStatus}>
-                          {visit?.clientInterestedStatus}
-                        </div>
-                      ) : null}
-                      <div
-                        style={{
-                          backgroundColor: "rgba(3, 84, 214, 1)",
-                        }}
-                        className={styles.clientStatus}
-                      >
-                        {visit.leadType === "cp"
-                          ? visit.channelPartner?.firmName ?? "-"
-                          : visit.leadType ?? "-"}
-                      </div>
+                    ) : null}
+                    <div
+                      style={{
+                        backgroundColor: "rgba(3, 84, 214, 1)",
+                      }}
+                      className={styles.clientStatus}
+                    >
+                      {visit.leadType === "cp"
+                        ? visit.channelPartner?.firmName ?? "-"
+                        : visit.leadType ?? "-"}
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
             {searchLeadInfo?.page &&
               searchLeadInfo.totalPages &&
               searchLeadInfo.page < searchLeadInfo.totalPages && (
@@ -596,7 +668,7 @@ const Salesdetaispage = () => {
                       <MdCall size={15} />
                     </button>
 
-                 <button
+                    <button
                       className={styles.whatsbtn}
                       onClick={() => {
                         console.log("clicked 1");
@@ -616,7 +688,7 @@ const Salesdetaispage = () => {
                     </button>
 
                     <ThemeToggle />
-                    {SelectedLead.approvalStatus === "pending" && (
+                    {/* {SelectedLead.approvalStatus === "pending" && (
                       <button
                         className={styles.approveBtn}
                         onClick={() => setShowApprovalDialog(true)}
@@ -624,7 +696,7 @@ const Salesdetaispage = () => {
                         <Check className={styles.btnIcon} />
                         Approve/Reject
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -640,9 +712,14 @@ const Salesdetaispage = () => {
 
                   {activeTab === "access" && <QuickAccess />}
 
-                  {activeTab === "taskDetails" && <TaskOverview />}
-                  {activeTab === "followup" && <FollowUp />}
-                  {activeTab === "siteVisit" && <VisitHistory />}
+                  {activeTab === "taskDetails" && (
+                    <TaskOverview task={SelectedLead?.taskRef} />
+                  )}
+                  {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
+                  {/* {activeTab === "siteVisit" && (
+                    <VisitHistory lead={SelectedLead} />
+                  )} */}
+
                   {activeTab === "transfer" && (
                     <TransferHistory
                       cycleHistory={SelectedLead?.cycleHistoryNew}
@@ -710,7 +787,7 @@ const Salesdetaispage = () => {
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
-                    <button
+                    {/* <button
                       className={`${styles.navItem} ${
                         activeTab === "siteVisit" ? styles.active : ""
                       }`}
@@ -718,7 +795,7 @@ const Salesdetaispage = () => {
                     >
                       <FaMapMarkedAlt className={styles.icon} /> Site Visit
                       History
-                    </button>
+                    </button> */}
 
                     <button
                       className={`${styles.navItem} ${
@@ -756,26 +833,12 @@ const Salesdetaispage = () => {
           onClose={() => setShowFilterDialog(false)}
           onOpenChange={setShowFilterDialog}
           filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={() => {
-            const cleared = {
-              visitType: "",
-              leadFilter: "",
-              statusFilter: "",
-              feedbackFilter: "",
-              clientStatus: "",
-              leadStatus: "",
-              cycleStatus: 0,
-              dateFrom: "",
-              dateTo: "",
-            };
-            setFilters(cleared);
-            console.log("Filters cleared and data refresh simulated.");
-          }}
+          onFiltersChange={setFilters}
+          onClearFilters={handleClearFilters}
+          onApplyFilters={handleApplyFilters} // Pass the apply function
           visits={leads || []}
           resultCount={leads?.length || 0}
         />
-
         {showEditDialog && (
           <EditDialog
             visit={editFormData}
@@ -825,12 +888,9 @@ const Salesdetaispage = () => {
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(
-                  `/lead-details?id=${visit._id}`,
-                  {
-                    scroll: false,
-                  }
-                );
+                router.push(`/lead-details?id=${visit._id}`, {
+                  scroll: false,
+                });
               }}
             >
               <div className={styles.leadInfo}>
@@ -983,24 +1043,24 @@ const Salesdetaispage = () => {
               <MdCall size={15} />
             </button>
 
-           <button
-                      className={styles.whatsbtn}
-                      onClick={() => {
-                        console.log("clicked 1");
+            <button
+              className={styles.whatsbtn}
+              onClick={() => {
+                console.log("clicked 1");
 
-                        socket?.emit("callCustomerWeb", {
-                          lead: SelectedLead?._id,
-                          phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
-                          type: "whatsapp",
-                          message: "hey",
-                          userId: user?._id,
-                        });
+                socket?.emit("callCustomerWeb", {
+                  lead: SelectedLead?._id,
+                  phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                  type: "whatsapp",
+                  message: "hey",
+                  userId: user?._id,
+                });
 
-                        console.log("clicked 2");
-                      }}
-                    >
-                      <IoLogoWhatsapp size={15} />
-                    </button>
+                console.log("clicked 2");
+              }}
+            >
+              <IoLogoWhatsapp size={15} />
+            </button>
 
             <button
               className={styles.menuBtn}
@@ -1081,14 +1141,14 @@ const Salesdetaispage = () => {
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
-              <button
+              {/* <button
                 className={`${styles.navItem} ${
                   activeTab === "siteVisit" ? styles.active : ""
                 }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
-              </button>
+              </button> */}
 
               <button
                 className={`${styles.navItem} ${
@@ -1134,9 +1194,9 @@ const Salesdetaispage = () => {
 
           {activeTab === "taskDetails" && <TaskOverview />}
 
-          {activeTab === "followup" && <FollowUp />}
+          {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
 
-          {activeTab === "siteVisit" && <VisitHistory />}
+          {/* {activeTab === "siteVisit" && <VisitHistory />} */}
 
           {activeTab === "transfer" && <TransferHistory />}
 
@@ -1332,7 +1392,9 @@ const VisitDetailsContent = ({
                   <IoIosPerson size={12} color="#4a84ff" />
                   Property Type
                 </label>
-                <p className={styles.infoValue}>NA</p>
+                <p className={styles.infoValue}>
+                  {visit?.propertyType ?? "NA"}
+                </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
