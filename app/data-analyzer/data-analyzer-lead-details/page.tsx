@@ -81,7 +81,7 @@ const DataAnalyzerdetailspage = () => {
   // });
   // console.log(mapLead);
   const searchParams = useSearchParams();
-    const visitId = searchParams.get("id");
+  const visitId = searchParams.get("id");
   // const status = searchParams.get("status");
   // const visitId = searchParams.get("id"); // Get ID from URL if needed
   // console.log("leads from context", leads);
@@ -101,7 +101,7 @@ const DataAnalyzerdetailspage = () => {
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [query, setQuery] = useState("");
-    const status = searchParams.get("status");
+  const status = searchParams.get("status");
 
   const [editFormData, setEditFormData] = useState({});
   const [approvalData, setApprovalData] = useState({
@@ -180,6 +180,7 @@ const DataAnalyzerdetailspage = () => {
       clientStatus: "",
       leadStatus: "",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "",
       dateTo: "",
     });
@@ -253,7 +254,7 @@ const DataAnalyzerdetailspage = () => {
   //   };
 
   //   fetchLeadsBasedOnStatus();
-  // }, [user, loading, selectedFilter]); 
+  // }, [user, loading, selectedFilter]);
 
   // Fix the loadMore function
   const loadMoreLeads = useCallback(async () => {
@@ -268,7 +269,13 @@ const DataAnalyzerdetailspage = () => {
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery, status]);
+  }, [
+    searchLeadInfo,
+    selectedFilter,
+    fetchSearchLeads,
+    debouncedSearchQuery,
+    status,
+  ]);
 
   // Update your scroll handler
   const handleScroll = useCallback(
@@ -347,6 +354,7 @@ const DataAnalyzerdetailspage = () => {
     clientStatus: "",
     leadStatus: "",
     cycleStatus: 0,
+    propertyType: "",
     dateFrom: "",
     dateTo: "",
   });
@@ -388,14 +396,14 @@ const DataAnalyzerdetailspage = () => {
     reconnectSocket();
   }, []);
 
-    useEffect(() => {
-      if (visitId && leads!.length > 0) {
-        const foundVisit = leads?.find((v: any) => v?._id === visitId);
-        if (foundVisit) {
-          setSelectedLead(foundVisit);
-        }
+  useEffect(() => {
+    if (visitId && leads!.length > 0) {
+      const foundVisit = leads?.find((v: any) => v?._id === visitId);
+      if (foundVisit) {
+        setSelectedLead(foundVisit);
       }
-    }, [visitId, leads]);
+    }
+  }, [visitId, leads]);
   // Initial data fetch
   // useEffect(() => {
   //   if (user && !loading) {
@@ -522,6 +530,7 @@ const DataAnalyzerdetailspage = () => {
       clientStatus: "string",
       leadStatus: "string",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "string",
       dateTo: "string",
     });
@@ -556,130 +565,128 @@ const DataAnalyzerdetailspage = () => {
             </button>
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-             {leads?.map((visit, index) => (
+            {leads?.map((visit, index) => (
               <div
                 key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
-                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                  }`}
+                className={`${styles.visitCard} ${
+                  SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                }`}
                 onClick={() => {
                   setSelectedLead(visit);
 
                   // router.push(`/super-admin/lead-details?id=${visit._id}`, {
                   //   scroll: false,
                   // });
-                  router.push(`/lead-details?status=${status}&id=${visit._id}`, {
-
-                    scroll: false,
-                  });
+                  router.push(
+                    `/lead-details?status=${status}&id=${visit._id}`,
+                    {
+                      scroll: false,
+                    }
+                  );
                 }}
               >
-                  <div className={styles.tag}></div>
-                  <div className={styles.leadInfo}>
-                    <Image
-                      src={tagIcon}
-                      alt="Tag"
-                      className={styles.tagImage}
-                      width={55}
-                      height={20}
-                    />
-                    <div className={styles.clientDetails}>
-                      {/* <p className={styles.trnsname}>Vicky</p> */}
-                      <div className={styles.namecl}>
-                        {visit?.firstName ?? "No Name"} {visit?.lastName ?? ""}
-                      </div>
-                      <p className={styles.phone}>
-                        {visit?.countryCode ?? "91"}{" "}
-                        {visit?.phoneNumber ?? "No Phone"}
-                      </p>
+                <div className={styles.tag}></div>
+                <div className={styles.leadInfo}>
+                  <Image
+                    src={tagIcon}
+                    alt="Tag"
+                    className={styles.tagImage}
+                    width={55}
+                    height={20}
+                  />
+                  <div className={styles.clientDetails}>
+                    {/* <p className={styles.trnsname}>Vicky</p> */}
+                    <div className={styles.namecl}>
+                      {visit?.firstName ?? "No Name"} {visit?.lastName ?? ""}
                     </div>
+                    <p className={styles.phone}>
+                      {visit?.countryCode ?? "91"}{" "}
+                      {visit?.phoneNumber ?? "No Phone"}
+                    </p>
                   </div>
+                </div>
 
-                  <div className={styles.leadMeta}>
-                    <p>
-                      Assign Date:{" "}
-                      {visit.cycle?.startDate ? (
-                        <span>
-                          {formatDate(new Date(visit.cycle.startDate))}
-                        </span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </p>
-                    <p>
-                      Visit Deadline:{" "}
-                      {visit.cycle?.validTill ? (
-                        <span>
-                          {formatDate(new Date(visit.cycle.validTill))}
-                        </span>
-                      ) : (
-                        <span>Not available</span>
-                      )}
-                    </p>
+                <div className={styles.leadMeta}>
+                  <p>
+                    Assign Date:{" "}
+                    {visit.cycle?.startDate ? (
+                      <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </p>
+                  <p>
+                    Visit Deadline:{" "}
+                    {visit.cycle?.validTill ? (
+                      <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    ) : (
+                      <span>Not available</span>
+                    )}
+                  </p>
 
-                    <div className={styles.taskContainer}>
-                      <div className={styles.taskHeader}>
-                        <div
-                          className={styles.accentLine}
+                  <div className={styles.taskContainer}>
+                    <div className={styles.taskHeader}>
+                      <div
+                        className={styles.accentLine}
+                        style={{
+                          backgroundColor:
+                            visit?.taskRef?.completed === true
+                              ? "rgb(5, 170, 5)"
+                              : "orange",
+                        }}
+                      ></div>
+                      <span className={styles.taskTitle}>Task Details</span>
+                    </div>
+                    <span className={styles.taskName}>
+                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                        visit.taskRef?.assignTo?.lastName ?? ""
+                      }`}
+                      <span className={styles.status}>
+                        <span
+                          className={styles.statusText}
                           style={{
-                            backgroundColor:
+                            color:
                               visit?.taskRef?.completed === true
                                 ? "rgb(5, 170, 5)"
                                 : "orange",
                           }}
-                        ></div>
-                        <span className={styles.taskTitle}>Task Details</span>
-                      </div>
-                      <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
-                          visit.taskRef?.assignTo?.lastName ?? ""
-                        }`}
-                        <span className={styles.status}>
-                          <span
-                            className={styles.statusText}
-                            style={{
-                              color:
-                                visit?.taskRef?.completed === true
-                                  ? "rgb(5, 170, 5)"
-                                  : "orange",
-                            }}
-                          >
-                            {visit?.taskRef?.completed === true
-                              ? "COMPLETED"
-                              : "PENDING"}
-                          </span>
-                          <span className={styles.statusIcon}>⏳</span>
+                        >
+                          {visit?.taskRef?.completed === true
+                            ? "COMPLETED"
+                            : "PENDING"}
                         </span>
+                        <span className={styles.statusIcon}>⏳</span>
                       </span>
+                    </span>
+                  </div>
+
+                  {visit.teamLeader ? (
+                    <div className={styles.assignby}>
+                      {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
+                      {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
                     </div>
+                  ) : (
+                    <span>Not available</span>
+                  )}
 
-                    {visit.teamLeader ? (
-                      <div className={styles.assignby}>
-                        {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
-                        {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                  <div className={styles.lastpart}>
+                    {visit?.clientInterestedStatus ? (
+                      <div className={styles.clientStatus}>
+                        {visit?.clientInterestedStatus}
                       </div>
-                    ) : (
-                      <span>Not available</span>
-                    )}
-
-                    <div className={styles.lastpart}>
-                      {visit?.clientInterestedStatus ? (
-                        <div className={styles.clientStatus}>
-                          {visit?.clientInterestedStatus}
-                        </div>
-                      ) : null}
-                      <div
-                        style={{ backgroundColor: "rgba(3, 84, 214, 1)" }}
-                        className={styles.clientStatus}
-                      >
-                        {visit.leadType === "cp"
-                          ? visit.channelPartner?.firmName ?? "-"
-                          : visit.leadType ?? "-"}
-                      </div>
+                    ) : null}
+                    <div
+                      style={{ backgroundColor: "rgba(3, 84, 214, 1)" }}
+                      className={styles.clientStatus}
+                    >
+                      {visit.leadType === "cp"
+                        ? visit.channelPartner?.firmName ?? "-"
+                        : visit.leadType ?? "-"}
                     </div>
                   </div>
                 </div>
-              )
-            )}
+              </div>
+            ))}
             {searchLeadInfo?.page &&
               searchLeadInfo.totalPages &&
               searchLeadInfo.page < searchLeadInfo.totalPages && (
@@ -779,15 +786,19 @@ const DataAnalyzerdetailspage = () => {
                   {activeTab === "access" && <AnalyzerQuickaccess />}
 
                   {/* {activeTab === "taskDetails" && <TaskOverview task={SelectedLead?.taskRef} />} */}
-                    {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
-{activeTab === "cphistory" && (
-  <CPTransferHistory 
-    channelPartnerHistory={SelectedLead?.channelPartnerHistory} 
-  />
-)}
-                  {activeTab === "cyclehistory" &&  <TransferHistory
+                  {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
+                  {activeTab === "cphistory" && (
+                    <CPTransferHistory
+                      channelPartnerHistory={
+                        SelectedLead?.channelPartnerHistory
+                      }
+                    />
+                  )}
+                  {activeTab === "cyclehistory" && (
+                    <TransferHistory
                       cycleHistory={SelectedLead?.cycleHistoryNew}
-                    />}
+                    />
+                  )}
                   {activeTab === "chat" && <div></div>}
                   {similarVisits.length > 0 && (
                     <div className={styles.similarVisitsSection}>
@@ -1258,11 +1269,9 @@ const DataAnalyzerdetailspage = () => {
 
           {activeTab === "cphistory" && <CPTransferHistory />}
 
-         {activeTab === "cyclehistory" && (
-                    <TransferHistory
-                      cycleHistory={SelectedLead?.cycleHistoryNew}
-                    />
-                  )}
+          {activeTab === "cyclehistory" && (
+            <TransferHistory cycleHistory={SelectedLead?.cycleHistoryNew} />
+          )}
 
           {activeTab === "chat" && <div></div>}
           {similarVisits.length > 0 && (
@@ -1454,7 +1463,10 @@ const VisitDetailsContent = ({
                   <IoIosPerson size={12} color="#4a84ff" />
                   Property Type
                 </label>
-                <p className={styles.infoValue}> {visit?.propertyType ?? "NA"}</p>
+                <p className={styles.infoValue}>
+                  {" "}
+                  {visit?.propertyType ?? "NA"}
+                </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>

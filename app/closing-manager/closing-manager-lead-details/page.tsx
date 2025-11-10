@@ -108,6 +108,7 @@ const Closingdetaispage = () => {
     clientStatus: "",
     leadStatus: "",
     cycleStatus: 0,
+    propertyType: "",
     dateFrom: "",
     dateTo: "",
   });
@@ -181,6 +182,7 @@ const Closingdetaispage = () => {
       clientStatus: "",
       leadStatus: "",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "",
       dateTo: "",
     });
@@ -430,6 +432,7 @@ const Closingdetaispage = () => {
       clientStatus: "string",
       leadStatus: "string",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "string",
       dateTo: "string",
     });

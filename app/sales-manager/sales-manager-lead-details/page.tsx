@@ -108,6 +108,7 @@ const Salesdetaispage = () => {
     clientStatus: "",
     leadStatus: "",
     cycleStatus: 0,
+    propertyType: "",
     dateFrom: "",
     dateTo: "",
   });
@@ -182,6 +183,7 @@ const Salesdetaispage = () => {
       clientStatus: "",
       leadStatus: "",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "",
       dateTo: "",
     });
@@ -453,6 +455,7 @@ const Salesdetaispage = () => {
       clientStatus: "string",
       leadStatus: "string",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "string",
       dateTo: "string",
     });
