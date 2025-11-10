@@ -778,10 +778,16 @@ const DataAnalyzerdetailspage = () => {
 
                   {activeTab === "access" && <AnalyzerQuickaccess />}
 
-                  {activeTab === "taskDetails" && <TaskOverview />}
-                  {activeTab === "followup" && <FollowUp />}
-                  {activeTab === "cphistory" && <CPTransferHistory />}
-                  {activeTab === "cyclehistory" && <TransferHistory />}
+                  {/* {activeTab === "taskDetails" && <TaskOverview task={SelectedLead?.taskRef} />} */}
+                    {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
+{activeTab === "cphistory" && (
+  <CPTransferHistory 
+    channelPartnerHistory={SelectedLead?.channelPartnerHistory} 
+  />
+)}
+                  {activeTab === "cyclehistory" &&  <TransferHistory
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                    />}
                   {activeTab === "chat" && <div></div>}
                   {similarVisits.length > 0 && (
                     <div className={styles.similarVisitsSection}>
@@ -822,14 +828,14 @@ const DataAnalyzerdetailspage = () => {
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
-                    <button
+                    {/* <button
                       className={`${styles.navItem} ${
                         activeTab === "taskDetails" ? styles.active : ""
                       }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
-                    </button>
+                    </button> */}
 
                     <button
                       className={`${styles.navItem} ${
@@ -1177,14 +1183,14 @@ const DataAnalyzerdetailspage = () => {
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
-              <button
+              {/* <button
                 className={`${styles.navItem} ${
                   activeTab === "taskDetails" ? styles.active : ""
                 }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
-              </button>
+              </button> */}
 
               <button
                 className={`${styles.navItem} ${
@@ -1246,13 +1252,17 @@ const DataAnalyzerdetailspage = () => {
 
           {activeTab === "access" && <AnalyzerQuickaccess />}
 
-          {activeTab === "taskDetails" && <TaskOverview />}
+          {/* {activeTab === "taskDetails" && <TaskOverview />} */}
 
           {activeTab === "followup" && <FollowUp />}
 
           {activeTab === "cphistory" && <CPTransferHistory />}
 
-          {activeTab === "cyclehistory" && <TransferHistory />}
+         {activeTab === "cyclehistory" && (
+                    <TransferHistory
+                      cycleHistory={SelectedLead?.cycleHistoryNew}
+                    />
+                  )}
 
           {activeTab === "chat" && <div></div>}
           {similarVisits.length > 0 && (
