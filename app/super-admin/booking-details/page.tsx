@@ -794,7 +794,7 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
           />{" "}
           Team Leader
         </p>
-        <p className={bookstyle.cardvalue}>{visit.closingManager?.firstName ?? ""}</p>
+        <p className={bookstyle.cardvalue}>{visit.closingManager?.firstName ?? ""} {visit.closingManager?.lastName ?? ""}</p>
       </div>
 
       <div className={`${bookstyle.infoItem} ${bookstyle.infoItemRevisitDate}`}>
