@@ -54,30 +54,28 @@ import useDebounce from "@/hooks/useDebounce";
 const BookingDetails = () => {
   const {
     searchPostSaleLeadInfo,
-  loadingPostSaleLeads,
+    loadingPostSaleLeads,
 
-    fetchPostSaleLeads,
     postSaleleads,
+    currentLead,
+    fetchPostSaleLeads,
+    getLeadByBookingId,
   } = useData();
-    const { user, loading } = useUser();
-      const searchParams = useSearchParams();
-    
+  const { user, loading } = useUser();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const postSaleId = searchParams.get("id");
-  
-   const [SelectedLead, setSelectedLead] = useState<PostSaleLead | null>(null);
+  const status = searchParams.get("status");
+
+  const [SelectedLead, setSelectedLead] = useState<PostSaleLead | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [isOpen, setIsOpen] = useState(false);
-
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [showaddbooking, setshowaddbooking] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
-
-  const router = useRouter();
   const currentStage = "Confirm Booking";
-
   const isConfirmed =
     currentStage === "Confirm Booking" || currentStage === "Registration Done";
 
@@ -88,7 +86,6 @@ const BookingDetails = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-
   useEffect(() => {
     if (postSaleId && postSaleleads!.length > 0) {
       const foundVisit = postSaleleads?.find((v: any) => v?._id === postSaleId);
@@ -98,6 +95,12 @@ const BookingDetails = () => {
     }
   }, [postSaleId, postSaleleads]);
 
+
+  useEffect(() => {
+    if (SelectedLead) {
+      getLeadByBookingId(SelectedLead._id??"");
+    }
+  }, [SelectedLead]);
 
 
   useEffect(() => {
@@ -111,21 +114,29 @@ const BookingDetails = () => {
     }
   }, [user, loading]);
 
-
   const loadMoreLeads = useCallback(async () => {
-    if (searchPostSaleLeadInfo && searchPostSaleLeadInfo.page && searchPostSaleLeadInfo.totalPages) {
+    if (
+      searchPostSaleLeadInfo &&
+      searchPostSaleLeadInfo.page &&
+      searchPostSaleLeadInfo.totalPages
+    ) {
       const nextPage = searchPostSaleLeadInfo.page + 1;
       if (nextPage <= searchPostSaleLeadInfo.totalPages) {
         await fetchPostSaleLeads({
           query: debouncedSearchQuery,
           page: nextPage,
-          limit: 10,  
+          limit: 10,
           status: status === "all" ? null : status,
-
         });
       }
     }
-  }, [searchPostSaleLeadInfo, , fetchPostSaleLeads, debouncedSearchQuery, status]);
+  }, [
+    searchPostSaleLeadInfo,
+    ,
+    fetchPostSaleLeads,
+    debouncedSearchQuery,
+    status,
+  ]);
 
   const handleScroll = useCallback(
     (e: any) => {
@@ -149,22 +160,21 @@ const BookingDetails = () => {
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
   };
-    const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
-      handleScroll,
-    ]);
+  const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
+    handleScroll,
+  ]);
 
-
-    function debounce(func: (...args: any[]) => void, wait: number) {
-  let timeout: ReturnType<typeof setTimeout>;
-  return function executedFunction(...args: any[]) {
-    const later = () => {
+  function debounce(func: (...args: any[]) => void, wait: number) {
+    let timeout: ReturnType<typeof setTimeout>;
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
       clearTimeout(timeout);
-      func(...args);
+      timeout = setTimeout(later, wait);
     };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
+  }
   const formatDate = (date: any) =>
     new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -200,9 +210,9 @@ const BookingDetails = () => {
             <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
               {postSaleleads?.map((lead) => (
                 <div
-                  key={lead.id}
+                  key={lead._id}
                   className={`${bookstyle.visitCard} ${
-                    SelectedLead?.id === lead.id ? bookstyle.selectedCard : ""
+                    SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
                   }`}
                   onClick={() => setSelectedLead(lead)}
                 >
@@ -312,8 +322,7 @@ const BookingDetails = () => {
                 <div className={styles.detailsHeader}>
                   <div className={styles.headerInfo}>
                     <h2 className={styles.detailsTitle}>
-                    {SelectedLead.firstName}{" "}
-                      {SelectedLead.lastName}{" "}
+                      {SelectedLead.firstName} {SelectedLead.lastName}{" "}
                     </h2>
 
                     <div className={styles.actionButtons}>
@@ -351,12 +360,12 @@ const BookingDetails = () => {
                 <div className={styles.detsilpart}>
                   <div className={styles.detailsContent}>
                     {activeTab === "overview" && (
-                      <VisitDetailsContent visit={SelectedLead} />
+                      <VisitDetailsContent visit={SelectedLead} currentLead={currentLead} />
                     )}
                     {activeTab === "access" && <BookingQuikAccess />}
-                    {activeTab === "bookingoverview" && <OverviewDetails />}
-                    {activeTab === "applicant" && <ApplicantOverview />}
-                    {activeTab === "feedback" && <BookingFeedback />}
+                    {activeTab === "bookingoverview" && <OverviewDetails booking={SelectedLead} />}
+                    {activeTab === "applicant" && <ApplicantOverview booking={SelectedLead}/>}
+                    {activeTab === "feedback" && <BookingFeedback booking={SelectedLead} lead={currentLead}/>}
                   </div>
                   <div className={styles.detailstab}>
                     <div className={styles.bookingnavbar}>
@@ -455,7 +464,7 @@ const BookingDetails = () => {
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
             {postSaleleads?.map((lead) => (
               <div
-                key={lead.id}
+                key={lead._id}
                 className={bookstyle.visitCard}
                 onClick={() => {
                   setSelectedLead(lead);
@@ -544,7 +553,9 @@ const BookingDetails = () => {
                       <FaUserTie />
                       Closing Manager
                     </p>
-                    <p className={bookstyle.value}>{lead.closingManager?.firstName ?? ""}</p>
+                    <p className={bookstyle.value}>
+                      {lead.closingManager?.firstName ?? ""}
+                    </p>
                   </div>
                   <div className={bookstyle.gridItem}>
                     <p className={bookstyle.label}>
@@ -584,8 +595,7 @@ const BookingDetails = () => {
               className={styles.detailsTitle}
               style={{ flexGrow: 1, textAlign: "left", marginLeft: "10px" }}
             >
-             {SelectedLead.firstName}{" "}
-              {SelectedLead.lastName}{" "}
+              {SelectedLead.firstName} {SelectedLead.lastName}{" "}
             </h2>
 
             <div className={styles.actionButtons}>
@@ -721,14 +731,14 @@ const BookingDetails = () => {
         <div className={styles.detsilpart}>
           <div className={styles.detailsContent}>
             {activeTab === "overview" && SelectedLead && (
-              <VisitDetailsContent visit={SelectedLead} />
+              <VisitDetailsContent visit={SelectedLead} currentLead={currentLead} />
             )}
 
             {activeTab === "access" && <BookingQuikAccess />}
 
-            {activeTab === "bookingoverview" && <OverviewDetails />}
+            {activeTab === "bookingoverview" && <OverviewDetails booking={SelectedLead}/>}
 
-            {activeTab === "applicant" && <ApplicantOverview />}
+            {activeTab === "applicant" && <ApplicantOverview  booking={SelectedLead} />}
 
             {activeTab === "feedback" && <BookingFeedback />}
           </div>
@@ -742,7 +752,13 @@ const BookingDetails = () => {
 
 export default BookingDetails;
 
-const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
+const VisitDetailsContent = ({
+  visit,
+  currentLead,
+}: {
+  visit: PostSaleLead;
+  currentLead: Lead | null;
+}) => (
   <div className={bookstyle.visitContainer}>
     <div className={bookstyle.headerRow}>
       <div>
@@ -759,7 +775,7 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
     </div>
 
     <div className={bookstyle.infoGrid}>
-      {/* <div
+      <div
         className={`${bookstyle.infoItem} ${bookstyle.infoItemChannelPartner}`}
       >
         <p className={bookstyle.cardlabel}>
@@ -768,10 +784,10 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
           />{" "}
           Channel Partner
         </p>
-        <p className={bookstyle.cardvalue}>{visit.channelPartner ?? "N/A"}</p>
-      </div> */}
+        <p className={bookstyle.cardvalue}>{currentLead?.channelPartner?.firmName ?? "N/A"}</p>
+      </div>
 
-      {/* <div
+      <div
         className={`${bookstyle.infoItem} ${bookstyle.infoItemLeadReceived}`}
       >
         <p className={bookstyle.cardlabel}>
@@ -781,11 +797,11 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
           Lead Received
         </p>
         <p className={bookstyle.cardvalue}>
-          {visit.leadReceived
-            ? new Date(visit.leadReceived).toLocaleDateString()
+          {currentLead?.startDate
+            ? new Date(currentLead?.startDate).toLocaleDateString()
             : "N/A"}
         </p>
-      </div> */}
+      </div>
 
       <div className={`${bookstyle.infoItem} ${bookstyle.infoItemTeamLeader}`}>
         <p className={bookstyle.cardlabel}>
@@ -794,7 +810,10 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
           />{" "}
           Team Leader
         </p>
-        <p className={bookstyle.cardvalue}>{visit.closingManager?.firstName ?? ""} {visit.closingManager?.lastName ?? ""}</p>
+        <p className={bookstyle.cardvalue}>
+          {visit.closingManager?.firstName ?? ""}{" "}
+          {visit.closingManager?.lastName ?? ""}
+        </p>
       </div>
 
       <div className={`${bookstyle.infoItem} ${bookstyle.infoItemRevisitDate}`}>
@@ -804,11 +823,11 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
           />{" "}
           Revisit Date
         </p>
-        {/* <p className={bookstyle.cardvalue}>
-          {visit.revisitDate
-            ? new Date(visit.revisitDate).toLocaleDateString()
+        <p className={bookstyle.cardvalue}>
+          {currentLead?.revisitRef?.date
+            ? new Date(currentLead?.revisitRef?.date).toLocaleDateString()
             : "N/A"}
-        </p> */}
+        </p>
       </div>
 
       <div className={`${bookstyle.infoItem} ${bookstyle.infoItemBookingDate}`}>
@@ -819,9 +838,7 @@ const VisitDetailsContent = ({ visit }: { visit: PostSaleLead }) => (
           Booking Date
         </p>
         <p className={bookstyle.cardvalue}>
-          {visit.date
-            ? new Date(visit.date).toLocaleDateString()
-            : "N/A"}
+          {visit.date ? new Date(visit.date).toLocaleDateString() : "N/A"}
         </p>
       </div>
     </div>

@@ -721,7 +721,7 @@ const LeadDetailsPage = () => {
                     />
                   )}
 
-                  {activeTab === "access" && <QuickAccess />}
+                  {activeTab === "access" && <QuickAccess />}c
 
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
