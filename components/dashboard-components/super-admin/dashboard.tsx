@@ -65,6 +65,25 @@ const SuperAdminDasboard = () => {
   });
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      setIsLight(document.documentElement.classList.contains("light"));
+    }
+
+    const observer = new MutationObserver(() => {
+      const lightMode = document.documentElement.classList.contains("light");
+      setIsLight(lightMode);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (user && !loading) {
@@ -74,7 +93,7 @@ const SuperAdminDasboard = () => {
         query: "",
         page: 1,
         limit: 10,
-        
+
       });
     }
   }, [user, loading]);
@@ -93,11 +112,11 @@ const SuperAdminDasboard = () => {
       page: 1,
       limit: 10,
       query: "",
-      interval:selectedFilter,
+      interval: selectedFilter,
       startDate,
       endDate,
     });
-  }, [user, loading,selectedFilter]);
+  }, [user, loading, selectedFilter]);
 
   useEffect(() => {
     if (user && !loading && !ranking) {
@@ -127,32 +146,40 @@ const SuperAdminDasboard = () => {
       label: "Total Leads",
       value: searchLeadInfo?.totalItems ?? 0,
       icon: <FaUsers />,
-      color: "#ad82f2e1",
-      bgcolor: "#7c2ff706",
+      color: "#00024a92",
+      lightcolor: "#9ea1f7ff",
+      iconcolor: "#00024a6c",
+      darkiconcolor: "#6166f111",
       status: "all",
     },
     {
       label: "Visit 1",
       value: searchLeadInfo?.visitCount ?? 0,
       icon: <FaUserTie />,
-      color: "#88c08aa8",
-      bgcolor: "#4caf4f09",
+      color: "#857500b8",
+      lightcolor: "#f7f19eff",
+      iconcolor: "#7951006f",
+      darkiconcolor: "#f1c8610d",
       status: "visit",
     },
     {
       label: "Visit 2",
       value: searchLeadInfo?.visit2Count ?? 0,
       icon: <FaCarSide />,
-      color: "#ce676082",
-      bgcolor: "#f4433609",
+      color: "#760400ad",
+      lightcolor: "#f7a09eff",
+      iconcolor: "#4a020043",
+      darkiconcolor: "#f16a610d",
       status: "visit2",
     },
     {
       label: "Booking",
       value: searchLeadInfo?.bookingCount ?? 0,
       icon: <IoMdKey />,
-      color: "#c0a24aa7",
-      bgcolor: "#ffc10709",
+      color: "#0f4a00ab",
+      lightcolor: "#a6f79eff",
+      iconcolor: "#004a0664",
+      darkiconcolor: "#61f1740d",
       status: "booking",
     },
     {
@@ -160,7 +187,9 @@ const SuperAdminDasboard = () => {
       value: searchLeadInfo?.internalLeadCount ?? 0,
       icon: <FaUserFriends />,
       color: "#bd58959c",
-      bgcolor: "#d4006a09",
+      lightcolor: "#f79edfff",
+      iconcolor: "#45004a64",
+      darkiconcolor: "#ea61f10d",
       status: "internal-lead",
     },
     {
@@ -168,7 +197,9 @@ const SuperAdminDasboard = () => {
       value: searchLeadInfo?.bulkCount ?? 0,
       icon: <FaBoxes />,
       color: "#58b1bd9c",
-      bgcolor: "#00bbd409",
+      lightcolor: "#9ee2f7ff",
+      iconcolor: "#00404a64",
+      darkiconcolor: "#61f1ef0d",
       status: "bulk-lead",
     },
   ];
@@ -208,9 +239,8 @@ const SuperAdminDasboard = () => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${
-        scrollPercent * (hintWidth - wrapper.offsetWidth)
-      }px`;
+      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
+        }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -271,9 +301,8 @@ const SuperAdminDasboard = () => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${
-        scrollPercent * (hintWidth - wrapper.offsetWidth)
-      }px`;
+      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
+        }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -303,13 +332,12 @@ const SuperAdminDasboard = () => {
   const years = Array.from({ length: 10 }, (_, i) => year - 5 + i);
   const cards = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
-        name: `${item.teamLeader?.firstName ?? "Team"} ${
-          item.teamLeader?.lastName ?? "Leader"
+      name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"
         }`,
-        feedback: item.notFollowUpCount ?? 0,
-        tasks: item.notAssignedCount ?? 0,
-        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
-      }))
+      feedback: item.notFollowUpCount ?? 0,
+      tasks: item.notAssignedCount ?? 0,
+      border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+    }))
     : [];
 
   const toggleBottomSheet = (index: number) => {
@@ -490,9 +518,8 @@ const SuperAdminDasboard = () => {
                 {filters.map((option) => (
                   <div
                     key={option}
-                    className={`${superstayle.filterOption} ${
-                      selectedFilter === option ? superstayle.activeOption : ""
-                    }`}
+                    className={`${superstayle.filterOption} ${selectedFilter === option ? superstayle.activeOption : ""
+                      }`}
                     onClick={() => handleSelect(option)}
                   >
                     {option}
@@ -531,22 +558,22 @@ const SuperAdminDasboard = () => {
               onClick={() => handleCardClick(card.status)}
               style={{ cursor: "pointer" }} // ✅ Makes card clickable UI
             >
-              <div className={styles.bgIcon} style={{ color: card.bgcolor }}>
+              <div className={superstayle.bgIcon} style={{ color: isLight ? card.iconcolor : card.darkiconcolor }}>
                 {card.icon}
               </div>
 
               <div className={styles.cardContent}>
                 <div className={styles.topRow}>
                   <div
-                    className={styles.iconContainer}
-                    style={{ color: card.color }}
+                    className={superstayle.iconContainer}
+                    style={{ color: isLight ? "white" : card.lightcolor, background: isLight ? card.color : card.darkiconcolor }}
                   >
                     {card.icon}
                   </div>
 
                   <div
                     className={styles.arrowContainer}
-                    style={{ color: card.color }}
+                    style={{ color: isLight ? card.color : card.lightcolor }}
                   >
                     <FaArrowRight />
                   </div>
@@ -573,17 +600,7 @@ const SuperAdminDasboard = () => {
           </div>
         </div>
 
-        <div className={styles.hint}>
-          <div className={styles.hintcontainer}>
-            <span className={styles.starWrapper}>
-              «
-              <span className={styles.star} ref={starRef}>
-                ✦︎
-              </span>
-              »
-            </span>
-          </div>
-        </div>
+
       </div>
 
       <div className={styles.headtitle}>
@@ -619,9 +636,8 @@ const SuperAdminDasboard = () => {
         {cards.map((card, index) => (
           <div key={index} className={styles.cardWrapper}>
             <div
-              className={`${styles.cardtarget} ${
-                activeCard === index ? styles.cardActive : ""
-              }`}
+              className={`${styles.cardtarget} ${activeCard === index ? styles.cardActive : ""
+                }`}
               onClick={() => toggleBottomSheet(index)}
             >
               <h3>{card.name}</h3>
@@ -637,9 +653,8 @@ const SuperAdminDasboard = () => {
             </div>
 
             <div
-              className={`${styles.bottomSheet} ${
-                activeCard === index ? styles.show : ""
-              }`}
+              className={`${styles.bottomSheet} ${activeCard === index ? styles.show : ""
+                }`}
             >
               <div className={styles.sheetItem}>
                 <p className={styles.sheetLabel}>Feedback Pending</p>
@@ -661,10 +676,11 @@ const SuperAdminDasboard = () => {
       <div className={styles.headtitle}>
         <div className={styles.ding}>Conversion Metrics</div>
       </div>
-      <div className="p-4 sm:p-6 pt-0">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1">
-            <div className="bg-card rounded-xl p-4 sm:p-6 shadow-sm border text-card-foreground">
+      <div className="p-4 sm:p-6 pt-0 ">
+        <div className="flex flex-col lg:flex-row gap-4  ">
+          <div className="flex-1 ">
+
+            <div className=" rounded-xl p-4 sm:p-6 shadow-sm border text-card-foreground bg-[#f0e1dc] dark:bg-transparent">
               <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {metrics.map((kpi, index) => (
                   <CircularProgress
