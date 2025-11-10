@@ -60,6 +60,7 @@ const BookingDetails = () => {
     currentLead,
     fetchPostSaleLeads,
     getLeadByBookingId,
+    getClosingManagers,
   } = useData();
   const { user, loading } = useUser();
   const router = useRouter();
@@ -74,6 +75,8 @@ const BookingDetails = () => {
   const [showaddbooking, setshowaddbooking] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+   const [projects, setProjects] = useState<OurProject[]>([]);
+  const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const currentStage = "Confirm Booking";
   const isConfirmed =
@@ -95,24 +98,34 @@ const BookingDetails = () => {
     }
   }, [postSaleId, postSaleleads]);
 
+   useEffect(() => {
+      if (user && !loading) {
+        console.log("use effect dashboard");
+  
+        getClosingManagers();
+      }
+    }, [user, loading]);
 
   useEffect(() => {
     if (SelectedLead) {
-      getLeadByBookingId(SelectedLead._id??"");
+      getLeadByBookingId(SelectedLead._id ?? "");
     }
   }, [SelectedLead]);
 
-
   useEffect(() => {
     if (user && !loading) {
+      const statusParam = searchParams.get("status");
+      const projectIdParam = searchParams.get("projectId");
+
       fetchPostSaleLeads({
         query: debouncedSearchQuery,
         page: 1,
         limit: 10,
-        // project: selectproject.project != "" ? selectproject.project : null,
+        status: statusParam,
+        project: projectIdParam,
       });
     }
-  }, [user, loading]);
+  }, [user, loading, debouncedSearchQuery, searchParams]);
 
   const loadMoreLeads = useCallback(async () => {
     if (
@@ -121,22 +134,34 @@ const BookingDetails = () => {
       searchPostSaleLeadInfo.totalPages
     ) {
       const nextPage = searchPostSaleLeadInfo.page + 1;
+      const statusParam = searchParams.get("status");
+      const projectIdParam = searchParams.get("projectId");
+
       if (nextPage <= searchPostSaleLeadInfo.totalPages) {
         await fetchPostSaleLeads({
           query: debouncedSearchQuery,
           page: nextPage,
           limit: 10,
-          status: status === "all" ? null : status,
+          status: statusParam,
+          project: projectIdParam,
         });
       }
     }
   }, [
     searchPostSaleLeadInfo,
-    ,
     fetchPostSaleLeads,
     debouncedSearchQuery,
-    status,
+    searchParams,
   ]);
+
+  const handleApplyFilters = useCallback((filterParams: any) => {
+    fetchPostSaleLeads({
+      query: debouncedSearchQuery,
+      page: 1,
+      limit: 10,
+      ...filterParams, // Spread the filter parameters
+    });
+  }, [debouncedSearchQuery, fetchPostSaleLeads]);
 
   const handleScroll = useCallback(
     (e: any) => {
@@ -208,9 +233,9 @@ const BookingDetails = () => {
             </div>
 
             <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-              {postSaleleads?.map((lead) => (
+              {postSaleleads?.map((lead, index) => (
                 <div
-                  key={lead._id}
+                  key={`${lead._id}-${index}-${lead.phoneNumber}`} // Add index and phone as fallback
                   className={`${bookstyle.visitCard} ${
                     SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
                   }`}
@@ -360,12 +385,24 @@ const BookingDetails = () => {
                 <div className={styles.detsilpart}>
                   <div className={styles.detailsContent}>
                     {activeTab === "overview" && (
-                      <VisitDetailsContent visit={SelectedLead} currentLead={currentLead} />
+                      <VisitDetailsContent
+                        visit={SelectedLead}
+                        currentLead={currentLead}
+                      />
                     )}
                     {activeTab === "access" && <BookingQuikAccess />}
-                    {activeTab === "bookingoverview" && <OverviewDetails booking={SelectedLead} />}
-                    {activeTab === "applicant" && <ApplicantOverview booking={SelectedLead}/>}
-                    {activeTab === "feedback" && <BookingFeedback booking={SelectedLead} lead={currentLead}/>}
+                    {activeTab === "bookingoverview" && (
+                      <OverviewDetails booking={SelectedLead} />
+                    )}
+                    {activeTab === "applicant" && (
+                      <ApplicantOverview booking={SelectedLead} />
+                    )}
+                    {activeTab === "feedback" && (
+                      <BookingFeedback
+                        booking={SelectedLead}
+                        lead={currentLead}
+                      />
+                    )}
                   </div>
                   <div className={styles.detailstab}>
                     <div className={styles.bookingnavbar}>
@@ -429,9 +466,12 @@ const BookingDetails = () => {
           </div>
         </div>
         <Leadbookingfilter
-          open={showFilterDialog}
-          onClose={() => setShowFilterDialog(false)}
-        />
+        open={showFilterDialog}
+        onClose={() => setShowFilterDialog(false)}
+        projects={projects}
+        closingManagers={closingManagers}
+        onApplyFilters={handleApplyFilters}
+      />
         {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
       </>
     );
@@ -569,10 +609,13 @@ const BookingDetails = () => {
             ))}
           </div>
         </div>
-        <Leadbookingfilter
-          open={showFilterDialog}
-          onClose={() => setShowFilterDialog(false)}
-        />
+         <Leadbookingfilter
+        open={showFilterDialog}
+        onClose={() => setShowFilterDialog(false)}
+        projects={projects}
+        closingManagers={closingManagers}
+        onApplyFilters={handleApplyFilters}
+      />
       </>
     );
   }
@@ -731,14 +774,21 @@ const BookingDetails = () => {
         <div className={styles.detsilpart}>
           <div className={styles.detailsContent}>
             {activeTab === "overview" && SelectedLead && (
-              <VisitDetailsContent visit={SelectedLead} currentLead={currentLead} />
+              <VisitDetailsContent
+                visit={SelectedLead}
+                currentLead={currentLead}
+              />
             )}
 
             {activeTab === "access" && <BookingQuikAccess />}
 
-            {activeTab === "bookingoverview" && <OverviewDetails booking={SelectedLead}/>}
+            {activeTab === "bookingoverview" && (
+              <OverviewDetails booking={SelectedLead} />
+            )}
 
-            {activeTab === "applicant" && <ApplicantOverview  booking={SelectedLead} />}
+            {activeTab === "applicant" && (
+              <ApplicantOverview booking={SelectedLead} />
+            )}
 
             {activeTab === "feedback" && <BookingFeedback />}
           </div>
@@ -784,7 +834,9 @@ const VisitDetailsContent = ({
           />{" "}
           Channel Partner
         </p>
-        <p className={bookstyle.cardvalue}>{currentLead?.channelPartner?.firmName ?? "N/A"}</p>
+        <p className={bookstyle.cardvalue}>
+          {currentLead?.channelPartner?.firmName ?? "N/A"}
+        </p>
       </div>
 
       <div

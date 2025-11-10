@@ -522,6 +522,8 @@ type DataProviderState = {
   getLeadByBookingId: (
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
+
+  getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -643,6 +645,12 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+  getClosingManagers: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
 };
 
 const dataProviderContext =
@@ -732,6 +740,44 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
 
+ const getClosingManagers = async () => {
+  try {
+    console.log("test1");
+    const response = await fetchAdapter("/api/employee-closing-manager");
+    console.log("test2");
+
+// console.log("data message:", response.data);
+//     if (response.data?.code !== 200) {
+      
+//           console.log("API message:", response.data?.message);
+//       return { success: false, message: response.data?.message || "Error" };
+//     }
+
+    console.log("test3");
+
+
+    const items: Employee[] = response.data ?? [];
+    console.log("Managers fetched:", items);
+
+    setEmployees(items);
+    console.log("test5");
+
+    return { success: true };
+
+  } catch (error: any) {
+    let errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+    console.log("test 7",error);
+
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    return { success: false, message: errorMessage };
+  }
+};
+
+
+  
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
     altPhoneNumber?: Number
@@ -2363,6 +2409,7 @@ console.log(`/api/lead-by-booking/${id}`);
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
+    getClosingManagers: getClosingManagers,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
     fetchTeamLeaderLeads: fetchTeamLeaderLeads,

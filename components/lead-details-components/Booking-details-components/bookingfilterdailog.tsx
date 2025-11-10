@@ -1,33 +1,170 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/components/visit-components/filterDialog.module.css";
+import { useData } from "@/providers/dataContext";
+import loading from "@/app/dashboard/loading";
+import { useUser } from "@/providers/userContext";
 
-const PROJECTS = ["Project A", "Project B", "Project C"];
-const MANAGERS = ["Manager 1", "Manager 2", "Manager 3"];
-const STATUSES = ["Pending", "Confirmed", "Cancelled"];
-const DATE_OPTIONS = [
-  "Today",
-  "Yesterday",
-  "Last 7 Days",
-  "Last 30 Days",
-  "Custom",
-];
+// const PROJECTS = ["Project A", "Project B", "Project C"];
+// const MANAGERS = ["Manager 1", "Manager 2", "Manager 3"];
+// const STATUSES = ["Pending", "Confirmed", "Cancelled"];
+// const DATE_OPTIONS = [
+//   "Today",
+//   "Yesterday",
+//   "Last 7 Days",
+//   "Last 30 Days",
+//   "Custom",
+// ];
+const BOOKING_STATUS_MAP: { [key: string]: string } = {
+  All: "All",
+  "Registration Done": "registrationDone",
+  "EOI Received": "EOI Received",
+  Cancelled: "Cancelled",
+};
+
+interface Employee {
+  _id?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+}
+
+interface OurProject {
+  _id?: string | null;
+  name?: string | null;
+}
 
 interface LeadbookingfilterProps {
   open: boolean;
   onClose: () => void;
+  projects: OurProject[];
+  closingManagers: Employee[];
+  onApplyFilters: (filters: {
+    project?: string | null;
+    closingManager?: string | null;
+    status?: string | null;
+    date?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  }) => void;
 }
 
-export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
-  const [project, setProject] = useState("");
-  const [manager, setManager] = useState("");
-  const [status, setStatus] = useState("");
-  const [datePreset, setDatePreset] = useState("Today");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+export function Leadbookingfilter({
+  open,
+  onClose,
+  onApplyFilters,
+}: LeadbookingfilterProps) {
+  const {
+    projects,
+    getProjects,
+    employees,
+    getClosingManagers,
+    fetchPostSaleLeads,
+  } = useData();
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [selectedManager, setSelectedManager] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [dateFilter, setDateFilter] = useState<string | null>(null);
+  const [selectedDateRange, setSelectedDateRange] = useState<{
+    start: string;
+    end: string;
+  } | null>(null);
+  const [selectproject, setSelectproject] = useState<{ project: string }>({
+    project: "",
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const { user, loading } = useUser();
 
-  if (!open) return null;
+useEffect(() => {
+  if (user && !loading) {
+    console.log("Fetching managers & projects...");
+    getClosingManagers();
+    getProjects();
+  }
+}, [user, loading]);
 
-  const isCustomDate = datePreset === "Custom";
+
+  const DATE_OPTIONS = [
+    "Today",
+    "Yesterday",
+    "Last 7 days",
+    "Last 30 days",
+    "Custom",
+  ];
+
+  const handleDatePresetChange = (preset: string) => {
+    setDateFilter(preset);
+    setShowDatePicker(false);
+
+    const today = new Date();
+    let startDate = "";
+    let endDate = "";
+
+    switch (preset) {
+      case "Today":
+        startDate = today.toISOString().split("T")[0];
+        endDate = today.toISOString().split("T")[0];
+        break;
+      case "Yesterday":
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        startDate = yesterday.toISOString().split("T")[0];
+        endDate = yesterday.toISOString().split("T")[0];
+        break;
+      case "Last 7 days":
+        const weekAgo = new Date(today);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        startDate = weekAgo.toISOString().split("T")[0];
+        endDate = today.toISOString().split("T")[0];
+        break;
+      case "Last 30 days":
+        const monthAgo = new Date(today);
+        monthAgo.setDate(monthAgo.getDate() - 30);
+        startDate = monthAgo.toISOString().split("T")[0];
+        endDate = today.toISOString().split("T")[0];
+        break;
+      case "Custom":
+        setShowDatePicker(true);
+        return;
+      default:
+        break;
+    }
+
+    if (preset !== "Custom") {
+      setSelectedDateRange({ start: startDate, end: endDate });
+    }
+  };
+
+  const handleCustomDateChange = (type: "start" | "end", value: string) => {
+    setSelectedDateRange((prev) => ({
+      start: type === "start" ? value : prev?.start || "",
+      end: type === "end" ? value : prev?.end || "",
+    }));
+  };
+
+  const applyFilters = () => {
+    const apiFilters = {
+      project: selectproject.project,
+      closingManager: selectedManager,
+      status: selectedStatus ? BOOKING_STATUS_MAP[selectedStatus] : null,
+      date:
+        dateFilter && dateFilter !== "Custom"
+          ? dateFilter.toLowerCase().replace(/\s+/g, "-")
+          : null,
+      startDate: selectedDateRange?.start || null,
+      endDate: selectedDateRange?.end || null,
+    };
+
+    onApplyFilters(apiFilters);
+    onClose();
+  };
+
+  const clearAllFilters = () => {
+    setSelectedProject(null);
+    setSelectedManager(null);
+    setSelectedStatus(null);
+    setDateFilter(null);
+    setSelectedDateRange(null);
+    setShowDatePicker(false);
+  };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -35,14 +172,9 @@ export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
     }
   };
 
-  const clearAll = () => {
-    setProject("");
-    setManager("");
-    setStatus("");
-    setDatePreset("Today");
-    setDateFrom("");
-    setDateTo("");
-  };
+  if (!open) return null;
+
+  const isCustomDate = dateFilter === "Custom";
 
   return (
     <div className={styles.overlay} onClick={handleOverlayClick}>
@@ -58,14 +190,19 @@ export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
           <div className={styles.fieldGroup}>
             <label>Project</label>
             <select
-              value={project}
-              onChange={(e) => setProject(e.target.value)}
+              value={selectproject.project}
+              onChange={(e) => {
+                setSelectproject((prev) => ({
+                  ...prev,
+                  project: e.target.value,
+                }));
+              }}
               className={styles.select}
             >
               <option value="">All Projects</option>
-              {PROJECTS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
+              {projects.map((option: OurProject, index: number) => (
+                <option key={index} value={option._id ?? ""}>
+                  {option.name ?? ""}
                 </option>
               ))}
             </select>
@@ -74,28 +211,33 @@ export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
           <div className={styles.fieldGroup}>
             <label>Closing Manager</label>
             <select
-              value={manager}
-              onChange={(e) => setManager(e.target.value)}
+              value={selectedManager || ""}
+              onChange={(e) => setSelectedManager(e.target.value || null)}
               className={styles.select}
             >
               <option value="">All Managers</option>
-              {MANAGERS.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
+
+              {employees && employees.length > 0 ? (
+                employees.map((mgr: Employee) => (
+                  <option key={mgr._id ?? ""} value={mgr._id ?? ""}>
+                    {`${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Loading...</option>
+              )}
             </select>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Booking Status</label>
             <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              value={selectedStatus || ""}
+              onChange={(e) => setSelectedStatus(e.target.value || null)}
               className={styles.select}
             >
-              <option value="">All Statuses</option>
-              {STATUSES.map((s) => (
+              {/* <option value="">All Statuses</option> */}
+              {Object.keys(BOOKING_STATUS_MAP).map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
@@ -106,8 +248,8 @@ export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
           <div className={styles.fieldGroup}>
             <label>Select Date</label>
             <select
-              value={datePreset}
-              onChange={(e) => setDatePreset(e.target.value)}
+              value={dateFilter || ""}
+              onChange={(e) => handleDatePresetChange(e.target.value)}
               className={styles.select}
             >
               {DATE_OPTIONS.map((d) => (
@@ -121,15 +263,19 @@ export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
               <div className={styles.dateRange}>
                 <input
                   type="date"
-                  value={dateFrom}
-                  onChange={(e) => setDateFrom(e.target.value)}
+                  value={selectedDateRange?.start || ""}
+                  onChange={(e) =>
+                    handleCustomDateChange("start", e.target.value)
+                  }
                   className={styles.dateInput}
                 />
                 <span>to</span>
                 <input
                   type="date"
-                  value={dateTo}
-                  onChange={(e) => setDateTo(e.target.value)}
+                  value={selectedDateRange?.end || ""}
+                  onChange={(e) =>
+                    handleCustomDateChange("end", e.target.value)
+                  }
                   className={styles.dateInput}
                 />
               </div>
@@ -138,10 +284,10 @@ export function Leadbookingfilter({ open, onClose }: LeadbookingfilterProps) {
         </div>
 
         <div className={styles.actions}>
-          <button onClick={clearAll} className={styles.clearBtn}>
+          <button onClick={clearAllFilters} className={styles.clearBtn}>
             Clear All
           </button>
-          <button onClick={onClose} className={styles.applyBtn}>
+          <button onClick={applyFilters} className={styles.applyBtn}>
             Apply
           </button>
         </div>
