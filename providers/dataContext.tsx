@@ -63,13 +63,12 @@ type FetchLeadsParams = {
   startDateDeadline?: string | null;
   endDateDeadline?: string | null;
   date?: string | null;
-
   status2?: string | null;
   channelPartner?: string | null;
   taskType?: string | null;
   bulkLead?: string | null;
   project?: string | null;
-  propertyType: string | null;
+  propertyType?: string | null;
 };
 
 type FetchTeamLeaderParams = {

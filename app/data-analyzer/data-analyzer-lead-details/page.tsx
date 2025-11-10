@@ -980,7 +980,7 @@ const DataAnalyzerdetailspage = () => {
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                   </div>
                   <p className={styles.phone}>
-                    {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                    {visit?.countryCode ?? "91"} {visit?.phoneNumber ?? "NA"}
                   </p>
                 </div>
               </div>
@@ -989,7 +989,9 @@ const DataAnalyzerdetailspage = () => {
                 <p>
                   Assign Date:{" "}
                   {visit.cycle?.startDate ? (
-                    <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.startDate ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -997,7 +999,9 @@ const DataAnalyzerdetailspage = () => {
                 <p>
                   Visit Deadline:{" "}
                   {visit.cycle?.validTill ? (
-                    <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.validTill ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -1099,7 +1103,9 @@ const DataAnalyzerdetailspage = () => {
                 className={styles.backBtn}
                 onClick={() => {
                   setSelectedLead(null);
-                  router.push("/data-analyzer /data-analyzer-lead-details", {
+                  const apiStatus = status === "all" ? null : status;
+
+                  router.push(`/lead-details?status=${apiStatus}`, {
                     scroll: false,
                   });
                 }}
