@@ -190,7 +190,7 @@ interface Lost {
 
 interface ChannelPartnerHistory {
   _id?: string;
-  channelPartner: string;
+  channelPartner: ChannelPartner;
   status: string | null;
   stage: string | null;
   date: string | null;
