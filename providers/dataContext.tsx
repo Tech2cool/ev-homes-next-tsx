@@ -522,6 +522,8 @@ type DataProviderState = {
   getLeadByBookingId: (
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
+
+  getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -643,6 +645,12 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+  getClosingManagers: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
 };
 
 const dataProviderContext =
@@ -732,6 +740,46 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
 
+  const getClosingManagers = async () => {
+  try {
+    const response = await fetchAdapter("/api/employee-closing-manager");
+
+    if (response.data?.code !== 200) {
+      return { success: false, message: response.data?.message || "Error" };
+    }
+
+    const items: any[] = response.data?.data ?? [];
+    const empItems: Employee[] = items.map((item) => ({
+      ...item,
+      phoneNumber:
+        item.phoneNumber !== null ? Number(item.phoneNumber) : null,
+      alternatePhoneNumber:
+        item.alternatePhoneNumber !== null
+          ? Number(item.alternatePhoneNumber)
+          : null,
+    }));
+
+    setEmployees(empItems);
+
+    return { success: true };
+  } catch (error: any) {
+    let errorMessage = "Something went wrong";
+
+    if (error?.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    return { success: false, message: errorMessage };
+  }
+};
+
+  
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
     altPhoneNumber?: Number
@@ -2363,6 +2411,7 @@ console.log(`/api/lead-by-booking/${id}`);
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
+    getClosingManagers: getClosingManagers,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
     fetchTeamLeaderLeads: fetchTeamLeaderLeads,
