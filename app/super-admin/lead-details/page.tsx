@@ -116,6 +116,7 @@ const LeadDetailsPage = () => {
     clientStatus: "",
     leadStatus: "",
     cycleStatus: 0,
+    propertyType: "",
     dateFrom: "",
     dateTo: "",
   });
@@ -189,6 +190,7 @@ const LeadDetailsPage = () => {
       clientStatus: "",
       leadStatus: "",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "",
       dateTo: "",
     });

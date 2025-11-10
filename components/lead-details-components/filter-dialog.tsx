@@ -3,9 +3,9 @@ import styles from "@/components/visit-components/filterDialog.module.css";
 import { PaginationProps } from "@mui/material/Pagination";
 
 const VISIT_TYPE_MAP: { [key: string]: string } = {
-  "All": "all",
-  "Pending": "pending",
-  "visit-done": "visit-done", 
+  All: "all",
+  Pending: "pending",
+  "visit-done": "visit-done",
   "revisit-done": "revisit-done",
   "Visit Pending": "visit-pending",
   "Revisit Pending": "revisit-pending",
@@ -18,14 +18,14 @@ const LEAD_FILTER_MAP: { [key: string]: string } = {
 };
 
 const STATUS_FILTER_MAP: { [key: string]: string } = {
-  "Assigned": "assigned",
+  Assigned: "assigned",
   "Not Assigned": "not-assigned",
-  "Feedback pending" : "feedback-pending",
+  "Feedback pending": "feedback-pending",
 };
 
 const FEEDBACK_FILTER_MAP: { [key: string]: string } = {
   "Call Connected": "Call Connected",
-  "Call Disconnected": "Call Disconnected", 
+  "Call Disconnected": "Call Disconnected",
   "Call Not Received": "Call Not Received",
   "Call Not Reachable": "Call Not Reachable",
   "Call Busy": "Call Busy",
@@ -33,17 +33,17 @@ const FEEDBACK_FILTER_MAP: { [key: string]: string } = {
 };
 
 const CLIENT_STATUS_MAP: { [key: string]: string } = {
-  "interested": "interested",
-  "not-interested": "not-interested", 
-  "DND": "DND",
-  "moderate": "moderate",
+  interested: "interested",
+  "not-interested": "not-interested",
+  DND: "DND",
+  moderate: "moderate",
 };
 
 const LEAD_STATUS_MAP: { [key: string]: string } = {
   "just-curious": "just-curious",
   "in-progress": "in-progress",
   "supposed-to-visit": "supposed-to-visit",
-  "lost": "lost",
+  lost: "lost",
 };
 
 const CYCLE_STATUS_MAP: { [key: string]: number } = {
@@ -53,8 +53,8 @@ const CYCLE_STATUS_MAP: { [key: string]: number } = {
 };
 
 const PROPERTY_TYPE_MAP: { [key: string]: string } = {
-  "Residential": "Residential",
-  "Commercial": "Commercial",
+  Residential: "Residential",
+  Commercial: "Commercial",
 };
 
 interface FilterDialogProps {
@@ -68,6 +68,7 @@ interface FilterDialogProps {
     feedbackFilter: string;
     clientStatus: string;
     leadStatus: string;
+    propertyType: string;
     cycleStatus: number;
     dateFrom: string;
     dateTo: string;
@@ -79,7 +80,7 @@ interface FilterDialogProps {
   onApplyFilters: (filterParams: any) => void; // Add this prop
 }
 
-export function LeadFilterDialog({ 
+export function LeadFilterDialog({
   open,
   onClose,
   onOpenChange,
@@ -110,20 +111,20 @@ export function LeadFilterDialog({
 
     switch (preset) {
       case "today":
-        dateFrom = today.toISOString().split('T')[0];
-        dateTo = today.toISOString().split('T')[0];
+        dateFrom = today.toISOString().split("T")[0];
+        dateTo = today.toISOString().split("T")[0];
         break;
       case "yesterday":
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
-        dateFrom = yesterday.toISOString().split('T')[0];
-        dateTo = yesterday.toISOString().split('T')[0];
+        dateFrom = yesterday.toISOString().split("T")[0];
+        dateTo = yesterday.toISOString().split("T")[0];
         break;
       case "last7days":
         const weekAgo = new Date(today);
         weekAgo.setDate(weekAgo.getDate() - 7);
-        dateFrom = weekAgo.toISOString().split('T')[0];
-        dateTo = today.toISOString().split('T')[0];
+        dateFrom = weekAgo.toISOString().split("T")[0];
+        dateTo = today.toISOString().split("T")[0];
         break;
       case "custom":
         return;
@@ -140,13 +141,33 @@ export function LeadFilterDialog({
   const applyFilters = () => {
     // Convert UI filters to API parameters
     const apiFilters = {
-      status: VISIT_TYPE_MAP[localFilters.visitType as keyof typeof VISIT_TYPE_MAP],
-      taskType: LEAD_FILTER_MAP[localFilters.leadFilter as keyof typeof LEAD_FILTER_MAP],
-      status2: STATUS_FILTER_MAP[localFilters.statusFilter as keyof typeof STATUS_FILTER_MAP],
-      callData: FEEDBACK_FILTER_MAP[localFilters.feedbackFilter as keyof typeof FEEDBACK_FILTER_MAP],
-      clientstatus: CLIENT_STATUS_MAP[localFilters.clientStatus as keyof typeof CLIENT_STATUS_MAP],
-      leadstatus: LEAD_STATUS_MAP[localFilters.leadStatus as keyof typeof LEAD_STATUS_MAP],
-      cycle: CYCLE_STATUS_MAP[localFilters.cycleStatus.toString() as keyof typeof CYCLE_STATUS_MAP],
+      status:
+        VISIT_TYPE_MAP[localFilters.visitType as keyof typeof VISIT_TYPE_MAP],
+      taskType:
+        LEAD_FILTER_MAP[
+          localFilters.leadFilter as keyof typeof LEAD_FILTER_MAP
+        ],
+      status2:
+        STATUS_FILTER_MAP[
+          localFilters.statusFilter as keyof typeof STATUS_FILTER_MAP
+        ],
+      callData:
+        FEEDBACK_FILTER_MAP[
+          localFilters.feedbackFilter as keyof typeof FEEDBACK_FILTER_MAP
+        ],
+      clientstatus:
+        CLIENT_STATUS_MAP[
+          localFilters.clientStatus as keyof typeof CLIENT_STATUS_MAP
+        ],
+      leadstatus:
+        LEAD_STATUS_MAP[
+          localFilters.leadStatus as keyof typeof LEAD_STATUS_MAP
+        ],
+      cycle:
+        CYCLE_STATUS_MAP[
+          localFilters.cycleStatus.toString() as keyof typeof CYCLE_STATUS_MAP
+        ],
+      propertyType: PROPERTY_TYPE_MAP[localFilters.propertyType],
       startDateDeadline: localFilters.dateFrom || null,
       endDateDeadline: localFilters.dateTo || null,
     };
@@ -165,6 +186,7 @@ export function LeadFilterDialog({
       clientStatus: "",
       leadStatus: "",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "",
       dateTo: "",
     };
@@ -203,11 +225,13 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Visit Types</option>
-              {Object.keys(VISIT_TYPE_MAP).filter(key => key).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
+              {Object.keys(VISIT_TYPE_MAP)
+                .filter((key) => key)
+                .map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -219,7 +243,25 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Lead Types</option>
-              {Object.keys(LEAD_FILTER_MAP).filter(key => key).map((type) => (
+              {Object.keys(LEAD_FILTER_MAP)
+                .filter((key) => key)
+                .map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label>Property Filter</label>
+            <select
+              value={localFilters.propertyType}
+              onChange={(e) => handleChange("propertyType", e.target.value)}
+              className={styles.select}
+            >
+              <option value="">All Property Types</option>
+              {Object.keys(PROPERTY_TYPE_MAP).map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -236,11 +278,13 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Statuses</option>
-              {Object.keys(STATUS_FILTER_MAP).filter(key => key).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
+              {Object.keys(STATUS_FILTER_MAP)
+                .filter((key) => key)
+                .map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -252,11 +296,13 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Feedback Types</option>
-              {Object.keys(FEEDBACK_FILTER_MAP).filter(key => key).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
+              {Object.keys(FEEDBACK_FILTER_MAP)
+                .filter((key) => key)
+                .map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -268,11 +314,13 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Client Statuses</option>
-              {Object.keys(CLIENT_STATUS_MAP).filter(key => key).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
+              {Object.keys(CLIENT_STATUS_MAP)
+                .filter((key) => key)
+                .map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -284,11 +332,13 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value="">All Lead Statuses</option>
-              {Object.keys(LEAD_STATUS_MAP).filter(key => key).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
+              {Object.keys(LEAD_STATUS_MAP)
+                .filter((key) => key)
+                .map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -300,11 +350,13 @@ export function LeadFilterDialog({
               className={styles.select}
             >
               <option value={0}>All Cycle Statuses</option>
-              {Object.keys(CYCLE_STATUS_MAP).filter(key => key).map((days) => (
-                <option key={days} value={days}>
-                  {days} days
-                </option>
-              ))}
+              {Object.keys(CYCLE_STATUS_MAP)
+                .filter((key) => key)
+                .map((days) => (
+                  <option key={days} value={days}>
+                    {days} days
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -340,9 +392,7 @@ export function LeadFilterDialog({
             )}
           </div>
 
-          <div className={styles.resultCount}>
-            Results: {resultCount} leads
-          </div>
+          <div className={styles.resultCount}>Results: {resultCount} leads</div>
         </div>
 
         <div className={styles.actions}>
