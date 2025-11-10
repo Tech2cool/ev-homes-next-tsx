@@ -109,7 +109,6 @@ type SiteVisitParams = {
   date?: string | null;
 };
 
-
 type ProjectSchema = {
   projectId?: OurProject | null;
   target?: number | null;
@@ -376,7 +375,7 @@ type DataProviderState = {
   assignInfo: TeamLeaderAssignFolloupUp | null;
   closingManager: PaginationProps[];
   leads: Lead[] | null;
-  postSaleleads:PostSaleLead[]|null;
+  postSaleleads: PostSaleLead[] | null;
   dashCount: DashboardCount | null;
   closingManagerAllGraph: ClosingManagerGraph | null;
   salesDashCount: DashboardCount | null;
@@ -396,7 +395,7 @@ type DataProviderState = {
   loadingProjectTargets: boolean;
   ranking: RankingTurn | null;
   leaveCount: EmployeeShiftInfoModel | null;
-
+  currentLead: Lead | null;
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -520,6 +519,10 @@ type DataProviderState = {
   getShiftInfoByUserId: (
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
+
+  getLeadByBookingId: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -559,6 +562,7 @@ const initialState: DataProviderState = {
   loadingProjectTargets: false,
   ranking: null,
   leaveCount: null,
+  currentLead: null,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -636,6 +640,10 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+  getLeadByBookingId: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -657,10 +665,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [employees, setEmployees] = useState<Employee[]>([]);
 
-  
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
-  const [loadingPostSaleLeads, setLoadingPostSaleLeads] = useState<boolean>(false);
-  
+  const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
+    useState<boolean>(false);
+
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
   const [fetchingMorePostSaleLeads, setFetchingPostSaleLeads] =
     useState<boolean>(false);
@@ -722,6 +730,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [leaveCount, setLeaveCount] = useState<EmployeeShiftInfoModel | null>(
     null
   );
+
+  const [currentLead, setCurrentLead] = useState<Lead | null>(null);
 
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
@@ -2259,6 +2269,59 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const getLeadByBookingId = async (
+    id: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Lead | null;
+  }> => {
+
+    console.log("lead by");
+    setLoading(true);
+    setError("");
+console.log(`/api/lead-by-booking/${id}`);
+    try {
+      const response = await fetchAdapter(`/api/lead-by-booking/${id}`, {
+        method: "GET",
+      });
+
+      // Your API structure: { data: {...} }
+      const data = response?.data;
+
+      console.log(data);
+
+      if (response?.code !== 200) {
+        return {
+          success: false,
+          message: response?.message || "Failed to fetch target",
+        };
+      }
+
+      const parsedTarget = data as Lead;
+      setCurrentLead(parsedTarget);
+      return { success: true, data: parsedTarget };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      // Prevent literal 'null' from showing
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2295,8 +2358,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     salesDashCount: salesDashCount,
     ranking: ranking,
     leaveCount: leaveCount,
+    currentLead: currentLead,
     getProjectTargets: getProjectTargets,
-
     getProjects: getProjects,
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
@@ -2326,6 +2389,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getQuarterWiseTarget: getQuarterWiseTarget,
     getRankingTurns: getRankingTurns,
     getShiftInfoByUserId: getShiftInfoByUserId,
+    getLeadByBookingId: getLeadByBookingId,
   };
 
   return (

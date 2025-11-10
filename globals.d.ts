@@ -102,7 +102,7 @@ interface Division {
 interface CallNote {
   _id?: string;
   note: string | null;
-  date: string; 
+  date: string;
   channelPartner: string | null;
 }
 
@@ -134,12 +134,12 @@ interface Task {
   details?: string;
   type?: string;
   remark?: string;
-  
-  assignDate?: string; 
+
+  assignDate?: string;
   completed?: boolean;
   completedDate?: string;
   deadline?: string;
-  
+
   remindMe?: boolean;
   reminderDate?: string;
   reminderDescription?: string;
@@ -231,7 +231,7 @@ interface Lead {
   visitRef?: SiteVisit;
   taskRef?: Task | null;
   revisitStatus?: string;
-  revisitRef?: string | null;
+  revisitRef?: SiteVisit;
   bookingStatus?: string;
   bookingRef?: string | null;
   followupStatus?: string;
@@ -376,26 +376,25 @@ interface LineChartData {
   leads: number;
 }
 
-
- interface RankingTurn {
+interface RankingTurn {
   id?: string;
   period?: Period;
-  startDate?: string;  
-  endDate?: string;    
-  ranking?: RankTurn[]|null;
-  timeline?: RankTurn[]|null;
+  startDate?: string;
+  endDate?: string;
+  ranking?: RankTurn[] | null;
+  timeline?: RankTurn[] | null;
 }
 
- interface Period {
+interface Period {
   id?: string;
   period?: string;
-  startDate?: string; 
-  endDate?: string;   
+  startDate?: string;
+  endDate?: string;
 }
 
- interface RankTurn {
+interface RankTurn {
   id?: string;
-  user?: Employee | null; 
+  user?: Employee | null;
   rank?: number;
   leadsShouldRecieve?: number;
   leadsGiven?: number;
@@ -428,16 +427,15 @@ interface Shift {
   type?: string;
   timeIn?: string;
   timeOut?: string;
-  workingHours?: number;      
-  graceTime?: number;         
-  graceDays?: number;          
+  workingHours?: number;
+  graceTime?: number;
+  graceDays?: number;
   multiTimeInOut?: boolean;
   status?: string;
-  absentHours?: number;        
-  employees: Employee[];      
-  regularizationDays?: number; 
+  absentHours?: number;
+  employees: Employee[];
+  regularizationDays?: number;
 }
-
 
 //post sale model
 //
@@ -540,7 +538,7 @@ interface Attachment {
   document?: string | null;
 }
 interface PostSaleLead {
-  id?: string;
+  _id?: string;
   unitNo?: string | null;
   floor?: number | null;
   buildingNo?: number | null;
