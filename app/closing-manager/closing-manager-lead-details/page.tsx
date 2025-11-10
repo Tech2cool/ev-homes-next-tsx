@@ -498,12 +498,13 @@ const Closingdetaispage = () => {
                   />
                   <div className={styles.clientDetails}>
                     {/* <p className={styles.trns}>Transferred From</p> */}
-                    <p className={styles.trnsname}>Vicky</p>
+                    {/* <p className={styles.trnsname}>Vicky</p> */}
                     <div className={styles.namecl}>
-                      {visit?.firstName ?? ""} {visit?.lastName ?? ""}
+                      {visit?.firstName ?? "No Name"} {visit?.lastName ?? ""}
                     </div>
                     <p className={styles.phone}>
-                      {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                      {visit?.countryCode ?? "91"}{" "}
+                      {visit?.phoneNumber ?? "No Phone"}
                     </p>
                   </div>
                 </div>
@@ -696,8 +697,10 @@ const Closingdetaispage = () => {
                   )}
                   {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
 
-                  {activeTab === "siteVisit" && <VisitHistory lead={SelectedLead} />}
-                 {activeTab === "transfer" && (
+                  {activeTab === "siteVisit" && (
+                    <VisitHistory lead={SelectedLead} />
+                  )}
+                  {activeTab === "transfer" && (
                     <TransferHistory
                       cycleHistory={SelectedLead?.cycleHistoryNew}
                     />
@@ -805,7 +808,7 @@ const Closingdetaispage = () => {
         </div>
 
         {/* Filter Dialog */}
-        <LeadFilterDialog
+        {/* <LeadFilterDialog
           open={showFilterDialog}
           onClose={() => setShowFilterDialog(false)}
           onOpenChange={setShowFilterDialog}
@@ -815,7 +818,7 @@ const Closingdetaispage = () => {
           onApplyFilters={handleApplyFilters} // Pass the apply function
           visits={leads || []}
           resultCount={leads?.length || 0}
-        />
+        /> */}
 
         {showEditDialog && (
           <EditDialog
@@ -835,7 +838,7 @@ const Closingdetaispage = () => {
     );
   }
 
-  // Mobile view (details)
+  // Mobile view (list and details)
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
@@ -862,13 +865,18 @@ const Closingdetaispage = () => {
           </button>
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-          {leads?.map((visit) => (
+          {leads?.map((visit, index) => (
             <div
-              key={visit._id}
+              key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+              // key={visit._id}
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/lead-details?id=${visit._id}`, {
+
+                // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                //   scroll: false,
+                // });
+                router.push(`/lead-details?status=${status}&id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -882,12 +890,12 @@ const Closingdetaispage = () => {
                   height={20}
                 />
                 <div className={styles.clientDetails}>
-                  <p className={styles.trnsname}>Vicky</p>
+                  {/* <p className={styles.trnsname}>Vicky</p> */}
                   <div className={styles.namecl}>
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                   </div>
                   <p className={styles.phone}>
-                    {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                    {visit?.countryCode ?? "91"} {visit?.phoneNumber ?? "NA"}
                   </p>
                 </div>
               </div>
@@ -896,7 +904,9 @@ const Closingdetaispage = () => {
                 <p>
                   Assign Date:{" "}
                   {visit.cycle?.startDate ? (
-                    <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.startDate ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -904,7 +914,9 @@ const Closingdetaispage = () => {
                 <p>
                   Visit Deadline:{" "}
                   {visit.cycle?.validTill ? (
-                    <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.validTill ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -977,17 +989,19 @@ const Closingdetaispage = () => {
               </div>
             </div>
           ))}
-          {hasMoreRef.current && (
-            <div className={styles.loadMoreContainer}>
-              <button
-                className={styles.loadMoreBtn}
-                onClick={() => loadMoreLeads}
-                disabled={loadingRef.current}
-              >
-                {loadingRef.current ? "Loading..." : ""}
-              </button>
-            </div>
-          )}
+          {searchLeadInfo?.page &&
+            searchLeadInfo.totalPages &&
+            searchLeadInfo.page < searchLeadInfo.totalPages && (
+              <div className={styles.loadMoreContainer}>
+                <button
+                  className={styles.loadMoreBtn}
+                  onClick={loadMoreLeads}
+                  disabled={loadingLeads}
+                >
+                  {loadingLeads ? "Loading..." : ""}
+                </button>
+              </div>
+            )}
         </div>
       </div>
     );
@@ -996,159 +1010,166 @@ const Closingdetaispage = () => {
   // Mobile view (details)
   return (
     <div className={styles.container}>
-      <div className={styles.detailsHeader}>
-        <div className={styles.headerInfo}>
-          <button
-            className={styles.backBtn}
-            onClick={() => {
-              setSelectedLead(null);
-              router.push("/lead-details", {
-                scroll: false,
-              });
-            }}
-          >
-            <ArrowLeft className={styles.backIcon} />
-          </button>
+      {SelectedLead ? (
+        <>
+          <div className={styles.detailsHeader}>
+            <div className={styles.headerInfo}>
+              <button
+                className={styles.backBtn}
+                onClick={() => {
+                  setSelectedLead(null);
+                  const apiStatus = status === "all" ? null : status;
 
-          <div className={styles.actionButtons}>
-            <button
-              className={styles.verifiedBadge}
-              onClick={() => {
-                handleCall({
-                  ...SelectedLead,
-                  phoneNumber: SelectedLead.phoneNumber,
-                });
-              }}
-            >
-              <MdCall size={15} />
-            </button>
-
-            <button
-              className={styles.whatsbtn}
-              onClick={() => {
-                console.log("clicked 1");
-
-                socket?.emit("callCustomerWeb", {
-                  lead: SelectedLead?._id,
-                  phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
-                  type: "whatsapp",
-                  message: "hey",
-                  userId: user?._id,
-                });
-
-                console.log("clicked 2");
-              }}
-            >
-              <IoLogoWhatsapp size={15} />
-            </button>
-
-            <button
-              className={styles.menuBtn}
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? " " : <Menu className={styles.menuIcon} />}
-            </button>
-
-            {/* Sidebar Overlay */}
-            {isOpen && (
-              <div
-                className={styles.overlay}
-                onClick={() => setIsOpen(false)}
-              />
-            )}
-
-            {/* Sidebar Panel */}
-            <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  alignItems: "center",
+                  router.push(`/lead-details?status=${apiStatus}`, {
+                    scroll: false,
+                  });
                 }}
               >
+                <ArrowLeft className={styles.backIcon} />
+              </button>
+
+              <div className={styles.actionButtons}>
                 <button
-                  className={styles.editb}
+                  className={styles.verifiedBadge}
                   onClick={() => {
-                    setEditFormData(SelectedLead);
-                    setShowEditDialog(true);
+                    handleCall({
+                      ...SelectedLead,
+                      phoneNumber: SelectedLead.phoneNumber,
+                    });
                   }}
                 >
-                  <Edit size={15} />
+                  <MdCall size={15} />
                 </button>
-                <ThemeToggle />
-              </div>
 
-              <button
-                onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 z-50 p-2 lg:hidden"
-                style={{ color: "red" }}
-              >
-                ✕
-              </button>
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "overview" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("overview")}
-              >
-                <FaUser className={styles.icon} /> Client Overview
-              </button>
+                <button
+                  className={styles.whatsbtn}
+                  onClick={() => {
+                    console.log("clicked 1");
 
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "access" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("access")}
-              >
-                <FaBolt className={styles.icon} /> Quick Access
-              </button>
+                    socket?.emit("callCustomerWeb", {
+                      lead: SelectedLead?._id,
+                      phoneNumber: `${SelectedLead?.countryCode}${SelectedLead?.phoneNumber}`,
+                      type: "whatsapp",
+                      message: "hey",
+                      userId: user?._id,
+                    });
 
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "taskDetails" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("taskDetails")}
-              >
-                <FaTasks className={styles.icon} /> Task Details
-              </button>
+                    console.log("clicked 2");
+                  }}
+                >
+                  <IoLogoWhatsapp size={15} />
+                </button>
 
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "followup" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("followup")}
-              >
-                <FaHistory className={styles.icon} /> Follow-up History
-              </button>
+                <button
+                  className={styles.menuBtn}
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  {isOpen ? " " : <Menu className={styles.menuIcon} />}
+                </button>
 
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "siteVisit" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("siteVisit")}
-              >
-                <FaMapMarkedAlt className={styles.icon} /> Site Visit History
-              </button>
+                {/* Sidebar Overlay */}
+                {isOpen && (
+                  <div
+                    className={styles.overlay}
+                    onClick={() => setIsOpen(false)}
+                  />
+                )}
 
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "transfer" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("transfer")}
-              >
-                <FaExchangeAlt className={styles.icon} /> Transfer History
-              </button>
+                {/* Sidebar Panel */}
+                <div
+                  className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "start",
+                      alignItems: "center",
+                    }}
+                  >
+                    <button
+                      className={styles.editb}
+                      onClick={() => {
+                        setEditFormData(SelectedLead);
+                        setShowEditDialog(true);
+                      }}
+                    >
+                      <Edit size={15} />
+                    </button>
+                    <ThemeToggle />
+                  </div>
 
-              <button
-                className={`${styles.navItem} ${
-                  activeTab === "booking" ? styles.active : ""
-                }`}
-                onClick={() => setActiveTab("booking")}
-              >
-                <FaFileContract className={styles.icon} /> Booking Overview
-              </button>
-            </div>
-            {/* {SelectedLead.approvalStatus === "pending" && (
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="absolute top-4 right-4 z-50 p-2 lg:hidden"
+                    style={{ color: "red" }}
+                  >
+                    ✕
+                  </button>
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "overview" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    <FaUser className={styles.icon} /> Client Overview
+                  </button>
+
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "access" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("access")}
+                  >
+                    <FaBolt className={styles.icon} /> Quick Access
+                  </button>
+
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "taskDetails" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("taskDetails")}
+                  >
+                    <FaTasks className={styles.icon} /> Task Details
+                  </button>
+
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "followup" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("followup")}
+                  >
+                    <FaHistory className={styles.icon} /> Follow-up History
+                  </button>
+
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "siteVisit" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("siteVisit")}
+                  >
+                    <FaMapMarkedAlt className={styles.icon} /> Site Visit
+                    History
+                  </button>
+
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "transfer" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("transfer")}
+                  >
+                    <FaExchangeAlt className={styles.icon} /> Transfer History
+                  </button>
+
+                  <button
+                    className={`${styles.navItem} ${
+                      activeTab === "booking" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveTab("booking")}
+                  >
+                    <FaFileContract className={styles.icon} /> Booking Overview
+                  </button>
+                </div>
+                {/* {SelectedLead.approvalStatus === "pending" && (
               <button
                 className={styles.approveBtn}
                 onClick={() => setShowApprovalDialog(true)}
@@ -1157,53 +1178,92 @@ const Closingdetaispage = () => {
                 Approve/Reject
               </button>
             )} */}
-          </div>
-        </div>
-      </div>
-      <div className={styles.detsilpart}>
-        <div className={styles.detailsContent}>
-          {activeTab === "overview" && (
-            <VisitDetailsContent
-              visit={SelectedLead}
-              onCall={handleCall}
-              user={user}
-            />
-          )}
-
-          {activeTab === "access" && <QuickAccess />}
-
-          {activeTab === "taskDetails" && <TaskOverview />}
-
-          {activeTab === "followup" && <FollowUp />}
-
-          {activeTab === "siteVisit" && <VisitHistory />}
-
-          {activeTab === "transfer" && <TransferHistory />}
-
-          {activeTab === "booking" && (
-            <div className={styles.tabContent}>
-              <BookingOverview />
-            </div>
-          )}
-          {similarVisits.length > 0 && (
-            <div className={styles.similarVisitsSection}>
-              <div
-                className={styles.similarVisitsHeader}
-                onClick={() => setShowSimilarVisits(!showSimilarVisits)}
-              >
-                <h3 className={styles.similarVisitsTitle}>
-                  Similar Visits ({similarVisits.length})
-                </h3>
-                {showSimilarVisits ? (
-                  <ChevronUp className={styles.chevron} />
-                ) : (
-                  <ChevronDown className={styles.chevron} />
-                )}
               </div>
             </div>
-          )}
+          </div>
+          <div className={styles.detsilpart}>
+            <div className={styles.detailsContent}>
+              {activeTab === "overview" && (
+                <VisitDetailsContent
+                  visit={SelectedLead}
+                  onCall={handleCall}
+                  user={user}
+                />
+              )}
+
+              {activeTab === "access" && <QuickAccess />}
+
+              {activeTab === "taskDetails" && (
+                <TaskOverview task={SelectedLead?.taskRef} />
+              )}
+
+              {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
+
+              {activeTab === "siteVisit" && (
+                <VisitHistory lead={SelectedLead} />
+              )}
+
+              {activeTab === "transfer" && (
+                <TransferHistory cycleHistory={SelectedLead?.cycleHistoryNew} />
+              )}
+
+              {activeTab === "booking" && (
+                <div className={styles.tabContent}>
+                  <BookingOverview />
+                </div>
+              )}
+              {similarVisits.length > 0 && (
+                <div className={styles.similarVisitsSection}>
+                  <div
+                    className={styles.similarVisitsHeader}
+                    onClick={() => setShowSimilarVisits(!showSimilarVisits)}
+                  >
+                    <h3 className={styles.similarVisitsTitle}>
+                      Similar Visits ({similarVisits.length})
+                    </h3>
+                    {showSimilarVisits ? (
+                      <ChevronUp className={styles.chevron} />
+                    ) : (
+                      <ChevronDown className={styles.chevron} />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className={styles.emptyState}>
+          <FileText className={styles.emptyIcon} />
+          <p className={styles.emptyText}>Select a lead to view details</p>
         </div>
-      </div>
+      )}
+
+      {/* Filter Dialog */}
+      <LeadFilterDialog
+        open={showFilterDialog}
+        onClose={() => setShowFilterDialog(false)}
+        onOpenChange={setShowFilterDialog}
+        filters={filters}
+        onFiltersChange={setFilters}
+        onClearFilters={handleClearFilters}
+        onApplyFilters={handleApplyFilters} // Pass the apply function
+        visits={leads || []}
+        resultCount={leads?.length || 0}
+      />
+
+      {showEditDialog && (
+        <EditDialog
+          visit={editFormData}
+          onClose={() => setShowEditDialog(false)}
+          onSave={(updatedVisit: any) => {
+            console.log("Saving visit (Dummy):", updatedVisit);
+            setSelectedLead(updatedVisit);
+            //   setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
+            setShowEditDialog(false);
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -1372,7 +1432,10 @@ const VisitDetailsContent = ({
                   <IoIosPerson size={12} color="#4a84ff" />
                   Property Type
                 </label>
-                <p className={styles.infoValue}> {visit?.propertyType ?? "NA"}</p>
+                <p className={styles.infoValue}>
+                  {" "}
+                  {visit?.propertyType ?? "NA"}
+                </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>

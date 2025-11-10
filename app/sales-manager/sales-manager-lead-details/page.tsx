@@ -170,8 +170,7 @@ const Salesdetaispage = () => {
     },
     [debouncedSearchQuery, status, fetchTeamLeaderReportingToLeads]
   );
-  console.log(searchLeadInfo
-  );
+  console.log(searchLeadInfo);
 
   // Function to clear all filters
   const handleClearFilters = useCallback(() => {
@@ -885,13 +884,18 @@ const Salesdetaispage = () => {
           </button>
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-          {leads?.map((visit) => (
+          {leads?.map((visit, index) => (
             <div
-              key={visit._id}
+              key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+              // key={visit._id}
               className={`${styles.visitCard}`}
               onClick={() => {
                 setSelectedLead(visit);
-                router.push(`/lead-details?id=${visit._id}`, {
+
+                // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                //   scroll: false,
+                // });
+                router.push(`/lead-details?status=${status}&id=${visit._id}`, {
                   scroll: false,
                 });
               }}
@@ -910,7 +914,7 @@ const Salesdetaispage = () => {
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                   </div>
                   <p className={styles.phone}>
-                    {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                    {visit?.countryCode ?? "91"} {visit?.phoneNumber ?? "NA"}
                   </p>
                 </div>
               </div>
@@ -919,7 +923,9 @@ const Salesdetaispage = () => {
                 <p>
                   Assign Date:{" "}
                   {visit.cycle?.startDate ? (
-                    <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.startDate ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -927,7 +933,9 @@ const Salesdetaispage = () => {
                 <p>
                   Visit Deadline:{" "}
                   {visit.cycle?.validTill ? (
-                    <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.validTill ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -1000,17 +1008,19 @@ const Salesdetaispage = () => {
               </div>
             </div>
           ))}
-          {hasMoreRef.current && (
-            <div className={styles.loadMoreContainer}>
-              <button
-                className={styles.loadMoreBtn}
-                onClick={() => loadMoreLeads}
-                disabled={loadingRef.current}
-              >
-                {loadingRef.current ? "Loading..." : ""}
-              </button>
-            </div>
-          )}
+          {searchLeadInfo?.page &&
+            searchLeadInfo.totalPages &&
+            searchLeadInfo.page < searchLeadInfo.totalPages && (
+              <div className={styles.loadMoreContainer}>
+                <button
+                  className={styles.loadMoreBtn}
+                  onClick={loadMoreLeads}
+                  disabled={loadingLeads}
+                >
+                  {loadingLeads ? "Loading..." : ""}
+                </button>
+              </div>
+            )}
         </div>
       </div>
     );
@@ -1025,7 +1035,9 @@ const Salesdetaispage = () => {
             className={styles.backBtn}
             onClick={() => {
               setSelectedLead(null);
-              router.push("/sales-manager/sales-manager-lead-details", {
+              const apiStatus = status === "all" ? null : status;
+
+              router.push(`/lead-details?status=${apiStatus}`, {
                 scroll: false,
               });
             }}
@@ -1195,13 +1207,17 @@ const Salesdetaispage = () => {
 
           {activeTab === "access" && <QuickAccess />}
 
-          {activeTab === "taskDetails" && <TaskOverview />}
-
+          {activeTab === "taskDetails" && (
+            <TaskOverview task={SelectedLead?.taskRef} />
+          )}
+          
           {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
 
           {/* {activeTab === "siteVisit" && <VisitHistory />} */}
 
-          {activeTab === "transfer" && <TransferHistory />}
+          {activeTab === "transfer" && (
+            <TransferHistory cycleHistory={SelectedLead?.cycleHistoryNew} />
+          )}
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>
