@@ -60,6 +60,7 @@ const BookingDetails = () => {
     currentLead,
     fetchPostSaleLeads,
     getLeadByBookingId,
+    getClosingManagers,
   } = useData();
   const { user, loading } = useUser();
   const router = useRouter();
@@ -96,6 +97,14 @@ const BookingDetails = () => {
       }
     }
   }, [postSaleId, postSaleleads]);
+
+   useEffect(() => {
+      if (user && !loading) {
+        console.log("use effect dashboard");
+  
+        getClosingManagers();
+      }
+    }, [user, loading]);
 
   useEffect(() => {
     if (SelectedLead) {

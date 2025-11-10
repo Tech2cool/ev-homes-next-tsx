@@ -52,8 +52,13 @@ export function Leadbookingfilter({
   onClose,
   onApplyFilters,
 }: LeadbookingfilterProps) {
-  const { projects, getProjects, employees, getClosingManagers, fetchPostSaleLeads } =
-    useData();
+  const {
+    projects,
+    getProjects,
+    employees,
+    getClosingManagers,
+    fetchPostSaleLeads,
+  } = useData();
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [selectedManager, setSelectedManager] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -66,18 +71,16 @@ export function Leadbookingfilter({
     project: "",
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
-    const { user, loading } = useUser();
-  
+  const { user, loading } = useUser();
 
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("use effect dashboard");
+useEffect(() => {
+  if (user && !loading) {
+    console.log("Fetching managers & projects...");
+    getClosingManagers();
+    getProjects();
+  }
+}, [user, loading]);
 
-      getClosingManagers(
-      
-      );
-    }
-  }, [user, loading]);
 
   const DATE_OPTIONS = [
     "Today",
@@ -214,11 +217,15 @@ export function Leadbookingfilter({
             >
               <option value="">All Managers</option>
 
-              {employees.map((mgr: Employee, index: number) => (
-                <option key={mgr._id ?? index} value={mgr._id ?? ""}>
-                  {`${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`}
-                </option>
-              ))}
+              {employees && employees.length > 0 ? (
+                employees.map((mgr: Employee) => (
+                  <option key={mgr._id ?? ""} value={mgr._id ?? ""}>
+                    {`${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Loading...</option>
+              )}
             </select>
           </div>
 

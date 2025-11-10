@@ -740,36 +740,33 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
 
-  const getClosingManagers = async () => {
+ const getClosingManagers = async () => {
   try {
+    console.log("test1");
     const response = await fetchAdapter("/api/employee-closing-manager");
+    console.log("test2");
 
-    if (response.data?.code !== 200) {
-      return { success: false, message: response.data?.message || "Error" };
-    }
+// console.log("data message:", response.data);
+//     if (response.data?.code !== 200) {
+      
+//           console.log("API message:", response.data?.message);
+//       return { success: false, message: response.data?.message || "Error" };
+//     }
 
-    const items: any[] = response.data?.data ?? [];
-    const empItems: Employee[] = items.map((item) => ({
-      ...item,
-      phoneNumber:
-        item.phoneNumber !== null ? Number(item.phoneNumber) : null,
-      alternatePhoneNumber:
-        item.alternatePhoneNumber !== null
-          ? Number(item.alternatePhoneNumber)
-          : null,
-    }));
+    console.log("test3");
 
-    setEmployees(empItems);
+
+    const items: Employee[] = response.data ?? [];
+    console.log("Managers fetched:", items);
+
+    setEmployees(items);
+    console.log("test5");
 
     return { success: true };
-  } catch (error: any) {
-    let errorMessage = "Something went wrong";
 
-    if (error?.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
+  } catch (error: any) {
+    let errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+    console.log("test 7",error);
 
     if (errorMessage.trim().toLowerCase() === "null") {
       errorMessage = "Something went wrong";
@@ -778,6 +775,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     return { success: false, message: errorMessage };
   }
 };
+
 
   
   const getSiteVisitHistoryByPhone = async (
