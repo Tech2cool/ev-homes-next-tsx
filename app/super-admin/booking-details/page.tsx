@@ -75,7 +75,7 @@ const BookingDetails = () => {
   const [showaddbooking, setshowaddbooking] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-   const [projects, setProjects] = useState<OurProject[]>([]);
+  const [projects, setProjects] = useState<OurProject[]>([]);
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const currentStage = "Confirm Booking";
@@ -98,13 +98,13 @@ const BookingDetails = () => {
     }
   }, [postSaleId, postSaleleads]);
 
-   useEffect(() => {
-      if (user && !loading) {
-        console.log("use effect dashboard");
-  
-        getClosingManagers();
-      }
-    }, [user, loading]);
+  useEffect(() => {
+    if (user && !loading) {
+      console.log("use effect dashboard");
+
+      getClosingManagers();
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     if (SelectedLead) {
@@ -154,14 +154,17 @@ const BookingDetails = () => {
     searchParams,
   ]);
 
-  const handleApplyFilters = useCallback((filterParams: any) => {
-    fetchPostSaleLeads({
-      query: debouncedSearchQuery,
-      page: 1,
-      limit: 10,
-      ...filterParams, // Spread the filter parameters
-    });
-  }, [debouncedSearchQuery, fetchPostSaleLeads]);
+  const handleApplyFilters = useCallback(
+    (filterParams: any) => {
+      fetchPostSaleLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        ...filterParams, // Spread the filter parameters
+      });
+    },
+    [debouncedSearchQuery, fetchPostSaleLeads]
+  );
 
   const handleScroll = useCallback(
     (e: any) => {
@@ -221,6 +224,8 @@ const BookingDetails = () => {
                     type="text"
                     placeholder="Search leads..."
                     className={styles.searchInput}
+                    value={searchQuery}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                   />
                 </div>
                 <button
@@ -239,7 +244,15 @@ const BookingDetails = () => {
                   className={`${bookstyle.visitCard} ${
                     SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
                   }`}
-                  onClick={() => setSelectedLead(lead)}
+                  onClick={() => {
+                    setSelectedLead(lead);
+                    router.push(
+                      `/lead-details?status=${status}&id=${lead._id}`,
+                      {
+                        scroll: false,
+                      }
+                    );
+                  }}
                 >
                   <div className={bookstyle.topRow}>
                     <div className={bookstyle.nameBlock}>
@@ -466,12 +479,12 @@ const BookingDetails = () => {
           </div>
         </div>
         <Leadbookingfilter
-        open={showFilterDialog}
-        onClose={() => setShowFilterDialog(false)}
-        projects={projects}
-        closingManagers={closingManagers}
-        onApplyFilters={handleApplyFilters}
-      />
+          open={showFilterDialog}
+          onClose={() => setShowFilterDialog(false)}
+          projects={projects}
+          closingManagers={closingManagers}
+          onApplyFilters={handleApplyFilters}
+        />
         {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
       </>
     );
@@ -490,6 +503,8 @@ const BookingDetails = () => {
                   type="text"
                   placeholder="Search leads..."
                   className={styles.searchInput}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                 />
               </div>
               <button
@@ -609,13 +624,13 @@ const BookingDetails = () => {
             ))}
           </div>
         </div>
-         <Leadbookingfilter
-        open={showFilterDialog}
-        onClose={() => setShowFilterDialog(false)}
-        projects={projects}
-        closingManagers={closingManagers}
-        onApplyFilters={handleApplyFilters}
-      />
+        <Leadbookingfilter
+          open={showFilterDialog}
+          onClose={() => setShowFilterDialog(false)}
+          projects={projects}
+          closingManagers={closingManagers}
+          onApplyFilters={handleApplyFilters}
+        />
       </>
     );
   }
@@ -790,7 +805,12 @@ const BookingDetails = () => {
               <ApplicantOverview booking={SelectedLead} />
             )}
 
-            {activeTab === "feedback" && <BookingFeedback />}
+          {activeTab === "feedback" && (
+                      <BookingFeedback
+                        booking={SelectedLead}
+                        lead={currentLead}
+                      />
+                    )}
           </div>
         </div>
       </div>
