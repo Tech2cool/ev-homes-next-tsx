@@ -24,7 +24,12 @@ import RunningStatus from "./Dailog/runningstatus";
 import AddBooking from "./Dailog/addbooking";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
-const QuickAccess = () => {
+import FeedbackTwo from "./Dailog/feedbacktwo";
+interface QuickAccessProps {
+  lead?: Lead | null;
+}
+
+const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
   const [showfb, setshowfb] = useState(false);
   const [showsite, setshowsite] = useState(false);
   const [showtask, setshowtask] = useState(false);
@@ -61,6 +66,7 @@ const QuickAccess = () => {
     if (label === "Add Feedback") {
       setshowfb(true);
     }
+
     if (label === "Add Visit") {
       setshowsite(true);
     }
@@ -96,7 +102,7 @@ const QuickAccess = () => {
           user?.designation?._id === "desg-sales-manager" ||
           (user?.designation?._id === "desg-sales-executive" &&
             [
-              "Schedule Meeting", 
+              "Schedule Meeting",
               "Cancel Booking",
               "Brokerage Calculator",
             ].includes(action.label)) ? null : (
@@ -116,7 +122,13 @@ const QuickAccess = () => {
         <FaRobot className={styles.aiIcon} />
       </button>
 
-      {showfb && <AddFeedBaack openclick={setshowfb} />}
+      {showfb &&
+        (lead?.callHistory && lead.callHistory.length > 0 ? (
+          <FeedbackTwo openclick={setshowfb} />
+        ) : (
+          <AddFeedBaack openclick={setshowfb} lead={lead} />
+        ))}
+
       {showsite && <SiteVisit openclick={setshowsite} />}
       {showtask && <AssignTask openclick={setshowtask} />}
       {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin} />}

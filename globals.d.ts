@@ -260,6 +260,9 @@ interface Lead {
   occupation?: string;
   additionLinRemark?: string;
   propertyType?: string;
+  uploadedLinkedIn?: string;
+  linkedIn?: string;
+  nameRemark?: string;
 }
 
 interface SiteVisit {
