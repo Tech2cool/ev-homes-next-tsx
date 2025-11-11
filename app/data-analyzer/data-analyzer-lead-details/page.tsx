@@ -148,6 +148,7 @@ const DataAnalyzerdetailspage = () => {
     getRequirements,
     projects,
     requirements,
+    updateLeadDetails,
   } = useData();
 
   const socket = getSocket();
@@ -908,17 +909,25 @@ const DataAnalyzerdetailspage = () => {
         />
 
         {showEditDialog && (
-          <EditDialog
-            visit={editFormData}
-            onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit: any) => {
-              console.log("Saving visit (Dummy):", updatedVisit);
-              setSelectedLead(updatedVisit);
-              //   setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
-              setShowEditDialog(false);
-            }}
-          />
-        )}
+              <EditDialog
+                visit={SelectedLead}
+                onClose={() => setShowEditDialog(false)}
+                onSave={async (payload) => {
+                  const response = await updateLeadDetails(
+                    SelectedLead?._id ?? "",
+                    payload
+                  );
+    
+                  console.log(response);
+                  if (response.success) {
+                    // setSelectedLead(response);
+                    setShowEditDialog(false);
+                  } else {
+                    console.error(response.message);
+                  }
+                }}
+              />
+            )}
       </div>
     );
   }
@@ -1332,16 +1341,24 @@ const DataAnalyzerdetailspage = () => {
         visits={leads || []}
         resultCount={leads?.length || 0}
       />
-
-      {showEditDialog && (
+ {showEditDialog && (
         <EditDialog
-          visit={editFormData}
+          visit={SelectedLead}
           onClose={() => setShowEditDialog(false)}
-          onSave={(updatedVisit: any) => {
-            console.log("Saving visit (Dummy):", updatedVisit);
-            setSelectedLead(updatedVisit);
-            //   setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
-            setShowEditDialog(false);
+          onSave={async (payload) => {
+            const response = await updateLeadDetails(
+              SelectedLead?._id ?? "",
+              payload
+            );
+
+            console.log(response);
+
+            if (response.success) {
+              // setSelectedLead(response.data ?? null);
+              setShowEditDialog(false);
+            } else {
+              console.error(response.message);
+            }
           }}
         />
       )}

@@ -143,11 +143,7 @@ const Closingdetaispage = () => {
     leads,
     loadingLeads,
     fetchTeamLeaderLeads,
-    employees,
-    getProjects,
-    getRequirements,
-    projects,
-    requirements,
+    updateLeadDetails,
   } = useData();
 
   const socket = getSocket();
@@ -822,17 +818,37 @@ const Closingdetaispage = () => {
 
         {showEditDialog && (
           <EditDialog
-            visit={editFormData}
+            visit={SelectedLead}
             onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit: any) => {
-              console.log("Saving visit (Dummy):", updatedVisit);
-              setSelectedLead(updatedVisit);
-              // setLeads((prev) =>
-              //   prev.map((l) => (l._id === updatedVisit._id ? updatedVisit : l))
-              // );
-              setShowEditDialog(false);
+            onSave={async (payload) => {
+              const response = await updateLeadDetails(
+                SelectedLead?._id ?? "",
+                payload
+
+              );
+
+              console.log(response);
+              if (response.success) {
+                // setSelectedLead(response.data ?? null);
+                setShowEditDialog(false);
+              } else {
+                console.error(response.message);
+              }
             }}
           />
+
+          // <EditDialog
+          //   visit={editFormData}
+          //   onClose={() => setShowEditDialog(false)}
+          //   onSave={(updatedVisit: any) => {
+          //     console.log("Saving visit (Dummy):", updatedVisit);
+          //     setSelectedLead(updatedVisit);
+          //     // setLeads((prev) =>
+          //     //   prev.map((l) => (l._id === updatedVisit._id ? updatedVisit : l))
+          //     // );
+          //     setShowEditDialog(false);
+          //   }}
+          // />
         )}
       </div>
     );
@@ -1254,13 +1270,22 @@ const Closingdetaispage = () => {
 
       {showEditDialog && (
         <EditDialog
-          visit={editFormData}
+          visit={SelectedLead}
           onClose={() => setShowEditDialog(false)}
-          onSave={(updatedVisit: any) => {
-            console.log("Saving visit (Dummy):", updatedVisit);
-            setSelectedLead(updatedVisit);
-            //   setLeads(prev => prev.map(l => l._id === updatedVisit._id ? updatedVisit : l));
-            setShowEditDialog(false);
+          onSave={async (payload) => {
+            const response = await updateLeadDetails(
+              SelectedLead?._id ?? "",
+              payload
+            );
+
+            console.log(response);
+
+            if (response.success) {
+              // setSelectedLead(response.data ?? null);
+              setShowEditDialog(false);
+            } else {
+              console.error(response.message);
+            }
           }}
         />
       )}

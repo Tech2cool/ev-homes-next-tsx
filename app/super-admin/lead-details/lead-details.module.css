@@ -23,7 +23,7 @@
 
 :global(html.light) .leftSidebar {
   background-color: #f6f5f5;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #b9b9b9;
 }
 
 .sidebarHeader {
@@ -34,7 +34,7 @@
 }
 
 :global(html.light) .sidebarHeader {
-  background-color: #f6f5f5;
+  background-color: #A1C2BD;
   border-bottom: 1px solid #ddd;
 }
 
@@ -53,9 +53,7 @@
   color: #ffffff;
 }
 
-:global(html.light) .title {
-  color: #000000;
-}
+
 
 /* Right Panel for Desktop */
 .rightPanel {
@@ -77,11 +75,15 @@
   justify-content: space-between;
   align-items: flex-start;
   flex-shrink: 0;
+  box-shadow: none;
+
 }
 
 :global(html.light) .detailsHeader {
-  background-color: #f6f5f5;
-  border-bottom: 1px solid #ddd;
+  background-color: #ffffff;
+  border-bottom: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.156);
+
 }
 
 
@@ -425,7 +427,7 @@
 }
 
 :global(html.light) .detailsCard {
-  background-color: #ffffff;
+  background-color: #f6f9f8;
   border: none;
   box-shadow: 0 2px 10px rgba(67, 63, 63, 0.3);
 
@@ -444,10 +446,14 @@
 }
 
 :global(html.light) .cardTitle {
-  background-color: #dbd9d9;
+  background-color: #394a50;
   border-bottom: 1px solid #e5e5e5;
 
-  color: #1f1e1e;
+  color: #f5f5f5;
+}
+
+:global(html.light) .cardTitle:hover {
+  background-color: #708993;
 }
 
 .cardContent {
@@ -590,11 +596,13 @@
   background: linear-gradient(180deg, #28a74631, #28a74660);
   border: 1px solid #28a746;
   color: #ffffff;
+  box-shadow: 0 2px 5px rgba(67, 63, 63, 0.3);
+
 }
 
 :global(html.light) .statusBadge.approved {
-  background: linear-gradient(180deg, #28a746fb, #28a746);
-  border: 1px solid #28a746;
+  background: linear-gradient(180deg, #28a746fb);
+  border: none;
 }
 
 .statusBadge.rejected {
@@ -837,13 +845,16 @@
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
+  box-shadow: none;
 }
 
 
 :global(html.light) .visitCard {
-  background-color: transparent;
-  border: 1px solid #dbdbdb;
+  /* background-color: rgb(236, 255, 217); */
+  background-color: rgb(255, 255, 255);
 
+  border: 1px solid #dbdbdb;
+  box-shadow: 0 2px 10px rgba(104, 150, 251, 0.325);
 }
 
 .visitCard:hover {
@@ -928,11 +939,8 @@
 }
 
 :global(html.light) .filterBtn {
-  background-color: #f5f5f5;
-  /* Light background */
-  border: 1px solid #ddd;
-  color: #222;
-  /* Dark text */
+  background-color: #435663;
+  border: 1px solid #435663;
 }
 
 .filterBtn:hover {
@@ -1188,15 +1196,18 @@
 
   padding: 15px 6px;
 }
-.bookingnavbar{
-   justify-content: start;
-   gap: 2rem;
+
+.bookingnavbar {
+  justify-content: start;
+  gap: 2rem;
 }
+
 /* Scrollbar */
 .bookingnavbar::-webkit-scrollbar,
 .navbar::-webkit-scrollbar {
   width: 5px;
 }
+
 .bookingnavbar::-webkit-scrollbar-thumb,
 .navbar::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #4a84ff, #2e5ede);
@@ -1231,7 +1242,7 @@
 }
 
 :global(html.light) .icon {
-  color: #345df1;
+  color: #5d6e94;
 }
 
 .navItem:hover {
@@ -1258,9 +1269,10 @@
 }
 
 :global(html.light) .navItem.active {
-  background: linear-gradient(145deg, #2e6cf3, #0a3ecc);
+  background: linear-gradient(145deg, #48555b, #708993);
   color: #fff;
-  box-shadow: 0 2px 10px rgba(134, 171, 251, 0.278);
+  box-shadow: none;
+  border: none;
 }
 
 :global(html.light) .active .icon {
@@ -1269,21 +1281,22 @@
 
 /* Light Theme */
 :global(html.light) .detailstab {
-  background: linear-gradient(135deg, #ffffff, #f5f7fa);
+  background: linear-gradient(135deg, #cfdde4);
   box-shadow: 0 1px 8px rgba(255, 255, 255, 0.08);
 }
 
 :global(html.light) .navItem {
   background: linear-gradient(145deg, #ffffff, #ffffff);
   color: rgb(27, 26, 26);
-  border: 1px solid #4a84ff;
-  box-shadow: 0 2px 2px rgba(52, 193, 225, 0.571);
+  border: none;
+  box-shadow: none;
 }
 
 :global(html.light) .navItem:hover {
-  background: linear-gradient(145deg, #4a84ff, #2e5ede);
+  background: linear-gradient(145deg, #48555b, #708993);
   color: #fff;
-  box-shadow: 0 3px 10px rgba(74, 132, 255, 0.25);
+  box-shadow: none;
+  border: none;
 }
 
 /* Header Info section */
@@ -1440,10 +1453,15 @@
 }
 
 :global(html.light) .visitBtn {
-  background: linear-gradient(135deg, #4a84ff, #2e5ede);
+  background: linear-gradient(145deg, rgb(64, 76, 81), rgb(108, 134, 145));
   color: #fff;
+  box-shadow: none;
 }
 
+:global(html.light) .visitBtn:hover {
+  background: linear-gradient(145deg, rgb(91, 107, 114), rgb(126, 158, 171));
+
+}
 
 .center {
   padding-left: 1%;
@@ -1501,22 +1519,25 @@
 :global(html.light) .phone {
   color: #3b3939;
 }
+
 .leadMeta p {
-   font-size: 14px;
-   font-weight: 500;
-   color: rgb(210, 209, 209);
-    margin: 3px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(210, 209, 209);
+  margin: 3px 0;
 }
+
 :global(html.light) .leadMeta p {
   color: #181818;
 }
-.leadMeta p span{
+
+.leadMeta p span {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
   margin: 3px 0;
 }
 
-:global(html.light) .leadMeta p span{
+:global(html.light) .leadMeta p span {
   color: #272525;
 }
 
@@ -1542,8 +1563,8 @@
 }
 
 :global(html.light) .clientStatus {
-  color: #272525;
-  background: rgb(245, 169, 29);
+  color: #ffffff;
+  background: #F0A04B;
 }
 
 .assignby {
@@ -1563,7 +1584,7 @@
 }
 
 :global(html.light) .assignby {
-  background-color: #056edf;
+  background-color: #a868ee;
 
 }
 
@@ -1629,18 +1650,19 @@
 
 :global(html.light) .blue {
   background-color: rgb(221, 221, 255);
+  background-color: rgb(235, 235, 246);
 }
 
 :global(html.light) .red {
-  background-color: rgb(252, 207, 207);
+  background-color: rgb(250, 229, 229);
 }
 
 :global(html.light) .purple {
-  background-color: rgb(252, 200, 252);
+  background-color: rgb(248, 221, 248);
 }
 
 :global(html.light) .yellow {
-  background-color: rgb(249, 249, 196);
+  background-color: rgb(247, 247, 224);
 
 }
 
@@ -1681,7 +1703,8 @@
     border: 1px solid rgba(14, 14, 14, 0.08);
 
   }
-.bookingnavbar,
+
+  .bookingnavbar,
   .navbar {
     flex-direction: row;
     height: 100%;
@@ -1717,7 +1740,8 @@
   .phone {
     font-size: 1.5vh;
   }
-.leadMeta p span,
+
+  .leadMeta p span,
   .leadMeta p {
     font-size: 2vh;
     margin: 1px 0;
@@ -1818,7 +1842,8 @@
   .phone {
     font-size: 14px;
   }
-.leadMeta p span,
+
+  .leadMeta p span,
   .leadMeta p {
     font-size: 13px;
   }
@@ -1941,7 +1966,7 @@
   }
 
   :global(html.light) .navItem:hover {
-    background: linear-gradient(145deg, #3474ff, #1247d8);
+    background: linear-gradient(145deg, #48555b, #708993);
     color: #fff;
     box-shadow: 0 3px 10px rgba(74, 132, 255, 0.25);
   }
@@ -1986,10 +2011,11 @@
   .statusCard {
     position: relative;
   }
+
   .statusIcons {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
 
   .statusIcon {
     position: absolute;
@@ -2046,7 +2072,7 @@
 .taskContainer {
   display: flex;
   flex-direction: column;
-  padding:4px 0px 5px 8px;
+  padding: 4px 0px 5px 8px;
   position: relative;
   line-height: 1rem;
 }
@@ -2063,17 +2089,21 @@
   background: #ffb84d;
   border-radius: 2px;
 }
-:global(html.light) .accentLine{
+
+:global(html.light) .accentLine {
   background: #ffaa2a;
 }
+
 .taskTitle {
   font-weight: 700;
   font-size: 0.85rem;
   color: #cfcdcd;
 }
-:global(html.light) .taskTitle{
-   color: #212020;
+
+:global(html.light) .taskTitle {
+  color: #212020;
 }
+
 .taskName {
   font-weight: 500;
   font-size: 0.8rem;
@@ -2081,9 +2111,11 @@
   padding-left: 12px;
   padding-bottom: 7px;
 }
-:global(html.light) .taskName{
-   color: #474545;
+
+:global(html.light) .taskName {
+  color: #474545;
 }
+
 .status {
   display: inline-flex;
   align-items: center;
@@ -2092,7 +2124,7 @@
   color: #ffb84d;
   margin-left: 5px;
 }
-:global(html.light) .status{
+
+:global(html.light) .status {
   color: #ffaa2a;
 }
-

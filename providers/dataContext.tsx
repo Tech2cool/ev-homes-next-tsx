@@ -395,6 +395,7 @@ type DataProviderState = {
   ranking: RankingTurn | null;
   leaveCount: EmployeeShiftInfoModel | null;
   currentLead: Lead | null;
+  dataEntryUsers: Employee | null;
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -523,7 +524,18 @@ type DataProviderState = {
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
 
+
+  updateLeadDetails: (
+    id: string,
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  getDataEntryEmployees: (
+    params: Employee[]
+  ) => Promise<{ success: boolean; message?: string }>;
+
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
+
 };
 
 //initial values should define here
@@ -564,6 +576,7 @@ const initialState: DataProviderState = {
   ranking: null,
   leaveCount: null,
   currentLead: null,
+  dataEntryUsers: null,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -646,7 +659,16 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
+  updateLeadDetails: async () => ({
+
   getClosingManagers: async () => ({
+
+    success: false,
+    message: "Not initialized",
+  }),
+
+
+  getDataEntryEmployees: async () => ({
     success: false,
     message: "Not initialized",
   }),
@@ -739,6 +761,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   );
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
+
+
+  const [dataEntryUsers, setDataEntryUsers] = useState<Employee | null>(null);
+
 
  const getClosingManagers = async () => {
   try {
@@ -2058,7 +2084,42 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  //data analyzer graph
+  const updateLeadDetails = async (
+    id: string,
+    data: Record<string, any> = {}
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Lead | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const url = `/api/lead-update-details/${id}`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      // The API is assumed to return something like:
+      // { data: Lead, message, code }
+      setCurrentLead(res?.data as Lead);
+      setLoading(false);
+
+      return { success: true };
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setLoading(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchTeamLeaderGraphForDA = async ({
     interval = "monthly",
     year = null,
@@ -2321,11 +2382,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     message?: string;
     data?: Lead | null;
   }> => {
-
     console.log("lead by");
     setLoading(true);
     setError("");
-console.log(`/api/lead-by-booking/${id}`);
+    console.log(`/api/lead-by-booking/${id}`);
     try {
       const response = await fetchAdapter(`/api/lead-by-booking/${id}`, {
         method: "GET",
@@ -2367,6 +2427,40 @@ console.log(`/api/lead-by-booking/${id}`);
     }
   };
 
+  const getDataEntryEmployees = async ({}: Employee[]): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    try {
+      let url = `/api/employee-visit-allowed-staff`;
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      if (res?.data) {
+        setDataEntryUsers(res.data);
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error(errorMessage);
+      return { success: false, message: errorMessage };
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2404,6 +2498,7 @@ console.log(`/api/lead-by-booking/${id}`);
     ranking: ranking,
     leaveCount: leaveCount,
     currentLead: currentLead,
+    dataEntryUsers: dataEntryUsers,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -2436,6 +2531,8 @@ console.log(`/api/lead-by-booking/${id}`);
     getRankingTurns: getRankingTurns,
     getShiftInfoByUserId: getShiftInfoByUserId,
     getLeadByBookingId: getLeadByBookingId,
+    updateLeadDetails: updateLeadDetails,
+    getDataEntryEmployees: getDataEntryEmployees,
   };
 
   return (

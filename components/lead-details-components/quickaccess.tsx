@@ -118,9 +118,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
         )}
       </div>
 
-      <button className={styles.aiButton}>
-        <FaRobot className={styles.aiIcon} />
-      </button>
+   
 
       {showfb &&
         (lead?.callHistory && lead.callHistory.length > 0 ? (

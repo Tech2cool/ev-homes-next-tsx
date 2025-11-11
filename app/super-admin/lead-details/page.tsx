@@ -149,6 +149,7 @@ const LeadDetailsPage = () => {
     leads,
     loadingLeads,
     fetchingMoreLeads,
+    updateLeadDetails,
   } = useData();
 
   const socket = getSocket();
@@ -509,6 +510,7 @@ const LeadDetailsPage = () => {
             {leads?.map((visit, index) => (
               <div
                 key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+                
                 className={`${styles.visitCard} ${
                   SelectedLead?._id === visit._id ? styles.selectedCard : ""
                 }`}
@@ -623,7 +625,7 @@ const LeadDetailsPage = () => {
                     ) : null}
                     <div
                       style={{
-                        backgroundColor: "rgba(3, 84, 214, 1)",
+                        backgroundColor: "#387478",
                       }}
                       className={styles.clientStatus}
                     >
@@ -734,8 +736,8 @@ const LeadDetailsPage = () => {
                     />
                   )}
 
-                  {activeTab === "access" && <QuickAccess lead={SelectedLead} />}
 
+                  {activeTab === "access" && <QuickAccess lead={SelectedLead} />}
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
                   )}
@@ -867,12 +869,21 @@ const LeadDetailsPage = () => {
         {/* Edit Dialog */}
         {showEditDialog && (
           <EditDialog
-            visit={editFormData}
+            visit={SelectedLead}
             onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit: any) => {
-              console.log("Saving visit:", updatedVisit);
-              setSelectedLead(updatedVisit);
-              setShowEditDialog(false);
+            onSave={async (payload) => {
+              const response = await updateLeadDetails(
+                SelectedLead?._id ?? "",
+                payload
+              );
+
+              console.log(response);
+              if (response.success) {
+                // setSelectedLead(response);
+                setShowEditDialog(false);
+              } else {
+                console.error(response.message);
+              }
             }}
           />
         )}
@@ -1020,7 +1031,7 @@ const LeadDetailsPage = () => {
                   )}
                   <div
                     style={{
-                      backgroundColor: "rgba(3, 84, 214, 1)",
+                      backgroundColor: "#387478",
                     }}
                     className={styles.clientStatus}
                   >
