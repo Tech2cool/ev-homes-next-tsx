@@ -112,9 +112,7 @@ const QuickAccess = () => {
         )}
       </div>
 
-      <button className={styles.aiButton}>
-        <FaRobot className={styles.aiIcon} />
-      </button>
+   
 
       {showfb && <AddFeedBaack openclick={setshowfb} />}
       {showsite && <SiteVisit openclick={setshowsite} />}
