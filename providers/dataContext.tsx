@@ -63,13 +63,12 @@ type FetchLeadsParams = {
   startDateDeadline?: string | null;
   endDateDeadline?: string | null;
   date?: string | null;
-
   status2?: string | null;
   channelPartner?: string | null;
   taskType?: string | null;
   bulkLead?: string | null;
   project?: string | null;
-  propertyType: string | null;
+  propertyType?: string | null;
 };
 
 type FetchTeamLeaderParams = {
@@ -107,75 +106,6 @@ type SiteVisitParams = {
   startDate?: string | null;
   endDate?: string | null;
   date?: string | null;
-};
-
-type PostSaleLead = {
-  id?: string | null;
-  unitNo?: string | null;
-  floor?: number | null;
-  buildingNo?: number | null;
-  number?: number | null;
-  project?: OurProject | null;
-  firstName?: string | null;
-  lastName?: string | null;
-  requirement?: string | null;
-  countryCode?: string | null;
-  phoneNumber?: number | null;
-  address?: string | null;
-  email?: string | null;
-  date?: Date | null;
-  carpetArea?: number | null;
-  sellableCarpetArea?: number | null;
-  flatCost?: number | null;
-  closingManager?: Employee | null;
-  postSaleExecutive?: Employee | null;
-  closingManagerTeam: Employee[];
-  postSaleAssignTo: Employee[];
-  bookingStatus?: BookingStatus | null;
-  applicants: Applicant[];
-  preRegistrationCheckList?: PreRegistrationChecklist | null;
-  disbursementRecord: DisbursementRecord[];
-  allInclusiveAmount?: number | null;
-  totalAmount?: number | null;
-  cgstAmount?: number | null;
-  netAmount?: number | null;
-  stampDutyAmount?: number | null;
-  tdsAmount?: number | null;
-  registrationDone?: boolean | null;
-  status?: string | null;
-  bookingCancelRemark?: string | null;
-  bookingCancelDate?: Date | null;
-  currentSlab?: string | null;
-  addressLine1?: string | null;
-  addressLine2?: string | null;
-  city?: string | null;
-  pincode?: string | null;
-  bookingFormFront?: string | null;
-  bookingFormBack?: string | null;
-  bookingPdf?: string | null;
-  registrationDoneDate?: Date | null;
-  callHistory: CallHistory[];
-  parking: Parking[];
-  agreementValue?: number | null;
-  stampDutyValue?: number | null;
-  gstValue?: number | null;
-  roundedAgreementValue?: number | null;
-  roundedStampDutyValue?: number | null;
-  roundedGstValue?: number | null;
-  adjustedStampDutyAmt?: number | null;
-  totalValue?: number | null;
-  roundedAdjustedStampDuty?: number | null;
-  costSheetUrl?: string | null;
-  uploadedDocuments: UploadedDocuments[];
-  floorRise?: number | null;
-  pricingRemark?: string | null;
-  paymentOneAmt?: number | null;
-  paymentTwoAmt?: number | null;
-  paymentThreeAmt?: number | null;
-  paymentOneDueDate?: Date | null;
-  paymentTwoDueDate?: Date | null;
-  paymentThreeDueDate?: Date | null;
-  paymentScheme?: string | null;
 };
 
 type ProjectSchema = {
@@ -434,6 +364,8 @@ type DataProviderState = {
   testimonials: Testimonial[];
   loadingTestimonial: boolean;
   loadingLeads: boolean;
+  loadingPostSaleLeads: boolean;
+
   fetchingMoreLeads: boolean;
   employees: Employee[];
   teamOverview: TeamInsight[];
@@ -442,6 +374,7 @@ type DataProviderState = {
   assignInfo: TeamLeaderAssignFolloupUp | null;
   closingManager: PaginationProps[];
   leads: Lead[] | null;
+  postSaleleads: PostSaleLead[] | null;
   dashCount: DashboardCount | null;
   closingManagerAllGraph: ClosingManagerGraph | null;
   salesDashCount: DashboardCount | null;
@@ -460,8 +393,8 @@ type DataProviderState = {
   projectTargets: ProjectTargetData[];
   loadingProjectTargets: boolean;
   ranking: RankingTurn | null;
-  leaveCount:EmployeeShiftInfoModel | null;
-
+  leaveCount: EmployeeShiftInfoModel | null;
+  currentLead: Lead | null;
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -582,9 +515,15 @@ type DataProviderState = {
   //   setTheme: (theme: Theme) => void;
   //   toggleTheme: () => void;
 
-  getShiftInfoByUserId:(
+  getShiftInfoByUserId: (
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
+
+  getLeadByBookingId: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -600,7 +539,11 @@ const initialState: DataProviderState = {
   leadInfo: null,
   requirements: [],
   leads: null,
+  postSaleleads: null,
+
   loadingLeads: false,
+  loadingPostSaleLeads: false,
+
   siteInfo: null,
   visits: null,
   dashCount: null,
@@ -619,7 +562,8 @@ const initialState: DataProviderState = {
   projectTargets: [],
   loadingProjectTargets: false,
   ranking: null,
-  leaveCount:null,
+  leaveCount: null,
+  currentLead: null,
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -693,9 +637,19 @@ const initialState: DataProviderState = {
 
   getTeamOverview: async () => ({ success: false, message: "Not initialized" }),
 
+  getShiftInfoByUserId: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getLeadByBookingId: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 
-getShiftInfoByUserId: async () => ({ success: false, message: "Not initialized" }),
-
+  getClosingManagers: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 
 };
 
@@ -719,7 +673,12 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
+  const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
+    useState<boolean>(false);
+
   const [fetchingMoreLeads, setFetchingMoreLeads] = useState<boolean>(false);
+  const [fetchingMorePostSaleLeads, setFetchingPostSaleLeads] =
+    useState<boolean>(false);
 
   const [myOverallTarget, setMyOverallTarget] = useState<OverallTarget | null>(
     null
@@ -754,7 +713,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [leads, setleads] = useState<Lead[]>([]);
 
-  const [postSaleleads, setPostSaleLeads] = useState<Lead[]>([]);
+  const [postSaleleads, setPostSaleLeads] = useState<PostSaleLead[]>([]);
 
   const [loadingVisits, setLoadingVisits] = useState<boolean>(false);
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
@@ -779,6 +738,46 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     null
   );
 
+  const [currentLead, setCurrentLead] = useState<Lead | null>(null);
+
+ const getClosingManagers = async () => {
+  try {
+    console.log("test1");
+    const response = await fetchAdapter("/api/employee-closing-manager");
+    console.log("test2");
+
+// console.log("data message:", response.data);
+//     if (response.data?.code !== 200) {
+      
+//           console.log("API message:", response.data?.message);
+//       return { success: false, message: response.data?.message || "Error" };
+//     }
+
+    console.log("test3");
+
+
+    const items: Employee[] = response.data ?? [];
+    console.log("Managers fetched:", items);
+
+    setEmployees(items);
+    console.log("test5");
+
+    return { success: true };
+
+  } catch (error: any) {
+    let errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+    console.log("test 7",error);
+
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    return { success: false, message: errorMessage };
+  }
+};
+
+
+  
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
     altPhoneNumber?: Number
@@ -1844,9 +1843,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     message?: string;
   }> => {
     if (page === 1) {
-      setLoadingLeads(true);
+      setLoadingPostSaleLeads(true);
     } else {
-      setFetchingMoreLeads(true);
+      setFetchingPostSaleLeads(true);
     }
     setError("");
 
@@ -1866,18 +1865,16 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
       const { data, ...paginationInfo } = res as PaginationProps;
 
-      // Store pagination meta (like total pages, etc)
       setPostSaleLeadInfo(paginationInfo);
 
-      // Append when paginating
       if (page > 1) {
         setPostSaleLeads((prev) => [...prev, ...(data ?? [])]);
       } else {
         setPostSaleLeads(data ?? []);
       }
 
-      setFetchingMoreLeads(false);
-      setLoadingLeads(false);
+      setFetchingPostSaleLeads(false);
+      setLoadingPostSaleLeads(false);
 
       return { success: true };
     } catch (err: any) {
@@ -1885,8 +1882,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       setError(err?.message);
       return { success: false, message: err.message };
     } finally {
-      setFetchingMoreLeads(false);
-      setLoadingLeads(false);
+      setFetchingPostSaleLeads(false);
+
+      setLoadingPostSaleLeads(false);
     }
   };
 
@@ -2316,11 +2314,66 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const getLeadByBookingId = async (
+    id: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Lead | null;
+  }> => {
+
+    console.log("lead by");
+    setLoading(true);
+    setError("");
+console.log(`/api/lead-by-booking/${id}`);
+    try {
+      const response = await fetchAdapter(`/api/lead-by-booking/${id}`, {
+        method: "GET",
+      });
+
+      // Your API structure: { data: {...} }
+      const data = response?.data;
+
+      console.log(data);
+
+      if (response?.code !== 200) {
+        return {
+          success: false,
+          message: response?.message || "Failed to fetch target",
+        };
+      }
+
+      const parsedTarget = data as Lead;
+      setCurrentLead(parsedTarget);
+      return { success: true, data: parsedTarget };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      // Prevent literal 'null' from showing
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
     loadingLeads: loadingLeads,
+    loadingPostSaleLeads: loadingPostSaleLeads,
+
     employees: employees,
     leadInfo: leadInfo,
     dashCount: dashCount,
@@ -2328,6 +2381,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     siteInfo: siteInfo,
     visits: visits,
     leads: leads,
+    postSaleleads: postSaleleads,
     teamOverview: teamOverview,
     fetchingMoreLeads: fetchingMoreLeads,
     assignInfo: assignInfo,
@@ -2348,13 +2402,14 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     loadingProjectTargets: loadingProjectTargets,
     salesDashCount: salesDashCount,
     ranking: ranking,
-    leaveCount:leaveCount,
+    leaveCount: leaveCount,
+    currentLead: currentLead,
     getProjectTargets: getProjectTargets,
-
     getProjects: getProjects,
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
+    getClosingManagers: getClosingManagers,
     fetchReportingToEmployees: fetchReportingToEmployees,
     fetchSaleExecutiveLeads: fetchSaleExecutiveLeads,
     fetchTeamLeaderLeads: fetchTeamLeaderLeads,
@@ -2379,7 +2434,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getClosingManagerDashBoardCount: getClosingManagerDashBoardCount,
     getQuarterWiseTarget: getQuarterWiseTarget,
     getRankingTurns: getRankingTurns,
-    getShiftInfoByUserId:getShiftInfoByUserId,
+    getShiftInfoByUserId: getShiftInfoByUserId,
+    getLeadByBookingId: getLeadByBookingId,
   };
 
   return (

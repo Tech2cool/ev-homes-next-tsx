@@ -94,6 +94,8 @@ const SuperAdminDasboard = () => {
         page: 1,
         limit: 10,
 
+
+
       });
     }
   }, [user, loading]);
@@ -130,16 +132,18 @@ const SuperAdminDasboard = () => {
     }
   }, [user, loading, projects.length]);
 
-  useEffect(() => {
-    if (user && !loading) {
-      fetchPostSaleLeads({
-        query: "",
-        page: 1,
-        limit: 10,
-        project: selectproject.project != "" ? selectproject.project : null,
-      });
-    }
-  }, [user, loading, selectproject.project]);
+useEffect(() => {
+  if (user && !loading) {
+    fetchPostSaleLeads({
+      query: "",
+      page: 1,
+      limit: 10,
+      project: selectproject.project !== "" ? selectproject.project : null,
+      // Add status parameter when needed
+      status: null, // Default to all bookings
+    });
+  }
+}, [user, loading, selectproject.project]);
 
   const cardsData = [
     {
@@ -208,6 +212,23 @@ const SuperAdminDasboard = () => {
     // Pass the filtered data via router state
     router.push(`/lead-details?status=${apiStatus}`);
   };
+
+const handleBookingClick = async (status?: string) => {
+  const apiStatus = status === "all" ? null : status;
+  const projectId = selectproject.project !== "" ? selectproject.project : null;
+  
+  // Fetch booking data with the selected status
+  await fetchPostSaleLeads({
+    query: "",
+    page: 1,
+    limit: 10,
+    status: apiStatus,
+    project: projectId,
+  });
+  
+  // Navigate to booking details with both status and projectId
+  router.push(`/super-admin/booking-details?status=${apiStatus || ''}&projectId=${projectId || ''}`);
+};
 
   //   const dashCount = {
   //     name: "Deepak Karki",
@@ -446,21 +467,25 @@ const SuperAdminDasboard = () => {
       id: 1,
       count: searchPostSaleLeadInfo?.totalItems ?? 0,
       label: "Total Booking",
+      status: "all",
     },
     {
       id: 2,
       count: searchPostSaleLeadInfo?.registrationDone ?? 0,
       label: "Reg-done",
+      status: "registrationDone",
     },
     {
       id: 3,
       count: searchPostSaleLeadInfo?.eoiRecieved ?? 0,
       label: "EOI Recieved",
+      status: "EOI Recieved",
     },
     {
       id: 4,
       count: searchPostSaleLeadInfo?.cancelled ?? 0,
       label: "Cancelled",
+      status: "Cancelled",
     },
   ];
 
@@ -608,8 +633,13 @@ const SuperAdminDasboard = () => {
       </div>
       <div className={styles.visitsection}>
         <div className={styles.viewrow} ref={visitscrollRef}>
-          {visitData.map((item) => (
-            <div key={item.id} className={styles.viewcontainer}>
+          {visitData.map((item, index) => (
+            <div
+              key={index}
+              className={styles.viewcontainer}
+              onClick={() => handleBookingClick(item.status)} // ← Add this
+              style={{ cursor: "pointer" }} // optional for pointer cursor
+            >
               <div className={styles.numsec}>{item.count}</div>
               <p>{item.label}</p>
             </div>

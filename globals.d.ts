@@ -102,7 +102,7 @@ interface Division {
 interface CallNote {
   _id?: string;
   note: string | null;
-  date: string; 
+  date: string;
   channelPartner: string | null;
 }
 
@@ -134,12 +134,12 @@ interface Task {
   details?: string;
   type?: string;
   remark?: string;
-  
-  assignDate?: string; 
+
+  assignDate?: string;
   completed?: boolean;
   completedDate?: string;
   deadline?: string;
-  
+
   remindMe?: boolean;
   reminderDate?: string;
   reminderDescription?: string;
@@ -190,7 +190,7 @@ interface Lost {
 
 interface ChannelPartnerHistory {
   _id?: string;
-  channelPartner: string;
+  channelPartner: ChannelPartner;
   status: string | null;
   stage: string | null;
   date: string | null;
@@ -231,7 +231,7 @@ interface Lead {
   visitRef?: SiteVisit;
   taskRef?: Task | null;
   revisitStatus?: string;
-  revisitRef?: string | null;
+  revisitRef?: SiteVisit;
   bookingStatus?: string;
   bookingRef?: string | null;
   followupStatus?: string;
@@ -376,26 +376,25 @@ interface LineChartData {
   leads: number;
 }
 
-
- interface RankingTurn {
+interface RankingTurn {
   id?: string;
   period?: Period;
-  startDate?: string;  
-  endDate?: string;    
-  ranking?: RankTurn[]|null;
-  timeline?: RankTurn[]|null;
+  startDate?: string;
+  endDate?: string;
+  ranking?: RankTurn[] | null;
+  timeline?: RankTurn[] | null;
 }
 
- interface Period {
+interface Period {
   id?: string;
   period?: string;
-  startDate?: string; 
-  endDate?: string;   
+  startDate?: string;
+  endDate?: string;
 }
 
- interface RankTurn {
+interface RankTurn {
   id?: string;
-  user?: Employee | null; 
+  user?: Employee | null;
   rank?: number;
   leadsShouldRecieve?: number;
   leadsGiven?: number;
@@ -428,12 +427,197 @@ interface Shift {
   type?: string;
   timeIn?: string;
   timeOut?: string;
-  workingHours?: number;      
-  graceTime?: number;         
-  graceDays?: number;          
+  workingHours?: number;
+  graceTime?: number;
+  graceDays?: number;
   multiTimeInOut?: boolean;
   status?: string;
-  absentHours?: number;        
-  employees: Employee[];      
-  regularizationDays?: number; 
+  absentHours?: number;
+  employees: Employee[];
+  regularizationDays?: number;
 }
+
+//post sale model
+//
+interface Applicant {
+  prefix?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  countryCode?: string | null;
+  phoneNumber?: number | null;
+  address?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+  email?: string | null;
+  kyc?: Kyc | null;
+}
+interface Kyc {
+  addhar?: KycDocument | null;
+  pan?: KycDocument | null;
+  other?: KycDocument | null;
+}
+
+interface KycDocument {
+  verified?: boolean;
+  document?: string | null;
+  remark?: string | null;
+  type?: string | null;
+}
+interface PreRegistrationChecklist {
+  tenPercentRecieved?: ChecklistItem | null;
+  stampDuty?: ChecklistItem | null;
+  gst?: ChecklistItem | null;
+  noc?: ChecklistItem | null;
+  tds?: ChecklistItem | null;
+  legalCharges?: ChecklistItem | null;
+  kyc?: ChecklistItem | null;
+  agreement?: Agreement | null;
+}
+interface ChecklistItem {
+  recieved?: string | null;
+  value?: number | null;
+  percent?: number | null;
+  remark?: string | null;
+}
+interface Agreement {
+  prepared?: boolean;
+  handOver?: HandOver | null;
+  document?: DocumentMeta | null;
+}
+
+interface HandOver {
+  status?: string | null;
+  document?: string | null;
+  remark?: string | null;
+}
+
+interface DocumentMeta {
+  verified?: boolean;
+  document?: string | null;
+  remark?: string | null;
+}
+interface DisbursementRecord {
+  value?: number | null;
+  percent?: number | null;
+  recievedAmount?: number | null;
+  gst?: number | null;
+  remark?: string | null;
+}
+interface CallHistoryPostSale {
+  caller?: Employee | null;
+  callDate?: string | Date | null;
+  status?: string | null;
+  stage?: string | null;
+  remark?: string | null;
+  feedback?: string | null;
+  document?: string | null;
+  recording?: string | null;
+}
+
+interface UploadedDocuments {
+  typeOfDoc?: string | null;
+  docUrl?: string | null;
+  uploadedBy?: Employee | null;
+  date?: string | Date | null;
+}
+interface PaymentDetailSchema {
+  id?: string | null;
+  label?: string | null;
+  paymentAmount?: number | null;
+  paymentDueDate?: string | Date | null;
+  receivedStatus?: boolean | null;
+  paymentReceivedDate?: string | Date | null;
+  attachment?: Attachment[];
+  remark?: string | null;
+  receivedAmount?: number | null;
+}
+
+interface Attachment {
+  document?: string | null;
+}
+interface PostSaleLead {
+  _id?: string;
+  unitNo?: string | null;
+  floor?: number | null;
+  buildingNo?: number | null;
+  number?: number | null;
+  project?: OurProject | null;
+
+  firstName?: string | null;
+  lastName?: string | null;
+  requirement?: string | null;
+  countryCode?: string | null;
+  phoneNumber?: number | null;
+  address?: string | null;
+  email?: string | null;
+
+  date?: string | Date | null;
+  carpetArea?: number | null;
+  sellableCarpetArea?: number | null;
+  flatCost?: number | null;
+
+  closingManager?: Employee | null;
+  postSaleExecutive?: Employee | null;
+  closingManagerTeam?: Employee[];
+  postSaleAssignTo?: Employee[];
+
+  bookingStatus?: BookingStatus | null;
+
+  applicants?: Applicant[];
+  preRegistrationCheckList?: PreRegistrationChecklist | null;
+  disbursementRecord?: DisbursementRecord[];
+  allInclusiveAmount?: number | null;
+  totalAmount?: number | null;
+  cgstAmount?: number | null;
+  netAmount?: number | null;
+  stampDutyAmount?: number | null;
+  tdsAmount?: number | null;
+
+  registrationDone?: boolean;
+  status?: string | null;
+
+  bookingCancelRemark?: string | null;
+  bookingCancelDate?: string | Date | null;
+
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+
+  bookingFormFront?: string | null;
+  bookingFormBack?: string | null;
+  bookingPdf?: string | null;
+
+  registrationDoneDate?: string | Date | null;
+  callHistory?: CallHistoryPostSale[];
+  parking?: Parking[];
+
+  agreementValue?: number | null;
+  stampDutyValue?: number | null;
+  gstValue?: number | null;
+  roundedAgreementValue?: number | null;
+  roundedStampDutyValue?: number | null;
+  roundedGstValue?: number | null;
+  adjustedStampDutyAmt?: number | null;
+  totalValue?: number | null;
+  roundedAdjustedStampDuty?: number | null;
+  costSheetUrl?: string | null;
+  uploadedDocuments?: UploadedDocuments[];
+  floorRise?: number | null;
+  pricingRemark?: string | null;
+
+  paymentOneAmt?: number | null;
+  paymentTwoAmt?: number | null;
+  paymentThreeAmt?: number | null;
+  paymentOneDueDate?: string | Date | null;
+  paymentTwoDueDate?: string | Date | null;
+  paymentThreeDueDate?: string | Date | null;
+  paymentScheme?: string | null;
+
+  paymentFourAmt?: number | null;
+  paymentFourDueDate?: string | Date | null;
+  paymentDetailSchema?: PaymentDetailSchema[];
+}
+//

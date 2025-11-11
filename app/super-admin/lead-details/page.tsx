@@ -116,6 +116,7 @@ const LeadDetailsPage = () => {
     clientStatus: "",
     leadStatus: "",
     cycleStatus: 0,
+    propertyType: "",
     dateFrom: "",
     dateTo: "",
   });
@@ -167,17 +168,20 @@ const LeadDetailsPage = () => {
   //   }
   // }, [status]);
 
-    // Function to handle filter application
-  const handleApplyFilters = useCallback((filterParams: any) => {
-    // Reset to page 1 when applying new filters
-    fetchSearchLeads({
-      query: debouncedSearchQuery,
-      page: 1,
-      limit: 10,
-      status: status === "all" ? null : status,
-      ...filterParams, // Spread the filter parameters
-    });
-  }, [debouncedSearchQuery, status, fetchSearchLeads]);
+  // Function to handle filter application
+  const handleApplyFilters = useCallback(
+    (filterParams: any) => {
+      // Reset to page 1 when applying new filters
+      fetchSearchLeads({
+        query: debouncedSearchQuery,
+        page: 1,
+        limit: 10,
+        status: status === "all" ? null : status,
+        ...filterParams, // Spread the filter parameters
+      });
+    },
+    [debouncedSearchQuery, status, fetchSearchLeads]
+  );
 
   // Function to clear all filters
   const handleClearFilters = useCallback(() => {
@@ -189,10 +193,11 @@ const LeadDetailsPage = () => {
       clientStatus: "",
       leadStatus: "",
       cycleStatus: 0,
+      propertyType: "",
       dateFrom: "",
       dateTo: "",
     });
-    
+
     // Fetch without any filters
     fetchSearchLeads({
       query: debouncedSearchQuery,
@@ -203,7 +208,7 @@ const LeadDetailsPage = () => {
   }, [debouncedSearchQuery, status, fetchSearchLeads]);
 
   // Initial data fetch with status from URL
-   useEffect(() => {
+  useEffect(() => {
     if (user && !loading) {
       console.log("Initial fetch with status:", status);
       fetchSearchLeads({
@@ -227,7 +232,6 @@ const LeadDetailsPage = () => {
       });
     }
   }, [debouncedSearchQuery, user, loading, status]);
-  
 
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -244,7 +248,7 @@ const LeadDetailsPage = () => {
     //   endDateDeadline: newFilters.dateTo || null,
     //   page: 1,
     // });
-     // Apply filters with search
+    // Apply filters with search
     fetchSearchLeads({
       query: debouncedSearchQuery,
       page: 1,
@@ -337,13 +341,18 @@ const LeadDetailsPage = () => {
         await fetchSearchLeads({
           query: debouncedSearchQuery,
           page: nextPage,
-          limit: 10,  
+          limit: 10,
           status: status === "all" ? null : status,
-
         });
       }
     }
-  }, [searchLeadInfo, selectedFilter, fetchSearchLeads, debouncedSearchQuery, status]);
+  }, [
+    searchLeadInfo,
+    selectedFilter,
+    fetchSearchLeads,
+    debouncedSearchQuery,
+    status,
+  ]);
 
   // const fetchLeads = () => {
   //   fetchTeamLeaderReportingToLeads({
@@ -500,18 +509,21 @@ const LeadDetailsPage = () => {
             {leads?.map((visit, index) => (
               <div
                 key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
-                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                  }`}
+                className={`${styles.visitCard} ${
+                  SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                }`}
                 onClick={() => {
                   setSelectedLead(visit);
 
                   // router.push(`/super-admin/lead-details?id=${visit._id}`, {
                   //   scroll: false,
                   // });
-                  router.push(`/lead-details?status=${status}&id=${visit._id}`, {
-
-                    scroll: false,
-                  });
+                  router.push(
+                    `/lead-details?status=${status}&id=${visit._id}`,
+                    {
+                      scroll: false,
+                    }
+                  );
                 }}
               >
                 <div className={styles.tag}></div>
@@ -572,8 +584,9 @@ const LeadDetailsPage = () => {
                     </div>
 
                     <span className={styles.taskName}>
-                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                        }`}
+                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                        visit.taskRef?.assignTo?.lastName ?? ""
+                      }`}
                       <span className={styles.status}>
                         <span
                           className={styles.statusText}
@@ -721,13 +734,15 @@ const LeadDetailsPage = () => {
                     />
                   )}
 
-                  {activeTab === "access" && <QuickAccess />}
+                  {activeTab === "access" && <QuickAccess />}c
 
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
                   )}
                   {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
-                  {activeTab === "siteVisit" && <VisitHistory lead={SelectedLead} />}
+                  {activeTab === "siteVisit" && (
+                    <VisitHistory lead={SelectedLead} />
+                  )}
                   {activeTab === "transfer" && (
                     <TransferHistory
                       cycleHistory={SelectedLead?.cycleHistoryNew}
@@ -761,40 +776,45 @@ const LeadDetailsPage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "siteVisit" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
                       <FaMapMarkedAlt className={styles.icon} /> Site Visit
@@ -802,16 +822,18 @@ const LeadDetailsPage = () => {
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "transfer" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "booking" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("booking")}
                     >
                       <FaFileContract className={styles.icon} /> Booking
@@ -830,17 +852,17 @@ const LeadDetailsPage = () => {
         </div>
 
         {/* Filter Dialog */}
-       <LeadFilterDialog
-        open={showFilterDialog}
-        onClose={() => setShowFilterDialog(false)}
-        onOpenChange={setShowFilterDialog}
-        filters={filters}
-        onFiltersChange={setFilters}
-        onClearFilters={handleClearFilters}
-        onApplyFilters={handleApplyFilters} // Pass the apply function
-        visits={leads || []}
-        resultCount={leads?.length || 0}
-      />
+        <LeadFilterDialog
+          open={showFilterDialog}
+          onClose={() => setShowFilterDialog(false)}
+          onOpenChange={setShowFilterDialog}
+          filters={filters}
+          onFiltersChange={setFilters}
+          onClearFilters={handleClearFilters}
+          onApplyFilters={handleApplyFilters} // Pass the apply function
+          visits={leads || []}
+          resultCount={leads?.length || 0}
+        />
 
         {/* Edit Dialog */}
         {showEditDialog && (
@@ -885,18 +907,18 @@ const LeadDetailsPage = () => {
           </button>
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-          {leads?.map((visit) => (
+          {leads?.map((visit, index) => (
             <div
-              key={visit._id}
+              key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+              // key={visit._id}
               className={`${styles.visitCard}`}
-              // className={`${styles.visitCard} ${
-              //   SelectedLead?._id === visit?._id ? styles.selectedCard : ""
-              // }`}
               onClick={() => {
                 setSelectedLead(visit);
 
+                // router.push(`/super-admin/lead-details?id=${visit._id}`, {
+                //   scroll: false,
+                // });
                 router.push(`/lead-details?status=${status}&id=${visit._id}`, {
-
                   scroll: false,
                 });
               }}
@@ -911,12 +933,12 @@ const LeadDetailsPage = () => {
                 />
                 <div className={styles.clientDetails}>
                   {/* <p className={styles.trns}>Transferred From</p> */}
-                  <p className={styles.trnsname}>Vicky</p>
+                  {/* <p className={styles.trnsname}>Vicky</p> */}
                   <div className={styles.namecl}>
                     {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                   </div>
                   <p className={styles.phone}>
-                    {visit?.countryCode ?? "91"} {visit?.phoneNumber}
+                    {visit?.countryCode ?? "91"} {visit?.phoneNumber ?? "NA"}
                   </p>
                 </div>
               </div>
@@ -925,7 +947,9 @@ const LeadDetailsPage = () => {
                 <p>
                   Assign Date:{" "}
                   {visit.cycle?.startDate ? (
-                    <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.startDate ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -933,7 +957,9 @@ const LeadDetailsPage = () => {
                 <p>
                   Visit Deadline:{" "}
                   {visit.cycle?.validTill ? (
-                    <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                    <span>
+                      {formatDate(new Date(visit.cycle.validTill ?? "NA"))}
+                    </span>
                   ) : (
                     <span>Not available</span>
                   )}
@@ -953,8 +979,9 @@ const LeadDetailsPage = () => {
                   </div>
 
                   <span className={styles.taskName}>
-                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                      }`}
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                      visit.taskRef?.assignTo?.lastName ?? ""
+                    }`}
                     <span className={styles.status}>
                       <span
                         className={styles.statusText}
@@ -1022,17 +1049,19 @@ const LeadDetailsPage = () => {
                   </div> */}
             </div>
           ))}
-          {hasMoreRef.current && (
-            <div className={styles.loadMoreContainer}>
-              <button
-                className={styles.loadMoreBtn}
-                onClick={() => loadMoreLeads}
-                disabled={loadingRef.current}
-              >
-                {loadingRef.current ? "Loading..." : ""}
-              </button>
-            </div>
-          )}
+          {searchLeadInfo?.page &&
+            searchLeadInfo.totalPages &&
+            searchLeadInfo.page < searchLeadInfo.totalPages && (
+              <div className={styles.loadMoreContainer}>
+                <button
+                  className={styles.loadMoreBtn}
+                  onClick={loadMoreLeads}
+                  disabled={loadingLeads}
+                >
+                  {loadingLeads ? "Loading..." : ""}
+                </button>
+              </div>
+            )}
         </div>
       </div>
     );
@@ -1047,16 +1076,14 @@ const LeadDetailsPage = () => {
         <div className={styles.headerInfo}>
           <button
             className={styles.backBtn}
+            onClick={() => {
+              setSelectedLead(null);
+              const apiStatus = status === "all" ? null : status;
 
-            // onClick={() => {
-            //   setSelectedLead(null);
-
-            //   router.push(`/lead-details?status=${status}&id=${visit._id}`, {
-            //     scroll: false,
-            //   });
-
-            // }}
-
+              router.push(`/lead-details?status=${apiStatus}`, {
+                scroll: false,
+              });
+            }}
           >
             <ArrowLeft className={styles.backIcon} />
           </button>
@@ -1137,56 +1164,63 @@ const LeadDetailsPage = () => {
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "overview" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "access" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "taskDetails" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "followup" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "siteVisit" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "transfer" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("transfer")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "booking" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("booking")}
               >
                 <FaFileContract className={styles.icon} /> Booking Overview
@@ -1222,12 +1256,10 @@ const LeadDetailsPage = () => {
 
           {activeTab === "followup" && <FollowUp lead={SelectedLead} />}
 
-          {activeTab === "siteVisit" && <VisitHistory />}
+          {activeTab === "siteVisit" && <VisitHistory lead={SelectedLead} />}
 
           {activeTab === "transfer" && (
-            <TransferHistory
-              cycleHistory={SelectedLead?.cycleHistoryNew}
-            />
+            <TransferHistory cycleHistory={SelectedLead?.cycleHistoryNew} />
           )}
 
           {activeTab === "booking" && (
@@ -1444,7 +1476,9 @@ const VisitDetailsContent = ({
                   <IoIosPerson size={12} color="#4a84ff" />
                   Property Type
                 </label>
-                <p className={styles.infoValue}>{visit?.propertyType ?? "NA"}</p>
+                <p className={styles.infoValue}>
+                  {visit?.propertyType ?? "NA"}
+                </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
