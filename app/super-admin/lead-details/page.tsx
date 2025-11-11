@@ -509,6 +509,7 @@ const LeadDetailsPage = () => {
             {leads?.map((visit, index) => (
               <div
                 key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
+                
                 className={`${styles.visitCard} ${
                   SelectedLead?._id === visit._id ? styles.selectedCard : ""
                 }`}
@@ -623,7 +624,7 @@ const LeadDetailsPage = () => {
                     ) : null}
                     <div
                       style={{
-                        backgroundColor: "rgba(3, 84, 214, 1)",
+                        backgroundColor: "#387478",
                       }}
                       className={styles.clientStatus}
                     >
@@ -734,7 +735,7 @@ const LeadDetailsPage = () => {
                     />
                   )}
 
-                  {activeTab === "access" && <QuickAccess />}c
+                  {activeTab === "access" && <QuickAccess />}
 
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
@@ -1020,7 +1021,7 @@ const LeadDetailsPage = () => {
                   )}
                   <div
                     style={{
-                      backgroundColor: "rgba(3, 84, 214, 1)",
+                      backgroundColor: "#387478",
                     }}
                     className={styles.clientStatus}
                   >
