@@ -380,6 +380,7 @@ type DataProviderState = {
   salesDashCount: DashboardCount | null;
   siteInfo: PaginationProps | null;
   visits: SiteVisit[] | null;
+  timer: string | null;
   channelPartners: ChannelPartner[];
   searchLeadInfo: PaginationProps | null;
   searchPostSaleLeadInfo: PaginationProps | null;
@@ -536,6 +537,9 @@ type DataProviderState = {
 
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
 
+  updateFeedbackWithTimer: () => Promise<{ success: boolean; message?: string }>;
+
+
 };
 
 //initial values should define here
@@ -558,6 +562,7 @@ const initialState: DataProviderState = {
 
   siteInfo: null,
   visits: null,
+  timer: null,
   dashCount: null,
   closingManagerAllGraph: null,
   salesDashCount: null,
@@ -659,7 +664,9 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-  updateLeadDetails: async () => ({
+  updateLeadDetails: async () => ({success: false,
+    message: "Not initialized",
+  }),
 
   getClosingManagers: async () => ({
 
@@ -669,6 +676,12 @@ const initialState: DataProviderState = {
 
 
   getDataEntryEmployees: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  updateFeedbackWithTimer: async () => ({
+
     success: false,
     message: "Not initialized",
   }),
@@ -741,6 +754,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
   const [siteInfo, setVisitInfo] = useState<PaginationProps | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
+  const [timer, setTimer] = useState<string| null>(null);
+  
   const [loadingChannelPartners, setLoadingChannelPartners] =
     useState<boolean>(false);
   const [channelPartners, setChannelPartners] = useState<ChannelPartner[]>([]);
@@ -765,6 +780,42 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee | null>(null);
 
+  const updateFeedbackWithTimer = async (): Promise<{ success: boolean; message?: string }> => {
+  try {
+    const response = await fetchAdapter('/api/update-feedback-timer-v2');
+
+    // if (response.data.code !== 200) {
+    //   // showCustomSnackBar(response.data.message);
+    //   return null;
+    // }
+    
+    // showCustomSnackBar(response.data.message, 'green');
+    console.log(response);
+      const reqs = response?.data || [];
+      setTimer(reqs); // ✅ update state
+
+   return { success: true };
+  } catch (error: any) {
+    console.log(error);
+    let errorMessage = 'Something went wrong';
+
+    if (error.response) {
+      // Backend response error message
+      errorMessage = error.response?.data?.message || errorMessage;
+    } else {
+      errorMessage = error.message || errorMessage;
+    }
+    
+    // Prevent literal 'null' from showing
+    if (errorMessage.trim().toLowerCase() === 'null') {
+      errorMessage = 'Something went wrong';
+    }
+    
+    // showCustomSnackBar(errorMessage);
+      return { success: false, message: errorMessage };
+
+  }
+};
 
  const getClosingManagers = async () => {
   try {
@@ -2474,6 +2525,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     closingManagerAllGraph: closingManagerAllGraph,
     siteInfo: siteInfo,
     visits: visits,
+    timer: timer,
     leads: leads,
     postSaleleads: postSaleleads,
     teamOverview: teamOverview,
@@ -2533,6 +2585,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadByBookingId: getLeadByBookingId,
     updateLeadDetails: updateLeadDetails,
     getDataEntryEmployees: getDataEntryEmployees,
+     updateFeedbackWithTimer: updateFeedbackWithTimer,
   };
 
   return (

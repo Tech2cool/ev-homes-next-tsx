@@ -27,6 +27,7 @@ import { useUser } from "@/providers/userContext";
 import FeedbackTwo from "./Dailog/feedbacktwo";
 interface QuickAccessProps {
   lead?: Lead | null;
+  task?: Task | null;
 }
 
 const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
@@ -122,7 +123,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
 
       {showfb &&
         (lead?.callHistory && lead.callHistory.length > 0 ? (
-          <FeedbackTwo openclick={setshowfb} />
+          <FeedbackTwo openclick={setshowfb} lead={lead} task={lead.taskRef} />
         ) : (
           <AddFeedBaack openclick={setshowfb} lead={lead} />
         ))}
