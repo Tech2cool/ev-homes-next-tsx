@@ -149,6 +149,7 @@ const LeadDetailsPage = () => {
     leads,
     loadingLeads,
     fetchingMoreLeads,
+    updateLeadDetails,
   } = useData();
 
   const socket = getSocket();
@@ -733,9 +734,7 @@ const LeadDetailsPage = () => {
                       user={user}
                     />
                   )}
-
                   {activeTab === "access" && <QuickAccess />}c
-
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
                   )}
@@ -867,12 +866,21 @@ const LeadDetailsPage = () => {
         {/* Edit Dialog */}
         {showEditDialog && (
           <EditDialog
-            visit={editFormData}
+            visit={SelectedLead}
             onClose={() => setShowEditDialog(false)}
-            onSave={(updatedVisit: any) => {
-              console.log("Saving visit:", updatedVisit);
-              setSelectedLead(updatedVisit);
-              setShowEditDialog(false);
+            onSave={async (payload) => {
+              const response = await updateLeadDetails(
+                SelectedLead?._id ?? "",
+                payload
+              );
+
+              console.log(response);
+              if (response.success) {
+                // setSelectedLead(response);
+                setShowEditDialog(false);
+              } else {
+                console.error(response.message);
+              }
             }}
           />
         )}

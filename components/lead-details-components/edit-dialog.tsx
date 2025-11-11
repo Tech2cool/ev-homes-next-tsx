@@ -1,27 +1,46 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, Save, User, Building, Edit } from "lucide-react";
 import styles from "./dialog.module.css";
 import { useData } from "@/providers/dataContext";
+import { BsBuildingFill } from "react-icons/bs";
+import Select, { MultiValue } from "react-select";
 
 // Assuming you have a DataContext - adjust the import path as needed
 // import { DataContext } from '@/context/DataContext';
 
-const EditDialog = ({ visit, onClose, onSave }: any) => {
+interface EditDialogProps {
+  visit: Lead | null; // or use your Lead type
+  onClose: () => void;
+  onSave: (data: any) => void;
+}
+
+const EditDialog = ({ visit, onClose, onSave }: EditDialogProps) => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    project: "",
-    requirement: "",
-    notes: "",
-    // ...visit,
+    firstName: visit?.firstName ?? "",
+    lastName: visit?.lastName ?? "",
+    project:
+      visit?.project?.map((p: any) => ({
+        value: p._id || p.value,
+        label: p.name || p.projectName || p.label,
+      })) || [],
+    requirement:
+      visit?.requirement?.map((r: any) => ({
+        value: r._id || r.value || r,
+        label: r.requirementName?.toUpperCase() || r.label || r.toUpperCase(),
+      })) || [],
+
+    nameRemark: "",
   });
+
+  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
 
   const [errors, setErrors] = useState<any>({});
   const {
     getProjects,
     projects,
-
+    getRequirements,
+    requirements,
     // fetchingMoreVisits,
     // loadingVisits,
   } = useData();
@@ -33,34 +52,21 @@ const EditDialog = ({ visit, onClose, onSave }: any) => {
   //   const [projects, setProjects] = useState([])
 
   // Requirement options
-  const requirementOptions = [
-    { value: "1bhk", label: "1 BHK" },
-    { value: "1rk", label: "1 RK" },
-    { value: "2bhk", label: "2 BHK" },
-    { value: "3bhk", label: "3 BHK" },
-    { value: "4bhk", label: "4 BHK" },
-    { value: "jodi", label: "Jodi" },
+  const requirementOptions =
+    requirements.map((r: string) => ({
+      value: r,
+      label: r.toUpperCase(),
+    })) ?? [];
 
-
-  ];
+  const projectOptions = projects.map((p: any) => ({
+    value: p._id,
+    label: p.name,
+  }));
 
   useEffect(() => {
-    // Fetch projects when component mounts
-    // If you have getProjects in context, call it here
     getProjects();
 
-    // Mock API call - replace with your actual implementation
-    // const fetchProjects = async () => {
-    //   try {
-    //     const response = await fetch("/api/getProjects")
-    //     const data = await response.json()
-    //     setProjects(data)
-    //   } catch (error) {
-    //     console.error("Error fetching projects:", error)
-    //   }
-    // }
-
-    // fetchProjects()
+    getRequirements();
   }, []);
 
   const handleInputChange = (field: any, value: any) => {
@@ -69,7 +75,6 @@ const EditDialog = ({ visit, onClose, onSave }: any) => {
       [field]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev: any) => ({
         ...prev,
@@ -87,21 +92,29 @@ const EditDialog = ({ visit, onClose, onSave }: any) => {
     if (!formData.lastName?.trim()) {
       newErrors.lastName = "Last name is required";
     }
-    if (!formData.project) {
-      newErrors.project = "Project is required";
-    }
-    if (!formData.requirement) {
-      newErrors.requirement = "Requirement is required";
-    }
+    // if (!formData.project) {
+    //   newErrors.project = "Project is required";
+    // }
+    // if (!formData.requirement) {
+    //   newErrors.requirement = "Requirement is required";
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
-    if (validateForm()) {
-      onSave(formData);
-    }
+  const handleSave = async () => {
+    if (!validateForm()) return;
+
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      project: formData?.project?.map((p) => p.value), // Extract IDs
+      requirement: formData?.requirement.map((r) => r.value), // Extract requirement values
+      nameRemark: formData.nameRemark,
+    };
+
+    onSave(payload);
   };
 
   const handleOverlayClick = (e: any) => {
@@ -109,7 +122,59 @@ const EditDialog = ({ visit, onClose, onSave }: any) => {
       onClose();
     }
   };
-
+  const customSelectStyles = useMemo(
+    () => ({
+      control: (base: any) => ({
+        ...base,
+        backgroundColor: currentTheme === "dark" ? "#151414f5" : "transparent",
+        borderColor: currentTheme === "dark" ? "#444444f5" : "#927fbff5",
+        minHeight: "40px",
+        borderWidth: "2px",
+        color: currentTheme === "dark" ? "white" : "#201f1f",
+      }),
+      menu: (base: any) => ({
+        ...base,
+        backgroundColor: currentTheme === "dark" ? "#151414f5" : "white",
+      }),
+      option: (base: any, state: any) => ({
+        ...base,
+        backgroundColor: state.isSelected
+          ? currentTheme === "dark"
+            ? "#007bff"
+            : "#cce5ff"
+          : state.isFocused
+          ? currentTheme === "dark"
+            ? "#e6f0ff"
+            : "#f0f0f0"
+          : currentTheme === "dark"
+          ? "#fff"
+          : "#fff",
+        color: state.isSelected
+          ? currentTheme === "dark"
+            ? "white"
+            : "#201f1f"
+          : "black",
+      }),
+      multiValue: (base: any) => ({
+        ...base,
+        backgroundColor: currentTheme === "dark" ? "#007bff" : "#cce5ff",
+        color: currentTheme === "dark" ? "white" : "#201f1f",
+      }),
+      multiValueLabel: (base: any) => ({
+        ...base,
+        color: currentTheme === "dark" ? "white" : "#201f1f",
+      }),
+      multiValueRemove: (base: any) => ({
+        ...base,
+        color: currentTheme === "dark" ? "white" : "#201f1f",
+        ":hover": {
+          backgroundColor: "red",
+          color: "white",
+        },
+      }),
+    }),
+    [currentTheme]
+  );
   return (
     <div className={styles.dialogOverlay} onClick={handleOverlayClick}>
       <div className={styles.dialogContainer}>
@@ -178,57 +243,57 @@ const EditDialog = ({ visit, onClose, onSave }: any) => {
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Project *</label>
-                <select
-                  value={formData.project || ""}
-                  onChange={(e) => handleInputChange("project", e.target.value)}
-                  className={`${styles.formSelect} ${errors.project ? styles.formInputError : ""}`}
-                >
-                  {/* <option value="">Select project</option> */}
-                  {projects.map((project: any) => (
-                    <option key={project._id} value={project._id}>
-                      {project.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.project && (
-                  <span className={styles.errorText}>{errors.project}</span>
+                <Select
+                  isMulti
+                  options={projectOptions}
+                  value={formData?.project}
+                  onChange={(
+                    selected: MultiValue<{ value: string; label: string }>
+                  ) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      projects: [...selected],
+                    }));
+                  }}
+                  styles={customSelectStyles}
+                />
+                {errors.projects && (
+                  <p className={styles.errorMsg}>{errors.projects}</p>
                 )}
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Requirement *</label>
-                <select
-                  id="requirements"
-                  value={formData.requirement || ""}
-                  onChange={(e) =>
-                    handleInputChange("requirement", e.target.value)
-                  }
-                  className={`${styles.formSelect} ${
-                    errors.requirement ? styles.formInputError : ""
-                  }`}
-                >
-                  {/* <option value="">Select requirement</option> */}
-                  {requirementOptions.map((option, index) => (
-                    <option key={index} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.requirement && (
-                  <span className={styles.errorText}>{errors.requirement}</span>
+                <label>
+                  <label className={styles.formLabel}>Requirement *</label>
+                </label>
+                <Select
+                  isMulti
+                  options={requirementOptions}
+                  value={formData?.requirement}
+                  onChange={(
+                    selected: MultiValue<{ value: string; label: string }>
+                  ) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      requirements: [...selected], // spread into a mutable array
+                    }));
+                  }}
+                  styles={customSelectStyles}
+                />
+                {errors.requirements && (
+                  <p className={styles.errorMsg}>{errors.requirements}</p>
                 )}
               </div>
-
               <div
                 className={styles.formGroup}
                 style={{ gridColumn: "1 / -1" }}
               >
-                <label className={styles.formLabel}>Notes</label>
+                <label className={styles.formLabel}>Additional Note</label>
                 <textarea
-                  value={formData.notes || ""}
+                  value={formData.nameRemark || ""}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                   className={styles.formTextarea}
-                  placeholder="Enter additional notes"
+                  placeholder="Enter additional note"
                   rows={4}
                 />
               </div>

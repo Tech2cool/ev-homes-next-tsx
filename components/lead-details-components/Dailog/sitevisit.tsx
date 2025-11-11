@@ -12,6 +12,7 @@ import { LocateIcon } from "lucide-react";
 import { IoMdTime } from "react-icons/io";
 import { SiOpensourcehardware } from "react-icons/si";
 import { CgNotes } from "react-icons/cg";
+import { useData } from "@/providers/dataContext";
 
 
 interface SiteVisitProps {
@@ -49,6 +50,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
   const currentTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
 
   const dialogRef = useRef<HTMLDivElement>(null);
+
+
+  const {getDataEntryEmployees, dataEntryUsers}=useData();
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -74,6 +78,12 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
     prefix: "",
   });
 
+
+
+
+  useEffect(()=>{
+// getDataEntryEmployees();
+  }),[];
   // Dropdown Options
   const userOptions = [
     { value: "deepak", label: "Deepak Karki" },
