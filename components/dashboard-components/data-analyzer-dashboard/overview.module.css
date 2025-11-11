@@ -39,7 +39,7 @@
 :global(html.light) .card {
   background: #fffdff;
 
-  box-shadow: 0 2px 20px #01043333;
+  box-shadow: 0 1px 15px #01043313;
 }
 
 .card::before {
@@ -83,7 +83,7 @@
   position: absolute;
   bottom: 5px;
   right: 8px;
-  font-size: 60px;
+  font-size: 40px;
   color: rgba(255, 255, 255, 0.05);
   z-index: 2;
 }
@@ -138,7 +138,7 @@
 }
 
 :global(html.light) .label {
-  color: #5c5c6e;
+  color: #524747;
 }
 
 .value {
@@ -149,15 +149,17 @@
 }
 
 :global(html.light) .value {
-  color: #393943;
+  color: #272424;
 }
 
 .arrows {
   display: none;
 }
-.hint{
+
+.hint {
   display: none;
 }
+
 @media (max-width: 768px) {
 
   .tapsection {
@@ -167,39 +169,41 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
+
   .hint {
-  display: flex;
-  justify-content: center;
- 
-}
- .hintcontainer {
-  position: relative;
-  width: 20%;
-  height: 1.5vh;
-  background: linear-gradient(90deg, #060d5a, #4a62d8);
-  border-radius: 999px;
-}
+    display: flex;
+    justify-content: center;
 
-.starWrapper {
-  position: absolute;
-  top: -3px;
-  font-size: 10px;
-  left: 0;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-  color: gold;
-}
+  }
 
-.star {
+  .hintcontainer {
+    position: relative;
+    width: 20%;
+    height: 1.5vh;
+    background: linear-gradient(90deg, #060d5a, #4a62d8);
+    border-radius: 999px;
+  }
 
-  display: inline-block;
-  color: gold;
-  transition: transform 0.1s linear;
-  transform-origin: center;
-   font-size: 11px;
-}
+  .starWrapper {
+    position: absolute;
+    top: -3px;
+    font-size: 10px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    color: gold;
+  }
+
+  .star {
+
+    display: inline-block;
+    color: gold;
+    transition: transform 0.1s linear;
+    transform-origin: center;
+    font-size: 11px;
+  }
 
 
   .arrows {
@@ -348,11 +352,13 @@
     height: 140px;
     flex: 0 0 auto;
   }
-:global(html.light) .card {
-  background: #ffffffde;
 
-  box-shadow: 0 2px 10px #01043333;
-}
+  :global(html.light) .card {
+    background: #ffffffde;
+
+    box-shadow: 0 2px 10px #01043333;
+  }
+
   .iconContainer {
     font-size: 25px;
     width: 22px;
@@ -448,9 +454,9 @@
 .ding {
   background-color: #b028ef39;
   color: white;
-  padding: 6px 20px 6px 12px;
+  padding: 4px 20px 4px 12px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   position: relative;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -464,18 +470,21 @@
   right: -12px;
   width: 0;
   height: 0;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid transparent;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
   border-left: 12px solid #b028ef39;
 }
 
 
 :global(html.light) .ding {
-  background-color: #280659;
+  background: linear-gradient(135deg,
+     
+      #C1785A);
+
 }
 
 :global(html.light) .ding::after {
-  border-left: 12px solid #280659;
+  border-left: 12px solid #C1785A;
 }
 
 @media (max-width: 768px) and (min-width:481px) {
@@ -542,7 +551,7 @@
 :global(html.light) .viewcontainer {
   background: white;
   border: none;
-  box-shadow: 0 4px 20px #01043333;
+  box-shadow: 0 2px 20px #adaeb433;
 
 }
 
@@ -567,6 +576,13 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+:global(html.light) .numsec {
+  background: linear-gradient(135deg, #3f96ae,#173B45);
+    box-shadow: 0 2px 10px rgba(235, 231, 231, 0.4);
+
+
+}
+
 
 .viewcontainer p {
   margin-top: 25px;
@@ -582,7 +598,7 @@
 }
 
 :global(html.light) .viewcontainer p {
-  color: #393943;
+  color: #2C061F;
   font-weight: 600;
 }
 
@@ -702,8 +718,9 @@
 }
 
 :global(html.light) .cardtarget {
-  background: linear-gradient(135deg, #5c36e4c1, #b028efdc);
-  border-bottom: 2px solid rgba(194, 137, 255, 0.2);
+ background: linear-gradient(135deg, #7469B6,#7469B6);
+    border-bottom: 2px solid rgba(194, 137, 255, 0.2);
+     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   border: none;
 
 }
@@ -737,7 +754,7 @@
 }
 
 :global(html.light) .bottomSheet {
-  background: linear-gradient(135deg, #5c36e4, #b028ef);
+ background: linear-gradient(135deg, #a193ef,#aaa8bb);
   border-bottom: 2px solid rgba(194, 137, 255, 0.2);
   border: none;
   box-shadow: none;
@@ -970,6 +987,10 @@
   z-index: 1;
 }
 
+:global(html.light) .donut::before {
+  background: linear-gradient(135deg, #435663, #313647);
+}
+
 .iconBg {
   position: absolute;
   z-index: 1;
@@ -1003,8 +1024,7 @@
 }
 
 :global(html.light) .targetcontainer {
-  background-color: #392f5a;
-
+  background: linear-gradient(135deg, #A3B087, #A3B087);
 }
 
 .texttarget {
@@ -1076,7 +1096,7 @@
 }
 
 :global(html.light) .filter {
-  background-color: rgb(59, 67, 84);
+  background: linear-gradient(135deg, #435663, #313647);
 }
 
 .yearSelector select {
