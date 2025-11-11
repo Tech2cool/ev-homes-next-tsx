@@ -247,7 +247,10 @@ const Brokerage = () => {
                             <label>Sellable Carpet Area</label>
                             <input type="text" name="sellableCarpet" value={formData.sellableCarpet} onChange={onChangeField} />
                         </div>
-                        <div className={styles.formControl}>
+                       
+                    </div>
+                    <div className={styles.card}>
+                         <div className={styles.formControl}>
                             <label>Total Parking</label>
                             <input type="text" name="totalParking" value={formData.totalParking} onChange={onChangeField} />
                         </div>

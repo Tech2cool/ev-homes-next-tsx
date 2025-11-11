@@ -5,12 +5,12 @@ import styles from "./reportssection.module.css";
 import { useData } from "@/providers/dataContext";
 
 const STAGE_COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#FF6347",
-  "#FF4500",
+  "#ABE7B2",
+  "#b5d5ebff",
+  "#fcee96ff",
+  "rgba(223, 174, 106, 1)",
+  "#c5917fff",
+  "#e1a9e8ff",
   "#9370DB",
   "#32CD32",
   "#FF69B4",
@@ -19,9 +19,9 @@ const STAGE_COLORS = [
 const funnelStages = [
   { stage: "Site Visits", count: 2000, color: "#0088FE" },
   { stage: "Visited", count: 800, color: "#00C49F" },
-  { stage: "Revisited", count: 600, color: "#FFBB28" },
-  { stage: "Approved", count: 300, color: "#FF8042" },
-  { stage: "Booked", count: 30, color: "#FF6347" },
+  { stage: "Revisited", count: 600, color: "#FF4545" },
+  { stage: "Approved", count: 300, color: "#FF7D29" },
+  { stage: "Booked", count: 30, color: "#ABE7B2" },
   { stage: "Rejected", count: 10, color: "#FF4500" },
 ];
 

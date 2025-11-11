@@ -1193,7 +1193,7 @@ const Salesdetaispage = () => {
                 <FaFileContract className={styles.icon} /> Booking Overview
               </button>
             </div>
-            {SelectedLead.approvalStatus === "pending" && (
+            {/* {SelectedLead.approvalStatus === "pending" && (
               <button
                 className={styles.approveBtn}
                 onClick={() => setShowApprovalDialog(true)}
@@ -1201,7 +1201,7 @@ const Salesdetaispage = () => {
                 <Check className={styles.btnIcon} />
                 Approve/Reject
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </div>

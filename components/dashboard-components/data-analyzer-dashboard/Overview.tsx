@@ -33,7 +33,6 @@ const SectionTap = () => {
   } = useData();
   const { user, loading } = useUser();
   const router = useRouter();
- 
 
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,6 +61,25 @@ const SectionTap = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const starRef = useRef<HTMLSpanElement>(null);
   const starvisitRef = useRef<HTMLSpanElement>(null);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      setIsLight(document.documentElement.classList.contains("light"));
+    }
+
+    const observer = new MutationObserver(() => {
+      const lightMode = document.documentElement.classList.contains("light");
+      setIsLight(lightMode);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const [loadingTarget, setLoadingTarget] = useState(false);
 
@@ -70,8 +88,6 @@ const SectionTap = () => {
       console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
     }
   }, [asssignFeedbackInfo]);
-
- 
 
   useEffect(() => {
     if (user && !loading) {
@@ -95,70 +111,131 @@ const SectionTap = () => {
       });
     }
   }, []);
-
   const cardsData = [
     {
       label: "Total Leads",
       value: searchLeadInfo?.totalItems ?? 0,
-      // linkHref: "/lead-details?status=all",
       status: "all",
       icon: <FaUsers />,
-      color: "#ad82f2ff",
-      iconcolor: "#00024a87",
-      bgcolor: ["#324effff", "#99adffff"],
+      color: "#00024a92",
+      lightcolor: "#9ea1f7ff",
+      iconcolor: "#00024a6c",
+      darkiconcolor: "#6166f111",
+      bgcolor: "linear-gradient(135deg, #324effff, #99adffff)",
     },
+    
     {
       label: "Approved",
       value: searchLeadInfo?.approvedCount ?? 0,
-
-      // linkHref:"/lead-details?status=approved",
-
       status: "approved",
       icon: <FaCheck />,
-      color: "#88c08aa8",
-      iconcolor: "#88c08aa8",
-      lighticoncolor: "#88c08aa8",
-      bgcolor: ["#5A70F7", "#6A83EA"],
+      color: "#0f4a00ab",
+      lightcolor: "#a6f79eff",
+      iconcolor: "#004a0664",
+      darkiconcolor: "#61f1740d",
+      bgcolor: "linear-gradient(135deg, #48c058ff, #a7ff99ff)",
     },
+
     {
       label: "Rejected",
       value: searchLeadInfo?.rejectedCount ?? 0,
-
-      //  linkHref:"/lead-details?status=rejected",
-
       status: "rejected",
       icon: <FaTimes />,
-      color: "#ce676082",
-      iconcolor: "#88c08aa8",
-      bgcolor: ["#5A70F7", "#6A83EA"],
+      color: "#760400ad",
+      lightcolor: "#f7a09eff",
+      iconcolor: "#4a020043",
+      darkiconcolor: "#f16a610d",
+      bgcolor: "linear-gradient(135deg, #c06648ff, #ffaf99ff)",
     },
+
     {
       label: "Pending",
       value: searchLeadInfo?.pendingCount ?? 0,
-
-      // linkHref:"/lead-details?status=pending",
-
       status: "pending",
       icon: <FaClock />,
-      color: "#c0a24aa7",
-      iconcolor: "#88c08aa8",
-      bgcolor: ["#5A70F7", "#6A83EA"],
+      color: "#857500b8",
+      lightcolor: "#f7f19eff",
+      iconcolor: "#7951006f",
+      darkiconcolor: "#f1c8610d",
+      bgcolor: "linear-gradient(135deg, #c2c047ff, #faff99ff)",
     },
+
     {
       label: "Bulk Lead",
       value: searchLeadInfo?.bulkCount ?? 0,
-
-      // linkHref:"/lead-details?status=bulk",
-
       status: "bulk",
       icon: <FaBoxes />,
-      color: "#58b1bd9c",
-      iconcolor: "#88c08aa8",
-      bgcolor: ["#5A70F7", "#6A83EA"],
+      color: "#49004abe",
+      lightcolor: "#e29ef7ff",
+      iconcolor: "#45004a63",
+      darkiconcolor: "#d261f10d",
+      bgcolor: "linear-gradient(135deg, #b84dd6ff, #e099ffff)",
     },
   ];
 
-   const handleCardClick = async (status?: String) => {
+  // const cardsData = [
+  //   {
+  //     label: "Total Leads",
+  //     value: searchLeadInfo?.totalItems ?? 0,
+  //     // linkHref: "/lead-details?status=all",
+  //     status: "all",
+  //     icon: <FaUsers />,
+  //     color: "#ad82f2ff",
+  //     iconcolor: "#00024a87",
+  //     bgcolor: ["#324effff", "#99adffff"],
+  //   },
+  //   {
+  //     label: "Approved",
+  //     value: searchLeadInfo?.approvedCount ?? 0,
+
+  //     // linkHref:"/lead-details?status=approved",
+
+  //     status: "approved",
+  //     icon: <FaCheck />,
+  //     color: "#88c08aa8",
+  //     iconcolor: "#88c08aa8",
+  //     lighticoncolor: "#88c08aa8",
+  //     bgcolor: ["#5A70F7", "#6A83EA"],
+  //   },
+  //   {
+  //     label: "Rejected",
+  //     value: searchLeadInfo?.rejectedCount ?? 0,
+
+  //     //  linkHref:"/lead-details?status=rejected",
+
+  //     status: "rejected",
+  //     icon: <FaTimes />,
+  //     color: "#ce676082",
+  //     iconcolor: "#88c08aa8",
+  //     bgcolor: ["#5A70F7", "#6A83EA"],
+  //   },
+  //   {
+  //     label: "Pending",
+  //     value: searchLeadInfo?.pendingCount ?? 0,
+
+  //     // linkHref:"/lead-details?status=pending",
+
+  //     status: "pending",
+  //     icon: <FaClock />,
+  //     color: "#c0a24aa7",
+  //     iconcolor: "#88c08aa8",
+  //     bgcolor: ["#5A70F7", "#6A83EA"],
+  //   },
+  //   {
+  //     label: "Bulk Lead",
+  //     value: searchLeadInfo?.bulkCount ?? 0,
+
+  //     // linkHref:"/lead-details?status=bulk",
+
+  //     status: "bulk",
+  //     icon: <FaBoxes />,
+  //     color: "#58b1bd9c",
+  //     iconcolor: "#88c08aa8",
+  //     bgcolor: ["#5A70F7", "#6A83EA"],
+  //   },
+  // ];
+
+  const handleCardClick = async (status?: String) => {
     const apiStatus = status === "all" ? null : status;
     // Pass the filtered data via router state
     router.push(`/lead-details?status=${apiStatus}`);
@@ -188,7 +265,7 @@ const SectionTap = () => {
     return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     if (!user || loading) return;
     fetchSearchLeads({
       page: 1,
@@ -196,7 +273,7 @@ const SectionTap = () => {
       query: "",
     });
   }, [user, loading]);
-  
+
   useEffect(() => {
     const visitScroll = () => {
       const scrollEl = visitscrollRef.current;
@@ -442,22 +519,32 @@ const SectionTap = () => {
               className={styles.card}
               key={index}
               onClick={() => handleCardClick(card.status)}
-              style={{ cursor: "pointer" }} // ✅ Makes card clickable UI
+              style={{
+                cursor: "pointer",
+              }} //
             >
-              <div className={styles.bgIcon} style={{ color: card.iconcolor }}>
+              <div
+                className={styles.bgIcon}
+                style={{
+                  color: isLight ? card.iconcolor : card.darkiconcolor,
+                }}
+              >
                 {card.icon}
               </div>
               <div className={styles.cardContent}>
                 <div className={styles.topRow}>
                   <div
                     className={styles.iconContainer}
-                    style={{ color: card.color }}
+                    style={{
+                      color: isLight ? "white" : card.lightcolor,
+                      background: isLight ? card.color : card.darkiconcolor,
+                    }}
                   >
                     {card.icon}
                   </div>
                   <div
                     className={styles.arrowContainer}
-                    style={{ color: card.color }}
+                    style={{ color: isLight ? card.color : card.lightcolor }}
                   >
                     <FaArrowRight />
                   </div>

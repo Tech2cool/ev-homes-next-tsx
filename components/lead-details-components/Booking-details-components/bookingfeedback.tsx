@@ -21,7 +21,7 @@ const BookingFeedback: React.FC<BookingFeedbackProps> = ({ booking, lead }) => {
         title: `${lead.visitRef.closingManager?.firstName ?? ""} ${lead.visitRef.closingManager?.lastName ?? ""}`,
         subTitle: lead.visitStatus ?? "",
         description: `Feedback:\n${lead.visitRef.cpfeedback ?? ""}`,
-        color: "#1e8e3e", // green
+        color: "#55e87fff", // green
         icon: <User size={12} />,
       });
     }
@@ -51,7 +51,7 @@ const BookingFeedback: React.FC<BookingFeedbackProps> = ({ booking, lead }) => {
             title: `${c.caller?.firstName ?? ""} ${c.caller?.lastName ?? ""}`,
             subTitle: c.interestedStatus ? ` - ${c.interestedStatus}` : "",
             description: `Feedback:\n${c.feedback ?? ""}`,
-            color: "#0066cc", // blue
+            color: "#53676fff", // blue
             icon: <Phone size={12} />,
           });
         }

@@ -829,7 +829,7 @@ const ReportsSection: React.FC = () => {
       <div className={styles.firstContainer}>
         <div className={styles.leadsMonth}>
           <div className={styles.chartHeader}>
-            <span>Leads Over Time</span>
+            
             <div className={styles.filterWrapper}>
               <FaFilter
                 onClick={() => setLineChartFilter(!lineChartFilter)}
