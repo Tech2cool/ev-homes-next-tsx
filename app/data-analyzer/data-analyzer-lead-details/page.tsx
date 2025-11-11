@@ -895,7 +895,7 @@ const DataAnalyzerdetailspage = () => {
         </div>
 
         {/* Filter Dialog */}
-        {/* <LeadFilterDialog
+        <LeadFilterDialog
           open={showFilterDialog}
           onClose={() => setShowFilterDialog(false)}
           onOpenChange={setShowFilterDialog}
@@ -905,7 +905,7 @@ const DataAnalyzerdetailspage = () => {
           onApplyFilters={handleApplyFilters} // Pass the apply function
           visits={leads || []}
           resultCount={leads?.length || 0}
-        /> */}
+        />
 
         {showEditDialog && (
           <EditDialog

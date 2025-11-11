@@ -246,12 +246,12 @@ const BookingDetails = () => {
                   }`}
                   onClick={() => {
                     setSelectedLead(lead);
-                    router.push(
-                      `/lead-details?status=${status}&id=${lead._id}`,
-                      {
-                        scroll: false,
-                      }
-                    );
+                    // router.push(
+                    //   `/lead-details?status=${status}&id=${lead._id}`,
+                    //   {
+                    //     scroll: false,
+                    //   }
+                    // );
                   }}
                 >
                   <div className={bookstyle.topRow}>
