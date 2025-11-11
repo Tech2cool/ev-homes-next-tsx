@@ -34,7 +34,6 @@ const SectionTap = () => {
   const { user, loading } = useUser();
   const router = useRouter();
 
-
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -64,23 +63,23 @@ const SectionTap = () => {
   const starvisitRef = useRef<HTMLSpanElement>(null);
   const [isLight, setIsLight] = useState(false);
 
-useEffect(() => {
-  if (typeof document !== "undefined") {
-    setIsLight(document.documentElement.classList.contains("light"));
-  }
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      setIsLight(document.documentElement.classList.contains("light"));
+    }
 
-  const observer = new MutationObserver(() => {
-    const lightMode = document.documentElement.classList.contains("light");
-    setIsLight(lightMode);
-  });
+    const observer = new MutationObserver(() => {
+      const lightMode = document.documentElement.classList.contains("light");
+      setIsLight(lightMode);
+    });
 
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
 
   const [loadingTarget, setLoadingTarget] = useState(false);
 
@@ -89,8 +88,6 @@ useEffect(() => {
       console.log("assignFeedbackInfo updated:", asssignFeedbackInfo);
     }
   }, [asssignFeedbackInfo]);
-
-
 
   useEffect(() => {
     if (user && !loading) {
@@ -126,28 +123,7 @@ useEffect(() => {
       darkiconcolor: "#6166f111",
       bgcolor: "linear-gradient(135deg, #324effff, #99adffff)",
     },
-     {
-      label: "Bulk Lead",
-      value: searchLeadInfo?.bulkCount ?? 0,
-      status: "bulk",
-      icon: <FaBoxes />,
-     color: "#49004abe",
-      lightcolor: "#e29ef7ff",
-      iconcolor: "#45004a63",
-      darkiconcolor: "#d261f10d",
-      bgcolor: "linear-gradient(135deg, #b84dd6ff, #e099ffff)",
-    },
-        {
-      label: "Rejected",
-      value: searchLeadInfo?.rejectedCount ?? 0,
-      status: "rejected",
-      icon: <FaTimes />,
-      color: "#760400ad",
-      lightcolor: "#f7a09eff",
-      iconcolor: "#4a020043",
-      darkiconcolor: "#f16a610d",
-      bgcolor: "linear-gradient(135deg, #c06648ff, #ffaf99ff)",
-    },
+    
     {
       label: "Approved",
       value: searchLeadInfo?.approvedCount ?? 0,
@@ -161,6 +137,18 @@ useEffect(() => {
     },
 
     {
+      label: "Rejected",
+      value: searchLeadInfo?.rejectedCount ?? 0,
+      status: "rejected",
+      icon: <FaTimes />,
+      color: "#760400ad",
+      lightcolor: "#f7a09eff",
+      iconcolor: "#4a020043",
+      darkiconcolor: "#f16a610d",
+      bgcolor: "linear-gradient(135deg, #c06648ff, #ffaf99ff)",
+    },
+
+    {
       label: "Pending",
       value: searchLeadInfo?.pendingCount ?? 0,
       status: "pending",
@@ -171,7 +159,18 @@ useEffect(() => {
       darkiconcolor: "#f1c8610d",
       bgcolor: "linear-gradient(135deg, #c2c047ff, #faff99ff)",
     },
-   
+
+    {
+      label: "Bulk Lead",
+      value: searchLeadInfo?.bulkCount ?? 0,
+      status: "bulk",
+      icon: <FaBoxes />,
+      color: "#49004abe",
+      lightcolor: "#e29ef7ff",
+      iconcolor: "#45004a63",
+      darkiconcolor: "#d261f10d",
+      bgcolor: "linear-gradient(135deg, #b84dd6ff, #e099ffff)",
+    },
   ];
 
   // const cardsData = [
@@ -256,8 +255,9 @@ useEffect(() => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
-        }px`;
+      wrapper.style.left = `${
+        scrollPercent * (hintWidth - wrapper.offsetWidth)
+      }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -288,8 +288,9 @@ useEffect(() => {
         scrollEl.scrollLeft / (scrollEl.scrollWidth - scrollEl.clientWidth);
       const hintWidth = hintContainer.offsetWidth;
       const wrapper = starEl.parentElement as HTMLElement;
-      wrapper.style.left = `${scrollPercent * (hintWidth - wrapper.offsetWidth)
-        }px`;
+      wrapper.style.left = `${
+        scrollPercent * (hintWidth - wrapper.offsetWidth)
+      }px`;
       starEl.style.transform = `rotate(${scrollPercent * 360 * 3}deg)`;
     };
 
@@ -324,12 +325,13 @@ useEffect(() => {
   // ];
   const assignFeedbackcard = Array.isArray(asssignFeedbackInfo)
     ? asssignFeedbackInfo.map((item, index) => ({
-      name: `${item.teamLeader?.firstName ?? "Team"} ${item.teamLeader?.lastName ?? "Leader"
+        name: `${item.teamLeader?.firstName ?? "Team"} ${
+          item.teamLeader?.lastName ?? "Leader"
         }`,
-      feedback: item.notFollowUpCount ?? 0,
-      tasks: item.notAssignedCount ?? 0,
-      border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
-    }))
+        feedback: item.notFollowUpCount ?? 0,
+        tasks: item.notAssignedCount ?? 0,
+        border: ["#87CEEB", "#FF6B6B", "#4ECDC4", "#FFE66D"][index % 4],
+      }))
     : [];
 
   const toggleBottomSheet = (index: number) => {
@@ -519,19 +521,24 @@ useEffect(() => {
               onClick={() => handleCardClick(card.status)}
               style={{
                 cursor: "pointer",
-            
-              }} // 
+              }} //
             >
-              <div className={styles.bgIcon} style={{
-                color: isLight ? card.iconcolor : card.darkiconcolor
-              }}>
+              <div
+                className={styles.bgIcon}
+                style={{
+                  color: isLight ? card.iconcolor : card.darkiconcolor,
+                }}
+              >
                 {card.icon}
               </div>
               <div className={styles.cardContent}>
-                <div className={styles.topRow} >
+                <div className={styles.topRow}>
                   <div
                     className={styles.iconContainer}
-                    style={{ color: isLight ? "white" : card.lightcolor, background: isLight ?  card.color: card.darkiconcolor }}
+                    style={{
+                      color: isLight ? "white" : card.lightcolor,
+                      background: isLight ? card.color : card.darkiconcolor,
+                    }}
                   >
                     {card.icon}
                   </div>
@@ -748,8 +755,9 @@ useEffect(() => {
         {assignFeedbackcard.map((card, index) => (
           <div key={index} className={styles.cardWrapper}>
             <div
-              className={`${styles.cardtarget} ${activeCard === index ? styles.cardActive : ""
-                }`}
+              className={`${styles.cardtarget} ${
+                activeCard === index ? styles.cardActive : ""
+              }`}
               onClick={() => toggleBottomSheet(index)}
             >
               <h3>{card.name}</h3>
@@ -765,8 +773,9 @@ useEffect(() => {
             </div>
 
             <div
-              className={`${styles.bottomSheet} ${activeCard === index ? styles.show : ""
-                }`}
+              className={`${styles.bottomSheet} ${
+                activeCard === index ? styles.show : ""
+              }`}
             >
               <div className={styles.sheetItem}>
                 <p className={styles.sheetLabel}>Feedback Pending</p>
