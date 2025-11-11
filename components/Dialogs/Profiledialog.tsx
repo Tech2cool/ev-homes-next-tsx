@@ -33,9 +33,9 @@ const ProfileDialogBox: React.FC<ProfileDialogBoxProps> = ({
   }, [isOpen]);
 
 
-    useEffect(() => {
-      getShiftInfoByUserId(user?._id??"");
-    }, []);
+    // useEffect(() => {
+    //   getShiftInfoByUserId(user?._id??"");
+    // }, []);
 
 
   if (!isOpen || !user) return null;
