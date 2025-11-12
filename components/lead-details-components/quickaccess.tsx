@@ -129,28 +129,8 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
       </div>
 
       {showfb &&
-        (lead?.callHistory && lead.callHistory.length > 0 ? (
-          <FeedbackTwo openclick={setshowfb} lead={lead} task={lead.taskRef} />
-        ) : (
-          <AddFeedBaack
-            openclick={setshowfb}
-            lead={lead}
-            onSave={async (payload) => {
-              const response = await updateLeadDetails(
-                lead?._id ?? "",
-                payload
-              );
-
-              console.log(response);
-              if (response.success) {
-                setshowfb(false);
-              } else {
-                console.error(response.message);
-              }
-            }}
-          />
-        ))}
-
+          <FeedbackTwo openclick={setshowfb} lead={lead} task={lead?.taskRef} />
+       }
       {showsite && <SiteVisit openclick={setshowsite} />}
       {showtask && <AssignTask openclick={setshowtask} />}
       {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin} />}
