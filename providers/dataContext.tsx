@@ -664,7 +664,9 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-  updateLeadDetails: async () => ({success: false,
+
+  updateLeadDetails: async () => ({ 
+    success: false,
     message: "Not initialized",
   }),
 
