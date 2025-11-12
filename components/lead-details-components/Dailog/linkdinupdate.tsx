@@ -147,8 +147,12 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
 
                     <div className={styles.formControl}>
                         <label>
-                            <RequiredLabel icon={<AiFillPicture className={styles.iconcolor} />} text="Upload Photo" />
+                            <RequiredLabel
+                                icon={<AiFillPicture className={styles.iconcolor} />}
+                                text="Upload Photo"
+                            />
                         </label>
+
                         <div className={styles.uploadBox}>
                             <input
                                 type="file"
@@ -162,28 +166,45 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                             />
 
                             <label htmlFor="fileUpload" className={styles.uploadLabel}>
-                                <div className={styles.uploadIcon}>
-                                    <AiFillPicture size={30} />
-                                </div>
-                                <p>{(!formData.photo ? "Click to upload or drag & drop" : "")}</p>
-                                {formData.photo && (
-                                    <p style={{ marginTop: "8px", color: "#555", fontSize: "14px" }}>
-                                        Uploaded:{" "}
-                                        <a
-                                            href={URL.createObjectURL(formData.photo)}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ color: "#007bff", textDecoration: "underline" }}
-                                        >
-                                            {formData.photo.name}
-                                        </a>
-                                    </p>
+                                {!formData.photo ? (
+                                    <>
+                                        <div className={styles.uploadIcon}>
+                                            <AiFillPicture size={30} />
+                                        </div>
+                                        <p>Click to upload or drag & drop</p>
+                                    </>
+                                ) : (
+                                    <div
+                                        style={{
+                                            marginTop: "10px",
+                                            textAlign: "center",
+                                            width: "100%",
+                                            height: "170px",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            overflow: "hidden",
+                                            borderRadius: "8px",
+                                        }}
+                                    >
+                                        <img
+                                            src={URL.createObjectURL(formData.photo)}
+                                            alt="Preview"
+                                            style={{
+                                                width: "auto",
+                                                height: "100%",
+                                                borderRadius: "8px",
+                                                objectFit: "cover",
+                                            }}
+                                        />
+                                    </div>
                                 )}
                             </label>
-
                         </div>
+
                         {errors.photo && <p className={styles.errorMsg}>{errors.photo}</p>}
                     </div>
+
                     <div className={styles.formControl}>
                         <label>
                             <RequiredLabel icon={<IoLocation className={styles.iconcolor} />} text="Remark" />
