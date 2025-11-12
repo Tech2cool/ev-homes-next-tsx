@@ -18,7 +18,7 @@ interface FormState {
     occupation: string;
     link: string;
     uploadedLinkedinUrl: string | File | null;
-    additionalLinRremark: string;
+    additionLinRremark: string;
 }
 
 const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }) => {
@@ -29,16 +29,15 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }
         occupation: "",
         link: "",
         uploadedLinkedinUrl: "",
-        additionalLinRremark: "",
+        additionLinRremark: "",
     });
     useEffect(() => {
         if (lead) {
             setformData({
-
                 occupation: lead.occupation || "",
                 link: lead.linkedIn || "",
                 uploadedLinkedinUrl: lead.uploadedLinkedIn ?? "",
-                additionalLinRremark: lead.additionLinRemark ?? "",
+                additionLinRremark: lead.additionLinRemark ?? "",
             });
         }
     }, [lead, openclick]);
@@ -60,7 +59,7 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }
             occupation: "",
             link: "",
             uploadedLinkedinUrl: "",
-            additionalLinRremark: "",
+            additionLinRremark: "",
         })
         openclick(false);
     }
@@ -83,7 +82,7 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }
             newErrors.uploadedLinkedinUrl = "Please upload profile";
         }
 
-        if (!formData.additionalLinRremark.trim()) {
+        if (!formData.additionLinRremark.trim()) {
             newErrors.remark = "Please enter Remark";
         }
 
@@ -95,13 +94,13 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }
             occupation: formData.occupation,
             linkedIn: formData.link,
             uploadedLinkedIn: formData.uploadedLinkedinUrl,
-            additionLinRemark: formData.additionalLinRremark,
+            additionLinRemark: formData.additionLinRremark,
         };
 
         onSave(payload);
 
         alert("Form submitted successfully!");
-        // openclick(false);
+        openclick(false);
     };
     const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
         <label style={{ display: "flex", alignItems: "center", gap: "3px" }}>
@@ -236,8 +235,8 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }
                         <textarea
                             rows={2}
                             placeholder="Enter remark"
-                            value={formData.additionalLinRremark}
-                            name="additionalLinRremark"
+                            value={formData.additionLinRremark}
+                            name="additionLinRremark"
                             onChange={onChangeField}
                         />
                         {errors.remark && <p className={styles.errorMsg}>{errors.remark}</p>}

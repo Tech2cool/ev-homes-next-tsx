@@ -2149,7 +2149,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
+      console.log("test1");
       const url = `/api/lead-update-details/${id}`;
+      console.log("test1");
+
       const res = await fetchAdapter(url, {
         method: "POST",
         body: JSON.stringify(data),
