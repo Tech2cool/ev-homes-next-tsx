@@ -136,6 +136,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
 
       {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin}  lead={lead}
             onSave={async (payload) => {
+              console.log("payload",payload);
               const response = await updateLeadDetails(
                 lead?._id ?? "",
                 payload
