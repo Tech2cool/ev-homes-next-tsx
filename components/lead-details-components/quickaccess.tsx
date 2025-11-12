@@ -25,12 +25,21 @@ import AddBooking from "./Dailog/addbooking";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import FeedbackTwo from "./Dailog/feedbacktwo";
+import { useData } from "@/providers/dataContext";
 interface QuickAccessProps {
   lead?: Lead | null;
   task?: Task | null;
 }
 
 const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
+   const {
+      fetchSearchLeads,
+      searchLeadInfo,
+      leads,
+      loadingLeads,
+      fetchingMoreLeads,
+      updateLeadDetails,
+    } = useData();
   const [showfb, setshowfb] = useState(false);
   const [showsite, setshowsite] = useState(false);
   const [showtask, setshowtask] = useState(false);
@@ -119,13 +128,27 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
         )}
       </div>
 
-   
-
       {showfb &&
         (lead?.callHistory && lead.callHistory.length > 0 ? (
           <FeedbackTwo openclick={setshowfb} lead={lead} task={lead.taskRef} />
         ) : (
-          <AddFeedBaack openclick={setshowfb} lead={lead} />
+          <AddFeedBaack
+            openclick={setshowfb}
+            lead={lead}
+            onSave={async (payload) => {
+              const response = await updateLeadDetails(
+                lead?._id ?? "",
+                payload
+              );
+
+              console.log(response);
+              if (response.success) {
+                setshowfb(false);
+              } else {
+                console.error(response.message);
+              }
+            }}
+          />
         ))}
 
       {showsite && <SiteVisit openclick={setshowsite} />}

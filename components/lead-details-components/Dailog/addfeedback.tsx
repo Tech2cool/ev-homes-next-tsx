@@ -10,10 +10,13 @@ import { AiFillPicture } from "react-icons/ai";
 import ReactDOM from "react-dom";
 import { MdCancel } from "react-icons/md";
 import { useData } from "@/providers/dataContext";
+import FeedbackTwo from "./feedbacktwo";
 
 interface AddFeedBaackProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
   lead?: Lead | null;
+  task?: Task | null;
+  onSave: (payload: any) => void;
 }
 
 interface OptionType {
@@ -30,16 +33,22 @@ interface FormState {
   occupation: string;
   link: string;
   uploadedLinkedinUrl: string;
-  additionalLiRremark: string;
+  additionalLinRremark: string;
 }
 
-const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
+const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
+  openclick,
+  lead,
+  onSave,
+}) => {
   const { getRequirements, requirements, projects, getProjects } = useData();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
   const dialogRef = useRef<HTMLDivElement>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [showfb, setshowfb] = useState(false);
+  
 
   const [formData, setformData] = useState<FormState>({
     firstName: "",
@@ -51,8 +60,18 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
     occupation: "",
     link: "",
     uploadedLinkedinUrl: "",
-    additionalLiRremark: "",
+    additionalLinRremark: "",
   });
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
+        openclick(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [openclick]);
+
   useEffect(() => {
     if (lead) {
       setformData({
@@ -74,7 +93,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
         link: lead.linkedIn || "",
         uploadedLinkedinUrl: lead.uploadedLinkedIn ?? "",
         nameRemark: lead.nameRemark || "",
-        additionalLiRremark: lead.additionLinRemark ?? "",
+        additionalLinRremark: lead.additionLinRemark ?? "",
       });
     }
   }, [lead, openclick]);
@@ -155,7 +174,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
       occupation: "",
       link: "",
       uploadedLinkedinUrl: "",
-      additionalLiRremark: "",
+      additionalLinRremark: "",
     });
     openclick(false);
   };
@@ -170,39 +189,47 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
   const onSubmit = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "Please enter First Name";
-    }
+      // ✅ Client Details validation
+  if (!formData.firstName.trim())
+    newErrors.firstName = "Please enter First Name";
+  if (!formData.lastName.trim())
+    newErrors.lastName = "Please enter Last Name";
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Please enter Last Name";
-    }
+  // ✅ Project Details validation
+  if (!formData.project || formData.project.length === 0)
+    newErrors.project = "Please select at least one Project";
+  if (!formData.requirement || formData.requirement.length === 0)
+    newErrors.requirement = "Please select at least one Requirement";
 
-    if (!formData.project || formData.project.length === 0) {
-      newErrors.project = "Please select at least one Project";
-    }
+  // ✅ Property Type validatio
+  if (!formData.propertyType)
+    newErrors.propertyType = "Please select Property Type";
+ 
 
-    if (!formData.requirement || formData.requirement.length === 0) {
-      newErrors.requirement = "Please select at least one Requirement";
-    }
+  // ✅ Set errors and prevent submission if any
+  setErrors(newErrors);
+  if (Object.keys(newErrors).length > 0) return;
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      project: formData?.project?.map((p) => p.value), // Extract IDs
+      requirement: formData?.requirement.map((r) => r.value), // Extract requirement values
 
-    if (!formData.propertyType) {
-      newErrors.propertyType = "Please select Property Type";
-    }
+      propertyType: formData.propertyType,
+      occupation: formData.occupation,
+      linkedIn: formData.link,
+      uploadedLinkedIn: formData.uploadedLinkedinUrl,
+      nameRemark: formData.nameRemark,
+      additionLinRemark: formData.additionalLinRremark,
+    };
 
-    if (!formData.nameRemark.trim()) {
-      newErrors.remark = "Please enter Remark";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) return;
-
-    alert(
-      "Form submitted successfully: \n" + JSON.stringify(formData, null, 2)
-    );
-    openclick(false);
+    onSave(payload);
+    alert("Form submitted successfully:");
+    // openclick(false);
+    //  <FeedbackTwo openclick={setshowfb} lead={lead} task={lead.taskRef} />
+     setshowfb(true);
   };
+
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
     icon,
     text,
@@ -351,7 +378,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
             <textarea
               rows={2}
               placeholder="Enter notes"
-              name="notes"
+              name="nameRemark"
               value={formData.nameRemark}
               onChange={onChangeField}
             />
@@ -439,8 +466,8 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
             <textarea
               rows={2}
               placeholder="Enter remark"
-              value={formData.additionalLiRremark}
-              name="remark"
+              value={formData.additionalLinRremark}
+              name="additionalLinRremark"
               onChange={onChangeField}
             />
             {errors.remark && (
@@ -458,6 +485,10 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
           </div>
         </div>
       </div>
+     {showfb && (
+  <FeedbackTwo openclick={setshowfb} lead={lead} task={lead?.taskRef} />
+)}
+
     </div>,
     document.body
   );
