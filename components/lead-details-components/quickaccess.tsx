@@ -153,7 +153,22 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
 
       {showsite && <SiteVisit openclick={setshowsite} />}
       {showtask && <AssignTask openclick={setshowtask} />}
-      {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin} />}
+
+      {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin}  lead={lead}
+            onSave={async (payload) => {
+              const response = await updateLeadDetails(
+                lead?._id ?? "",
+                payload
+              );
+
+              console.log(response);
+              if (response.success) {
+                setshowlinkdin(false);
+              } else {
+                console.error(response.message);
+              }
+            }}/>}
+
       {showcancelboking && <CancelBooking openclick={setshowcancelbooking} />}
       {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
       {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}

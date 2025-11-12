@@ -10,26 +10,38 @@ import { MdCancel } from "react-icons/md";
 
 interface LinkdinUpdateProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
+    lead?: Lead | null;
+    onSave: (payload: any) => void;
 }
 
 interface FormState {
     occupation: string;
     link: string;
-    photo: File | null;
-    remark: string,
+    uploadedLinkedinUrl: string | File | null;
+    additionalLinRremark: string;
 }
 
-const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
+const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick, lead, onSave }) => {
     const dialogRef = useRef<HTMLDivElement>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const [formData, setformData] = useState<FormState>({
-
         occupation: "",
         link: "",
-        photo: null,
-        remark: "",
-    })
+        uploadedLinkedinUrl: "",
+        additionalLinRremark: "",
+    });
+    useEffect(() => {
+        if (lead) {
+            setformData({
+
+                occupation: lead.occupation || "",
+                link: lead.linkedIn || "",
+                uploadedLinkedinUrl: lead.uploadedLinkedIn ?? "",
+                additionalLinRremark: lead.additionLinRemark ?? "",
+            });
+        }
+    }, [lead, openclick]);
     useEffect(() => {
         const handleOutsideClick = (e: MouseEvent) => {
             if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
@@ -47,8 +59,8 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
         setformData({
             occupation: "",
             link: "",
-            photo: null,
-            remark: "",
+            uploadedLinkedinUrl: "",
+            additionalLinRremark: "",
         })
         openclick(false);
     }
@@ -67,20 +79,29 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
             newErrors.link = "Please enter profile link";
         }
 
-        if (!formData.photo) {
-            newErrors.photo = "Please upload profile";
+        if (!formData.uploadedLinkedinUrl) {
+            newErrors.uploadedLinkedinUrl = "Please upload profile";
         }
 
-        if (!formData.remark.trim()) {
+        if (!formData.additionalLinRremark.trim()) {
             newErrors.remark = "Please enter Remark";
         }
 
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) return;
+        const payload = {
 
-        alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
-        openclick(false);
+            occupation: formData.occupation,
+            linkedIn: formData.link,
+            uploadedLinkedIn: formData.uploadedLinkedinUrl,
+            additionLinRemark: formData.additionalLinRremark,
+        };
+
+        onSave(payload);
+
+        alert("Form submitted successfully!");
+        // openclick(false);
     };
     const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
         <label style={{ display: "flex", alignItems: "center", gap: "3px" }}>
@@ -118,7 +139,6 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                             </label>
                             <input
                                 type="text"
-
                                 name="occupation"
                                 placeholder="Enter occupation...."
                                 value={formData.occupation}
@@ -149,7 +169,7 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                         <label>
                             <RequiredLabel
                                 icon={<AiFillPicture className={styles.iconcolor} />}
-                                text="Upload Photo"
+                                text="Upload uploadedLinkedinUrl"
                             />
                         </label>
 
@@ -161,12 +181,12 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                                 className={styles.fileInput}
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] || null;
-                                    setformData((prev) => ({ ...prev, photo: file }));
+                                    setformData((prev) => ({ ...prev, uploadedLinkedinUrl: file }));
                                 }}
                             />
 
                             <label htmlFor="fileUpload" className={styles.uploadLabel}>
-                                {!formData.photo ? (
+                                {!formData.uploadedLinkedinUrl ? (
                                     <>
                                         <div className={styles.uploadIcon}>
                                             <AiFillPicture size={30} />
@@ -188,7 +208,11 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                                         }}
                                     >
                                         <img
-                                            src={URL.createObjectURL(formData.photo)}
+                                            src={
+                                                typeof formData.uploadedLinkedinUrl === "string"
+                                                    ? formData.uploadedLinkedinUrl
+                                                    : URL.createObjectURL(formData.uploadedLinkedinUrl)
+                                            }
                                             alt="Preview"
                                             style={{
                                                 width: "auto",
@@ -202,7 +226,7 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                             </label>
                         </div>
 
-                        {errors.photo && <p className={styles.errorMsg}>{errors.photo}</p>}
+                        {errors.uploadedLinkedinUrl && <p className={styles.errorMsg}>{errors.uploadedLinkedinUrl}</p>}
                     </div>
 
                     <div className={styles.formControl}>
@@ -212,8 +236,8 @@ const LinkdinUpdate: React.FC<LinkdinUpdateProps> = ({ openclick }) => {
                         <textarea
                             rows={2}
                             placeholder="Enter remark"
-                            value={formData.remark}
-                            name="remark"
+                            value={formData.additionalLinRremark}
+                            name="additionalLinRremark"
                             onChange={onChangeField}
                         />
                         {errors.remark && <p className={styles.errorMsg}>{errors.remark}</p>}
