@@ -134,7 +134,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
        }
        {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
 
-      {showtask && <AssignTask openclick={setshowtask} />}
+      {showtask && <AssignTask openclick={setshowtask}  lead={lead} task={lead?.taskRef}/>}
 
       {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin}  lead={lead}
             onSave={async (payload) => {
