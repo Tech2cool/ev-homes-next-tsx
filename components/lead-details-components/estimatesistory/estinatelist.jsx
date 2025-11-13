@@ -90,9 +90,9 @@ const LeadCard = ({ estimate, onClick }) => {
     
         <div className={styles.etmcontainer}>
           <div className={styles.est}>
-            <p style={{color:"rgba(255, 255, 255, 0.6)",}}>Est ID:</p>
+            <p className={styles.estlable}>Est ID:</p>
 
-            <p style={{color:"rgb(255, 255, 255)",}}>{estimate.estID}</p>
+            <p  className={styles.estvalue}>{estimate.estID}</p>
           </div>
           <div className={styles.est}>
             {estimate.date}

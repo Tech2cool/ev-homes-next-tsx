@@ -222,56 +222,86 @@ const AssignTask: React.FC<AssignTaskProps> = ({ openclick, task, lead }) => {
     }
   };
 
-  const customSelectStyles = (theme: "dark" | "light") => ({
-    control: (base: any) => ({
-      ...base,
-      backgroundColor: theme === "dark" ? "#151414f5" : "transparent",
-      borderColor: theme === "dark" ? "#444444f5" : "#927fbff5",
-      minHeight: "40px",
-      borderWidth: "2px",
-      color: theme === "dark" ? "white" : "#201f1f",
-    }),
-    menu: (base: any) => ({
-      ...base,
-      backgroundColor: theme === "dark" ? "#151414f5" : "white",
-    }),
-    option: (base: any, state: any) => ({
-      ...base,
-      backgroundColor: state.isSelected
-        ? theme === "dark"
-          ? "#007bff"
-          : "#cce5ff"
-        : state.isFocused
-        ? theme === "dark"
-          ? "#e6f0ff"
-          : "#f0f0f0"
-        : theme === "dark"
-        ? "#fff"
-        : "#fff",
-      color: state.isSelected
-        ? theme === "dark"
-          ? "white"
-          : "#201f1f"
-        : "black",
-    }),
-    multiValue: (base: any) => ({
-      ...base,
-      backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
-      color: theme === "dark" ? "white" : "#201f1f",
-    }),
-    multiValueLabel: (base: any) => ({
-      ...base,
-      color: theme === "dark" ? "white" : "#201f1f",
-    }),
-    multiValueRemove: (base: any) => ({
-      ...base,
-      color: theme === "dark" ? "white" : "#201f1f",
-      ":hover": {
-        backgroundColor: "red",
-        color: "white",
-      },
-    }),
-  });
+ const customSelectStyles = (theme: "dark" | "light") => ({
+        control: (base: any, state: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            borderColor: state.isFocused
+                ? "#007bff"
+                : theme === "dark"
+                    ? "#444444f5"
+                    : "#ccc",
+            minHeight: "40px",
+            borderWidth: "2px",
+            color: theme === "dark" ? "white" : "#201f1f",
+            fontSize: "14px", // ✅ smaller font
+            boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
+            "&:hover": {
+                borderColor: "#007bff",
+            },
+        }),
+        menu: (base: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            fontSize: "14px", // smaller font in dropdown
+        }),
+        option: (base: any, state: any) => ({
+            ...base,
+            backgroundColor: state.isSelected
+                ? theme === "dark"
+                    ? "#007bff"
+                    : "#cce5ff"
+                : state.isFocused
+                    ? theme === "dark"
+                        ? "#0056b3"
+                        : "#e6f0ff"
+                    : theme === "dark"
+                        ? "#151414f5"
+                        : "white",
+            color: state.isSelected
+                ? theme === "dark"
+                    ? "white"
+                    : "#201f1f"
+                : theme === "dark"
+                    ? "white"
+                    : "#201f1f",
+            fontSize: "14px", // smaller font
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "white" : "#201f1f",
+            fontSize: "14px",
+        }),
+        multiValue: (base: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
+            fontSize: "14px",
+        }),
+        multiValueLabel: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+        }),
+        multiValueRemove: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+            ":hover": {
+                backgroundColor: "red",
+                color: "#e4e4e4ff",
+            },
+        }),
+        input: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+        }),
+        placeholder: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#aaa" : "#999",
+            fontSize: "14px",
+        }),
+    });
 
   const CustomOption = (props: any) => (
     <components.Option {...props}>
