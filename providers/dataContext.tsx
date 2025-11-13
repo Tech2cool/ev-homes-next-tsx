@@ -833,7 +833,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       console.log(" passed 2");
 
       const reqs = response?.data;
-      setCurrentLead(response?.data as Lead);
+      setCurrentLead(reqs);
 
       setTimer(reqs);
 
