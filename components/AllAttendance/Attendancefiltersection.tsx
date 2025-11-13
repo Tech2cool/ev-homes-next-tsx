@@ -1,6 +1,5 @@
-
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import "react-date-range/dist/styles.css";
@@ -13,11 +12,13 @@ import { HiOutlineSquares2X2, HiOutlineTableCells } from "react-icons/hi2";
 import Attendancesection from "./Attendancesection";
 import DateFilter from "../DateFilter";
 import { Range } from "react-date-range";
+import { useData } from "@/providers/dataContext";
 
-const Attendancefiltersection = () => { 
+const Attendancefiltersection = () => {
   const [viewType, setViewType] = useState<"grid" | "table">("table");
   const [showCalendar, setShowCalendar] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const { getTodayAttendance, attendanceList } = useData();
 
   const [dateRange, setDateRange] = useState<Range[]>([
     {
@@ -31,15 +32,17 @@ const Attendancefiltersection = () => {
     setShowCalendar((prev) => !prev);
   };
 
- 
+  const formattedDateRange = `${format(
+    dateRange[0].startDate!,
+    "dd-MM-yyyy"
+  )} - ${format(dateRange[0].endDate!, "dd-MM-yyyy")}`;
 
-const formattedDateRange = `${format(
-  dateRange[0].startDate!,
-  "dd-MM-yyyy"
-)} - ${format(dateRange[0].endDate!, "dd-MM-yyyy")}`;
-
-
-
+  useEffect(() => {
+    getTodayAttendance({
+      startDate: dateRange[0].startDate?.toISOString(),
+      endDate: dateRange[0].endDate?.toISOString(),
+    });
+  }, [dateRange]);
 
   // const formattedAdvancedDateRange = `${format(
   //   dateRange[0].startDate,
@@ -109,7 +112,11 @@ const formattedDateRange = `${format(
             <DateFilter
               dateRange={dateRange}
               setDateRange={setDateRange}
-              onClose={() => setShowCalendar(false)}
+              onClose={() => {
+                // 
+                setShowCalendar(false);
+                
+              }}
             />
           )}
         </div>
@@ -135,12 +142,9 @@ const formattedDateRange = `${format(
         </div>
       </div>
 
-      <Attendancesection
-        viewType={viewType}
-      />
+      <Attendancesection viewType={viewType} />
     </div>
   );
 };
 
 export default Attendancefiltersection;
-

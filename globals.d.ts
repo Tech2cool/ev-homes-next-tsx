@@ -624,3 +624,61 @@ interface PostSaleLead {
   paymentDetailSchema?: PaymentDetailSchema[];
 }
 //
+
+interface AttOverview {
+  document?: string | null;
+  month: number | null;
+  year: number | null;
+  // hours
+  requiredHours: number | null;
+  activeHours: number | null;
+  // days
+  totalDays: number | null;
+  requiredDays: number | null;
+  presentDays: number | null;
+  present: number | null;
+  holiday: number | null;
+  weekoff: number | null;
+  minWeekoff: number | null;
+  leave: number | null;
+
+  // for old not breaking model
+  totalWorkingHrsInMonth: number | null;
+  totalWorkingHrs: number | null;
+  activeMintus: number | null;
+  ot: number | null;
+}
+
+interface Attendance {
+  userId: Employee | null;
+  date: Date | null;
+  day: number | null;
+  month: number | null;
+  year: number | null;
+  status: string | null;
+  wlStatus: string | null;
+  checkInTime: Date | null;
+  checkInAddress: string | null;
+  checkInLatitude: number | null;
+  checkInLongitude: number | null;
+  checkInPhoto: string | null;
+  checkOutTime: Date | null;
+  checkOutAddress: string | null;
+  checkOutLatitude: number | null;
+  checkOutLongitude: number | null;
+  checkOutPhoto: string | null;
+  totalActiveSeconds: number | null;
+  totalBreakSeconds: number | null;
+  overtimeSeconds: number | null;
+  overtimeMinutes: number | null;
+  lateMinutes: number | null;
+  checkInSimilarity: number | null;
+  checkOutSimilarity: number | null;
+
+  earlyMinutes: number | null;
+  leaveDuration: number | null;
+
+  breakStartTime: number | null;
+  breakEndTime: string | null;
+  lastUpdatedTime: string | null;
+}

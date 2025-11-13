@@ -37,7 +37,7 @@ const Attendanceheader: React.FC<AttendanceHeaderProps> = ({
     <div className={styles.headerWrapper}>
       <div className={styles.leftSection}>
         <div className={styles.header}>Attendance</div>
-        <div className={styles.dateSelector}>
+        {/* <div className={styles.dateSelector}>
           <button className={styles.arrowButton} onClick={handlePrevDay}>
             <FaChevronLeft />
           </button>
@@ -45,7 +45,7 @@ const Attendanceheader: React.FC<AttendanceHeaderProps> = ({
           <button className={styles.arrowButton} onClick={handleNextDay}>
             <FaChevronRight />
           </button>
-        </div>
+        </div> */}
       </div>
       <button className={styles.reportButton}>Monthly Report</button>
       <div className={styles.dropdownWrapper}>
