@@ -650,7 +650,7 @@ interface AttOverview {
 }
 
 interface Attendance {
-  userId: string | null;
+  userId: Employee | null;
   date: Date | null;
   day: number | null;
   month: number | null;
