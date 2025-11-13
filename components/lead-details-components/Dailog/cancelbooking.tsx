@@ -61,12 +61,12 @@ const CancelBooking: React.FC<CancelBookingProps> = ({ openclick, leadId }) => {
     const result = await cancelBooking({id:leadId.bookingRef?._id??"",remark: formData.remark});
 
     console.log(result);
-    // if (result.success) {
-    //   alert("✅ Booking cancelled successfully!");
-    //   openclick(false);
-    // } else {
-    //   alert("❌ Failed to cancel booking: " + (result.message || ""));
-    // }
+    if (result.success) {
+      alert("Booking cancelled successfully!");
+      openclick(false);
+    } else {
+      alert("Failed to cancel booking: " + (result.message || ""));
+    }
   };
 
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
