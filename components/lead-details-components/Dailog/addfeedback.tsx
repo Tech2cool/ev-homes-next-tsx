@@ -72,6 +72,8 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
     uploadedLinkedinUrl: "",
     additionalLinRremark: "",
   });
+
+  const { updateLeadDetails } = useData();
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
@@ -259,6 +261,52 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
     const { name, value } = e.target;
     setformData((prev) => ({ ...prev, [name]: value }));
   };
+
+
+<!--   const onSubmit = async () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.firstName.trim())
+      newErrors.firstName = "Please enter First Name";
+    if (!formData.lastName.trim())
+      newErrors.lastName = "Please enter Last Name";
+    if (formData.project.length === 0)
+      newErrors.project = "Please select a Project";
+    if (formData.requirement.length === 0)
+      newErrors.requirement = "Please select a Requirement";
+    if (!formData.propertyType)
+      newErrors.propertyType = "Please select Property Type";
+    // if (!formData.nameRemark.trim()) newErrors.remark = "Please enter Remark";
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    if (!lead?._id) {
+      console.error("No lead ID found.");
+      return;
+    }
+
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      project: formData.project.map((p) => p.value),
+      requirement: formData.requirement.map((r) => r.value),
+      propertyType: formData.propertyType,
+      nameRemark: formData.nameRemark,
+      occupation: formData.occupation,
+      linkedIn: formData.link,
+      uploadedLinkedIn: formData.uploadedLinkedinUrl,
+      additionLinRemark: formData.additionalLiRremark,
+    };
+
+    const response = await updateLeadDetails(lead._id, payload);
+
+    if (response.success) {
+      openclick(false);
+    } else {
+      console.error(response.message || "Update failed.");
+    } -->
+
   const onSubmit = async () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -320,6 +368,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
     openclick(false);
     //  <FeedbackTwo openclick={setshowfb} lead={lead} task={lead.taskRef} />
      setshowfb(true);
+
   };
 
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
@@ -513,6 +562,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
             </div>
           </div>
 
+
            <div className={styles.formControl}>
                         <label>
                             <RequiredLabel
@@ -594,6 +644,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
 
                         {errors.uploadedLinkedinUrl && <p className={styles.errorMsg}>{errors.uploadedLinkedinUrl}</p>}
                     </div>
+
           <div className={styles.formControl}>
             <label>
               <RequiredLabel

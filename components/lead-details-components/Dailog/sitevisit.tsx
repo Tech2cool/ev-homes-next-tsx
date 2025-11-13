@@ -5,7 +5,14 @@ import styles from "./dailog.module.css";
 import { IoLocation, IoPersonOutline } from "react-icons/io5";
 import { FaLocationDot, FaStar, FaUsers, FaUserTie } from "react-icons/fa6";
 import { AiFillPicture } from "react-icons/ai";
-import { MdCancel, MdHomeWork, MdLocalPhone, MdNotListedLocation, MdOutlineEmail, MdOutlinePhoneInTalk } from "react-icons/md";
+import {
+  MdCancel,
+  MdHomeWork,
+  MdLocalPhone,
+  MdNotListedLocation,
+  MdOutlineEmail,
+  MdOutlinePhoneInTalk,
+} from "react-icons/md";
 import { BsBuildingFill } from "react-icons/bs";
 import Select, { components } from "react-select";
 import { LocateIcon } from "lucide-react";
@@ -14,9 +21,9 @@ import { SiOpensourcehardware } from "react-icons/si";
 import { CgNotes } from "react-icons/cg";
 import { useData } from "@/providers/dataContext";
 
-
 interface SiteVisitProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
+  visit?: Lead | null;
 }
 
 interface OptionType {
@@ -46,13 +53,27 @@ interface FormState {
   prefix: string;
 }
 
-const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
-  const currentTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
+const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
+  const currentTheme = document.documentElement.classList.contains("light")
+    ? "light"
+    : "dark";
 
   const dialogRef = useRef<HTMLDivElement>(null);
 
-
-  const {getDataEntryEmployees, dataEntryUsers}=useData();
+  const {
+    getDataEntryEmployees,
+    dataEntryUsers,
+    getProjects,
+    projects,
+    getRequirements,
+    requirements,
+    getClosingManagers,
+    closingManagers,
+    getChannelPartners,
+    channelPartners,
+    fetchReportingToEmployees,
+    reportingToEmps,
+  } = useData();
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -61,48 +82,74 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
     location: "",
     dateTime: "",
     photo: null,
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    altPhoneNumber: "",
-    email: "",
-    residence: "",
-    project: [],
-    requirement: [],
-    teammember: [],
+    firstName: visit?.firstName ?? "",
+    lastName: visit?.lastName ?? "",
+    phoneNumber: visit?.phoneNumber?.toString() ?? "",
+    altPhoneNumber: visit?.altPhoneNumber?.toString() ?? "",
+    email: visit?.email ?? "",
+    residence: visit?.address ?? "",
+    project:
+      visit?.project?.map((p: OurProject) => ({
+        value: p?._id ?? "",
+        label: p?.name ?? "",
+      })) ||[],
+    requirement:
+      visit?.requirement?.map((r: any) => ({
+        value: r._id || r.value || r,
+        label: r.requirementName?.toUpperCase() || r.label || r.toUpperCase(),
+      })) || [],
+
+    // teammember: [],
     propertyType: "",
-    Source: "",
-    cp: "",
-    closing: "",
+    Source: visit?.leadType ?? "",
+    cp: visit?.channelPartner?.firmName ?? "",
+    closing: visit?.teamLeader?._id ?? "",
+
+    teammember:
+      visit?.taskRef?.assignTo?._id && visit?.taskRef?.assignTo?.firstName
+        ? [
+            {
+              value: visit.taskRef.assignTo._id,
+              label: `${visit.taskRef.assignTo.firstName} ${
+                visit.taskRef.assignTo.lastName ?? ""
+              }`,
+            },
+          ]
+        : [],
+
     feedback: "",
     prefix: "",
   });
 
+  useEffect(() => {
+    getDataEntryEmployees();
+    getProjects();
+    getRequirements();
+    getClosingManagers();
+    getChannelPartners();
+  }, []);
 
-
-
-  useEffect(()=>{
-// getDataEntryEmployees();
-  }),[];
+  useEffect(() => {
+    fetchReportingToEmployees(formData.closing, "sales");
+  }, []);
   // Dropdown Options
-  const userOptions = [
-    { value: "deepak", label: "Deepak Karki" },
-    { value: "ranjna", label: "Ranjna Gupta" },
-  ];
+  // const userOptions=dataEntryUsers?.firstName;
+  const requirementOptions =
+    requirements.map((r: string) => ({
+      value: r,
+      label: r.toUpperCase(),
+    })) ?? [];
 
-  const projectOptions = [
-    { value: "p1", label: "EV 23 Malibu West" },
-    { value: "p2", label: "EV 10 Marina Bay" },
-  ];
+  const projectOptions = projects.map((p: OurProject) => ({
+    value: p?._id??"",
+    label: p?.name??"",
+  }));
 
-  const requirementOptions = [
-    { value: "2BHK", label: "2BHK" },
-    { value: "3BHK", label: "3BHK" },
-  ];
-  const themmember = [
-    { value: "snehal", label: "snehal (Sr.Manager)", status: "Present" },
-    { value: "kishor", label: "kishor (Sr.Manager)", status: "Absent" },
-  ];
+  const teamMemberOptions = reportingToEmps.map((emp) => ({
+    value: emp?._id ?? "  ",
+    label: `${emp.firstName} ${emp.lastName}`,
+  }));
+
   const CustomOption = (props: any) => (
     <components.Option {...props}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -131,13 +178,19 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
 
   // Handle field change
   const onChangeField = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value, files } = e.target as any;
     if (files) {
       setFormData((prev) => ({ ...prev, photo: files[0] }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    if (name === "closing" && value) {
+      fetchReportingToEmployees(value, "sales");
     }
   };
 
@@ -186,21 +239,23 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
     if (!formData.lastName.trim()) newErrors.lastName = "Enter last name.";
     if (!formData.phoneNumber.trim() || formData.phoneNumber.length < 10)
       newErrors.phoneNumber = "Enter a valid 10-digit phone number.";
-    if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email))
+    if (!formData.email.trim() )
       newErrors.email = "Enter a valid email.";
-    if (formData.project.length === 0) newErrors.project = "Select at least one project.";
+    if (formData.project.length === 0)
+      newErrors.project = "Select at least one project.";
     if (formData.requirement.length === 0)
       newErrors.requirement = "Select at least one requirement.";
     if (!formData.propertyType)
       newErrors.propertyType = "Please select property type.";
-    if (!formData.residence.trim()) newErrors.residence = "Enter residence details.";
+    if (!formData.residence.trim())
+      newErrors.residence = "Enter residence details.";
     if (!formData.Source) newErrors.Source = "Please select Source type.";
     if (!formData.closing) newErrors.closing = "Please select Closing Manager.";
-    if (formData.Source === "CP" && !formData.cp)
+    if (formData.Source === "cp" && !formData.cp)
       newErrors.cp = "Please select Channel Partner.";
     if (!formData.prefix) newErrors.prefix = "select title";
-    if (formData.teammember.length === 0) newErrors.teammember = "Please select at least one team member.";
-
+    if (formData.teammember.length === 0)
+      newErrors.teammember = "Please select at least one team member.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -209,18 +264,18 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
   const onSubmit = () => {
     if (!validateForm()) return;
 
-    alert(
-      "✅ Form submitted successfully:\n" +
-      JSON.stringify(
-        {
-          user: userOptions.find((u) => u.value === selectedUser)?.label,
-          ...formData,
-          photo: formData.photo ? formData.photo.name : "No file uploaded",
-        },
-        null,
-        2
-      )
-    );
+    // alert(
+    //   "✅ Form submitted successfully:\n" +
+    //     JSON.stringify(
+    //       {
+    //         user: userOptions.find((u) => u.value === selectedUser)?.label,
+    //         ...formData,
+    //         photo: formData.photo ? formData.photo.name : "No file uploaded",
+    //       },
+    //       null,
+    //       2
+    //     )
+    // );
     openclick(false);
   };
 
@@ -244,12 +299,12 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
           ? "#007bff"
           : "#cce5ff"
         : state.isFocused
-          ? theme === "dark"
-            ? "#e6f0ff"
-            : "#f0f0f0"
-          : theme === "dark"
-            ? "#fff"
-            : "#fff",
+        ? theme === "dark"
+          ? "#e6f0ff"
+          : "#f0f0f0"
+        : theme === "dark"
+        ? "#fff"
+        : "#fff",
       color: state.isSelected
         ? theme === "dark"
           ? "white"
@@ -274,11 +329,16 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
       },
     }),
   });
-  const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
+  const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
+    icon,
+    text,
+  }) => (
     <label style={{ display: "flex", alignItems: "center", gap: "3px" }}>
       {icon}
       <span>{text}</span>
-      <span style={{ color: "red", fontSize: "15px", marginLeft: "-1px" }}>*</span>
+      <span style={{ color: "red", fontSize: "15px", marginLeft: "-1px" }}>
+        *
+      </span>
     </label>
   );
   return ReactDOM.createPortal(
@@ -302,18 +362,20 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
         />
         {!selectedUser ? (
           <div className={styles.formControl}>
-
             <label>
-              <RequiredLabel icon={<IoPersonOutline className={styles.iconcolor} />} text="Select User" />
+              <RequiredLabel
+                icon={<IoPersonOutline className={styles.iconcolor} />}
+                text="Select User"
+              />
             </label>
             <select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
             >
               <option value="">Select User</option>
-              {userOptions.map((user) => (
-                <option key={user.value} value={user.value}>
-                  {user.label}
+              {dataEntryUsers?.map((user) => (
+                <option key={user?._id} value={user?._id ?? ""}>
+                  {user?.firstName ?? ""} {user?.lastName ?? ""}
                 </option>
               ))}
             </select>
@@ -324,7 +386,11 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
         ) : (
           <div className={styles.selectedUserName}>
             <p>
-              👤 <strong>{userOptions.find((u) => u.value === selectedUser)?.label}</strong>
+              👤{" "}
+              <strong>
+                {dataEntryUsers.find((u) => u?._id === selectedUser)?.firstName}{" "}
+                {dataEntryUsers.find((u) => u?._id === selectedUser)?.lastName}
+              </strong>
             </p>
           </div>
         )}
@@ -335,7 +401,10 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
 
             <div className={styles.formControl}>
               <label>
-                <RequiredLabel icon={<FaStar className={styles.iconcolor} />} text="Visit Type" />
+                <RequiredLabel
+                  icon={<FaStar className={styles.iconcolor} />}
+                  text="Visit Type"
+                />
               </label>
 
               <select
@@ -344,8 +413,10 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                 onChange={onChangeField}
               >
                 <option value="">Select Visit Type</option>
-                <option value="site-visit">Site Visit</option>
-                <option value="virtual-meeting">Virtual Meeting</option>
+                <option value="visit">visit</option>
+                <option value="revisit">revisit</option>
+
+                <option value="virtual-meeting">virtual-meeting</option>
               </select>
               {errors.visitType && (
                 <p className={styles.errorMsg}>{errors.visitType}</p>
@@ -353,28 +424,41 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
             </div>
 
             <div className={styles.card}>
-              <div className={styles.formControl}>
+              <div className={styles.card}>
+                <div className={styles.formControl}>
+                  <label>
+                    <RequiredLabel
+                      icon={<FaLocationDot className={styles.iconcolor} />}
+                      text="Location"
+                    />
+                  </label>
+                  <select
+                    value={formData.location}
+                    name="location"
+                    onChange={onChangeField}
+                  >
+                    <option value="">Select Location</option>
 
-                <label>
-                  <RequiredLabel icon={<FaLocationDot className={styles.iconcolor} />} text="Location" />
-                </label>
-                <select
-                  value={formData.location}
-                  name="location"
-                  onChange={onChangeField}
-                >
-                  <option value="">Select Location</option>
-                  <option value="marina-bay">EV 10 Marina Bay</option>
-                  <option value="square-9">EV 9 Square</option>
-                </select>
-                {errors.location && (
-                  <p className={styles.errorMsg}>{errors.location}</p>
-                )}
+                    {/* Dynamically list projects */}
+                    {projects.map((project: OurProject) => (
+                      <option key={project?._id} value={project?._id ?? ""}>
+                        {project.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {errors.location && (
+                    <p className={styles.errorMsg}>{errors.location}</p>
+                  )}
+                </div>
               </div>
 
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<IoMdTime className={styles.iconcolor} />} text="Date & Time" />
+                  <RequiredLabel
+                    icon={<IoMdTime className={styles.iconcolor} />}
+                    text="Date & Time"
+                  />
                 </label>
 
                 <input
@@ -392,7 +476,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
             {formData.visitType === "virtual-meeting" && (
               <div className={styles.formControl}>
                 <label>
-                  <AiFillPicture className={styles.iconcolor} /> Virtual Meeting Image
+                  <AiFillPicture className={styles.iconcolor} /> Virtual Meeting
+                  Image
                 </label>
                 <div className={styles.uploadBox}>
                   <input
@@ -417,16 +502,18 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
             <div className={styles.card}>
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<IoPersonOutline className={styles.iconcolor} />} text="First Name" />
+                  <RequiredLabel
+                    icon={<IoPersonOutline className={styles.iconcolor} />}
+                    text="First Name"
+                  />
                 </label>
 
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <div className={styles.formControl} >
+                  <div className={styles.formControl}>
                     <select
                       name="prefix"
                       value={formData.prefix}
                       onChange={onChangeField}
-
                     >
                       <option value="">Title</option>
                       <option value="Mr.">Mr.</option>
@@ -434,7 +521,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                       <option value="Miss">Miss</option>
                       <option value="Dr.">Dr.</option>
                     </select>
-                    {errors.prefix && <p className={styles.errorMsg}>{errors.prefix}</p>}
+                    {errors.prefix && (
+                      <p className={styles.errorMsg}>{errors.prefix}</p>
+                    )}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     <input
@@ -445,16 +534,19 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                       placeholder="First Name"
                       style={{ flex: 1 }}
                     />
-                    {errors.firstName && <p className={styles.errorMsg}>{errors.firstName}</p>}
+                    {errors.firstName && (
+                      <p className={styles.errorMsg}>{errors.firstName}</p>
+                    )}
                   </div>
-
                 </div>
-
               </div>
 
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<IoPersonOutline className={styles.iconcolor} />} text="Last Name" />
+                  <RequiredLabel
+                    icon={<IoPersonOutline className={styles.iconcolor} />}
+                    text="Last Name"
+                  />
                 </label>
 
                 <input
@@ -464,14 +556,19 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   onChange={onChangeField}
                   placeholder="Last Name"
                 />
-                {errors.lastName && <p className={styles.errorMsg}>{errors.lastName}</p>}
+                {errors.lastName && (
+                  <p className={styles.errorMsg}>{errors.lastName}</p>
+                )}
               </div>
             </div>
 
             <div className={styles.card}>
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<MdOutlinePhoneInTalk className={styles.iconcolor} />} text="Phone Number" />
+                  <RequiredLabel
+                    icon={<MdOutlinePhoneInTalk className={styles.iconcolor} />}
+                    text="Phone Number"
+                  />
                 </label>
                 <input
                   type="tel"
@@ -481,7 +578,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   placeholder="Enter 10-digit phone"
                   maxLength={10}
                 />
-                {errors.phoneNumber && <p className={styles.errorMsg}>{errors.phoneNumber}</p>}
+                {errors.phoneNumber && (
+                  <p className={styles.errorMsg}>{errors.phoneNumber}</p>
+                )}
               </div>
               <div className={styles.formControl}>
                 <label>
@@ -501,7 +600,10 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
             <div className={styles.card}>
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<MdOutlineEmail className={styles.iconcolor} />} text="Email" />
+                  <RequiredLabel
+                    icon={<MdOutlineEmail className={styles.iconcolor} />}
+                    text="Email"
+                  />
                 </label>
 
                 <input
@@ -511,12 +613,16 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   onChange={onChangeField}
                   placeholder="Enter email address"
                 />
-                {errors.email && <p className={styles.errorMsg}>{errors.email}</p>}
+                {errors.email && (
+                  <p className={styles.errorMsg}>{errors.email}</p>
+                )}
               </div>
               <div className={styles.formControl}>
-
                 <label>
-                  <RequiredLabel icon={<MdNotListedLocation className={styles.iconcolor} />} text="Residence" />
+                  <RequiredLabel
+                    icon={<MdNotListedLocation className={styles.iconcolor} />}
+                    text="Residence"
+                  />
                 </label>
                 <input
                   type="text"
@@ -524,9 +630,10 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   name="residence"
                   onChange={onChangeField}
                 />
-                {errors.residence && <p className={styles.errorMsg}>{errors.residence}</p>}
+                {errors.residence && (
+                  <p className={styles.errorMsg}>{errors.residence}</p>
+                )}
               </div>
-
             </div>
 
             {/* Project Details */}
@@ -534,7 +641,10 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
             <div className={styles.card}>
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<BsBuildingFill className={styles.iconcolor} />} text="Projects" />
+                  <RequiredLabel
+                    icon={<BsBuildingFill className={styles.iconcolor} />}
+                    text="Projects"
+                  />
                 </label>
 
                 <Select
@@ -549,12 +659,17 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   }
                   styles={customSelectStyles(currentTheme)}
                 />
-                {errors.project && <p className={styles.errorMsg}>{errors.project}</p>}
+                {errors.project && (
+                  <p className={styles.errorMsg}>{errors.project}</p>
+                )}
               </div>
 
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<BsBuildingFill className={styles.iconcolor} />} text="Requirements" />
+                  <RequiredLabel
+                    icon={<BsBuildingFill className={styles.iconcolor} />}
+                    text="Requirements"
+                  />
                 </label>
 
                 <Select
@@ -569,13 +684,18 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   }
                   styles={customSelectStyles(currentTheme)}
                 />
-                {errors.requirement && <p className={styles.errorMsg}>{errors.requirement}</p>}
+                {errors.requirement && (
+                  <p className={styles.errorMsg}>{errors.requirement}</p>
+                )}
               </div>
             </div>
 
             <div className={styles.formControl}>
               <label>
-                <RequiredLabel icon={<MdHomeWork className={styles.iconcolor} />} text="Property Type" />
+                <RequiredLabel
+                  icon={<MdHomeWork className={styles.iconcolor} />}
+                  text="Property Type"
+                />
               </label>
 
               <select
@@ -587,14 +707,18 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                 <option value="residential">Residential</option>
                 <option value="commercial">Commercial</option>
               </select>
-              {errors.propertyType && <p className={styles.errorMsg}>{errors.propertyType}</p>}
+              {errors.propertyType && (
+                <p className={styles.errorMsg}>{errors.propertyType}</p>
+              )}
             </div>
             <div className={styles.mainlable}>Managment Information</div>
             <div className={styles.card}>
               <div className={styles.formControl}>
-
                 <label>
-                  <RequiredLabel icon={<SiOpensourcehardware className={styles.iconcolor} />} text="Source" />
+                  <RequiredLabel
+                    icon={<SiOpensourcehardware className={styles.iconcolor} />}
+                    text="Source"
+                  />
                 </label>
                 <select
                   value={formData.Source}
@@ -602,47 +726,60 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                   onChange={onChangeField}
                 >
                   <option value="">Select Source Type</option>
-                  <option value="Walk">Walk-in</option>
-                  <option value="CP">CP</option>
-                  <option value="internal">Internal-Lead</option>
+                  <option value="walk-in">walk-in</option>
+                  <option value="cp">cp</option>
+                  <option value="internal-lead">Internal-Lead</option>
                 </select>
-                {errors.Source && <p className={styles.errorMsg}>{errors.Source}</p>}
+                {errors.Source && (
+                  <p className={styles.errorMsg}>{errors.Source}</p>
+                )}
               </div>
               <div className={styles.formControl}>
                 <label>
-
-                  <RequiredLabel icon={<FaUserTie className={styles.iconcolor} />} text=" Closing Manager" />
+                  <RequiredLabel
+                    icon={<FaUserTie className={styles.iconcolor} />}
+                    text=" Closing Manager"
+                  />
                 </label>
+
                 <select
                   value={formData.closing}
                   name="closing"
                   onChange={onChangeField}
                 >
                   <option value="">Select Closing Manager</option>
-                  <option value="mahesh">Deepak (closing Manager)</option>
-                  <option value="rahul">Jusprit Arora (closing Manager)</option>
-                  <option value="raj">Ranjana (closing Manager)</option>
+                  {closingManagers.map((manager: Employee) => (
+                    <option key={manager._id} value={manager?._id ?? ""}>
+                      {manager.firstName} {manager.lastName} (Closing Manager)
+                    </option>
+                  ))}
                 </select>
-                {errors.closing && <p className={styles.errorMsg}>{errors.closing}</p>}
+
+                {errors.closing && (
+                  <p className={styles.errorMsg}>{errors.closing}</p>
+                )}
               </div>
-
-
             </div>
 
-            {formData.Source === "CP" && (
+            {formData.Source === "cp" && (
               <div className={styles.formControl}>
                 <label>
-                  <RequiredLabel icon={<FaUserTie className={styles.iconcolor} />} text="Channel Pertner" />
+                  <RequiredLabel
+                    icon={<FaUserTie className={styles.iconcolor} />}
+                    text="Channel Partner"
+                  />
                 </label>
                 <select
-                  value={formData.cp}
-                  name="cp"
+                  value={formData.closing}
+                  name="closing"
                   onChange={onChangeField}
                 >
-                  <option value="">Select cp </option>
-                  <option value="mahesh">mahesh (mahesh farm)</option>
-                  <option value="rahul">rahul (rahul farm)</option>
-                  <option value="raj">raj (raj farm)</option>
+                  <option value="">Select Channel Partner </option>
+                  {channelPartners.map((cp: ChannelPartner) => (
+                    <option key={cp._id} value={cp?._id ?? ""}>
+                      {cp?.firstName} {cp?.lastName} ({cp?.firmName})
+                    </option>
+                  ))}
                 </select>
                 {errors.cp && <p className={styles.errorMsg}>{errors.cp}</p>}
               </div>
@@ -650,11 +787,15 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
 
             <div className={styles.formControl}>
               <label>
-                <RequiredLabel icon={<CgNotes className={styles.iconcolor} />} text="Team member" />
+                <RequiredLabel
+                  icon={<CgNotes className={styles.iconcolor} />}
+                  text="Team Member"
+                />
               </label>
+
               <Select
                 isMulti
-                options={themmember}
+                options={teamMemberOptions} // 👈 Dynamic from reportingToEmps
                 value={formData.teammember}
                 onChange={(selected) =>
                   setFormData((prev) => ({
@@ -665,8 +806,12 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                 styles={customSelectStyles(currentTheme)}
                 components={{ Option: CustomOption }}
               />
-              {errors.teammember && <p className={styles.errorMsg}>{errors.teammember}</p>}
+
+              {errors.teammember && (
+                <p className={styles.errorMsg}>{errors.teammember}</p>
+              )}
             </div>
+
             <div className={styles.formControl}>
               <label>
                 <IoLocation className={styles.iconcolor} /> Feedback
@@ -675,13 +820,10 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick }) => {
                 rows={2}
                 placeholder="Feedback for EV Homes"
                 name="feedback"
-
                 value={formData.feedback}
                 onChange={onChangeField}
               />
-
             </div>
-
 
             <div className={styles.dialogButtons}>
               <button className={styles.cancelBtn} onClick={handleCancel}>
