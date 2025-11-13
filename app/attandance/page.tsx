@@ -4,9 +4,9 @@ import MainTab from "../../components/MyAttendanceSection/MainTab";
 
 const AttendancePage = () => {
   return (
-    <div>
+    <>
       <MainTab />
-    </div>
+    </>
   );
 };
 
