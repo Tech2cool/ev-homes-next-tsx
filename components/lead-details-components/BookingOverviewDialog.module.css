@@ -1,0 +1,194 @@
+
+
+.pagemain {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 1.5vh 0.0vw;
+  gap: 2.5vh;
+}
+
+.CustomerInfoMain,
+.DetailedPriceMain,
+.NegotiationOverview,
+.ChannelPartnerMain {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(101, 101, 229, 0.665);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2vh 2vw;
+  border-radius: 12px;
+  gap: 1.2vh;
+  box-shadow: 0 0 10px rgba(50, 50, 150, 0.2);
+}
+
+.DetailedPriceMain {
+  width: fit-content;
+}
+
+.dateDesgin {
+  font-size: 1vw;
+}
+
+.Heading {
+  font-size: 1.5vw;
+  font-weight: 600;
+  color: #b5f5ffa2;
+  margin-bottom: 1vh;
+  border-bottom: 1px solid rgba(80, 80, 200, 0.3);
+  padding-bottom: 0.5vh;
+}
+
+.Tagmain {
+  color: #8a8a8a;
+  white-space: nowrap;
+  
+
+}
+
+.tag {
+  color: #8a8a8a;
+
+
+}
+
+
+
+.Twocontainermain {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  width: 100%;
+  white-space: nornal;
+  font-size: 0.5vw;
+  gap: 2vw;
+}
+
+
+.NameAndDateMain {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1.5vw;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+
+.ContainerOne {
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
+  width: 100%;
+  white-space: nowrap;
+  font-size: 1vw;
+  text-align: center;
+}
+
+
+
+.DpriceContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
+  flex-wrap: nowrap;
+  height: auto;
+  width: 100%;
+}
+
+.PriceBox:nth-child(1) {
+  border: 1px solid #e17a30aa;
+  padding: 1.2vh 1.5vw;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  width: fit-content;
+  text-align: center;
+  font-size: 0.8vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+
+}
+
+.PriceBox:nth-child(2) {
+  border: 1px solid #236b29dd;
+  padding: 1.2vh 1.5vw;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  width: fit-content;
+  text-align: center;
+  font-size: 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+    font-size: 0.8vw;
+
+
+
+}
+
+.negobox:nth-child(1) {
+  border: 1px solid #e17a30aa;
+  border-radius: 10px;
+  padding: 1.2vh 1vw;
+  font-size: 0.8vw;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.negobox:nth-child(2) {
+  border: 1px solid #236b29dd;
+    font-size: 0.8vw;
+  border-radius: 10px;
+  padding: 1.2vh 1vw;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+
+.ContainersMain {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2vw;
+  width: 100%;
+}
+
+.box {
+ display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #2a8dde;
+  border-radius: 10px;
+  padding: 1.2vh 1vw;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+.box:hover {
+  background-color: #066dc143;
+}
+
+/* .value{
+  border: 1px solid green;
+  padding: 1vh 1vw;
+  border-radius: 10px;
+} */
+
+
+.dialogueBox::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dialogueBox::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 255, 0.4);
+  border-radius: 10px;
+}
+
+.dialogueBox::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(120, 120, 255, 0.7);
+}
