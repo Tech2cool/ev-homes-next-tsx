@@ -402,6 +402,9 @@ type DataProviderState = {
   dataEntryUsers: Employee[];
   closingManagers: Employee[];
   reportingToEmps: Employee[];
+  attOverview: AttOverview | null;
+  attendanceList: Attendance[];
+
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -546,6 +549,13 @@ type DataProviderState = {
   getLeadById: (id: string) => Promise<{ success: boolean; message?: string }>;
 
   getTaskById: (id: string) => Promise<{ success: boolean; message?: string }>;
+  getAttendanceOverview: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
+    getMyMonthlyAttendance: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
+
 
   assignTask: (
     id: string,
@@ -598,6 +608,8 @@ const initialState: DataProviderState = {
   dataEntryUsers: [],
   closingManagers: [],
   reportingToEmps: [],
+  attOverview: null,
+  attendanceList:[],
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -709,7 +721,14 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
-
+  getAttendanceOverview: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getMyMonthlyAttendance: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
   assignTask: async () => ({
     success: false,
     message: "Not initialized",
@@ -808,10 +827,14 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
-
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
-
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
+
+  const [attOverview, setAttOverview] = useState<AttOverview | null>(null);
+  const [loadingAttOverview, setLoadingAttOverview] = useState<Boolean>(false);
+
+  const [attendanceList, setAttendanceList] = useState<Attendance[]>([]);
+  const [loadingAttendance, setLoadingAttendance] = useState<Boolean>(false);
 
   const updateFeedbackWithTimer = async (
     data: Record<string, any> = {}
@@ -823,7 +846,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     try {
       console.log(" passed 1");
 
-      let url = `/api/update-feedback-timer-v2`;
+      const url = `/api/update-feedback-timer-v2`;
       const response = await fetchAdapter(url, {
         method: "POST",
         body: JSON.stringify(data),
@@ -2658,6 +2681,89 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const getAttendanceOverview = async (
+    id: string,
+    date?: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: AttOverview | null;
+  }> => {
+    setLoadingAttOverview(true);
+    setError("");
+
+    try {
+      let url = `/api/monthly-attendance-overview/${id}`;
+      if (date != null) {
+        url += `?date=${date}`;
+      }
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const dta = res?.data;
+      console.log(dta);
+      setAttOverview(dta);
+
+      return { success: true, data: dta };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch attendance overview";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingAttOverview(false);
+    }
+  };
+
+  
+  const getMyMonthlyAttendance = async (
+    id: string,
+    date?: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Attendance[];
+  }> => {
+    setLoadingAttendance(true);
+    setError("");
+
+    try {
+      let url = `/api/attendance/${id}`;
+      if (date != null) {
+        url += `?date=${date}`;
+      }
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const dta = res?.data;
+      console.log(dta);
+      setAttendanceList(dta);
+
+      return { success: true, data: dta };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch attendance list";
+
+      setError(message);
+
+      return { success: false, message, data: [] };
+    } finally {
+      setLoadingAttendance(false);
+    }
+  };
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2702,6 +2808,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     closingManagers: closingManagers, //list of closing manager
     reportingToEmps: reportingToEmps,
     currentTask: currentTask,
+    attOverview: attOverview,
+    attendanceList:attendanceList,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -2740,6 +2848,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadById: getLeadById,
     getTaskById: getTaskById,
     assignTask: assignTask,
+    getAttendanceOverview: getAttendanceOverview,
+  getMyMonthlyAttendance:getMyMonthlyAttendance,
   };
 
   return (
