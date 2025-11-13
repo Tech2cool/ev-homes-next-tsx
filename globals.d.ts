@@ -330,7 +330,7 @@ interface ChannelPartner {
 }
 
 interface Task {
-  id?: string | null;
+  _id?: string | null;
   assignTo?: Employee | null;
   assignBy?: Employee | null;
   lead?: Lead | null;

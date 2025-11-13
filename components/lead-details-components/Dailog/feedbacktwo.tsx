@@ -11,6 +11,7 @@ import { LuAlarmClock } from "react-icons/lu";
 import { FaCalendarAlt } from "react-icons/fa";
 import { MdCancel, MdFeedback } from "react-icons/md";
 import { useData } from "@/providers/dataContext";
+import { toast } from "react-toastify";
 
 interface FeedbackTwoProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,16 +32,14 @@ interface FormState {
 }
 
 const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
-   const {
-       updateFeedbackWithTimer
-      } = useData();
+  const { updateFeedbackWithTimer, getLeadById, getTaskById } = useData();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormState>({
     callStatus: "",
     clientInterest: "",
@@ -105,62 +104,71 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-const onSubmit = async () => {
-    const newErrors: { [key: string]: string } = {};
+  const onSubmit = async () => {
+    // if (!formData.reminderDateTime) {
+    //   toast("Please select Reminder Date & Time", { type: "error" });
+    //   return;
+    // }
 
-    if (!formData.callStatus)
-      newErrors.callStatus = "Please select Call Status";
-    if (!formData.clientInterest)
-      newErrors.clientInterest = "Please select Client Interest Level";
-    if (!formData.leadStage) newErrors.leadStage = "Please select Lead Stage";
-    if (!formData.feedback.trim()) newErrors.feedback = "Please enter feedback";
+    const reminderDate = new Date(formData.reminderDateTime);
+    const preferredVisitDate = formData.preferredVisitDate
+      ? new Date(formData.preferredVisitDate)
+      : null;
 
-    // If leadStage is selected, validate the extra fields
-    if (formData.leadStage) {
-      if (!formData.priorityTag)
-        newErrors.priorityTag = "Please select Priority Tag";
-      if (!formData.siteVisit)
-        newErrors.siteVisit = "Please select Site Visit status";
-      if (!formData.reminderDateTime)
-        newErrors.reminderDateTime = "Please select Reminder Date & Time";
-      if (!formData.reminderType)
-        newErrors.reminderType = "Please select Reminder Type";
+    const data = {
+      taskCompleted: "completed",
+      leadStage: formData.leadStage,
+      callStatus: formData.callStatus,
+      tag: formData.priorityTag,
+      intrestedStatus: formData.clientInterest,
+      feedback: formData.feedback,
 
-      if (!formData.preferredVisitDate)
-        newErrors.preferredVisitDate = "Please select preferred Visit Date";
-    }
+      siteVisitInterested: formData.siteVisit,
+      siteVisitInterestedDate: preferredVisitDate
+        ? preferredVisitDate.toISOString()
+        : null,
 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+      reminderDate: reminderDate ? reminderDate.toISOString() : null,
+      reminderType: formData.reminderType,
 
-    setIsSubmitting(true);
+      task: task?._id ?? lead?.taskRef?._id ?? "",
+      lead: lead?._id ?? task?.lead?._id,
+    };
 
     try {
-      // Call the context function when submitting
-      const result = await updateFeedbackWithTimer();
-      
-      if (result.success) {
-        console.log("Feedback submitted and timer updated successfully");
-        
-        // Prepare your form data for submission
-        const submissionData = {
-          formData: formData,
-          leadId: lead?._id,
-          taskId: task?.id
-        };
-        
-        console.log("Full submission data:", submissionData);
-        
-        // Show success message
-        alert("Feedback submitted successfully!");
+      setIsSubmitting(true);
+
+      const response = await updateFeedbackWithTimer(data);
+
+      if (response?.success) {
+        toast("Feedback Updated", { type: "success" });
+
+        // refresh data if available in your context
+        if (lead?._id) {
+          try {
+            await getLeadById(lead._id);
+          } catch (err) {
+            console.warn("Error refreshing lead:", err);
+          }
+        }
+
+        if (task?._id) {
+          try {
+            await getTaskById(task._id);
+          } catch (err) {
+            console.warn("Error refreshing task:", err);
+          }
+        }
+
         openclick(false);
       } else {
-        console.error("Failed to update feedback:", result.message);
-        alert("Form submitted but failed to update timer: " + result.message);
+        toast(response?.message || "Failed to update feedback", {
+          type: "error",
+        });
       }
     } catch (error) {
-      console.error("Error submitting feedback:", error);
-      alert("Error submitting feedback. Please try again.");
+      console.error("Error updating feedback:", error);
+      toast("Something went wrong while saving feedback", { type: "error" });
     } finally {
       setIsSubmitting(false);
     }
@@ -423,15 +431,15 @@ const onSubmit = async () => {
 
           {/* Buttons */}
           <div className={styles.dialogButtons}>
-            <button 
-              className={styles.cancelBtn} 
+            <button
+              className={styles.cancelBtn}
               onClick={handleCancel}
               disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button 
-              className={styles.submitBtn} 
+            <button
+              className={styles.submitBtn}
               onClick={onSubmit}
               disabled={isSubmitting}
             >
