@@ -364,6 +364,8 @@ type DataProviderState = {
   testimonials: Testimonial[];
   loadingTestimonial: boolean;
   loadingLeads: boolean;
+  loadingTask:boolean;
+
   loadingPostSaleLeads: boolean;
 
   fetchingMoreLeads: boolean;
@@ -396,6 +398,7 @@ type DataProviderState = {
   ranking: RankingTurn | null;
   leaveCount: EmployeeShiftInfoModel | null;
   currentLead: Lead | null;
+  currentTask:Task|null;
   dataEntryUsers: Employee[];
   closingManagers: Employee[];
   reportingToEmps: Employee[];
@@ -535,10 +538,24 @@ type DataProviderState = {
   getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
 
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
-  updateFeedbackWithTimer: () => Promise<{
+ updateFeedbackWithTimer: (
+    data: Record<string, any>
+  ) => Promise<{
     success: boolean;
     message?: string;
   }>;
+
+
+
+  getLeadById: (
+    id: string
+  )=> Promise<{ success: boolean; message?: string }>;
+
+
+getTaskById: (
+    id: string
+  )=> Promise<{ success: boolean; message?: string }>;
+
 };
 
 //initial values should define here
@@ -557,6 +574,8 @@ const initialState: DataProviderState = {
   postSaleleads: null,
 
   loadingLeads: false,
+    loadingTask: false,
+
   loadingPostSaleLeads: false,
 
   siteInfo: null,
@@ -580,6 +599,7 @@ const initialState: DataProviderState = {
   ranking: null,
   leaveCount: null,
   currentLead: null,
+  currentTask:null,
   dataEntryUsers: [],
   closingManagers: [],
   reportingToEmps: [],
@@ -684,6 +704,17 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+
+  getLeadById: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  getTaskById: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -707,6 +738,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [reportingToEmps, setReportingToEmployees] = useState<Employee[]>([]);
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
+  const [loadingTask, setLoadingTask] = useState<boolean>(false);
+
   const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
     useState<boolean>(false);
 
@@ -775,27 +808,38 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   );
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
+
 
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
 
-  const updateFeedbackWithTimer = async (): Promise<{
+  const updateFeedbackWithTimer = async (
+    data: Record<string, any> = {}
+  ): Promise<{
     success: boolean;
     message?: string;
+    data?: Lead | null;
   }> => {
     try {
-      const response = await fetchAdapter("/api/update-feedback-timer-v2");
+      console.log(" passed 1");
 
-      // if (response.data.code !== 200) {
-      //   // showCustomSnackBar(response.data.message);
-      //   return null;
-      // }
+      let url = `/api/update-feedback-timer-v2`;
+      const response = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
 
-      // showCustomSnackBar(response.data.message, 'green');
       console.log(response);
-      const reqs = response?.data || [];
-      setTimer(reqs); // ✅ update state
+      console.log(" passed 2");
+
+      const reqs = response?.data;
+      setCurrentLead(response?.data as Lead);
+
+      setTimer(reqs); 
+
+      console.log("last end ");
 
       return { success: true };
     } catch (error: any) {
@@ -2513,11 +2557,81 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+
+  const getLeadById = async (
+  id: string
+): Promise<{ success: boolean; message?: string }> => {
+  setLoadingLeads(true);
+  setError("");
+
+  try {
+    const url = `/api/lead/${id}`;
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    // Assuming res.data is your lead object type
+    setCurrentLead(res?.data);
+
+    return { success: true };
+  } catch (error: any) {
+    console.error(error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to fetch lead";
+
+    setError(message);
+
+    return { success: false, message };
+  } finally {
+    setLoadingLeads(false);
+  }
+};
+
+
+
+const getTaskById = async (
+  id: string
+): Promise<{ success: boolean; message?: string; data?: Task | null }> => {
+  setLoadingTask(true);
+  setError("");
+
+  try {
+    const url = `/api/task-by-id/${id}`;
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    const task = res?.data as Task;
+    setCurrentTask(task);
+
+    return { success: true, data: task };
+  } catch (error: any) {
+    console.error(error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to fetch task";
+
+    setError(message);
+
+    return { success: false, message, data: null };
+  } finally {
+    setLoadingTask(false);
+  }
+};
+
+
   const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
     loadingLeads: loadingLeads,
+    loadingTask: loadingTask,
+
     loadingPostSaleLeads: loadingPostSaleLeads,
 
     employees: employees,
@@ -2554,6 +2668,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     dataEntryUsers: dataEntryUsers,
     closingManagers: closingManagers, //list of closing manager
     reportingToEmps: reportingToEmps,
+    currentTask:currentTask,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -2589,6 +2704,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     updateLeadDetails: updateLeadDetails,
     getDataEntryEmployees: getDataEntryEmployees,
     updateFeedbackWithTimer: updateFeedbackWithTimer,
+    getLeadById:getLeadById,
+    getTaskById:getTaskById
   };
 
   return (
