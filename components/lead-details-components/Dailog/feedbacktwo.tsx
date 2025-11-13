@@ -10,6 +10,7 @@ import { BsFillPatchQuestionFill } from "react-icons/bs";
 import { LuAlarmClock } from "react-icons/lu";
 import { FaCalendarAlt } from "react-icons/fa";
 import { MdCancel, MdFeedback } from "react-icons/md";
+import { useData } from "@/providers/dataContext";
 
 interface FeedbackTwoProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,13 +30,17 @@ interface FormState {
   preferredVisitDate?: string;
 }
 
-const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
+const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
+   const {
+       updateFeedbackWithTimer
+      } = useData();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormState>({
     callStatus: "",
     clientInterest: "",
@@ -47,6 +52,23 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
     reminderType: "",
     preferredVisitDate: "",
   });
+
+  // useEffect(() => {
+  //   const initializeFeedback = async () => {
+  //     try {
+  //       const result = await updateFeedbackWithTimer();
+  //       if (result.success) {
+  //         console.log("Feedback timer updated successfully");
+  //       } else {
+  //         console.error("Failed to update feedback timer:", result.message);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating feedback timer:", error);
+  //     }
+  //   };
+
+  //   initializeFeedback();
+  // }, [updateFeedbackWithTimer]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -83,7 +105,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onSubmit = () => {
+const onSubmit = async () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.callStatus)
@@ -111,9 +133,39 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    alert("Form submitted successfully:\n" + JSON.stringify(formData, null, 2));
-    openclick(false);
+    setIsSubmitting(true);
+
+    try {
+      // Call the context function when submitting
+      const result = await updateFeedbackWithTimer();
+      
+      if (result.success) {
+        console.log("Feedback submitted and timer updated successfully");
+        
+        // Prepare your form data for submission
+        const submissionData = {
+          formData: formData,
+          leadId: lead?._id,
+          taskId: task?.id
+        };
+        
+        console.log("Full submission data:", submissionData);
+        
+        // Show success message
+        alert("Feedback submitted successfully!");
+        openclick(false);
+      } else {
+        console.error("Failed to update feedback:", result.message);
+        alert("Form submitted but failed to update timer: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("Error submitting feedback. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
     icon,
     text,
@@ -126,6 +178,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
       </span>
     </label>
   );
+
   return ReactDOM.createPortal(
     <div className={styles.dialogOverlay}>
       <div ref={dialogRef} className={styles.dialogBox}>
@@ -159,6 +212,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                 value={formData.callStatus}
                 name="callStatus"
                 onChange={onChangeField}
+                disabled={isSubmitting}
               >
                 <option value="">Call Status</option>
                 <option value="connected">Call Connected</option>
@@ -174,7 +228,6 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
             </div>
 
             {/* Client Interest Level */}
-            {/* Client Interest Level */}
             <div className={styles.formControl}>
               <label>
                 <RequiredLabel
@@ -182,25 +235,20 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                   text="Client Interest Level"
                 />
               </label>
-
               <select
                 value={formData.clientInterest}
                 name="clientInterest"
                 onChange={onChangeField}
+                disabled={isSubmitting}
               >
                 <option value="">Client Interest Level</option>
-
-                {/* Show options dynamically */}
                 <option value="notInterested">Not-interested</option>
                 <option value="dnd">DND</option>
                 <option value="moderate">Moderate</option>
-
-                {/* Only show Interested when Call Connected */}
                 {formData.callStatus === "connected" && (
                   <option value="interested">Interested</option>
                 )}
               </select>
-
               {errors.clientInterest && (
                 <p className={styles.errorMsg}>{errors.clientInterest}</p>
               )}
@@ -219,6 +267,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
               value={formData.leadStage}
               name="leadStage"
               onChange={onChangeField}
+              disabled={isSubmitting}
             >
               <option value="">Select Lead Stage</option>
               <option value="progress">In Progress</option>
@@ -247,11 +296,11 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                     value={formData.priorityTag}
                     name="priorityTag"
                     onChange={onChangeField}
+                    disabled={isSubmitting}
                   >
                     <option value="">Select Priority</option>
                     <option value="cold">Cold</option>
                     <option value="warm">Warm</option>
-
                     <option value="hot">Hot</option>
                   </select>
                   {errors.priorityTag && (
@@ -272,6 +321,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                     value={formData.siteVisit}
                     name="siteVisit"
                     onChange={onChangeField}
+                    disabled={isSubmitting}
                   >
                     <option value="">Select Option</option>
                     <option value="yes">Yes</option>
@@ -293,8 +343,9 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                   <input
                     type="date"
                     name="preferredVisitDate"
-                    value={(formData as any).preferredVisitDate || ""}
+                    value={formData.preferredVisitDate || ""}
                     onChange={onChangeField}
+                    disabled={isSubmitting}
                   />
                   {errors.preferredVisitDate && (
                     <p className={styles.errorMsg}>
@@ -317,6 +368,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                     name="reminderDateTime"
                     value={formData.reminderDateTime}
                     onChange={onChangeField}
+                    disabled={isSubmitting}
                   />
                   {errors.reminderDateTime && (
                     <p className={styles.errorMsg}>{errors.reminderDateTime}</p>
@@ -334,6 +386,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
                     value={formData.reminderType}
                     name="reminderType"
                     onChange={onChangeField}
+                    disabled={isSubmitting}
                   >
                     <option value="">Select Type</option>
                     <option value="call">Call Reminder</option>
@@ -361,6 +414,7 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
               name="feedback"
               value={formData.feedback}
               onChange={onChangeField}
+              disabled={isSubmitting}
             />
             {errors.feedback && (
               <p className={styles.errorMsg}>{errors.feedback}</p>
@@ -369,11 +423,19 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick }) => {
 
           {/* Buttons */}
           <div className={styles.dialogButtons}>
-            <button className={styles.cancelBtn} onClick={handleCancel}>
+            <button 
+              className={styles.cancelBtn} 
+              onClick={handleCancel}
+              disabled={isSubmitting}
+            >
               Cancel
             </button>
-            <button className={styles.submitBtn} onClick={onSubmit}>
-              Save Changes
+            <button 
+              className={styles.submitBtn} 
+              onClick={onSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
