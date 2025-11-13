@@ -7,6 +7,8 @@ import { Folder } from "lucide-react";
 import { MdCancel } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdNoteAlt } from "react-icons/md";
+import { useData } from "@/providers/dataContext";
+
 
 
 const dummyEstimates = [
@@ -54,6 +56,10 @@ const dummyEstimates = [
 ];
 
 const LeadCard = ({ estimate, onClick }) => {
+  const {getEstimateGeneratedById} = useData();
+    const [estimatebyId, setEstimatebyId] = useState<EstimateGenerated[]>([]);
+  const [loadingEstimatebyId, setLoadingEstimatebyId] = useState<boolean>(false);
+  
   return (
     <div className={styles.leadCard} onClick={onClick}>
       <div className={styles.fistrow}>

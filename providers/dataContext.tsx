@@ -581,6 +581,10 @@ type DataProviderState = {
     id: string;
     remark?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
+
+  getEstimateGeneratedById: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -759,6 +763,11 @@ const initialState: DataProviderState = {
   }),
 
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
+
+  getEstimateGeneratedById: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -776,6 +785,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -783,6 +793,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [loadingTask, setLoadingTask] = useState<boolean>(false);
+
+  const [estimatebyId, setEstimatebyId] = useState<EstimateGenerated[]>([]);
+  const [loadingEstimatebyId, setLoadingEstimatebyId] = useState<boolean>(false);
+
 
   const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
     useState<boolean>(false);
@@ -856,6 +870,46 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
 
+  const getEstimateGeneratedById = async (
+    id: string
+  ): Promise<{ success: boolean; message?: string }> => {
+    setLoadingEstimatebyId(true);
+    setError("");
+
+    try {
+      let url = `/api/estimateGenerated-lead/${id}`;
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      // Expecting structure: { data: [...] }
+      // const items = (res?.data?.data as EstimateGenerated[]) ?? [];
+      setEstimatebyId(res?.data);
+      setLoadingEstimatebyId(false);
+
+      return { success: true };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      setLoadingEstimatebyId(false);
+
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoadingEstimatebyId(false);
+    }
+  };
 
   const cancelBooking = async ({
     id = null,
@@ -889,7 +943,6 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [attendanceList, setAttendanceList] = useState<Attendance[]>([]);
   const [loadingAttendance, setLoadingAttendance] = useState<Boolean>(false);
-
 
   const updateFeedbackWithTimer = async (
     data: Record<string, any> = {}
@@ -2923,6 +2976,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     attendanceList: attendanceList,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
+    getEstimateGeneratedById: getEstimateGeneratedById,
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
@@ -2963,7 +3017,6 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getAttendanceOverview: getAttendanceOverview,
     getMyMonthlyAttendance: getMyMonthlyAttendance,
     getTodayAttendance: getTodayAttendance,
-
   };
 
   return (
