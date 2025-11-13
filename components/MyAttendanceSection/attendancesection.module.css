@@ -1,7 +1,9 @@
 html,
 body {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  width: 100%;
 }
+
 
 .container {
   display: flex;
@@ -718,7 +720,9 @@ display: none;
   color: inherit;
   overflow: visible;
   max-height: 100vh;
-  width: 70vw;
+  width: 120%;
+
+  overflow-x: auto;
   scrollbar-width: none;
   border: 1px solid rgba(128, 128, 128, 0.247);
   border-radius: 10px;
@@ -727,9 +731,10 @@ display: none;
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 100%;
+  min-width: 100px;
   height: auto;
   outline: none;
+  border-collapse: collapse;
 }
 
 .table th,
@@ -957,17 +962,21 @@ display: none;
 }
 
 
+
 /* desktop overtime layout */
 
 @media screen and (min-width:616px) and (max-width:1700px) {
   .OvertimeMaindesk {
     display: flex;
     flex-direction: column;
+    flex: 0 0 330px;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.02);
     height: auto;
     margin-top: 2vh;
-    width: 100%;
+    width: fit-content;
+    min-width: 330px;
+    max-width: 330px;
     padding: 1vh 1vw;
     border: 1px solid rgba(128, 128, 128, 0.247);
     gap: 3vh;
@@ -1120,19 +1129,31 @@ display: none;
   .horizontalLayout {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1vw;
-    height: auto;
+    justify-content: flex-start;
+    gap: 20px;
+
     width: 100%;
-    padding-left: 3vw;
-    padding-right: 3vw;
+    max-width: 100%;
+
+
+    min-width: 0;
+
+    overflow-x: hidden;
+
+    padding: 0 10px;
+
+
+    box-sizing: border-box;
   }
+
 
   .headerandTableContainer {
     display: flex;
     flex-direction: column;
     height: auto;
+    min-width: 0;
+    overflow: hidden;
+    flex: 1;
 
   }
 
@@ -1167,7 +1188,8 @@ display: none;
     background-color: rgba(255, 255, 255, 0.02);
     height: auto;
     margin-top: 2vh;
-    width: 100%;
+    width: fit-content;
+    min-width: 0px;
     padding: 1vh 1vw;
     border: 1px solid rgba(128, 128, 128, 0.247);
     gap: 3vh;
@@ -1273,7 +1295,7 @@ display: none;
     bottom: 90%;
 
   }
-  
+
 
 
 
@@ -1318,20 +1340,28 @@ display: none;
   .horizontalLayout {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1vw;
-    height: auto;
+    justify-content: flex-start;
+    gap: 1rem;
+
     width: 100%;
-    padding-left: 3vw;
-    padding-right: 3vw;
+    max-width: 100%;
+
+
+    min-width: 0;
+
+    overflow-x: hidden;
+
+    padding-left: 20px;
+
+    padding-right: 20px;
+    box-sizing: border-box;
   }
 
   .headerandTableContainer {
     display: flex;
     flex-direction: column;
     height: auto;
-
+    flex: 1;
   }
 
   .tableSection {
@@ -1346,7 +1376,7 @@ display: none;
     font-size: 1.5vw;
   }
 
-  .tableContainer {
+  /* .tableContainer {
 
     color: inherit;
 
@@ -1358,7 +1388,7 @@ display: none;
     border: 1px solid rgba(128, 128, 128, 0.247);
     border-radius: 10px;
 
-  }
+  } */
 
   .tableContainer {
 
@@ -1366,7 +1396,8 @@ display: none;
 
     overflow: visible;
     max-height: 100vh;
-    width: 70vw;
+    width: 100%;
+    min-width: 0;
     scrollbar-width: none;
 
     border: 1px solid rgba(128, 128, 128, 0.247);

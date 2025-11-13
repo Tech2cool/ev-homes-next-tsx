@@ -471,18 +471,18 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ item, leaveInfo, 
   const shiftStart = leaveInfo.shift.timeIn;
   const shiftEnd = leaveInfo.shift.timeOut;
 
-    const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
-    
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const isDark =
-      document.documentElement.classList.contains("dark") ||
-      document.body.classList.contains("dark");
 
-    setTheme(isDark ? "dark" : "light");
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isDark =
+        document.documentElement.classList.contains("dark") ||
+        document.body.classList.contains("dark");
+
+      setTheme(isDark ? "dark" : "light");
+    }
+  }, []);
 
 
 
