@@ -551,6 +551,20 @@ type DataProviderState = {
     id: string,
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
+
+  sendOtpSiteVisit: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+
+  addSiteVisitV2: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+
+  // uploadFile: (
+  //   data: Record<string, any>
+  // ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -714,6 +728,24 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+  sendOtpSiteVisit: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+
+  addSiteVisitV2: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+
+  // uploadFile:async () => ({
+  //   success: false,
+  //   message: "Not initialized",
+  // }),
+
 };
 
 const dataProviderContext =
@@ -808,6 +840,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
+
+  // const [otp, setSiteVisitOtp] = useState<Task | null>(null);
 
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
@@ -2658,6 +2692,123 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const sendOtpSiteVisit = async (
+    data: Record<string, any>
+  ): Promise<{ success: boolean; message?: string; data?: Otp | null }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/site-visit-generate-otp`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const otp = res?.data;
+
+      console.log("otp", otp);
+      // setCurrentTask(task);
+
+      return { success: true, data: otp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+
+
+ const addSiteVisitV2 = async (
+    data: Record<string, any>
+  ): Promise<{ success: boolean; message?: string; data?: SiteVisit | null }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/site-visit-add-v2`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const otp = res?.data;
+
+      console.log("otp", otp);
+      // setCurrentTask(task);
+
+      return { success: true, data: otp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+
+
+const uploadFile = async (file: File): Promise<UploadFile | null> => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    const response = await fetchAdapter("/upload", {
+      method: "POST",
+      body: formData,
+      // do not manually set Content-Type for FormData
+      // timeout: 15 * 60 * 1000, // 15 minutes
+    });
+
+    if (response.code!=200) {
+      console.error("Upload failed:", response.message);
+      return null;
+    }
+
+    const data = await response.data();
+
+    if (!data) {
+      console.error("Upload failed: empty response");
+      return null;
+    }
+
+    return {
+      token: data.token,
+      filename: data.filename,
+      downloadUrl: data.downloadUrl,
+    } as UploadFile;
+  } catch (error: any) {
+    let errorMessage = "Something went wrong";
+
+    if (error?.message) {
+      errorMessage = error.message;
+    }
+
+    console.error("Upload error:", errorMessage);
+    return null;
+  }
+};
+
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2740,6 +2891,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadById: getLeadById,
     getTaskById: getTaskById,
     assignTask: assignTask,
+    sendOtpSiteVisit: sendOtpSiteVisit,
+    addSiteVisitV2:addSiteVisitV2,
+    uploadFile:uploadFile,
   };
 
   return (

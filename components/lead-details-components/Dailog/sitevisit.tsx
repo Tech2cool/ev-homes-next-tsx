@@ -74,6 +74,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     channelPartners,
     fetchReportingToEmployees,
     reportingToEmps,
+    sendOtpSiteVisit,
+    addSiteVisitV2,
   } = useData();
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -82,7 +84,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
   const [otp, setOTP] = useState("");
   const [otpError, setOtpError] = useState("");
   const [showOTPSuccess, setShowOTPSuccess] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const [formData, setFormData] = useState<FormState>({
@@ -116,17 +118,22 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     teammember:
       visit?.taskRef?.assignTo?._id && visit?.taskRef?.assignTo?.firstName
         ? [
-          {
-            value: visit.taskRef.assignTo._id,
-            label: `${visit.taskRef.assignTo.firstName} ${visit.taskRef.assignTo.lastName ?? ""
+            {
+              value: visit.taskRef.assignTo._id,
+              label: `${visit.taskRef.assignTo.firstName} ${
+                visit.taskRef.assignTo.lastName ?? ""
               }`,
-          },
-        ]
+            },
+          ]
         : [],
 
     feedback: "",
     prefix: "",
   });
+
+  const tagginOver = visit?.validTill
+    ? new Date(visit.validTill) < new Date()
+    : false;
 
   useEffect(() => {
     getDataEntryEmployees();
@@ -173,6 +180,127 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     </components.Option>
   );
 
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+
+    if (formData.visitType === "virtual-meeting") {
+      await handleVerifiedOrSkipOtp(true);
+    } else {
+      // ✅ If CP + taggingOver → show confirmation first
+      if (visit?.leadType?.toLowerCase() === "cp" && tagginOver) {
+        setShowConfirm(true);
+      } else {
+        // For all other cases, generate OTP directly
+        await generateOtp();
+      }
+    }
+  };
+
+  const handleConfirmSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.stopPropagation();
+    setShowConfirm(false);
+    await generateOtp(); // Generate OTP after confirmation
+  };
+
+  const generateOtp = async (resent = false) => {
+    try {
+      setIsLoading(true);
+      const payload = {
+        project: formData.project?.map((p: OptionType) => p.value),
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phoneNumber: formData.phoneNumber,
+        email: formData.email || null,
+        closingManager: formData.closing,
+      };
+      console.log(payload);
+
+      const res = await sendOtpSiteVisit(payload);
+      setShowOTP(true);
+      console.log(res);
+    } catch (error) {
+      alert("Failed to send OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifiedOrSkipOtp = async (verified = false) => {
+    try {
+      setIsLoading(true);
+
+      const visitMap = {
+        visitType: formData.visitType,
+        projects: formData.project?.map((p: OptionType) => p.value),
+        choiceApt: formData.requirement?.map((r: OptionType) => r.value),
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        closingManager: formData.closing,
+        closingTeam: formData.teammember?.map((t: OptionType) => t.value),
+        callBy: visit?.taskRef?.assignTo,
+        date: formData.dateTime,
+        phoneNumber: formData.phoneNumber ? Number(formData.phoneNumber) : null,
+        altPhoneNumber: formData.altPhoneNumber
+          ? Number(formData.altPhoneNumber)
+          : null,
+        email: formData.email?.trim() || null,
+        residence: formData.residence,
+        dataEntryBy: selectedUser,
+        namePrefix: formData.prefix,
+        countryCode: "+91",
+        verified,
+        source: formData.Source,
+        feedback: formData.feedback || "",
+        channelPartner: formData.cp || null,
+        gender:
+          formData.prefix?.toLowerCase() === "mr"
+            ? "male"
+            : formData.prefix
+            ? "female"
+            : null,
+        location: formData.location,
+        lead: visit, // optional
+        // createdThrough: formData.through || "web",
+        propertyType: formData.propertyType || null,
+      };
+      const res = await addSiteVisitV2(visitMap);
+
+      if (res) {
+        alert("✅ Site visit added successfully!");
+      } else {
+        alert("Error adding site visit");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to add site visit");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    if (otp.length !== 6) {
+      setOtpError("Enter valid 6-digit OTP");
+      return;
+    }
+    setShowOTP(false);
+    await handleVerifiedOrSkipOtp(true);
+  };
+
+  const handleSubmitClick = () => {
+    if (!validateForm()) return;
+
+    // Show confirmation only for CP leads with expired tagging
+    if (visit?.leadType?.toLowerCase() === "cp" && tagginOver) {
+      setShowConfirm(true);
+    } else {
+      // For all other cases, go directly to OTP
+      setShowOTP(true);
+    }
+  };
+
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (showOTP || showConfirm || showOTPSuccess) return;
@@ -183,9 +311,6 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [openclick, showOTP, showConfirm, showOTPSuccess]);
-
-
-
 
   // Handle field change
   const onChangeField = (
@@ -250,8 +375,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     if (!formData.lastName.trim()) newErrors.lastName = "Enter last name.";
     if (!formData.phoneNumber.trim() || formData.phoneNumber.length < 10)
       newErrors.phoneNumber = "Enter a valid 10-digit phone number.";
-    if (!formData.email.trim())
-      newErrors.email = "Enter a valid email.";
+    if (!formData.email.trim()) newErrors.email = "Enter a valid email.";
     if (formData.project.length === 0)
       newErrors.project = "Select at least one project.";
     if (formData.requirement.length === 0)
@@ -272,39 +396,14 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const onSubmit = () => {
-    if (!validateForm()) return;
-
-    // alert(
-    //   "✅ Form submitted successfully:\n" +
-    //     JSON.stringify(
-    //       {
-    //         user: userOptions.find((u) => u.value === selectedUser)?.label,
-    //         ...formData,
-    //         photo: formData.photo ? formData.photo.name : "No file uploaded",
-    //       },
-    //       null,
-    //       2
-    //     )
-    // );
-    openclick(false);
-  };
-
-  const handleConfirmSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    setShowConfirm(false);
-    setShowOTP(true);
-  };
-
-
-  const handleVerifyOTP = () => {
-    if (otp.trim().length !== 6) {
-      setOtpError("Enter a valid 6-digit OTP");
-      return;
-    }
-    setShowOTP(false);
-    setShowOTPSuccess(true);
-  };
+  // const handleVerifyOTP = () => {
+  //   if (otp.trim().length !== 6) {
+  //     setOtpError("Enter a valid 6-digit OTP");
+  //     return;
+  //   }
+  //   setShowOTP(false);
+  //   setShowOTPSuccess(true);
+  // };
 
   const handleCancelConfirm = () => {
     setShowConfirm(false);
@@ -316,8 +415,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
       borderColor: state.isFocused
         ? "#007bff"
         : theme === "dark"
-          ? "#444444f5"
-          : "#ccc",
+        ? "#444444f5"
+        : "#ccc",
       minHeight: "40px",
       borderWidth: "2px",
       color: theme === "dark" ? "white" : "#201f1f",
@@ -339,19 +438,19 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
           ? "#007bff"
           : "#cce5ff"
         : state.isFocused
-          ? theme === "dark"
-            ? "#0056b3"
-            : "#e6f0ff"
-          : theme === "dark"
-            ? "#151414f5"
-            : "white",
+        ? theme === "dark"
+          ? "#0056b3"
+          : "#e6f0ff"
+        : theme === "dark"
+        ? "#151414f5"
+        : "white",
       color: state.isSelected
         ? theme === "dark"
           ? "white"
           : "#201f1f"
         : theme === "dark"
-          ? "white"
-          : "#201f1f",
+        ? "white"
+        : "#201f1f",
       fontSize: "14px", // smaller font
     }),
     singleValue: (base: any) => ({
@@ -389,8 +488,6 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
       fontSize: "14px",
     }),
   });
-
-
 
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
     icon,
@@ -459,8 +556,14 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
               <p>
                 👤{" "}
                 <strong>
-                  {dataEntryUsers.find((u) => u?._id === selectedUser)?.firstName}{" "}
-                  {dataEntryUsers.find((u) => u?._id === selectedUser)?.lastName}
+                  {
+                    dataEntryUsers.find((u) => u?._id === selectedUser)
+                      ?.firstName
+                  }{" "}
+                  {
+                    dataEntryUsers.find((u) => u?._id === selectedUser)
+                      ?.lastName
+                  }
                 </strong>
               </p>
             </div>
@@ -547,8 +650,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
               {formData.visitType === "virtual-meeting" && (
                 <div className={styles.formControl}>
                   <label>
-                    <AiFillPicture className={styles.iconcolor} /> Virtual Meeting
-                    Image
+                    <AiFillPicture className={styles.iconcolor} /> Virtual
+                    Meeting Image
                   </label>
                   <div className={styles.uploadBox}>
                     <input
@@ -637,7 +740,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                 <div className={styles.formControl}>
                   <label>
                     <RequiredLabel
-                      icon={<MdOutlinePhoneInTalk className={styles.iconcolor} />}
+                      icon={
+                        <MdOutlinePhoneInTalk className={styles.iconcolor} />
+                      }
                       text="Phone Number"
                     />
                   </label>
@@ -655,7 +760,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                 </div>
                 <div className={styles.formControl}>
                   <label>
-                    <MdLocalPhone className={styles.iconcolor} /> Alternate Phone
+                    <MdLocalPhone className={styles.iconcolor} /> Alternate
+                    Phone
                   </label>
                   <input
                     type="tel"
@@ -691,7 +797,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                 <div className={styles.formControl}>
                   <label>
                     <RequiredLabel
-                      icon={<MdNotListedLocation className={styles.iconcolor} />}
+                      icon={
+                        <MdNotListedLocation className={styles.iconcolor} />
+                      }
                       text="Residence"
                     />
                   </label>
@@ -787,7 +895,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                 <div className={styles.formControl}>
                   <label>
                     <RequiredLabel
-                      icon={<SiOpensourcehardware className={styles.iconcolor} />}
+                      icon={
+                        <SiOpensourcehardware className={styles.iconcolor} />
+                      }
                       text="Source"
                     />
                   </label>
@@ -843,7 +953,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
 
                   <Select
                     options={channelPartners
-                      .filter((cp: ChannelPartner) => cp._id) 
+                      .filter((cp: ChannelPartner) => cp._id)
                       .map((cp: ChannelPartner) => ({
                         value: cp._id!,
                         label: `${cp.firstName} ${cp.lastName} (${cp.firmName})`,
@@ -851,13 +961,25 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                     value={
                       formData.cp
                         ? {
-                          value: formData.cp,
-                          label:
-                            channelPartners.find((c) => c._id === formData.cp)
-                              ? `${channelPartners.find((c) => c._id === formData.cp)?.firstName} ${channelPartners.find((c) => c._id === formData.cp)?.lastName
-                              } (${channelPartners.find((c) => c._id === formData.cp)?.firmName})`
+                            value: formData.cp,
+                            label: channelPartners.find(
+                              (c) => c._id === formData.cp
+                            )
+                              ? `${
+                                  channelPartners.find(
+                                    (c) => c._id === formData.cp
+                                  )?.firstName
+                                } ${
+                                  channelPartners.find(
+                                    (c) => c._id === formData.cp
+                                  )?.lastName
+                                } (${
+                                  channelPartners.find(
+                                    (c) => c._id === formData.cp
+                                  )?.firmName
+                                })`
                               : "",
-                        }
+                          }
                         : null
                     }
                     onChange={(selected) => {
@@ -874,7 +996,6 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                   {errors.cp && <p className={styles.errorMsg}>{errors.cp}</p>}
                 </div>
               )}
-
 
               <div className={styles.formControl}>
                 <label>
@@ -920,7 +1041,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                 <button className={styles.cancelBtn} onClick={handleCancel}>
                   Cancel
                 </button>
-                <button className={styles.submitBtn} onClick={() => setShowConfirm(true)}>
+                <button className={styles.submitBtn} onClick={handleSubmit}>
                   Submit
                 </button>
               </div>
@@ -928,14 +1049,14 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
           )}
         </div>
       </div>
-      {showConfirm && (
+      {visit?.leadType?.toLowerCase() === "cp" && tagginOver && showConfirm && (
         <div className={styles.dialogOverlay}>
           <div className={styles.alertbox}>
-            <h3 className={styles.dialogTitle} style={{ color: "#db5c49ff" }}>⚠️ Tagging is Over</h3>
+            <h3 className={styles.dialogTitle} style={{ color: "#db5c49ff" }}>
+              ⚠️ Tagging is Over
+            </h3>
             <div className={styles.altertext}>
-              <p>
-                Confirm details before adding Visit
-              </p>
+              <p>Confirm details before adding Visit</p>
               <p style={{ color: "#b4a32aff" }}>with Sourcing Manager</p>
             </div>
 
@@ -946,14 +1067,17 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
               >
                 Cancel
               </button>
-              <button className={styles.submitBtn} onClick={(e) => handleConfirmSubmit(e)}>
+              <button
+                className={styles.submitBtn}
+                onClick={handleConfirmSubmit}
+              >
                 ⚠️ Confirm
               </button>
-
             </div>
           </div>
         </div>
       )}
+      // OTP dialog shows for everyone when showOTP is true
       {showOTP && (
         <div className={styles.dialogOverlay}>
           <div className={styles.alertbox}>
@@ -963,15 +1087,13 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
             <div className={styles.altertext} style={{ gap: "5px" }}>
               <p>OTP sent to WhatsApp Number</p>
               <div className={styles.numberhide}>
-                {maskPhoneNumber("5243694586")}
+                {maskPhoneNumber(
+                  visit?.phoneNumber?.toString() ?? formData.phoneNumber
+                )}
               </div>
-
             </div>
 
-            <div
-              className={styles.otpContainer}
-              style={{ display: "flex", gap: "8px", justifyContent: "center", margin: "10px 0" }}
-            >
+            <div className={styles.otpContainer}>
               {Array.from({ length: 6 }).map((_, index) => (
                 <input
                   key={index}
@@ -979,7 +1101,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                   maxLength={1}
                   value={otp[index] || ""}
                   ref={(el) => {
-                    otpRefs.current[index] = el;
+                    otpRefs.current[index] = el!;
                   }}
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, "");
@@ -1004,15 +1126,15 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                 />
               ))}
             </div>
-            {otpError && <p className={styles.errorMsg}>{otpError}</p>}
 
+            {otpError && <p className={styles.errorMsg}>{otpError}</p>}
 
             <div className={styles.alertdailog}>
               <button
                 className={styles.cancelBtn}
-                onClick={() => {
+                onClick={async () => {
                   setShowOTP(false);
-                  setShowOTPSuccess(true);
+                  await handleVerifiedOrSkipOtp(false); // Skip OTP verification
                 }}
               >
                 Skip
@@ -1027,17 +1149,32 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
       {showOTPSuccess && (
         <div className={styles.dialogOverlay}>
           <div className={styles.alertbox}>
-            <div style={{ textAlign: "center", marginBottom: "10px", justifyContent: "center", display: "flex" }}>
+            <div
+              style={{
+                textAlign: "center",
+                marginBottom: "10px",
+                justifyContent: "center",
+                display: "flex",
+              }}
+            >
               <FcApproval size={50} />
             </div>
 
-            <div className={styles.altertext} style={{ textAlign: "center", gap: "5px" }}>
-              <p style={{ fontWeight: "bold", fontSize: "16px" }}>Site Visit Sent for Verification</p>
+            <div
+              className={styles.altertext}
+              style={{ textAlign: "center", gap: "5px" }}
+            >
+              <p style={{ fontWeight: "bold", fontSize: "16px" }}>
+                Site Visit Sent for Verification
+              </p>
               <p style={{ color: "#b4a32aff" }}>To Sourcing Manager</p>
               <p style={{ color: "#db5c49ff" }}>Contact them for approval</p>
             </div>
 
-            <div className={styles.alertdailog} style={{ justifyContent: "center", marginTop: "15px" }}>
+            <div
+              className={styles.alertdailog}
+              style={{ justifyContent: "center", marginTop: "15px" }}
+            >
               <button
                 className={styles.altersub}
                 onClick={() => {
@@ -1051,9 +1188,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
           </div>
         </div>
       )}
-
-    </>
-    ,
+    </>,
     document.body
   );
 };

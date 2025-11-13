@@ -623,4 +623,20 @@ interface PostSaleLead {
   paymentFourDueDate?: string | Date | null;
   paymentDetailSchema?: PaymentDetailSchema[];
 }
+
 //
+interface Otp {
+  id: string;
+  docId: string;
+  otp: string;
+  phoneNumber?: string;
+  email?: string;
+  type: string;
+  message: string;
+}
+
+interface UploadFile {
+  token: string;
+  filename: string;
+  downloadUrl: string;
+}
