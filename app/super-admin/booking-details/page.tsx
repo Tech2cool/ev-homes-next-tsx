@@ -78,6 +78,8 @@ const BookingDetails = () => {
   const [projects, setProjects] = useState<OurProject[]>([]);
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+
   const currentStage = "Confirm Booking";
   const isConfirmed =
     currentStage === "Confirm Booking" || currentStage === "Registration Done";
@@ -185,8 +187,15 @@ const BookingDetails = () => {
     [loadMoreLeads, loadingPostSaleLeads, searchPostSaleLeadInfo]
   );
 
-  const handleSearchChange = (query: string) => {
+  const handleSearchChange =async (query: string) => {
     setSearchQuery(query);
+    setLoadingSearch(true);
+
+    try {
+      await fetchPostSaleLeads({ query });
+    } finally {
+      setLoadingSearch(false);
+    }
   };
   const debouncedHandleScroll = useCallback(debounce(handleScroll, 200), [
     handleScroll,
@@ -241,9 +250,8 @@ const BookingDetails = () => {
               {postSaleleads?.map((lead, index) => (
                 <div
                   key={`${lead._id}-${index}-${lead.phoneNumber}`} // Add index and phone as fallback
-                  className={`${bookstyle.visitCard} ${
-                    SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
-                  }`}
+                  className={`${bookstyle.visitCard} ${SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
+                    }`}
                   onClick={() => {
                     setSelectedLead(lead);
                     // router.push(
@@ -420,45 +428,40 @@ const BookingDetails = () => {
                   <div className={styles.detailstab}>
                     <div className={styles.bookingnavbar}>
                       <button
-                        className={`${styles.navItem} ${
-                          activeTab === "overview" ? styles.active : ""
-                        }`}
+                        className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
+                          }`}
                         onClick={() => setActiveTab("overview")}
                       >
                         <FaUser className={styles.icon} /> Lead Overview
                       </button>
 
                       <button
-                        className={`${styles.navItem} ${
-                          activeTab === "access" ? styles.active : ""
-                        }`}
+                        className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
+                          }`}
                         onClick={() => setActiveTab("access")}
                       >
                         <FaBolt className={styles.icon} /> Quick Access
                       </button>
 
                       <button
-                        className={`${styles.navItem} ${
-                          activeTab === "bookingoverview" ? styles.active : ""
-                        }`}
+                        className={`${styles.navItem} ${activeTab === "bookingoverview" ? styles.active : ""
+                          }`}
                         onClick={() => setActiveTab("bookingoverview")}
                       >
                         <FaTasks className={styles.icon} /> Booking Overview
                       </button>
 
                       <button
-                        className={`${styles.navItem} ${
-                          activeTab === "applicant" ? styles.active : ""
-                        }`}
+                        className={`${styles.navItem} ${activeTab === "applicant" ? styles.active : ""
+                          }`}
                         onClick={() => setActiveTab("applicant")}
                       >
                         <FaHistory className={styles.icon} /> Applicant Overview
                       </button>
 
                       <button
-                        className={`${styles.navItem} ${
-                          activeTab === "feedback" ? styles.active : ""
-                        }`}
+                        className={`${styles.navItem} ${activeTab === "feedback" ? styles.active : ""
+                          }`}
                         onClick={() => setActiveTab("feedback")}
                       >
                         <FaMapMarkedAlt className={styles.icon} /> Feedback
@@ -517,7 +520,14 @@ const BookingDetails = () => {
           </div>
 
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-            {postSaleleads?.map((lead) => (
+             {loadingSearch ? (
+              // 🔹 Jab search API call chal rahi hai
+              <div className={styles.loadingContainer}>
+                <span className={styles.loadingText}>Loading...</span>
+              </div>
+            ) : postSaleleads && postSaleleads.length > 0 ? (
+                <>
+                 {postSaleleads?.map((lead) => (
               <div
                 key={lead._id}
                 className={bookstyle.visitCard}
@@ -622,6 +632,10 @@ const BookingDetails = () => {
                 </div>
               </div>
             ))}
+            </>
+            ) : (
+              <div className={styles.noResults}>No leads found</div>
+            )}
           </div>
         </div>
         <Leadbookingfilter
@@ -724,9 +738,8 @@ const BookingDetails = () => {
                 </div>
 
                 <button
-                  className={`${styles.navItem} ${
-                    activeTab === "overview" ? styles.active : ""
-                  }`}
+                  className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
+                    }`}
                   onClick={() => {
                     setActiveTab("overview");
                     setIsOpen(false);
@@ -736,9 +749,8 @@ const BookingDetails = () => {
                 </button>
 
                 <button
-                  className={`${styles.navItem} ${
-                    activeTab === "access" ? styles.active : ""
-                  }`}
+                  className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
+                    }`}
                   onClick={() => {
                     setActiveTab("access");
                     setIsOpen(false);
@@ -748,9 +760,8 @@ const BookingDetails = () => {
                 </button>
 
                 <button
-                  className={`${styles.navItem} ${
-                    activeTab === "bookingoverview" ? styles.active : ""
-                  }`}
+                  className={`${styles.navItem} ${activeTab === "bookingoverview" ? styles.active : ""
+                    }`}
                   onClick={() => {
                     setActiveTab("bookingoverview");
                     setIsOpen(false);
@@ -760,9 +771,8 @@ const BookingDetails = () => {
                 </button>
 
                 <button
-                  className={`${styles.navItem} ${
-                    activeTab === "applicant" ? styles.active : ""
-                  }`}
+                  className={`${styles.navItem} ${activeTab === "applicant" ? styles.active : ""
+                    }`}
                   onClick={() => {
                     setActiveTab("applicant");
                     setIsOpen(false);
@@ -772,9 +782,8 @@ const BookingDetails = () => {
                 </button>
 
                 <button
-                  className={`${styles.navItem} ${
-                    activeTab === "feedback" ? styles.active : ""
-                  }`}
+                  className={`${styles.navItem} ${activeTab === "feedback" ? styles.active : ""
+                    }`}
                   onClick={() => {
                     setActiveTab("feedback");
                     setIsOpen(false);
@@ -805,12 +814,12 @@ const BookingDetails = () => {
               <ApplicantOverview booking={SelectedLead} />
             )}
 
-          {activeTab === "feedback" && (
-                      <BookingFeedback
-                        booking={SelectedLead}
-                        lead={currentLead}
-                      />
-                    )}
+            {activeTab === "feedback" && (
+              <BookingFeedback
+                booking={SelectedLead}
+                lead={currentLead}
+              />
+            )}
           </div>
         </div>
       </div>
