@@ -552,11 +552,20 @@ type DataProviderState = {
   getAttendanceOverview: (
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
-    getMyMonthlyAttendance: (
+  getMyMonthlyAttendance: (
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
-
-
+  getTodayAttendance: ({
+    date,
+    filter,
+    startDate,
+    endDate,
+  }: {
+    date?: string;
+    filter?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => Promise<{ success: boolean; message?: string }>;
   assignTask: (
     id: string,
     data: Record<string, any>
@@ -609,7 +618,7 @@ const initialState: DataProviderState = {
   closingManagers: [],
   reportingToEmps: [],
   attOverview: null,
-  attendanceList:[],
+  attendanceList: [],
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -726,6 +735,10 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
   getMyMonthlyAttendance: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getTodayAttendance: async () => ({
     success: false,
     message: "Not initialized",
   }),
@@ -2722,7 +2735,6 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  
   const getMyMonthlyAttendance = async (
     id: string,
     date?: string
@@ -2739,6 +2751,63 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       if (date != null) {
         url += `?date=${date}`;
       }
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const dta = res?.data;
+      console.log(dta);
+      setAttendanceList(dta);
+
+      return { success: true, data: dta };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch attendance list";
+
+      setError(message);
+
+      return { success: false, message, data: [] };
+    } finally {
+      setLoadingAttendance(false);
+    }
+  };
+
+  const getTodayAttendance = async ({
+    date,
+    filter,
+    startDate,
+    endDate,
+  }: {
+    date?: string;
+    filter?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Attendance[];
+  }> => {
+    setLoadingAttendance(true);
+    setError("");
+
+    try {
+      const nwDate = !date ? new Date().toISOString() : date;
+      let url = `/api/get-check-in-by-date?date=${nwDate}`;
+      if (filter != null) {
+        url += `?filter=${filter}`;
+      }
+      if (startDate != null) {
+        url += `?startDate=${startDate}`;
+      }
+
+      if (endDate != null) {
+        url += `?endDate=${endDate}`;
+      }
+
       const res = await fetchAdapter(url, {
         method: "GET",
       });
@@ -2809,7 +2878,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     reportingToEmps: reportingToEmps,
     currentTask: currentTask,
     attOverview: attOverview,
-    attendanceList:attendanceList,
+    attendanceList: attendanceList,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -2849,7 +2918,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getTaskById: getTaskById,
     assignTask: assignTask,
     getAttendanceOverview: getAttendanceOverview,
-  getMyMonthlyAttendance:getMyMonthlyAttendance,
+    getMyMonthlyAttendance: getMyMonthlyAttendance,
+    getTodayAttendance: getTodayAttendance,
   };
 
   return (
