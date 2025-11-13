@@ -233,7 +233,7 @@ interface Lead {
   revisitStatus?: string;
   revisitRef?: SiteVisit;
   bookingStatus?: string;
-  bookingRef?: string | null;
+  bookingRef?: PostSaleLead;
   followupStatus?: string;
   contactedStatus?: string;
   interestedStatus?: string;
@@ -556,7 +556,7 @@ interface PostSaleLead {
   address?: string | null;
   email?: string | null;
 
-  date?: string | Date | null;
+  date?: string;
   carpetArea?: number | null;
   sellableCarpetArea?: number | null;
   flatCost?: number | null;
