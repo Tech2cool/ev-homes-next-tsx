@@ -397,8 +397,8 @@ type DataProviderState = {
   leaveCount: EmployeeShiftInfoModel | null;
   currentLead: Lead | null;
   dataEntryUsers: Employee[];
-  closingManagers:Employee[];
-  reportingToEmps:Employee[];
+  closingManagers: Employee[];
+  reportingToEmps: Employee[];
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -532,13 +532,13 @@ type DataProviderState = {
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
 
-getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
+  getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
 
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
-  updateFeedbackWithTimer: () => Promise<{ success: boolean; message?: string }>;
-
-
-
+  updateFeedbackWithTimer: () => Promise<{
+    success: boolean;
+    message?: string;
+  }>;
 };
 
 //initial values should define here
@@ -581,8 +581,8 @@ const initialState: DataProviderState = {
   leaveCount: null,
   currentLead: null,
   dataEntryUsers: [],
-  closingManagers:[],
-  reportingToEmps:[],
+  closingManagers: [],
+  reportingToEmps: [],
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -665,9 +665,7 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-
-
-  updateLeadDetails: async () => ({ 
+  updateLeadDetails: async () => ({
     success: false,
     message: "Not initialized",
   }),
@@ -682,13 +680,10 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-
   updateFeedbackWithTimer: async () => ({
-
     success: false,
     message: "Not initialized",
   }),
-
 };
 
 const dataProviderContext =
@@ -710,8 +705,6 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [reportingToEmps, setReportingToEmployees] = useState<Employee[]>([]);
-
-  
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
@@ -760,8 +753,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
   const [siteInfo, setVisitInfo] = useState<PaginationProps | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
-  const [timer, setTimer] = useState<string| null>(null);
-  
+  const [timer, setTimer] = useState<string | null>(null);
+
   const [loadingChannelPartners, setLoadingChannelPartners] =
     useState<boolean>(false);
   const [channelPartners, setChannelPartners] = useState<ChannelPartner[]>([]);
@@ -785,77 +778,46 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
-
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
 
-  const [dataEntryUsers, setDataEntryUsers] = useState<Employee | null>(null);
+  const updateFeedbackWithTimer = async (): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    try {
+      const response = await fetchAdapter("/api/update-feedback-timer-v2");
 
-  const updateFeedbackWithTimer = async (): Promise<{ success: boolean; message?: string }> => {
-  try {
-    const response = await fetchAdapter('/api/update-feedback-timer-v2');
+      // if (response.data.code !== 200) {
+      //   // showCustomSnackBar(response.data.message);
+      //   return null;
+      // }
 
-    // if (response.data.code !== 200) {
-    //   // showCustomSnackBar(response.data.message);
-    //   return null;
-    // }
-    
-    // showCustomSnackBar(response.data.message, 'green');
-    console.log(response);
+      // showCustomSnackBar(response.data.message, 'green');
+      console.log(response);
       const reqs = response?.data || [];
       setTimer(reqs); // ✅ update state
 
-   return { success: true };
-  } catch (error: any) {
-    console.log(error);
-    let errorMessage = 'Something went wrong';
+      return { success: true };
+    } catch (error: any) {
+      console.log(error);
+      let errorMessage = "Something went wrong";
 
-    if (error.response) {
-      // Backend response error message
-      errorMessage = error.response?.data?.message || errorMessage;
-    } else {
-      errorMessage = error.message || errorMessage;
-    }
-    
-    // Prevent literal 'null' from showing
-    if (errorMessage.trim().toLowerCase() === 'null') {
-      errorMessage = 'Something went wrong';
-    }
-    
-    // showCustomSnackBar(errorMessage);
+      if (error.response) {
+        // Backend response error message
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else {
+        errorMessage = error.message || errorMessage;
+      }
+
+      // Prevent literal 'null' from showing
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      // showCustomSnackBar(errorMessage);
       return { success: false, message: errorMessage };
-
-  }
-};
-
- const getClosingManagers = async () => {
-  try {
-    console.log("test1");
-    const response = await fetchAdapter("/api/employee-closing-manager");
-    console.log("test2");
-
-// console.log("data message:", response.data);
-//     if (response.data?.code !== 200) {
-      
-//           console.log("API message:", response.data?.message);
-//       return { success: false, message: response.data?.message || "Error" };
-//     }
-
-    console.log("test3");
-
-
-    const items: Employee[] = response.data ?? [];
-    console.log("Managers fetched:", items);
-
-    setEmployees(items);
-    console.log("test5");
-
-    return { success: true };
-
-  } catch (error: any) {
-    let errorMessage = error.response?.data?.message || error.message || "Something went wrong";
-    console.log("test 7",error);
-
-
+    }
+  };
 
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
@@ -2483,75 +2445,73 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
- const getDataEntryEmployees = async (): Promise<{
-  success: boolean;
-  message?: string;
-}> => {
-  try {
-    const url = `/api/employee-visit-allowed-staff`;
+  const getDataEntryEmployees = async (): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    try {
+      const url = `/api/employee-visit-allowed-staff`;
 
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
 
-    if (res?.data) {
-      setDataEntryUsers(res.data??[]);
+      if (res?.data) {
+        setDataEntryUsers(res.data ?? []);
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error(errorMessage);
+      return { success: false, message: errorMessage };
     }
+  };
 
-    return { success: true };
-  } catch (err: any) {
-    let errorMessage = "Something went wrong";
+  const getClosingManagers = async (): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    try {
+      const url = `/api/employee-closing-manager`;
 
-    if (err?.response?.data?.message) {
-      errorMessage = err.response.data.message;
-    } else if (err.message) {
-      errorMessage = err.message;
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      if (res?.data) {
+        setClosingManagers(res.data ?? []);
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error(errorMessage);
+      return { success: false, message: errorMessage };
     }
-
-    if (errorMessage.trim().toLowerCase() === "null") {
-      errorMessage = "Something went wrong";
-    }
-
-    console.error(errorMessage);
-    return { success: false, message: errorMessage };
-  }
-};
-
-
- const getClosingManagers = async (): Promise<{
-  success: boolean;
-  message?: string;
-}> => {
-  try {
-    const url = `/api/employee-closing-manager`;
-
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
-
-    if (res?.data) {
-      setClosingManagers(res.data??[]);
-    }
-
-    return { success: true };
-  } catch (err: any) {
-    let errorMessage = "Something went wrong";
-
-    if (err?.response?.data?.message) {
-      errorMessage = err.response.data.message;
-    } else if (err.message) {
-      errorMessage = err.message;
-    }
-
-    if (errorMessage.trim().toLowerCase() === "null") {
-      errorMessage = "Something went wrong";
-    }
-
-    console.error(errorMessage);
-    return { success: false, message: errorMessage };
-  }
-};
-
+  };
 
   const value = {
     projects: projects,
@@ -2592,8 +2552,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     leaveCount: leaveCount,
     currentLead: currentLead,
     dataEntryUsers: dataEntryUsers,
-    closingManagers:closingManagers, //list of closing manager
-    reportingToEmps:reportingToEmps,
+    closingManagers: closingManagers, //list of closing manager
+    reportingToEmps: reportingToEmps,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -2628,7 +2588,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadByBookingId: getLeadByBookingId,
     updateLeadDetails: updateLeadDetails,
     getDataEntryEmployees: getDataEntryEmployees,
-     updateFeedbackWithTimer: updateFeedbackWithTimer,
+    updateFeedbackWithTimer: updateFeedbackWithTimer,
   };
 
   return (
