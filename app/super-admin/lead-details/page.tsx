@@ -62,6 +62,7 @@ import { SiGoogletasks } from "react-icons/si";
 import { FaAddressBook } from "react-icons/fa";
 import { CiLink } from "react-icons/ci";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
+import AddFeedBaack from "@/components/lead-details-components/Dailog/addfeedback";
 
 const SuperAdminWrapper = () => {
   return (
@@ -868,9 +869,9 @@ const LeadDetailsPage = () => {
 
         {/* Edit Dialog */}
         {showEditDialog && (
-          <EditDialog
-            visit={SelectedLead}
-            onClose={() => setShowEditDialog(false)}
+          <AddFeedBaack
+            lead={SelectedLead}
+            openclick={() => setShowEditDialog(false)}
             onSave={async (payload) => {
               const response = await updateLeadDetails(
                 SelectedLead?._id ?? "",
@@ -879,6 +880,7 @@ const LeadDetailsPage = () => {
 
               console.log(response);
               if (response.success) {
+                
                 // setSelectedLead(response);
                 setShowEditDialog(false);
               } else {

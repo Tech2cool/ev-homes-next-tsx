@@ -380,6 +380,7 @@ type DataProviderState = {
   salesDashCount: DashboardCount | null;
   siteInfo: PaginationProps | null;
   visits: SiteVisit[] | null;
+  timer: string | null;
   channelPartners: ChannelPartner[];
   searchLeadInfo: PaginationProps | null;
   searchPostSaleLeadInfo: PaginationProps | null;
@@ -533,8 +534,11 @@ type DataProviderState = {
 
 getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
 
-
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
+  updateFeedbackWithTimer: () => Promise<{ success: boolean; message?: string }>;
+
+
+
 };
 
 //initial values should define here
@@ -557,6 +561,7 @@ const initialState: DataProviderState = {
 
   siteInfo: null,
   visits: null,
+  timer: null,
   dashCount: null,
   closingManagerAllGraph: null,
   salesDashCount: null,
@@ -660,7 +665,9 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-  updateLeadDetails: async () => ({
+
+
+  updateLeadDetails: async () => ({ 
     success: false,
     message: "Not initialized",
   }),
@@ -674,6 +681,14 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+
+  updateFeedbackWithTimer: async () => ({
+
+    success: false,
+    message: "Not initialized",
+  }),
+
 };
 
 const dataProviderContext =
@@ -745,6 +760,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [fetchingMoreVisits, setFetchingMoreVisits] = useState<boolean>(false);
   const [siteInfo, setVisitInfo] = useState<PaginationProps | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
+  const [timer, setTimer] = useState<string| null>(null);
+  
   const [loadingChannelPartners, setLoadingChannelPartners] =
     useState<boolean>(false);
   const [channelPartners, setChannelPartners] = useState<ChannelPartner[]>([]);
@@ -768,7 +785,76 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
+
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
+
+  const [dataEntryUsers, setDataEntryUsers] = useState<Employee | null>(null);
+
+  const updateFeedbackWithTimer = async (): Promise<{ success: boolean; message?: string }> => {
+  try {
+    const response = await fetchAdapter('/api/update-feedback-timer-v2');
+
+    // if (response.data.code !== 200) {
+    //   // showCustomSnackBar(response.data.message);
+    //   return null;
+    // }
+    
+    // showCustomSnackBar(response.data.message, 'green');
+    console.log(response);
+      const reqs = response?.data || [];
+      setTimer(reqs); // ✅ update state
+
+   return { success: true };
+  } catch (error: any) {
+    console.log(error);
+    let errorMessage = 'Something went wrong';
+
+    if (error.response) {
+      // Backend response error message
+      errorMessage = error.response?.data?.message || errorMessage;
+    } else {
+      errorMessage = error.message || errorMessage;
+    }
+    
+    // Prevent literal 'null' from showing
+    if (errorMessage.trim().toLowerCase() === 'null') {
+      errorMessage = 'Something went wrong';
+    }
+    
+    // showCustomSnackBar(errorMessage);
+      return { success: false, message: errorMessage };
+
+  }
+};
+
+ const getClosingManagers = async () => {
+  try {
+    console.log("test1");
+    const response = await fetchAdapter("/api/employee-closing-manager");
+    console.log("test2");
+
+// console.log("data message:", response.data);
+//     if (response.data?.code !== 200) {
+      
+//           console.log("API message:", response.data?.message);
+//       return { success: false, message: response.data?.message || "Error" };
+//     }
+
+    console.log("test3");
+
+
+    const items: Employee[] = response.data ?? [];
+    console.log("Managers fetched:", items);
+
+    setEmployees(items);
+    console.log("test5");
+
+    return { success: true };
+
+  } catch (error: any) {
+    let errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+    console.log("test 7",error);
+
 
 
   const getSiteVisitHistoryByPhone = async (
@@ -2063,7 +2149,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     setError("");
 
     try {
+      console.log("test1");
       const url = `/api/lead-update-details/${id}`;
+      console.log("test1");
+
       const res = await fetchAdapter(url, {
         method: "POST",
         body: JSON.stringify(data),
@@ -2477,6 +2566,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     closingManagerAllGraph: closingManagerAllGraph,
     siteInfo: siteInfo,
     visits: visits,
+    timer: timer,
     leads: leads,
     postSaleleads: postSaleleads,
     teamOverview: teamOverview,
@@ -2538,6 +2628,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadByBookingId: getLeadByBookingId,
     updateLeadDetails: updateLeadDetails,
     getDataEntryEmployees: getDataEntryEmployees,
+     updateFeedbackWithTimer: updateFeedbackWithTimer,
   };
 
   return (

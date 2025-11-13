@@ -25,11 +25,21 @@ import AddBooking from "./Dailog/addbooking";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import FeedbackTwo from "./Dailog/feedbacktwo";
+import { useData } from "@/providers/dataContext";
 interface QuickAccessProps {
   lead?: Lead | null;
+  task?: Task | null;
 }
 
 const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
+   const {
+      fetchSearchLeads,
+      searchLeadInfo,
+      leads,
+      loadingLeads,
+      fetchingMoreLeads,
+      updateLeadDetails,
+    } = useData();
   const [showfb, setshowfb] = useState(false);
   const [showsite, setshowsite] = useState(false);
   const [showtask, setshowtask] = useState(false);
@@ -118,18 +128,30 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
         )}
       </div>
 
-   
-
       {showfb &&
-        (lead?.callHistory && lead.callHistory.length > 0 ? (
-          <FeedbackTwo openclick={setshowfb} />
-        ) : (
-          <AddFeedBaack openclick={setshowfb} lead={lead} />
-        ))}
 
-      {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
+          <FeedbackTwo openclick={setshowfb} lead={lead} task={lead?.taskRef} />
+       }
+       {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
+
       {showtask && <AssignTask openclick={setshowtask} />}
-      {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin} />}
+
+      {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin}  lead={lead}
+            onSave={async (payload) => {
+              console.log("payload",payload);
+              const response = await updateLeadDetails(
+                lead?._id ?? "",
+                payload
+              );
+
+              console.log(response);
+              if (response.success) {
+                setshowlinkdin(false);
+              } else {
+                console.error(response.message);
+              }
+            }}/>}
+
       {showcancelboking && <CancelBooking openclick={setshowcancelbooking} />}
       {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
       {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
