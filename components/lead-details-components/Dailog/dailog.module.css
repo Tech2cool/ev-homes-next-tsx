@@ -16,6 +16,8 @@
 :global(html.light) .dialogOverlay {
   background: rgba(45, 45, 45, 0.401);
 }
+
+.alertbox,
 .dialog,
 .dialogBox {
   background: #1e1e1e;
@@ -32,9 +34,17 @@
   scrollbar-color: #4a4d4c #222;
   position: relative;
 }
-.dialog{
- width: 60vw;
+
+.dialog {
+  width: 60vw;
 }
+
+.alertbox {
+  width: 400px;
+
+}
+
+:global(html.light) .alertbox,
 :global(html.light) .dialog,
 :global(html.light) .dialogBox {
   background: #ebebeb;
@@ -43,17 +53,23 @@
   scrollbar-color: #a065ff #d8d4e9;
 
 }
+
+.dialogBox::-webkit-scrollbar,
 .dialog::-webkit-scrollbar,
 .dialogBox::-webkit-scrollbar {
   width: 6px;
 
 }
-.dialog::-webkit-scrollbar-thumb ,
+
+.dialogBox::-webkit-scrollbar-thumb,
+.dialog::-webkit-scrollbar-thumb,
 .dialogBox::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #3d4140, #1a1b1c);
   border-radius: 30px;
 }
-.dialog::-webkit-scrollbar-track,
+
+.dialogBox::-webkit-scrollbar-track,
+ .dialog::-webkit-scrollbar-track,
 .dialogBox::-webkit-scrollbar-track {
   background: #222;
 }
@@ -88,12 +104,18 @@
   color: #252425;
 }
 
-
+.alertdailog,
 .dialogButtons {
   display: flex;
   justify-content: flex-end;
   margin-top: 1rem;
   gap: 10px;
+}
+
+.alertdailog {
+  justify-content: center;
+  margin-top: 1.5rem;
+
 }
 
 .cancelBtn {
@@ -117,7 +139,7 @@
 :global(html.light) .cancelBtn:hover {
   background: #ffffff;
 }
-
+.altersub,
 .submitBtn {
   background: linear-gradient(90deg, #16476A, #132440);
   color: #ffffff;
@@ -128,7 +150,10 @@
   cursor: pointer;
   transition: 0.2s;
 }
-
+.altersub{
+   background: linear-gradient(90deg, #25ad2a, #1d6421);
+   width: 150px;
+}
 .submitBtn:hover {
 
   background: linear-gradient(90deg, #132440, #16476A);
@@ -364,6 +389,7 @@
 :global(html.light) .infoValue {
   color: #222;
 }
+
 .checkboxGroup {
   display: flex;
   gap: 15px;
@@ -380,19 +406,21 @@
   gap: 5px;
 
 }
-.formControl .radioLabel{
+
+.formControl .radioLabel {
   color: white;
 }
 
-.radioLabel .percentDropdown {  
+.radioLabel .percentDropdown {
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 11px;
- padding: 0.1rem 0.1rem;
- margin-left: 5px;
+  padding: 0.1rem 0.1rem;
+  margin-left: 5px;
 }
-.pdfcnt{
-   background: linear-gradient(135deg, #16476A, #132440);
+
+.pdfcnt {
+  background: linear-gradient(135deg, #16476A, #132440);
   padding: 5px;
   border-radius: 8px;
   display: flex;
@@ -404,17 +432,18 @@
 }
 
 .confirm {
-    display: flex;
-    padding-top: 1rem;
-    justify-content: right;
-    align-items: center;
-    gap: 5px;
-    font-size: 2.2vh;
-    font-weight: 400;
-    color: rgb(208, 208, 208);
-    width: 95%;
+  display: flex;
+  padding-top: 1rem;
+  justify-content: right;
+  align-items: center;
+  gap: 5px;
+  font-size: 2.2vh;
+  font-weight: 400;
+  color: rgb(208, 208, 208);
+  width: 95%;
 }
-:global(html.light) .confirm{
+
+:global(html.light) .confirm {
   color: #2c2b2b;
 }
 
@@ -427,6 +456,7 @@
 }
 
 @media screen and (max-width: 1024px) {
+
   .dialog,
   .dialogBox {
     width: 80vw;
@@ -437,6 +467,7 @@
 
 /* Mobile devices */
 @media screen and (max-width: 768px) {
+
   .dialog,
   .dialogBox {
     width: 95vw;
@@ -478,6 +509,7 @@
     font-size: 0.85rem;
   }
 
+  .alertdailog,
   .dialogButtons {
     flex-direction: column;
     gap: 8px;
@@ -495,6 +527,7 @@
 
 /* Extra small screens */
 @media screen and (max-width: 480px) {
+
   .dialog,
   .dialogBox {
     padding: 0.8rem;
@@ -679,8 +712,21 @@
     gap: 2px;
   }
 }
-.varning{
+
+.varning {
   font-size: 12px;
   padding: 0px 0px 12px 12px;
   color: rgb(241, 89, 89);
+}
+
+.altertext {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+.numberhide{
+  color: gray;
+  font-size: 14px;
 }
