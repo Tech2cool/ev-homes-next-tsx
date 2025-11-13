@@ -15,6 +15,7 @@ import ReimbursementSection from "./ReimbursementSection";
 import ApprovalSection from "./ApprovalSection/ApprovalSection";
 import GracetimeSection from "./GracetimeSection";
 import { useRouter } from "next/navigation";
+// import Overtime from "./Overtime"
 
 const MainTab = () => {
   const router = useRouter();
@@ -54,6 +55,12 @@ const MainTab = () => {
         return <Assets />;
       case "ShiftPlannerRequest":
         return <ShiftPlannerSection  />;
+
+        // case "Overtime" :
+        //   return <Overtime />
+
+
+
       case "Approval":
         return (
 <ApprovalSection onPendingCountChange={setApprovalPendingCount} />
@@ -129,11 +136,11 @@ const MainTab = () => {
             "Attendance",
             "Leave",
             "Weekoff",
-            "Regularization",
-            "Gracetime",
+            // "Regularization",
+            // "Gracetime",
             "Reimbursement",
             "Assets",
-            "ShiftPlannerRequest",
+            // "ShiftPlannerRequest",
           ].map((tab) => (
             <span
               key={tab}
