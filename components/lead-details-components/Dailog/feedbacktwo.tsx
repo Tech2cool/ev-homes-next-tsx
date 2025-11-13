@@ -32,14 +32,19 @@ interface FormState {
 }
 
 const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
-  const { updateFeedbackWithTimer, getLeadById, getTaskById } = useData();
+   const {
+       updateFeedbackWithTimer,
+       getLeadById,
+       getTaskById,
+      } = useData();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
   const [formData, setFormData] = useState<FormState>({
     callStatus: "",
     clientInterest: "",
@@ -104,75 +109,73 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onSubmit = async () => {
-    // if (!formData.reminderDateTime) {
-    //   toast("Please select Reminder Date & Time", { type: "error" });
-    //   return;
-    // }
+const onSubmit = async () => {
+  // if (!formData.reminderDateTime) {
+  //   toast("Please select Reminder Date & Time", { type: "error" });
+  //   return;
+  // }
 
-    const reminderDate = new Date(formData.reminderDateTime);
-    const preferredVisitDate = formData.preferredVisitDate
-      ? new Date(formData.preferredVisitDate)
-      : null;
+  const reminderDate = formData.reminderDateTime? new Date(formData.reminderDateTime):null;
+  const preferredVisitDate = formData.preferredVisitDate
+    ? new Date(formData.preferredVisitDate)
+    : null;
 
-    const data = {
-      taskCompleted: "completed",
-      leadStage: formData.leadStage,
-      callStatus: formData.callStatus,
-      tag: formData.priorityTag,
-      intrestedStatus: formData.clientInterest,
-      feedback: formData.feedback,
+  const data = {
+    taskCompleted: "completed",
+    leadStage: formData.leadStage,
+    callStatus: formData.callStatus,
+    tag: formData.priorityTag,
+    intrestedStatus: formData.clientInterest,
+    feedback: formData.feedback,
 
-      siteVisitInterested: formData.siteVisit,
-      siteVisitInterestedDate: preferredVisitDate
-        ? preferredVisitDate.toISOString()
-        : null,
+    siteVisitInterested: formData.siteVisit,
+    siteVisitInterestedDate: preferredVisitDate
+      ? preferredVisitDate.toISOString()
+      : null,
 
-      reminderDate: reminderDate ? reminderDate.toISOString() : null,
-      reminderType: formData.reminderType,
+    reminderDate: reminderDate ? reminderDate.toISOString() : null,
+    reminderType: formData.reminderType,
 
-      task: task?._id ?? lead?.taskRef?._id ?? "",
-      lead: lead?._id ?? task?.lead?._id,
-    };
-
-    try {
-      setIsSubmitting(true);
-
-      const response = await updateFeedbackWithTimer(data);
-
-      if (response?.success) {
-        toast("Feedback Updated", { type: "success" });
-
-        // refresh data if available in your context
-        if (lead?._id) {
-          try {
-            await getLeadById(lead._id);
-          } catch (err) {
-            console.warn("Error refreshing lead:", err);
-          }
-        }
-
-        if (task?._id) {
-          try {
-            await getTaskById(task._id);
-          } catch (err) {
-            console.warn("Error refreshing task:", err);
-          }
-        }
-
-        openclick(false);
-      } else {
-        toast(response?.message || "Failed to update feedback", {
-          type: "error",
-        });
-      }
-    } catch (error) {
-      console.error("Error updating feedback:", error);
-      toast("Something went wrong while saving feedback", { type: "error" });
-    } finally {
-      setIsSubmitting(false);
-    }
+    task: task?._id ?? lead?.taskRef?._id??"",
+    lead: lead?._id ?? task?.lead?._id,
   };
+
+  try {
+    setIsSubmitting(true);
+
+    const response = await updateFeedbackWithTimer(data);
+
+    if (response?.success) {
+      toast("Feedback Updated", { type: "success" });
+
+      // refresh data if available in your context
+      if (lead?._id) {
+        try {
+          await getLeadById(lead._id);
+        } catch (err) {
+          console.warn("Error refreshing lead:", err);
+        }
+      }
+
+      if (task?._id) {
+        try {
+          await getTaskById(task._id);
+        } catch (err) {
+          console.warn("Error refreshing task:", err);
+        }
+      }
+
+      openclick(false);
+    } else {
+      toast(response?.message || "Failed to update feedback", { type: "error" });
+    }
+  } catch (error) {
+    console.error("Error updating feedback:", error);
+    toast("Something went wrong while saving feedback", { type: "error" });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
     icon,
@@ -278,11 +281,11 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
               disabled={isSubmitting}
             >
               <option value="">Select Lead Stage</option>
-              <option value="progress">In Progress</option>
-              <option value="supposedvisit">Supposed To Visit</option>
-              <option value="visitDone">Visit Done</option>
-              <option value="revisitDone">Revisit Done</option>
-              <option value="booking">Booked</option>
+              <option value="in-progress">In Progress</option>
+              <option value="supposed-to-visit">Supposed To Visit</option>
+              <option value="visit-done">Visit Done</option>
+              <option value="revisit-done">Revisit Done</option>
+              <option value="booked">Booked</option>
               <option value="lost">Lost</option>
             </select>
             {errors.leadStage && (
@@ -431,15 +434,15 @@ const FeedbackTwo: React.FC<FeedbackTwoProps> = ({ openclick, lead, task }) => {
 
           {/* Buttons */}
           <div className={styles.dialogButtons}>
-            <button
-              className={styles.cancelBtn}
+            <button 
+              className={styles.cancelBtn} 
               onClick={handleCancel}
               disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button
-              className={styles.submitBtn}
+            <button 
+              className={styles.submitBtn} 
               onClick={onSubmit}
               disabled={isSubmitting}
             >

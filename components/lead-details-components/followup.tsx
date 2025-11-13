@@ -1,14 +1,18 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./QuickAccess.module.css";
 import { IoCall } from "react-icons/io5";
 import { FaHome } from "react-icons/fa";
+import { useData } from "@/providers/dataContext";
 
 interface FollowUpProps {
   lead?: Lead | null;
 }
 
 const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
+
+
+  const {getLeadById}= useData();
   const formatDateTime = (dateString: string | null | undefined) => {
     if (!dateString) return "NA";
     try {
@@ -26,6 +30,11 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
     }
   };
 
+// useEffect(() => {
+//   if (lead?._id) {
+//     getLeadById(lead._id);
+//   }
+// }, [lead?._id]); 
   // Helper function to get caller name from caller object
   const getCallerName = (caller: any) => {
     if (!caller) return "Unknown";
@@ -192,7 +201,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
                       </div>
                     </div>
                     <div className={styles.date}>{item.date ?? "NA"}</div>
-                  </div>
+                  </div> 
 
                   <div className={styles.secrow}>
                     <div className={styles.feedback}>CP Feedback</div>
