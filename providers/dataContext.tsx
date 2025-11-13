@@ -364,7 +364,7 @@ type DataProviderState = {
   testimonials: Testimonial[];
   loadingTestimonial: boolean;
   loadingLeads: boolean;
-  loadingTask:boolean;
+  loadingTask: boolean;
 
   loadingPostSaleLeads: boolean;
 
@@ -398,7 +398,7 @@ type DataProviderState = {
   ranking: RankingTurn | null;
   leaveCount: EmployeeShiftInfoModel | null;
   currentLead: Lead | null;
-  currentTask:Task|null;
+  currentTask: Task | null;
   dataEntryUsers: Employee[];
   closingManagers: Employee[];
   reportingToEmps: Employee[];
@@ -538,24 +538,19 @@ type DataProviderState = {
   getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
 
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
- updateFeedbackWithTimer: (
-    data: Record<string, any>
-  ) => Promise<{
+  updateFeedbackWithTimer: (data: Record<string, any>) => Promise<{
     success: boolean;
     message?: string;
   }>;
 
+  getLeadById: (id: string) => Promise<{ success: boolean; message?: string }>;
 
+  getTaskById: (id: string) => Promise<{ success: boolean; message?: string }>;
 
-  getLeadById: (
-    id: string
-  )=> Promise<{ success: boolean; message?: string }>;
-
-
-getTaskById: (
-    id: string
-  )=> Promise<{ success: boolean; message?: string }>;
-
+  assignTask: (
+    id: string,
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -574,7 +569,7 @@ const initialState: DataProviderState = {
   postSaleleads: null,
 
   loadingLeads: false,
-    loadingTask: false,
+  loadingTask: false,
 
   loadingPostSaleLeads: false,
 
@@ -599,7 +594,7 @@ const initialState: DataProviderState = {
   ranking: null,
   leaveCount: null,
   currentLead: null,
-  currentTask:null,
+  currentTask: null,
   dataEntryUsers: [],
   closingManagers: [],
   reportingToEmps: [],
@@ -705,13 +700,17 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-
   getLeadById: async () => ({
     success: false,
     message: "Not initialized",
   }),
 
   getTaskById: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  assignTask: async () => ({
     success: false,
     message: "Not initialized",
   }),
@@ -810,7 +809,6 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
-
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
@@ -837,7 +835,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       const reqs = response?.data;
       setCurrentLead(response?.data as Lead);
 
-      setTimer(reqs); 
+      setTimer(reqs);
 
       console.log("last end ");
 
@@ -2182,6 +2180,45 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const assignTask = async (
+    id: string,
+    data: Record<string, any> = {}
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Task | null;
+  }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      console.log("test1");
+      const url = `/api/assign-task/${id}`;
+      console.log("test1");
+
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      // The API is assumed to return something like:
+      // { data: Lead, message, code }
+      setCurrentTask(res?.data as Task);
+      setLoadingTask(false);
+
+      return { success: true };
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setLoadingTask(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
   const fetchTeamLeaderGraphForDA = async ({
     interval = "monthly",
     year = null,
@@ -2557,73 +2594,69 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-
   const getLeadById = async (
-  id: string
-): Promise<{ success: boolean; message?: string }> => {
-  setLoadingLeads(true);
-  setError("");
+    id: string
+  ): Promise<{ success: boolean; message?: string }> => {
+    setLoadingLeads(true);
+    setError("");
 
-  try {
-    const url = `/api/lead/${id}`;
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
+    try {
+      const url = `/api/lead/${id}`;
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
 
-    // Assuming res.data is your lead object type
-    setCurrentLead(res?.data);
+      // Assuming res.data is your lead object type
+      setCurrentLead(res?.data);
 
-    return { success: true };
-  } catch (error: any) {
-    console.error(error);
+      return { success: true };
+    } catch (error: any) {
+      console.error(error);
 
-    const message =
-      error?.response?.data?.message ||
-      error?.message ||
-      "Failed to fetch lead";
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch lead";
 
-    setError(message);
+      setError(message);
 
-    return { success: false, message };
-  } finally {
-    setLoadingLeads(false);
-  }
-};
+      return { success: false, message };
+    } finally {
+      setLoadingLeads(false);
+    }
+  };
 
+  const getTaskById = async (
+    id: string
+  ): Promise<{ success: boolean; message?: string; data?: Task | null }> => {
+    setLoadingTask(true);
+    setError("");
 
+    try {
+      const url = `/api/task-by-id/${id}`;
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
 
-const getTaskById = async (
-  id: string
-): Promise<{ success: boolean; message?: string; data?: Task | null }> => {
-  setLoadingTask(true);
-  setError("");
+      const task = res?.data as Task;
+      setCurrentTask(task);
 
-  try {
-    const url = `/api/task-by-id/${id}`;
-    const res = await fetchAdapter(url, {
-      method: "GET",
-    });
+      return { success: true, data: task };
+    } catch (error: any) {
+      console.error(error);
 
-    const task = res?.data as Task;
-    setCurrentTask(task);
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
 
-    return { success: true, data: task };
-  } catch (error: any) {
-    console.error(error);
+      setError(message);
 
-    const message =
-      error?.response?.data?.message ||
-      error?.message ||
-      "Failed to fetch task";
-
-    setError(message);
-
-    return { success: false, message, data: null };
-  } finally {
-    setLoadingTask(false);
-  }
-};
-
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
 
   const value = {
     projects: projects,
@@ -2668,7 +2701,7 @@ const getTaskById = async (
     dataEntryUsers: dataEntryUsers,
     closingManagers: closingManagers, //list of closing manager
     reportingToEmps: reportingToEmps,
-    currentTask:currentTask,
+    currentTask: currentTask,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
@@ -2704,8 +2737,9 @@ const getTaskById = async (
     updateLeadDetails: updateLeadDetails,
     getDataEntryEmployees: getDataEntryEmployees,
     updateFeedbackWithTimer: updateFeedbackWithTimer,
-    getLeadById:getLeadById,
-    getTaskById:getTaskById
+    getLeadById: getLeadById,
+    getTaskById: getTaskById,
+    assignTask: assignTask,
   };
 
   return (
