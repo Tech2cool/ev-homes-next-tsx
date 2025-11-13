@@ -53,6 +53,8 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
     uploadedLinkedinUrl: "",
     additionalLiRremark: "",
   });
+
+  const { updateLeadDetails } = useData();
   useEffect(() => {
     if (lead) {
       setformData({
@@ -167,42 +169,52 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
     const { name, value } = e.target;
     setformData((prev) => ({ ...prev, [name]: value }));
   };
-  const onSubmit = () => {
+
+  const onSubmit = async () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstName.trim()) {
+    if (!formData.firstName.trim())
       newErrors.firstName = "Please enter First Name";
-    }
-
-    if (!formData.lastName.trim()) {
+    if (!formData.lastName.trim())
       newErrors.lastName = "Please enter Last Name";
-    }
-
-    if (!formData.project || formData.project.length === 0) {
-      newErrors.project = "Please select at least one Project";
-    }
-
-    if (!formData.requirement || formData.requirement.length === 0) {
-      newErrors.requirement = "Please select at least one Requirement";
-    }
-
-    if (!formData.propertyType) {
+    if (formData.project.length === 0)
+      newErrors.project = "Please select a Project";
+    if (formData.requirement.length === 0)
+      newErrors.requirement = "Please select a Requirement";
+    if (!formData.propertyType)
       newErrors.propertyType = "Please select Property Type";
-    }
-
-    if (!formData.nameRemark.trim()) {
-      newErrors.remark = "Please enter Remark";
-    }
+    // if (!formData.nameRemark.trim()) newErrors.remark = "Please enter Remark";
 
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length > 0) return;
 
-    alert(
-      "Form submitted successfully: \n" + JSON.stringify(formData, null, 2)
-    );
-    openclick(false);
+    if (!lead?._id) {
+      console.error("No lead ID found.");
+      return;
+    }
+
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      project: formData.project.map((p) => p.value),
+      requirement: formData.requirement.map((r) => r.value),
+      propertyType: formData.propertyType,
+      nameRemark: formData.nameRemark,
+      occupation: formData.occupation,
+      linkedIn: formData.link,
+      uploadedLinkedIn: formData.uploadedLinkedinUrl,
+      additionLinRemark: formData.additionalLiRremark,
+    };
+
+    const response = await updateLeadDetails(lead._id, payload);
+
+    if (response.success) {
+      openclick(false);
+    } else {
+      console.error(response.message || "Update failed.");
+    }
   };
+
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
     icon,
     text,
@@ -409,22 +421,19 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> = ({ openclick, lead }) => {
                     : ""}
                 </p>
                 {formData.uploadedLinkedinUrl && (
-                  <p
-                    style={{
-                      marginTop: "8px",
-                      color: "#555",
-                      fontSize: "14px",
-                    }}
-                  >
-                    Uploaded:{" "}
-                    <a
-                      href={formData.uploadedLinkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {formData.uploadedLinkedinUrl}
-                    </a>
-                  </p>
+                  <div style={{ marginTop: "10px", textAlign: "center" }}>
+                    <img
+                      src={formData.uploadedLinkedinUrl}
+                      alt="Uploaded preview"
+                      style={{
+                        width: "120px",
+                        height: "120px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  </div>
                 )}
               </label>
             </div>

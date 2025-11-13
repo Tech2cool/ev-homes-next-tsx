@@ -127,7 +127,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
           <AddFeedBaack openclick={setshowfb} lead={lead} />
         ))}
 
-      {showsite && <SiteVisit openclick={setshowsite} />}
+      {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
       {showtask && <AssignTask openclick={setshowtask} />}
       {showlinkdin && <LinkdinUpdate openclick={setshowlinkdin} />}
       {showcancelboking && <CancelBooking openclick={setshowcancelbooking} />}

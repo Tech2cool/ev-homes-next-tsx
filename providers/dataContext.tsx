@@ -395,7 +395,9 @@ type DataProviderState = {
   ranking: RankingTurn | null;
   leaveCount: EmployeeShiftInfoModel | null;
   currentLead: Lead | null;
-  dataEntryUsers: Employee | null;
+  dataEntryUsers: Employee[];
+  closingManagers:Employee[];
+  reportingToEmps:Employee[];
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -524,18 +526,15 @@ type DataProviderState = {
     id: string
   ) => Promise<{ success: boolean; message?: string }>;
 
-
   updateLeadDetails: (
     id: string,
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
 
-  getDataEntryEmployees: (
-    params: Employee[]
-  ) => Promise<{ success: boolean; message?: string }>;
+getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
+
 
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
-
 };
 
 //initial values should define here
@@ -576,7 +575,9 @@ const initialState: DataProviderState = {
   ranking: null,
   leaveCount: null,
   currentLead: null,
-  dataEntryUsers: null,
+  dataEntryUsers: [],
+  closingManagers:[],
+  reportingToEmps:[],
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -660,19 +661,19 @@ const initialState: DataProviderState = {
   }),
 
   updateLeadDetails: async () => ({
-
-  getClosingManagers: async () => ({
-
     success: false,
     message: "Not initialized",
   }),
 
+  getClosingManagers: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 
   getDataEntryEmployees: async () => ({
     success: false,
     message: "Not initialized",
   }),
-
 };
 
 const dataProviderContext =
@@ -693,6 +694,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [reportingToEmps, setReportingToEmployees] = useState<Employee[]>([]);
+
+  
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
@@ -762,48 +766,11 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
 
+  const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
-  const [dataEntryUsers, setDataEntryUsers] = useState<Employee | null>(null);
-
-
- const getClosingManagers = async () => {
-  try {
-    console.log("test1");
-    const response = await fetchAdapter("/api/employee-closing-manager");
-    console.log("test2");
-
-// console.log("data message:", response.data);
-//     if (response.data?.code !== 200) {
-      
-//           console.log("API message:", response.data?.message);
-//       return { success: false, message: response.data?.message || "Error" };
-//     }
-
-    console.log("test3");
+  const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
 
 
-    const items: Employee[] = response.data ?? [];
-    console.log("Managers fetched:", items);
-
-    setEmployees(items);
-    console.log("test5");
-
-    return { success: true };
-
-  } catch (error: any) {
-    let errorMessage = error.response?.data?.message || error.message || "Something went wrong";
-    console.log("test 7",error);
-
-    if (errorMessage.trim().toLowerCase() === "null") {
-      errorMessage = "Something went wrong";
-    }
-
-    return { success: false, message: errorMessage };
-  }
-};
-
-
-  
   const getSiteVisitHistoryByPhone = async (
     phoneNumber: Number,
     altPhoneNumber?: Number
@@ -1184,7 +1151,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       });
       // console.log(url);
       // console.log(res);
-      setEmployees(res?.data);
+      setReportingToEmployees(res?.data);
       setLoading(false);
 
       return { success: true };
@@ -2427,39 +2394,75 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  const getDataEntryEmployees = async ({}: Employee[]): Promise<{
-    success: boolean;
-    message?: string;
-  }> => {
-    try {
-      let url = `/api/employee-visit-allowed-staff`;
+ const getDataEntryEmployees = async (): Promise<{
+  success: boolean;
+  message?: string;
+}> => {
+  try {
+    const url = `/api/employee-visit-allowed-staff`;
 
-      const res = await fetchAdapter(url, {
-        method: "GET",
-      });
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
 
-      if (res?.data) {
-        setDataEntryUsers(res.data);
-      }
-
-      return { success: true };
-    } catch (err: any) {
-      let errorMessage = "Something went wrong";
-
-      if (err?.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      if (errorMessage.trim().toLowerCase() === "null") {
-        errorMessage = "Something went wrong";
-      }
-
-      console.error(errorMessage);
-      return { success: false, message: errorMessage };
+    if (res?.data) {
+      setDataEntryUsers(res.data??[]);
     }
-  };
+
+    return { success: true };
+  } catch (err: any) {
+    let errorMessage = "Something went wrong";
+
+    if (err?.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+};
+
+
+ const getClosingManagers = async (): Promise<{
+  success: boolean;
+  message?: string;
+}> => {
+  try {
+    const url = `/api/employee-closing-manager`;
+
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    if (res?.data) {
+      setClosingManagers(res.data??[]);
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    let errorMessage = "Something went wrong";
+
+    if (err?.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+};
+
 
   const value = {
     projects: projects,
@@ -2499,6 +2502,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     leaveCount: leaveCount,
     currentLead: currentLead,
     dataEntryUsers: dataEntryUsers,
+    closingManagers:closingManagers, //list of closing manager
+    reportingToEmps:reportingToEmps,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getRequirements: getRequirements,
