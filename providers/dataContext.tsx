@@ -71,6 +71,11 @@ type FetchLeadsParams = {
   propertyType?: string | null;
 };
 
+type CancelBookingParams = {
+  id: string | null;
+  remark?: string | null;
+};
+
 type FetchTeamLeaderParams = {
   id?: string | null | undefined;
   query?: string;
@@ -551,6 +556,12 @@ type DataProviderState = {
     id: string,
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
+
+  cancelBooking: (params: {
+    // Add this
+    id: string;
+    remark?: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -714,6 +725,8 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+  cancelBooking: async () => ({ success: false, message: "Not initialized" }),
 };
 
 const dataProviderContext =
@@ -812,6 +825,33 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
 
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
+
+  const cancelBooking = async ({
+    id = null,
+    remark = null,
+  }: CancelBookingParams): Promise<{ success: boolean; message?: string }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      let url = `/api/cancel-booking?id=${id}`;
+      if (remark != null) {
+        url += `&remark=${remark}`;
+      }
+
+      console.log(url);
+      const res = await fetchAdapter(url, { method: "POST" });
+
+      console.log(res);
+      return { success: true };
+    } catch (err: any) {
+      const errorMsg = err?.message || "Something went wrong";
+      setError(errorMsg);
+      return { success: false, message: errorMsg };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateFeedbackWithTimer = async (
     data: Record<string, any> = {}
@@ -2740,6 +2780,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadById: getLeadById,
     getTaskById: getTaskById,
     assignTask: assignTask,
+    cancelBooking: cancelBooking,
   };
 
   return (

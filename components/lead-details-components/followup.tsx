@@ -2,7 +2,7 @@
 import React from "react";
 import styles from "./QuickAccess.module.css";
 import { IoCall } from "react-icons/io5";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaMobile, FaPhone } from "react-icons/fa";
 
 interface FollowUpProps {
   lead?: Lead | null;
@@ -64,6 +64,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
           feedback: call.feedback || call.feedback || "No feedback provided",
           icon: <IoCall />,
           isVisit: false,
+          isBooking: false,
           caller: getCallerName(call.caller), // Use helper function here
         });
       });
@@ -86,6 +87,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
             followup.feedback || followup.feedback || "No feedback provided",
           icon: <IoCall />,
           isVisit: false,
+          isBooking: false,
           caller: getCallerName(followup.caller), // Use helper function here
         });
       });
@@ -104,6 +106,22 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
           lead.followupStatus || "EV team assigned for visit coordination.",
         icon: <FaHome />,
         isVisit: true,
+        isBooking: false,
+      });
+    }
+
+    if (lead?.bookingRef && lead.bookingRef?.date) {
+      history.push({
+        type: "booking",
+        status: lead.bookingStatus,
+        name: "Booking Confirmed",
+        date: formatDateTime(lead?.bookingRef?.date),
+        feedback: `${
+          lead.bookingRef.project?.name || "No project name"
+        }\nFlat No: ${lead.bookingRef.unitNo || "Not specified"}`,
+        icon: <FaMobile />,
+        isVisit: false,
+        isBooking: true,
       });
     }
 
@@ -136,10 +154,12 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
               <div
                 className={`${styles.circle} ${
                   item.isVisit ? styles.visitCircle : ""
-                }`}
+                } ${item.isBooking ? styles.bookingCircle : ""}`}
               >
                 {React.cloneElement(item.icon, {
-                  className: item.isVisit ? styles.homeicon : styles.callicon,
+                  className: `${styles.callicon} ${
+                    item.isVisit ? styles.homeicon : ""
+                  } ${item.isBooking ? styles.bookingIcon : ""}`,
                 })}
               </div>
 
@@ -151,7 +171,8 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
             <div
               className={`${styles.maincot} ${
                 item.isVisit ? styles.visitMain : ""
-              }`}
+              }
+              ${item.isBooking ? styles.bookingMain : ""}`}
             >
               <div className={styles.tag}>{item.status ?? "NA"}</div>
 
@@ -160,9 +181,11 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
                   <div className={styles.firstrow}>
                     <div className={styles.com}>
                       <div className={styles.lable}>{item.name ?? "NA"}</div>
+                       {!item.isBooking && (
                       <div className={styles.call}>
                         <p>{item.callType ?? "NA"}</p>
                       </div>
+                       )}
                     </div>
                     <div className={styles.date}>{item.date ?? "NA"}</div>
                   </div>
@@ -206,7 +229,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
                   <div className={styles.secrow}>
                     <div className={styles.feedback}>EV Feedback</div>
                     <div className={styles.conts}>
-                       {lead?.visitRef?.feedback?.trim()
+                      {lead?.visitRef?.feedback?.trim()
                         ? lead.visitRef.feedback
                         : "No Feedback provided"}
                     </div>

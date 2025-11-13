@@ -152,7 +152,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
               }
             }}/>}
 
-      {showcancelboking && <CancelBooking openclick={setshowcancelbooking} />}
+      {showcancelboking && <CancelBooking openclick={setshowcancelbooking} leadId={lead}/>}
       {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
       {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
 
