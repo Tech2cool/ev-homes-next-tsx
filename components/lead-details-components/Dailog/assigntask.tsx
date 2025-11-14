@@ -350,9 +350,8 @@ const AssignTask: React.FC<AssignTaskProps> = ({ openclick, task, lead }) => {
             zIndex: "999",
           }}
         />
-        <h3 className={styles.dialogTitle}>📝 Assign Task</h3>
+        <h3 className={styles.dialogTitle}>Assign Task</h3>
         <div className={styles.dailogcnt}>
-          {/* {loading && <div className={styles.loading}>Loading employees...</div>} */}
           {error && <div className={styles.errorMsg}>{error}</div>}
 
           <div className={styles.formControl}>
