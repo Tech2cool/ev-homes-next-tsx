@@ -2,13 +2,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./dailog.module.css"
 import { IoLocation, IoLocationSharp, IoPersonOutline, IoReceipt } from "react-icons/io5";
-
+import Select, { components } from "react-select";
 import { FaArrowUpFromGroundWater, FaBuilding, FaCheck, FaDoorClosed, FaFileContract, FaFileInvoice, FaFileInvoiceDollar, FaFileSignature, FaHashtag, FaIdCard, FaPlus, FaStamp, FaStar, FaUser } from "react-icons/fa6";
 
 import ReactDOM from "react-dom";
 import { FaBalanceScale, FaCalendarAlt, FaParking, FaRegFileAlt } from "react-icons/fa";
 import { CiSquareAlert } from "react-icons/ci";
-import { MdCancel, MdLocalParking, MdOutlineCurrencyRupee, MdOutlineEmail, MdOutlineFileUpload, MdOutlineNumbers } from "react-icons/md";
+import { MdCancel, MdLocalParking, MdLocalPhone, MdOutlineCurrencyRupee, MdOutlineEmail, MdOutlineFileUpload, MdOutlineNumbers } from "react-icons/md";
 import { GiModernCity } from "react-icons/gi";
 import { BiSolidBookContent } from "react-icons/bi";
 import { LuBuilding2 } from "react-icons/lu";
@@ -23,11 +23,20 @@ interface Applicant {
     firstName: string;
     lastName: string;
     email: string;
+    number: string;
     aadhaarUploaded: boolean;
+    aadhaarFile: File | null;
+
     panUploaded: boolean;
+    panFile: File | null;
     otherUploaded: boolean;
-    apliaddress: string;
+    otherFile: File | null;
+    clientOneDress: string;
+    clientTwoAdress: string;
+    clientCity: string;
+    clientPincode: string;
 }
+
 interface Payment {
     id: number;
     paymentType: string;
@@ -37,7 +46,10 @@ interface Payment {
     receiptNo: string;
     transactionNo: string;
 }
-
+interface OptionType {
+    value: string;
+    label: string;
+}
 interface FormState {
     bookingDate: string;
     bookingstatus: string;
@@ -48,30 +60,42 @@ interface FormState {
     Flatno: string;
     carpet: string;
     Cost: string;
+    CostWords: string;
     notes: string;
     parkingno: string;
     prfloor: string;
     photo: File | null;
     remark: string,
+    remarkLast: string;
     applicants: Applicant[];
-    address: string;
+    addressOne: string;
+    addressTwo: string;
     pincode: string;
     city: string;
-    assignto: string;
+    assignto: OptionType[];
     manager: string;
     backphoto: File | null;
     frontphoto: File | null;
 }
 
 const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
+    const currentTheme = document.documentElement.classList.contains("light")
+        ? "light"
+        : "dark";
     const dialogRef = useRef<HTMLDivElement>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [currentStep, setCurrentStep] = useState(0);
     const [payments, setPayments] = useState<Payment[]>([]);
     const [parkingList, setParkingList] = useState<{ prfloor: string; parkingno: string }[]>([]);
     const [confirmChecked, setConfirmChecked] = useState(false);
-
+    const [regDone, setRegDone] = useState<string>("");
+    const [regDate, setRegDate] = useState<string>("");
+    const [handover, setHandover] = useState<string>("");
+    const [handoverDate, setHandoverDate] = useState<string>("");
+    const [frontUploaded, setFrontUploaded] = useState(false);
+    const [backUploaded, setBackUploaded] = useState(false);
     const addParking = () => {
+
         setParkingList([...parkingList, { prfloor: "", parkingno: "" }]);
     };
 
@@ -106,7 +130,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     };
 
     const [formData, setformData] = useState<FormState>({
-        bookingDate: "",
+        bookingDate: new Date().toISOString().split("T")[0],
         bookingstatus: "",
         project: "",
         blug: "",
@@ -115,19 +139,22 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         Flatno: "",
         carpet: "",
         Cost: "",
+        CostWords: "",
         notes: "",
         photo: null,
         remark: "",
         prfloor: "",
         parkingno: "",
-        address: "",
+        addressOne: "",
+        addressTwo: "",
         applicants: [],
         pincode: "",
         city: "",
-        assignto: "",
+        assignto: [],
         manager: "",
         backphoto: null,
         frontphoto: null,
+        remarkLast: "",
     })
     useEffect(() => {
         const handleOutsideClick = (e: MouseEvent) => {
@@ -143,7 +170,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
     const handleCancel = () => {
         setformData({
-            bookingDate: "",
+            bookingDate: new Date().toISOString().split("T")[0],
             bookingstatus: "",
             project: "",
             blug: "",
@@ -152,7 +179,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             Flatno: "",
             carpet: "",
             Cost: "",
-            address: "",
+            addressOne: "",
+            addressTwo: "",
             notes: "",
             photo: null,
             remark: "",
@@ -161,10 +189,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             applicants: [],
             pincode: "",
             city: "",
-            assignto: "",
+            assignto: [],
             manager: "",
             backphoto: null,
             frontphoto: null,
+            CostWords: "",
+            remarkLast: "",
         })
         openclick(false);
     }
@@ -193,7 +223,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             });
         }
         if (stepIndex === 1) {
-            if (!formData.address.trim()) newErrors.address = "Address is required";
+            if (!formData.addressOne.trim()) newErrors.addressOne = "address line 1 is required";
+            if (!formData.addressTwo.trim()) newErrors.addressTwo = "address line 2 is required";
             if (!formData.city.trim()) newErrors.city = "City is required";
             if (!formData.pincode.trim()) newErrors.pincode = "Pincode is required";
 
@@ -209,15 +240,24 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         newErrors[`applicant-${index}-lastName`] = `Last name is required `;
                     if (!applicant.email?.trim())
                         newErrors[`applicant-${index}-email`] = `Email is required `;
-                    if (!applicant.apliaddress?.trim())
-                        newErrors[`applicant-${index}-apliaddress`] = `apliaddress is required `;
-
+                    if (!applicant.number?.trim())
+                        newErrors[`applicant-${index}-number`] = `Number is required `;
+                    if (!applicant.clientOneDress?.trim())
+                        newErrors[`applicant-${index}-clientOneDress`] = `Address Line 1 is required `;
+                    if (!applicant.clientTwoAdress?.trim())
+                        newErrors[`applicant-${index}-clientTwoAdress`] = `Address Line 2 is required `;
+                    if (!applicant.clientCity?.trim())
+                        newErrors[`applicant-${index}-clientCity`] = `City is required `;
+                    if (!applicant.clientPincode?.trim())
+                        newErrors[`applicant-${index}-clientPincode`] = `Pincode is required`;
                 });
             }
         }
         if (stepIndex === 2) {
             if (!formData.manager.trim()) newErrors.manager = " Closing manager is required";
-            if (!formData.assignto.trim()) newErrors.assignto = "assign to is required";
+
+            if (formData.assignto.length === 0)
+                newErrors.assignto = "Select at least one assign.";
         }
         if (stepIndex === 3) {
             if (!formData.frontphoto) newErrors.frontphoto = "front Photo is required";
@@ -276,6 +316,58 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
         );
     };
+    useEffect(() => {
+        if (formData.floor && formData.unit) {
+            const floorNum = Number(formData.floor);
+            const unitNum = Number(formData.unit);
+
+            const flat = floorNum * 100 + unitNum;
+
+            setformData((prev: any) => ({
+                ...prev,
+                Flatno: flat.toString(),
+            }));
+        }
+    }, [formData.floor, formData.unit]);
+
+    const convertToIndianWords = (num: number) => {
+        if (!num) return "";
+
+        let crore = Math.floor(num / 10000000);
+        num %= 10000000;
+
+        let lakh = Math.floor(num / 100000);
+        num %= 100000;
+
+        let thousand = Math.floor(num / 1000);
+        num %= 1000;
+
+        let hundred = num;
+
+        let result = "";
+
+        if (crore) result += `${crore} Cr `;
+        if (lakh) result += `${lakh} Lakh `;
+        if (thousand) result += `${thousand} Thousand `;
+        if (hundred) result += `${hundred}`;
+
+        return result.trim();
+    };
+
+    const onChangeCost = (e: any) => {
+        const { name, value } = e.target;
+
+        // Allow only numbers
+        const onlyNumbers = value.replace(/\D/g, "");
+
+        setformData((prev: any) => ({
+            ...prev,
+            Cost: onlyNumbers,
+            CostWords: convertToIndianWords(Number(onlyNumbers))
+        }));
+    };
+
+
     const generatePDF = () => {
         const doc = new jsPDF();
         let y = 20;
@@ -329,7 +421,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
         // Applicants
         addSectionTitle("Applicants");
-        addField("Address", formData.address);
+        addField("addressOne", formData.addressOne);
+        addField("AddressTwo", formData.addressTwo);
         addField("City", formData.city);
         addField("Pincode", formData.pincode);
         formData.applicants.forEach((a, i) => {
@@ -341,7 +434,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             addField("First Name", a.firstName);
             addField("Last Name", a.lastName);
             addField("Email", a.email);
-            addField("Address", a.apliaddress);
+            addField("number", a.number);
+            addField("clientOneDress", a.clientOneDress);
+            addField("clientTwoAdress", a.clientTwoAdress);
+            addField("clientCity", a.clientCity);
+            addField("clientPincode", a.clientPincode);
             addField("Aadhaar Uploaded", a.aadhaarUploaded ? "Yes" : "No");
             addField("PAN Uploaded", a.panUploaded ? "Yes" : "No");
             addField("Other Document Uploaded", a.otherUploaded ? "Yes" : "No");
@@ -350,7 +447,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         // Team Overview
         addSectionTitle("Team Overview");
         addField("Closing Manager", formData.manager);
-        addField("Assign To", formData.assignto);
+        addField(
+            "Assign To",
+            formData.assignto.map((opt) => opt.label).join(", ") || "-"
+        );
+
 
         // Pre-registration
         addSectionTitle("Pre-registration");
@@ -370,6 +471,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             addField("TDS Amount", p.tdsAmount);
             addField("Receipt No", p.receiptNo);
             addField("Transaction No", p.transactionNo);
+
         });
 
         // Confirmation
@@ -391,6 +493,93 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         "Pre-registration",
         "Payment",
     ];
+    const optionssing: OptionType[] = [
+        { value: "mona", label: "Mona" },
+        { value: "snehal", label: "Snehal" },
+        { value: "rahul", label: "Rahul" },
+        { value: "ankit", label: "Ankit" },
+    ];
+    const customSelectStyles = (theme: "dark" | "light") => ({
+        control: (base: any, state: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            borderColor: state.isFocused
+                ? "#007bff"
+                : theme === "dark"
+                    ? "#444444f5"
+                    : "#ccc",
+            minHeight: "40px",
+            borderWidth: "2px",
+            color: theme === "dark" ? "white" : "#201f1f",
+            fontSize: "14px", // ✅ smaller font
+            boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
+            "&:hover": {
+                borderColor: "#007bff",
+            },
+        }),
+        menu: (base: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            fontSize: "14px", // smaller font in dropdown
+        }),
+        option: (base: any, state: any) => ({
+            ...base,
+            backgroundColor: state.isSelected
+                ? theme === "dark"
+                    ? "#007bff"
+                    : "#cce5ff"
+                : state.isFocused
+                    ? theme === "dark"
+                        ? "#0056b3"
+                        : "#e6f0ff"
+                    : theme === "dark"
+                        ? "#151414f5"
+                        : "white",
+            color: state.isSelected
+                ? theme === "dark"
+                    ? "white"
+                    : "#201f1f"
+                : theme === "dark"
+                    ? "white"
+                    : "#201f1f",
+            fontSize: "14px", // smaller font
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "white" : "#201f1f",
+            fontSize: "14px",
+        }),
+        multiValue: (base: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
+            fontSize: "14px",
+        }),
+        multiValueLabel: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+        }),
+        multiValueRemove: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+            ":hover": {
+                backgroundColor: "red",
+                color: "#e4e4e4ff",
+            },
+        }),
+        input: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+        }),
+        placeholder: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#aaa" : "#999",
+            fontSize: "14px",
+        }),
+    });
+
     const stepFields = [
         {
             title: "Booking Overview",
@@ -404,7 +593,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         <input
                             type="date"
                             name="bookingDate"
-                            value={(formData as any).bookingDate || ""}
+                            value={(formData as any).bookingDate || new Date().toISOString().split("T")[0]}
                             onChange={onChangeField}
                         />
                         {errors.bookingDate && <p className={styles.errorMsg}>{errors.bookingDate}</p>}
@@ -470,8 +659,9 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                 onChange={onChangeField}
                             >
                                 <option value="">Select floor </option>
-                                <option value="0">0</option>
                                 <option value="1">1</option>
+                                <option value="10">10</option>
+                                <option value="14">14</option>
                             </select>
                             {errors.floor && <p className={styles.errorMsg}>{errors.floor}</p>}
 
@@ -487,8 +677,9 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                 onChange={onChangeField}
                             >
                                 <option value="">Select Unit </option>
-                                <option value="0">0</option>
                                 <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="10">10</option>
                             </select>
                             {errors.unit && <p className={styles.errorMsg}>{errors.unit}</p>}
 
@@ -502,12 +693,13 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                             </label>
                             <input
                                 type="text"
-
                                 name="Flatno"
                                 placeholder="Enter Flat no...."
                                 value={formData.Flatno}
                                 onChange={onChangeField}
+                                readOnly
                             />
+
                             {errors.Flatno && <p className={styles.errorMsg}>{errors.Flatno}</p>}
                         </div>
                         <div className={styles.formControl}>
@@ -533,12 +725,20 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         </label>
                         <input
                             type="text"
-
                             name="Cost"
-                            placeholder=" Enter Flat Cost..."
+                            placeholder="Enter Flat Cost..."
                             value={formData.Cost}
-                            onChange={onChangeField}
+                            onChange={onChangeCost}
                         />
+
+                        {formData.CostWords && (
+                            <p
+                                className={styles.costvalue}
+                            >
+                                {formData.CostWords}
+                            </p>
+                        )}
+
                         {errors.Cost && <p className={styles.errorMsg}>{errors.Cost}</p>}
                     </div>
                     <div className={styles.formControl}>
@@ -625,20 +825,37 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             title: "Applicants",
             fields: (
                 <>
-                    <div className={styles.formControl}>
-                        <label>
+                    <div className={styles.card}>
+                        <div className={styles.formControl}>
+                            <label>
 
-                            <RequiredLabel icon={<IoLocationSharp className={styles.iconcolor} />} text="Address" />
-                        </label>
-                        <input
-                            type="text"
-                            name="address"
-                            placeholder="Enter Address...."
-                            value={formData.address}
-                            onChange={onChangeField}
-                        />
-                        {errors.address && <p className={styles.errorMsg}>{errors.address}</p>}
+                                <RequiredLabel icon={<IoLocationSharp className={styles.iconcolor} />} text="Address Line 1" />
+                            </label>
+                            <input
+                                type="text"
+                                name="addressOne"
+                                placeholder="Enter Address...."
+                                value={formData.addressOne}
+                                onChange={onChangeField}
+                            />
+                            {errors.addressOne && <p className={styles.errorMsg}>{errors.addressOne}</p>}
+                        </div>
+                        <div className={styles.formControl}>
+                            <label>
+
+                                <RequiredLabel icon={<IoLocationSharp className={styles.iconcolor} />} text="Address Line 2" />
+                            </label>
+                            <input
+                                type="text"
+                                name="addressTwo"
+                                placeholder="Enter Address...."
+                                value={formData.addressTwo}
+                                onChange={onChangeField}
+                            />
+                            {errors.addressTwo && <p className={styles.errorMsg}>{errors.addressTwo}</p>}
+                        </div>
                     </div>
+
                     <div className={styles.card}>
 
                         <div className={styles.formControl}>
@@ -786,28 +1003,112 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         <p className={styles.errorMsg}>{errors[`applicant-${index}-email`]}</p>
                                     )}
                                 </div>
-
                                 <div className={styles.formControl}>
                                     <label>
-                                        <RequiredLabel icon={<IoLocationSharp className={styles.iconcolor} />} text="Address" />
+                                        <RequiredLabel icon={<MdLocalPhone className={styles.iconcolor} />} text="Phone Number" />
                                     </label>
                                     <input
                                         type="text"
-                                        name="apliaddress"
-                                        value={applicant.apliaddress || ""}
-                                        placeholder="Enter address"
+                                        name="number"
+                                        value={applicant.number}
+                                        placeholder="Enter Phone number"
                                         onChange={(e) => {
                                             const updated = [...formData.applicants];
-                                            updated[index].apliaddress = e.target.value;
+                                            updated[index].number = e.target.value;
                                             setformData((prev) => ({ ...prev, applicants: updated }));
                                         }}
                                     />
-                                    {errors[`applicant-${index}-apliaddress`] && (
-                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-apliaddress`]}</p>
+                                    {errors[`applicant-${index}-number`] && (
+                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-number`]}</p>
+                                    )}
+                                </div>
+
+
+                            </div>
+                            <div className={styles.card}>
+
+
+                                <div className={styles.formControl}>
+                                    <label>
+                                        <RequiredLabel icon={<IoLocationSharp className={styles.iconcolor} />} text="Address Line 1" />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="clientOneDress"
+                                        value={applicant.clientOneDress || ""}
+                                        placeholder="Enter address Line 1"
+                                        onChange={(e) => {
+                                            const updated = [...formData.applicants];
+                                            updated[index].clientOneDress = e.target.value;
+                                            setformData((prev) => ({ ...prev, applicants: updated }));
+                                        }}
+                                    />
+                                    {errors[`applicant-${index}-clientOneDress`] && (
+                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-clientOneDress`]}</p>
+                                    )}
+                                </div>
+                                <div className={styles.formControl}>
+                                    <label>
+                                        <RequiredLabel icon={<IoLocationSharp className={styles.iconcolor} />} text="Address Line 2" />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="clientTwoAdress"
+                                        value={applicant.clientTwoAdress || ""}
+                                        placeholder="Enter address Line 2"
+                                        onChange={(e) => {
+                                            const updated = [...formData.applicants];
+                                            updated[index].clientTwoAdress = e.target.value;
+                                            setformData((prev) => ({ ...prev, applicants: updated }));
+                                        }}
+                                    />
+                                    {errors[`applicant-${index}-clientTwoAdress`] && (
+                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-clientTwoAdress`]}</p>
                                     )}
                                 </div>
                             </div>
+                            <div className={styles.card}>
 
+
+                                <div className={styles.formControl}>
+                                    <label>
+                                        <RequiredLabel icon={<GiModernCity className={styles.iconcolor} />} text="City" />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="clientCity"
+                                        value={applicant.clientCity || ""}
+                                        placeholder="Enter City Name"
+                                        onChange={(e) => {
+                                            const updated = [...formData.applicants];
+                                            updated[index].clientCity = e.target.value;
+                                            setformData((prev) => ({ ...prev, applicants: updated }));
+                                        }}
+                                    />
+                                    {errors[`applicant-${index}-clientCity`] && (
+                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-clientCity`]}</p>
+                                    )}
+                                </div>
+                                <div className={styles.formControl}>
+                                    <label>
+                                        <RequiredLabel icon={<FaHashtag className={styles.iconcolor} />} text="Pincode" />
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="clientPincode"
+                                        value={applicant.clientPincode || ""}
+                                        placeholder="Enter Pincode"
+                                        onChange={(e) => {
+                                            const updated = [...formData.applicants];
+                                            updated[index].clientPincode = e.target.value;
+                                            setformData((prev) => ({ ...prev, applicants: updated }));
+                                        }}
+                                    />
+                                    {errors[`applicant-${index}-clientPincode`] && (
+                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-clientPincode`]}</p>
+                                    )}
+                                </div>
+                            </div>
                             {/* Document Uploads */}
                             <div className={styles.card} style={{ marginTop: "15px" }}>
                                 {/* Aadhaar Upload */}
@@ -824,7 +1125,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         Aadhaar Card
                                         <span
                                             style={{
-                                                backgroundColor: "#476cff",
+                                                backgroundColor: applicant.aadhaarUploaded ? "green" : "#476cff",
                                                 color: "white",
                                                 borderRadius: "50%",
                                                 width: "22px",
@@ -838,7 +1139,30 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         >
                                             {applicant.aadhaarUploaded ? <FaCheck size={14} /> : "+"}
                                         </span>
+
+                                        {/* Remove button only if file uploaded */}
+                                        {applicant.aadhaarUploaded && (
+                                            <MdCancel
+                                                style={{
+                                                    color: "red",
+                                                    border: "none",
+                                                    borderRadius: "50%",
+                                                    width: "23px",
+                                                    height: "23px",
+                                                    cursor: "pointer",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                }}
+                                                onClick={() => {
+                                                    const updated = [...formData.applicants];
+                                                    updated[index].aadhaarUploaded = false;
+                                                    updated[index].aadhaarFile = null;
+                                                    setformData((prev) => ({ ...prev, applicants: updated }));
+                                                }}
+                                            />
+                                        )}
                                     </label>
+
                                     <input
                                         id={`aadhaar-${index}`}
                                         type="file"
@@ -846,31 +1170,33 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         style={{ display: "none" }}
                                         onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
                                             const updated = [...formData.applicants];
-                                            updated[index].aadhaarUploaded = !!e.target.files?.length;
+                                            updated[index].aadhaarUploaded = !!file;
+                                            updated[index].aadhaarFile = file;
                                             setformData((prev) => ({ ...prev, applicants: updated }));
                                         }}
                                     />
-                                    {errors[`applicant-${index}-aadhaar`] && (
-                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-aadhaar`]}</p>
+
+                                    {/* View uploaded file */}
+                                    {applicant.aadhaarUploaded && applicant.aadhaarFile && (
+                                        <button
+                                            type="button"
+                                            onClick={() => window.open(URL.createObjectURL(applicant.aadhaarFile!), "_blank")}
+                                            className={styles.upladfile}
+                                        >
+                                            View Aadhaar
+                                        </button>
                                     )}
                                 </div>
 
                                 {/* PAN Upload */}
                                 <div className={styles.formControl}>
-                                    <label
-                                        htmlFor={`pan-${index}`}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "8px",
-                                            cursor: "pointer",
-                                        }}
-                                    >
+                                    <label htmlFor={`pan-${index}`} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                         PAN Card
                                         <span
                                             style={{
-                                                backgroundColor: "#476cff",
+                                                backgroundColor: applicant.panUploaded ? "green" : "#476cff",
                                                 color: "white",
                                                 borderRadius: "50%",
                                                 width: "22px",
@@ -884,39 +1210,61 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         >
                                             {applicant.panUploaded ? <FaCheck size={14} /> : "+"}
                                         </span>
+
+                                        {applicant.panUploaded && (
+                                            <MdCancel
+                                                style={{
+                                                    color: "red",
+                                                    border: "none",
+                                                    borderRadius: "50%",
+                                                    width: "23px",
+                                                    height: "23px",
+                                                    cursor: "pointer",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                }}
+                                                onClick={() => {
+                                                    const updated = [...formData.applicants];
+                                                    updated[index].panUploaded = false;
+                                                    updated[index].panFile = null;
+                                                    setformData((prev) => ({ ...prev, applicants: updated }));
+                                                }}
+                                            />
+                                        )}
                                     </label>
+
                                     <input
                                         id={`pan-${index}`}
                                         type="file"
-                                        name="pan"
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         style={{ display: "none" }}
                                         onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
                                             const updated = [...formData.applicants];
-                                            updated[index].panUploaded = !!e.target.files?.length;
+                                            updated[index].panUploaded = !!file;
+                                            updated[index].panFile = file;
                                             setformData((prev) => ({ ...prev, applicants: updated }));
                                         }}
                                     />
-                                    {errors[`applicant-${index}-pan`] && (
-                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-pan`]}</p>
+
+                                    {applicant.panUploaded && applicant.panFile && (
+                                        <button
+                                            type="button"
+                                            onClick={() => window.open(URL.createObjectURL(applicant.panFile!), "_blank")}
+                                            className={styles.upladfile}
+                                        >
+                                            View PAN
+                                        </button>
                                     )}
                                 </div>
 
                                 {/* Other Document Upload */}
                                 <div className={styles.formControl}>
-                                    <label
-                                        htmlFor={`other-${index}`}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "8px",
-                                            cursor: "pointer",
-                                        }}
-                                    >
+                                    <label htmlFor={`other-${index}`} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                         Other Document
                                         <span
                                             style={{
-                                                backgroundColor: "#476cff",
+                                                backgroundColor: applicant.otherUploaded ? "green" : "#476cff",
                                                 color: "white",
                                                 borderRadius: "50%",
                                                 width: "22px",
@@ -930,30 +1278,59 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         >
                                             {applicant.otherUploaded ? <FaCheck size={14} /> : "+"}
                                         </span>
+
+                                        {applicant.otherUploaded && (
+                                            <MdCancel
+                                                style={{
+                                                    color: "red",
+                                                    border: "none",
+                                                    borderRadius: "50%",
+                                                    width: "23px",
+                                                    height: "23px",
+                                                    cursor: "pointer",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                }}
+                                                onClick={() => {
+                                                    const updated = [...formData.applicants];
+                                                    updated[index].otherUploaded = false;
+                                                    updated[index].otherFile = null;
+                                                    setformData((prev) => ({ ...prev, applicants: updated }));
+                                                }}
+                                            />
+                                        )}
                                     </label>
+
                                     <input
                                         id={`other-${index}`}
                                         type="file"
-                                        name="otherDocument"
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         style={{ display: "none" }}
                                         onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
                                             const updated = [...formData.applicants];
-                                            updated[index].otherUploaded = !!e.target.files?.length;
+                                            updated[index].otherUploaded = !!file;
+                                            updated[index].otherFile = file;
                                             setformData((prev) => ({ ...prev, applicants: updated }));
                                         }}
                                     />
-                                    {errors[`applicant-${index}-other`] && (
-                                        <p className={styles.errorMsg}>{errors[`applicant-${index}-other`]}</p>
+
+                                    {applicant.otherUploaded && applicant.otherFile && (
+                                        <button
+                                            type="button"
+                                            onClick={() => window.open(URL.createObjectURL(applicant.otherFile!), "_blank")}
+                                            className={styles.upladfile}
+                                        >
+                                            View Document
+                                        </button>
                                     )}
                                 </div>
                             </div>
+
+
+
                         </div>
                     ))}
-
-
-
-
 
                 </>
             ),
@@ -982,15 +1359,20 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         <label>
                             <RequiredLabel icon={<FaUser className={styles.iconcolor} />} text="Assign To" />
                         </label>
-                        <select
+                        <Select
+                            isMulti
                             value={formData.assignto}
-                            name="assignto"
-                            onChange={onChangeField}
-                        >
-                            <option value="">Select Assign To</option>
-                            <option value="mona">mona</option>
-                            <option value="snehal">snehal</option>
-                        </select>
+                            onChange={(selected) =>
+                                setformData((prev) => ({
+                                    ...prev,
+                                    assignto: selected as OptionType[],
+                                }))
+                            }
+                            options={optionssing}
+                            placeholder="Select Assign To"
+                            styles={customSelectStyles(currentTheme)}
+                        />
+
                         {errors.assignto && <p className={styles.errorMsg}>{errors.assignto}</p>}
 
                     </div>
@@ -1003,47 +1385,119 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             fields:
                 (
                     <>
-                        <div className={styles.formControl}>
-                            <label>
-                                <RequiredLabel
-                                    icon={<MdOutlineFileUpload className={styles.iconcolor} />}
-                                    text="Upload Booking Form"
-                                />
-                            </label>
-                        </div>
 
                         <div className={styles.card}>
                             <div className={styles.formControl}>
-                                <label>
-                                    <RequiredLabel
-                                        icon={<MdOutlineFileUpload className={styles.iconcolor} />}
-                                        text="Upload Frontside"
-                                    />
-                                </label>
-                                <input type="file"
-                                    name="frontphoto"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0] || null;
-                                        setformData((prev) => ({ ...prev, frontphoto: file }));
-                                    }}
-                                    placeholder="Upload Frontside..." />
-                                {errors.frontphoto && <p className={styles.errorMsg}>{errors.frontphoto}</p>}
-                            </div>
+                                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <MdOutlineFileUpload className={styles.iconcolor} />
+                                    Upload Booking Form Frontside
 
-                            <div className={styles.formControl}>
-                                <label>
-                                    <RequiredLabel
-                                        icon={<MdOutlineFileUpload className={styles.iconcolor} />}
-                                        text="Upload Backside"
-                                    />
+                                    {frontUploaded && formData.frontphoto && (
+                                        <MdCancel
+                                            style={{
+                                                color: "red",
+                                                border: "none",
+                                                borderRadius: "50%",
+                                                width: "17px",
+                                                height: "17px",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                            onClick={() => {
+                                                setformData((prev) => ({ ...prev, frontphoto: null }));
+                                                setFrontUploaded(false); // Enable input again
+                                            }}
+                                        />
+                                    )}
                                 </label>
-                                <input type="file" name="backphoto"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0] || null;
-                                        setformData((prev) => ({ ...prev, backphoto: file }));
-                                    }}
-                                    placeholder="Upload Backside..." />
-                                {errors.backphoto && <p className={styles.errorMsg}>{errors.backphoto}</p>}
+
+                                {!frontUploaded && (
+                                    <input
+                                        type="file"
+                                        name="frontphoto"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
+                                            if (!file) return;
+                                            setformData((prev) => ({ ...prev, frontphoto: file }));
+                                            setFrontUploaded(true); // Disable input
+                                        }}
+                                    />
+                                )}
+
+                                {/* Show file name */}
+                                {formData.frontphoto && <p>{formData.frontphoto.name}</p>}
+
+                                {formData.frontphoto && (
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            window.open(URL.createObjectURL(formData.frontphoto!), "_blank")
+                                        }
+                                        className={styles.upladfile}
+                                    >
+                                        View Frontside
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Backside */}
+                        <div className={styles.card}>
+                            <div className={styles.formControl}>
+                                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <MdOutlineFileUpload className={styles.iconcolor} />
+                                    Upload Booking Form Backside
+
+                                    {backUploaded && formData.backphoto && (
+                                        <MdCancel
+                                            style={{
+                                                color: "red",
+                                                border: "none",
+                                                borderRadius: "50%",
+                                                width: "17px",
+                                                height: "17px",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                            onClick={() => {
+                                                setformData((prev) => ({ ...prev, backphoto: null }));
+                                                setBackUploaded(false); // Enable input again
+                                            }}
+                                        />
+                                    )}
+                                </label>
+
+                                {!backUploaded && (
+                                    <input
+                                        type="file"
+                                        name="backphoto"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
+                                            if (!file) return;
+                                            setformData((prev) => ({ ...prev, backphoto: file }));
+                                            setBackUploaded(true); // Disable input
+                                        }}
+                                    />
+                                )}
+
+                                {/* Show file name */}
+                                {formData.backphoto && <p>{formData.backphoto.name}</p>}
+
+                                {formData.backphoto && (
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            window.open(URL.createObjectURL(formData.backphoto!), "_blank")
+                                        }
+                                        className={styles.upladfile}
+                                    >
+                                        View Backside
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -1196,12 +1650,38 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
                                 <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                                     <label className={styles.radioLabel}>
-                                        <input type="radio" name="registdone" value="yes" /> Yes
+                                        <input
+                                            type="radio"
+                                            name="registdone"
+                                            value="yes"
+                                            checked={regDone === "yes"}
+                                            onChange={(e) => setRegDone(e.target.value)}
+                                        />{" "}
+                                        Yes
                                     </label>
                                     <label className={styles.radioLabel}>
-                                        <input type="radio" name="registdone" value="no" /> No
+                                        <input
+                                            type="radio"
+                                            name="registdone"
+                                            value="no"
+                                            checked={regDone === "no"}
+                                            onChange={(e) => setRegDone(e.target.value)}
+                                        />{" "}
+                                        No
                                     </label>
                                 </div>
+
+                                {regDone === "yes" && (
+                                    <div className={styles.formControl}>
+                                        <label>Registration Date</label>
+                                        <input
+                                            type="date"
+                                            value={regDate}
+                                            onChange={(e) => setRegDate(e.target.value)}
+                                            className={styles.dateInput}
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             <div className={styles.formControl}>
@@ -1226,12 +1706,38 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
                                 <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                                     <label className={styles.radioLabel}>
-                                        <input type="radio" name="hanagreement" value="yes" /> Yes
+                                        <input
+                                            type="radio"
+                                            name="hanagreement"
+                                            value="yes"
+                                            checked={handover === "yes"}
+                                            onChange={(e) => setHandover(e.target.value)}
+                                        />{" "}
+                                        Yes
                                     </label>
                                     <label className={styles.radioLabel}>
-                                        <input type="radio" name="hanagreement" value="no" /> No
+                                        <input
+                                            type="radio"
+                                            name="hanagreement"
+                                            value="no"
+                                            checked={handover === "no"}
+                                            onChange={(e) => setHandover(e.target.value)}
+                                        />{" "}
+                                        No
                                     </label>
                                 </div>
+
+                                {handover === "yes" && (
+                                    <div className={styles.formControl}>
+                                        <label>Handover Date</label>
+                                        <input
+                                            type="date"
+                                            value={handoverDate}
+                                            onChange={(e) => setHandoverDate(e.target.value)}
+                                            className={styles.dateInput}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </>
@@ -1402,6 +1908,18 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                                         <p className={styles.errorMsg}>{errors[`payment-${index}-txn`]}</p>
                                     )}
                                 </div>
+
+                            </div>
+                            <div className={styles.formControl}>
+                                <label><IoLocation className={styles.iconcolor} />Remark</label>
+                                <textarea
+                                    rows={2}
+                                    placeholder="Reason for Cancellation"
+                                    value={formData.remarkLast}
+                                    name="remarkLast"
+                                    onChange={onChangeField}
+                                />
+                                {errors.remarkLast && <p className={styles.errorMsg}>{errors.remarkLast}</p>}
                             </div>
                         </div>
                     ))}

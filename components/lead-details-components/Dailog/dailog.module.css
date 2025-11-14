@@ -187,7 +187,7 @@
   color: rgb(142, 141, 141);
   align-items: center;
   padding-left: 0.5rem;
-  padding-bottom: 2px;
+  padding-top: 0px;
   display: flex;
   gap: 7px;
 }
@@ -217,8 +217,8 @@
 .formControl select:-webkit-autofill,
 .formControl select:-webkit-autofill:hover,
 .formControl select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #151414f5 inset !important; 
-  -webkit-text-fill-color: #fff !important; 
+  -webkit-box-shadow: 0 0 0px 1000px #151414f5 inset !important;
+  -webkit-text-fill-color: #fff !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -231,8 +231,8 @@
 :global(html.light) .formControl select:-webkit-autofill,
 :global(html.light) .formControl select:-webkit-autofill:hover,
 :global(html.light) .formControl select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important; 
-  -webkit-text-fill-color: #201f1f !important; 
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -265,7 +265,7 @@
   -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
   -webkit-text-fill-color: #201f1f !important;
   transition: background-color 5000s ease-in-out 0s;
-    border: 2px solid #927fbff5 !important;
+  border: 2px solid #927fbff5 !important;
 
 }
 
@@ -461,7 +461,7 @@
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 11px;
-  padding: 0.1rem 0.1rem;
+  padding: 0.2rem 0.3rem;
   margin-left: 5px;
 }
 
@@ -776,4 +776,28 @@
 .numberhide {
   color: gray;
   font-size: 14px;
+}
+
+.costvalue {
+
+  font-size: 13px;
+  color: #3cbf43;
+  margin-top: 2px;
+  text-align: right;
+}
+
+:global(html.light) .costvalue {
+  color: #206524;
+font-weight: 600;
+}
+.upladfile{
+  margin-top: 8px;
+  font-size:12px ;
+  color:#4CAF50;
+  background-color :#37363981;
+  padding:4px ;
+}
+:global(html.light) .upladfile {
+  color:#124614;
+  background-color :#86d88581;
 }
