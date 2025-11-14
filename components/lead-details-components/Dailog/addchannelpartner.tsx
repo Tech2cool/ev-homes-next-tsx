@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./dailog.module.css"
 import { IoLocation } from "react-icons/io5";
+import Select, { components } from "react-select";
 
 import ReactDOM from "react-dom";
 import { MdCancel } from "react-icons/md";
@@ -22,6 +23,9 @@ interface FormState {
 }
 
 const AddChannelPartner: React.FC<AddChannelPartnerProps> = ({ openclick }) => {
+        const currentTheme = document.documentElement.classList.contains("light")
+        ? "light"
+        : "dark";
     const dialogRef = useRef<HTMLDivElement>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const tagdateRef = useRef<HTMLInputElement>(null);
@@ -117,6 +121,86 @@ const AddChannelPartner: React.FC<AddChannelPartnerProps> = ({ openclick }) => {
         alert("Form submitted successfully: \n" + JSON.stringify(formData, null, 2));
         openclick(false);
     };
+     const customSelectStyles = (theme: "dark" | "light") => ({
+        control: (base: any, state: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            borderColor: state.isFocused
+                ? "#007bff"
+                : theme === "dark"
+                    ? "#444444f5"
+                    : "#ccc",
+            minHeight: "40px",
+            borderWidth: "2px",
+            color: theme === "dark" ? "white" : "#201f1f",
+            fontSize: "14px", // ✅ smaller font
+            boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
+            "&:hover": {
+                borderColor: "#007bff",
+            },
+        }),
+        menu: (base: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#151414f5" : "white",
+            fontSize: "14px", // smaller font in dropdown
+        }),
+        option: (base: any, state: any) => ({
+            ...base,
+            backgroundColor: state.isSelected
+                ? theme === "dark"
+                    ? "#007bff"
+                    : "#cce5ff"
+                : state.isFocused
+                    ? theme === "dark"
+                        ? "#0056b3"
+                        : "#e6f0ff"
+                    : theme === "dark"
+                        ? "#151414f5"
+                        : "white",
+            color: state.isSelected
+                ? theme === "dark"
+                    ? "white"
+                    : "#201f1f"
+                : theme === "dark"
+                    ? "white"
+                    : "#201f1f",
+            fontSize: "14px", // smaller font
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "white" : "#201f1f",
+            fontSize: "14px",
+        }),
+        multiValue: (base: any) => ({
+            ...base,
+            backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
+            fontSize: "14px",
+        }),
+        multiValueLabel: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+        }),
+        multiValueRemove: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+            ":hover": {
+                backgroundColor: "red",
+                color: "#e4e4e4ff",
+            },
+        }),
+        input: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+            fontSize: "14px",
+        }),
+        placeholder: (base: any) => ({
+            ...base,
+            color: theme === "dark" ? "#aaa" : "#999",
+            fontSize: "14px",
+        }),
+    });
     const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
         <label style={{ display: "flex", alignItems: "center", gap: "3px" }}>
             {icon}
@@ -153,15 +237,27 @@ const AddChannelPartner: React.FC<AddChannelPartnerProps> = ({ openclick }) => {
                             <RequiredLabel icon={<FaUserTie className={styles.iconcolor} />} text="Channel Partner" />
                         </label>
 
-                        <select
-                            value={formData.cpartner}
-                            name="cpartner"
-                            onChange={onChangeField}
-                        >
-                            <option value="">Select Channel Partner</option>
-                            <option value="monali">monali sing</option>
-                            <option value="anil">anil patil</option>
-                        </select>
+                       <Select
+                                options={[
+                                    { value: "", label: "Select Channel Partner" },
+                                    { value: "monali", label: "Monali Singh" },
+                                    { value: "anil", label: "Anil Patil" },
+                                ]}
+                                value={
+                                    formData.cpartner
+                                        ? { value: formData.cpartner, label: formData.cpartner }
+                                        : { value: "", label: "Select Channel Partner" }
+                                }
+                                onChange={(selectedOption) =>
+                                    setformData((prev) => ({
+                                        ...prev,
+                                        cpartner: selectedOption?.value || "",
+                                    }))
+                                }
+                                styles={customSelectStyles(currentTheme)}
+                                placeholder="Select Channel Partner"
+                                isClearable
+                            />
                         {errors.cpartner && (
                             <p className={styles.errorMsg}>{errors.cpartner}</p>
                         )}

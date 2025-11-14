@@ -69,7 +69,7 @@
 }
 
 .dialogBox::-webkit-scrollbar-track,
- .dialog::-webkit-scrollbar-track,
+.dialog::-webkit-scrollbar-track,
 .dialogBox::-webkit-scrollbar-track {
   background: #222;
 }
@@ -107,9 +107,10 @@
 .alertdailog,
 .dialogButtons {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+  justify-content: center;   /* Center horizontally */
+  align-items: center;
   gap: 10px;
+  margin-top: 20px; 
 }
 
 .alertdailog {
@@ -139,6 +140,7 @@
 :global(html.light) .cancelBtn:hover {
   background: #ffffff;
 }
+
 .altersub,
 .submitBtn {
   background: linear-gradient(90deg, #16476A, #132440);
@@ -150,10 +152,12 @@
   cursor: pointer;
   transition: 0.2s;
 }
-.altersub{
-   background: linear-gradient(90deg, #25ad2a, #1d6421);
-   width: 150px;
+
+.altersub {
+  background: linear-gradient(90deg, #25ad2a, #1d6421);
+  width: 150px;
 }
+
 .submitBtn:hover {
 
   background: linear-gradient(90deg, #132440, #16476A);
@@ -184,7 +188,7 @@
   color: rgb(142, 141, 141);
   align-items: center;
   padding-left: 0.5rem;
-  padding-bottom: 2px;
+  padding-top: 0px;
   display: flex;
   gap: 7px;
 }
@@ -202,10 +206,35 @@
   border: 1px solid #444444f5;
 }
 
+.formControl select {
+  padding: 0.7rem;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 8px;
+  background-color: #151414f5;
+  border: 1px solid #444444f5;
+}
+
+.formControl select:-webkit-autofill,
+.formControl select:-webkit-autofill:hover,
+.formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #151414f5 inset !important;
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 :global(html.light) .formControl select {
   color: #201f1f;
   border: 2px solid #927fbff5;
   background-color: transparent;
+}
+
+:global(html.light) .formControl select:-webkit-autofill,
+:global(html.light) .formControl select:-webkit-autofill:hover,
+:global(html.light) .formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .formControl input {
@@ -217,9 +246,27 @@
   border-radius: 8px;
 }
 
+.formControl input:-webkit-autofill,
+.formControl input:-webkit-autofill:hover,
+.formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
 :global(html.light) .formControl input {
   color: #201f1f;
   border: 2px solid #927fbff5;
+}
+
+:global(html.light) .formControl input:-webkit-autofill,
+:global(html.light) .formControl input:-webkit-autofill:hover,
+:global(html.light) .formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
+  transition: background-color 5000s ease-in-out 0s;
+  border: 2px solid #927fbff5 !important;
 
 }
 
@@ -227,7 +274,7 @@
   -webkit-box-shadow: 0 0 0 1000px #000000f5 inset !important;
   -webkit-text-fill-color: #fff !important;
   font-size: 1vw !important;
-  border: 1px solid #444444f5 !important;
+  border: 2px solid #19191af5 !important;
   border-radius: 8px !important;
 }
 
@@ -415,7 +462,7 @@
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 11px;
-  padding: 0.1rem 0.1rem;
+  padding: 0.2rem 0.3rem;
   margin-left: 5px;
 }
 
@@ -726,7 +773,32 @@
   flex-direction: column;
   gap: 10px;
 }
-.numberhide{
+
+.numberhide {
   color: gray;
   font-size: 14px;
+}
+
+.costvalue {
+
+  font-size: 13px;
+  color: #3cbf43;
+  margin-top: 2px;
+  text-align: right;
+}
+
+:global(html.light) .costvalue {
+  color: #206524;
+font-weight: 600;
+}
+.upladfile{
+  margin-top: 8px;
+  font-size:12px ;
+  color:#4CAF50;
+  background-color :#37363981;
+  padding:4px ;
+}
+:global(html.light) .upladfile {
+  color:#124614;
+  background-color :#86d88581;
 }

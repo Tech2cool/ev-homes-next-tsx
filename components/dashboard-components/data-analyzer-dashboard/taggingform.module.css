@@ -100,12 +100,27 @@
     border: 1px solid #444444f5;
 }
 
-:global(html.light) .formControl select {
-    color: #201f1f;
-    border: 2px solid #927fbff5;
-    background-color: transparent;
+.formControl select:-webkit-autofill,
+.formControl select:-webkit-autofill:hover,
+.formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #151414f5 inset !important; 
+  -webkit-text-fill-color: #fff !important; 
+  transition: background-color 5000s ease-in-out 0s;
 }
 
+:global(html.light) .formControl select {
+  color: #201f1f;
+  border: 2px solid #927fbff5;
+  background-color: transparent;
+}
+
+:global(html.light) .formControl select:-webkit-autofill,
+:global(html.light) .formControl select:-webkit-autofill:hover,
+:global(html.light) .formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important; 
+  -webkit-text-fill-color: #201f1f !important; 
+  transition: background-color 5000s ease-in-out 0s;
+}
 .formControl input {
     padding: 0.7rem;
     font-size: 1vw;
@@ -115,10 +130,36 @@
     border-radius: 8px;
 }
 
-:global(html.light) .formControl input {
-    color: #201f1f;
-    border: 2px solid #927fbff5;
+.formControl input:-webkit-autofill,
+.formControl input:-webkit-autofill:hover,
+.formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
 
+
+:global(html.light) .formControl input {
+  color: #201f1f;
+  border: 2px solid #927fbff5;
+}
+
+:global(html.light) .formControl input:-webkit-autofill,
+:global(html.light) .formControl input:-webkit-autofill:hover,
+:global(html.light) .formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
+  transition: background-color 5000s ease-in-out 0s;
+    border: 2px solid #927fbff5 !important;
+
+}
+
+.formControl input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #000000f5 inset !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: 1vw !important;
+  border: 2px solid #19191af5 !important;
+  border-radius: 8px !important;
 }
 
 /* Phone input specific styles */
