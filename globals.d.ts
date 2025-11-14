@@ -623,7 +623,86 @@ interface PostSaleLead {
   paymentFourDueDate?: string | Date | null;
   paymentDetailSchema?: PaymentDetailSchema[];
 }
+
 //
+interface Otp {
+  id: string;
+  docId: string;
+  otp: string;
+  phoneNumber?: string;
+  email?: string;
+  type: string;
+  message: string;
+}
+
+interface UploadFile {
+  token: string;
+  filename: string;
+  downloadUrl: string;
+}
+
+interface BrokerageCalculationData {
+  id?: string | null;
+  brokerageId?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: number | null;
+
+  project?: OurProject;
+  channelPartner?: ChannelPartner;
+  lead?: Lead;
+  generatedBy?: Employee;
+  selectedFlat?: Flat | null;
+
+  flatNo?: string | null;
+  floor?: number | null;
+  buildingNo?: number | null;
+  number?: number | null;
+
+  carpetArea?: number | null;
+  sellableCarpetArea?: number | null;
+
+  totalParking?: number | null;
+  parkingPrice?: number | null;
+  developmentPrice?: number | null;
+  allInclusiveValue?: number | null;
+  registrationCharges?: number | null;
+  commissionRate?: number | null;
+  floorRiseSkip?: number | null;
+  sellablePercent?: number | null;
+
+  pdf?: string | null;
+  createdAt?: string | Date | null;
+
+  agreementValue?: number | null;
+  parkingCharges?: number | null;
+  developmentCharges?: number | null;
+  floorRiseCharges?: number | null;
+  totalBrokerage?: number | null;
+}
+
+interface Flat {
+  id?: string;
+  type?: string;
+  floor?: number;
+  number?: number;
+  buildingNo?: number;
+  flatNo?: string;
+  carpetArea?: number;
+  sellableCarpetArea?: number;
+  allInclusiveValue?: number;
+  occupied?: boolean;
+  hold?: boolean;
+  readyOnly?: boolean;
+  occupiedBy?: string;
+  ssArea?: number;
+  reraArea?: number;
+  balconyArea?: number;
+  configuration?: string;
+  msp1?: number;
+  msp2?: number;
+  msp3?: number;
+  floorPlan?: string;
 
 interface AttOverview {
   document?: string | null;

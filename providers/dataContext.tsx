@@ -576,11 +576,25 @@ type DataProviderState = {
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
 
+  sendOtpSiteVisit: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  addSiteVisitV2: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  uploadFile: (file: File) => Promise<{
+    success: boolean;
+    message?: string;
+    file?: UploadFile | null;
+  }>;
   cancelBooking: (params: {
     // Add this
     id: string;
     remark?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
+
 };
 
 //initial values should define here
@@ -758,7 +772,23 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
+  sendOtpSiteVisit: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  addSiteVisitV2: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  uploadFile: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
+
 };
 
 const dataProviderContext =
@@ -853,6 +883,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
+  // const [otp, setSiteVisitOtp] = useState<Task | null>(null);
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
 
@@ -2736,7 +2767,8 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  const getAttendanceOverview = async (
+
+const getAttendanceOverview = async (
     id: string,
     date?: string
   ): Promise<{
@@ -2777,7 +2809,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  const getMyMonthlyAttendance = async (
+const getMyMonthlyAttendance = async (
     id: string,
     date?: string
   ): Promise<{
@@ -2818,7 +2850,152 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  const getTodayAttendance = async ({
+  const sendOtpSiteVisit = async (
+    data: Record<string, any>
+  ): Promise<{ success: boolean; message?: string; data?: Otp | null }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/site-visit-generate-otp`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const otp = res?.data;
+
+      console.log("otp", otp);
+      // setCurrentTask(task);
+
+      return { success: true, data: otp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+
+
+  const addSiteVisitV2 = async (
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: SiteVisit | null;
+  }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/site-visit-add-v2`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const otp = res?.data;
+
+      console.log("otp", otp);
+      // setCurrentTask(task);
+
+      return { success: true, data: otp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+
+
+const uploadFile = async (
+    file: File
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    file?: UploadFile | null;
+  }> => {
+    try {
+      console.log("initial pass 1");
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+
+      console.log("initial pass 2");
+
+      const response = await fetch(`/api/upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "x-platform": "web",
+        },
+      });
+
+      console.log("initial pass 3");
+
+      // Check if the response is OK (status in the range 200-299)
+      if (!response.ok) {
+        // Try to get the error message from the response
+        let errorMessage = "Upload failed";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the status text
+          errorMessage = response.statusText;
+        }
+        throw new Error(errorMessage);
+      }
+
+      // Parse the response as JSON
+      const data = await response.json();
+      return {
+        success: true,
+        file: data,
+      };
+    } catch (error: any) {
+      let errorMessage = "Something went wrong";
+
+      if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error("Upload error:", errorMessage);
+      return {
+        success: false,
+        message: errorMessage,
+        file: null,
+      };
+    }
+  };
+
+
+ const getTodayAttendance = async ({
     date,
     filter,
     startDate,
@@ -2875,7 +3052,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-  const value = {
+const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
@@ -2959,6 +3136,9 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getLeadById: getLeadById,
     getTaskById: getTaskById,
     assignTask: assignTask,
+    sendOtpSiteVisit: sendOtpSiteVisit,
+    addSiteVisitV2: addSiteVisitV2,
+    uploadFile: uploadFile,
     cancelBooking: cancelBooking,
     getAttendanceOverview: getAttendanceOverview,
     getMyMonthlyAttendance: getMyMonthlyAttendance,
