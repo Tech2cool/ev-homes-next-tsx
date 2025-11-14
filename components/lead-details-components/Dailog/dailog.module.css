@@ -69,7 +69,7 @@
 }
 
 .dialogBox::-webkit-scrollbar-track,
- .dialog::-webkit-scrollbar-track,
+.dialog::-webkit-scrollbar-track,
 .dialogBox::-webkit-scrollbar-track {
   background: #222;
 }
@@ -139,6 +139,7 @@
 :global(html.light) .cancelBtn:hover {
   background: #ffffff;
 }
+
 .altersub,
 .submitBtn {
   background: linear-gradient(90deg, #16476A, #132440);
@@ -150,10 +151,12 @@
   cursor: pointer;
   transition: 0.2s;
 }
-.altersub{
-   background: linear-gradient(90deg, #25ad2a, #1d6421);
-   width: 150px;
+
+.altersub {
+  background: linear-gradient(90deg, #25ad2a, #1d6421);
+  width: 150px;
 }
+
 .submitBtn:hover {
 
   background: linear-gradient(90deg, #132440, #16476A);
@@ -202,10 +205,35 @@
   border: 1px solid #444444f5;
 }
 
+.formControl select {
+  padding: 0.7rem;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 8px;
+  background-color: #151414f5;
+  border: 1px solid #444444f5;
+}
+
+.formControl select:-webkit-autofill,
+.formControl select:-webkit-autofill:hover,
+.formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #151414f5 inset !important; 
+  -webkit-text-fill-color: #fff !important; 
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 :global(html.light) .formControl select {
   color: #201f1f;
   border: 2px solid #927fbff5;
   background-color: transparent;
+}
+
+:global(html.light) .formControl select:-webkit-autofill,
+:global(html.light) .formControl select:-webkit-autofill:hover,
+:global(html.light) .formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important; 
+  -webkit-text-fill-color: #201f1f !important; 
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .formControl input {
@@ -217,9 +245,27 @@
   border-radius: 8px;
 }
 
+.formControl input:-webkit-autofill,
+.formControl input:-webkit-autofill:hover,
+.formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
 :global(html.light) .formControl input {
   color: #201f1f;
   border: 2px solid #927fbff5;
+}
+
+:global(html.light) .formControl input:-webkit-autofill,
+:global(html.light) .formControl input:-webkit-autofill:hover,
+:global(html.light) .formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
+  transition: background-color 5000s ease-in-out 0s;
+    border: 2px solid #927fbff5 !important;
 
 }
 
@@ -227,7 +273,7 @@
   -webkit-box-shadow: 0 0 0 1000px #000000f5 inset !important;
   -webkit-text-fill-color: #fff !important;
   font-size: 1vw !important;
-  border: 1px solid #444444f5 !important;
+  border: 2px solid #19191af5 !important;
   border-radius: 8px !important;
 }
 
@@ -726,7 +772,8 @@
   flex-direction: column;
   gap: 10px;
 }
-.numberhide{
+
+.numberhide {
   color: gray;
   font-size: 14px;
 }

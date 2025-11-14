@@ -517,7 +517,6 @@ const LeadDetailsPage = () => {
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
             {loadingSearch ? (
-              // 🔹 Jab search API call chal rahi hai
               <div className={styles.loadingContainer}>
                 <span className={styles.loadingText}>Loading...</span>
               </div>
