@@ -21,6 +21,52 @@ interface OurProject {
   flatList?:Flat[];
 }
 
+interface EstimateGenerated {
+  id?: string | null;
+  estID?: string | null;
+  lead?: Lead | null;
+  slab?: string | null;
+  slabPercentage?: number | null;
+  floor?: number | null;
+  number?: number | null;
+  buildingNo?: number | null;
+  project?: OurProject | null;
+  flatNo?: string | null;
+  configuration?: string | null;
+  carpetArea?: number | null;
+  reraArea?: number | null;
+  ssArea?: number | null;
+  balconyArea?: number | null;
+  agreementValue?: number | null;
+  allInclusiveValue?: number | null;
+  coupon?: number | null;
+  discountedAgreementValue?: number | null;
+  discountedPayable?: number | null;
+  payableBookingValue?: number | null;
+  totalPayableValue?: number | null;
+  generatedBy?: Employee | null;
+  teamLeader?: Employee | null;
+  document?: string | null;
+  physicalDocument?: string | null;
+  physicalPrice?: number | null;
+  stampDutyAmount?: number | null;
+  gstAmount?: number | null;
+  stampDutyPercentage?: number | null;
+  discountStampDuty?: number | null;
+  discountedGstValue?: number | null;
+  estimateDate?: Date | string | null;
+  finalEstDoc?: string | null;
+  parking?: number | null;
+  qrscan?: string | null;
+  finalStamp?: number | null;
+  finalAgreementValue?: number | null;
+  status?: string | null;
+  statusChangedDate?: Date | string | null;
+  reason?: string | null;
+  company?: string | null;
+}
+
+
 interface Amenity {
   _id?: string | null;
   image?: string | null;

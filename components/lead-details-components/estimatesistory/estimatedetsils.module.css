@@ -9,8 +9,6 @@
   position: relative;
   border-radius: 8px;
   flex-wrap: wrap;
-
-
 }
 
 .leftSection {
@@ -149,7 +147,6 @@
   display: flex;
   flex-direction: column;
   width: 85%;
-
 }
 
 .optionsContainer {
@@ -157,7 +154,8 @@
   gap: 10px;
   position: absolute;
   top: 1vh;
-  right: 1vw;
+  right: none;
+  left: 1vw;
   z-index: 2;
 }
 
@@ -181,7 +179,6 @@
   color: #888;
   transition: all 0.2s ease;
   padding: 0;
-  
 }
 
 .options:hover,
@@ -248,8 +245,6 @@
   display: block;
 }
 
-
-
 .sectiontwo {
   display: flex;
   justify-content: space-between;
@@ -258,7 +253,6 @@
 }
 
 .finalbutton {
-
   background: linear-gradient(to right, #00c6ff, #0072ff);
   border: none;
   width: 180px;
@@ -283,8 +277,6 @@
   margin-top: 20px;
 }
 
-
-
 .optionsbutton {
   display: flex;
 }
@@ -292,7 +284,6 @@
 .mobilebutton {
   display: none;
 }
-
 
 .priceContainer {
   width: 400px;
@@ -302,7 +293,7 @@
   padding: 20px;
   color: white;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   position: relative;
   overflow: hidden;
   margin: 0 auto;
@@ -346,15 +337,13 @@
   color: rgb(116, 130, 255);
 }
 
-
-
 .estimateContainer {
   background: linear-gradient(135deg, #1c1c1c, #1a1a1aa8);
   border-radius: 16px;
   padding: 20px;
   color: white;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   position: relative;
   overflow: hidden;
   max-width: 400px;
@@ -405,9 +394,8 @@
   padding: 20px;
   color: white;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-  font-family: 'Poppins', sans-serif;
-  overflow: hidden,
-
+  font-family: "Poppins", sans-serif;
+  overflow: hidden;
 }
 :global(html.light) .pdfcontainer {
   background: linear-gradient(135deg, #ffffff, #f5f5f5);
@@ -415,42 +403,38 @@
   padding: 20px;
   color: #222; /* dark text */
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* lighter shadow */
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   overflow: hidden;
 }
-.heading{
+.heading {
   color: white;
 }
 :global(html.light) .heading {
   color: rgb(22, 22, 22);
 }
-.nocont{
+.nocont {
   text-align: "center";
-   padding: 20px;
-    color: white
+  padding: 20px;
+  color: white;
 }
 :global(html.light) .nocont {
   color: rgb(22, 22, 22);
 }
-@media (max-width:1025px) {
-
+@media (max-width: 1025px) {
   .finalprice {
     flex-direction: column;
     align-items: center;
   }
-
 }
 
 @media (max-width: 768px) {
   .leadHistoryContainer {
     width: 95%;
-
   }
-.options
-{
-  width: 25px;
-  height: 25px;
-}
+  .options {
+    width: 25px;
+    height: 25px;
+  }
   .detailsContainer {
     flex-direction: column;
     padding: 2vw;
@@ -460,14 +444,14 @@
     width: 100%;
     padding: 1vw 0;
   }
-.middleSection,
+  .middleSection,
   .rightSection {
     background-color: #1d1c1cce;
-     width: 100%;
+    width: 100%;
     border-radius: 8px;
   }
   .avatar {
-   display: none;
+    display: none;
   }
 
   .name {
@@ -504,7 +488,14 @@
     padding: 4vw;
     gap: 10px;
   }
-
+  .optionsContainer {
+    display: flex;
+    gap: 10px;
+    position: absolute;
+    top: 1vh;
+    left: 88%;
+    z-index: 2;
+  }
   .leftSection {
     flex-direction: column;
     align-items: start;
@@ -552,7 +543,6 @@
     justify-content: center;
   }
 
-
   .priceContainer {
     width: 100%;
     padding: 15px;
@@ -585,7 +575,6 @@
     width: 100%;
   }
 }
-
 
 /* ===== Light Theme Overrides ===== */
 :global(html.light) .detailsContainer {

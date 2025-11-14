@@ -409,6 +409,8 @@ type DataProviderState = {
   reportingToEmps: Employee[];
   attOverview: AttOverview | null;
   attendanceList: Attendance[];
+  estimatebyId: EstimateGenerated[];
+  estimateAll: EstimateGenerated[];
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
@@ -594,11 +596,6 @@ type DataProviderState = {
     id: string;
     remark?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
-
-addBrokerage: (
-    data: Record<string, any>
-  ) => Promise<{ success: boolean; message?: string }>;
-
 };
 
 //initial values should define here
@@ -648,6 +645,9 @@ const initialState: DataProviderState = {
   reportingToEmps: [],
   attOverview: null,
   attendanceList: [],
+  estimatebyId: [],
+  estimateAll: [],
+
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -792,13 +792,6 @@ const initialState: DataProviderState = {
   }),
 
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
-
-
-  addBrokerage: async () => ({
-    success: false,
-    message: "Not initialized",
-  }),
-
 };
 
 const dataProviderContext =
@@ -816,6 +809,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -823,6 +817,14 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
   const [loadingTask, setLoadingTask] = useState<boolean>(false);
+
+  const [estimatebyId, setEstimatebyId] = useState<EstimateGenerated[]>([]);
+  const [loadingEstimatebyId, setLoadingEstimatebyId] =
+    useState<boolean>(false);
+
+  const [estimateAll, setEstimateAll] = useState<EstimateGenerated[]>([]);
+const [loadingEstimateAll, setLoadingEstimateAll] = useState<boolean>(false);
+
 
   const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
     useState<boolean>(false);
@@ -897,6 +899,133 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
 
+  //get all estimates
+  const getEstimateGenerated = async (
+  teamLeader: string 
+): Promise<{ success: boolean; message?: string }> => {
+  setLoadingEstimateAll(true);
+  setError("");
+
+  try {
+    let url = `/api/estimates`;
+    if (teamLeader) {
+      url += `?teamLeader=${teamLeader}`;
+    }
+
+    console.log("Fetching estimates:", url);
+
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    // Expected structure: { data: [...] }
+    const items = (res?.data) ?? [];
+
+    setEstimateAll(items);
+    setLoadingEstimateAll(false);
+
+    return { success: true };
+  } catch (err: any) {
+    let errorMessage = "Something went wrong";
+
+    if (err.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    if (errorMessage.trim().toLowerCase() === "null") {
+      errorMessage = "Something went wrong";
+    }
+
+    setError(errorMessage);
+    setLoadingEstimateAll(false);
+
+    return { success: false, message: errorMessage };
+  } finally {
+    setLoadingEstimateAll(false);
+  }
+};
+
+
+
+ const getEstimateGeneratedById = async (
+  id: string
+): Promise<{ success: boolean; data?: any[]; message?: string }> => {
+  setLoadingEstimatebyId(true);
+  setError("");
+
+  try {
+    let url = `/api/estimateGenerated-lead/${id}`;
+    console.log("🔍 Fetching estimate by ID:", url);
+
+    const res = await fetchAdapter(url, {
+      method: "GET",
+    });
+
+    console.log("📦 Full API Response:", res);
+    console.log("📦 Response data:", res.data);
+    
+    // Debug: Check the actual structure
+    console.log("🔍 Checking response structure:");
+    console.log("res.data:", res.data);
+    console.log("res.data.data:", res.data?.data);
+    console.log("res.data.data length:", res.data?.data?.length);
+    
+    // Extract data array from response - FIXED VERSION
+    let items: any[] = [];
+    
+    // Try different possible response structures
+    if (Array.isArray(res.data?.data)) {
+      items = res.data.data;
+      console.log("✅ Using res.data.data structure");
+    } else if (Array.isArray(res.data)) {
+      items = res.data;
+      console.log("✅ Using res.data structure");
+    } else if (Array.isArray(res)) {
+      items = res;
+      console.log("✅ Using res structure");
+    } else {
+      console.log("❌ No array found in expected locations");
+      console.log("Available keys:", Object.keys(res));
+      if (res.data) {
+        console.log("res.data keys:", Object.keys(res.data));
+      }
+    }
+    
+    console.log("📊 Final extracted items:", items);
+    
+    let estimateGeneratedItems: any[] = [];
+    if (items.length > 0) {
+      estimateGeneratedItems = items;
+      console.log("✅ Setting estimates:", estimateGeneratedItems.length, "items");
+      console.log("✅ First estimate:", estimateGeneratedItems[0]);
+    } else {
+      console.log("❌ No estimates found after extraction");
+    }
+
+    setEstimatebyId(estimateGeneratedItems);
+    setLoadingEstimatebyId(false);
+
+    return { success: true, data: estimateGeneratedItems };
+  } catch (err: any) {
+    console.error("🚨 Error fetching estimates:", err);
+    let errorMessage = "Something went wrong";
+
+    if (err.response?.data?.message) {
+      errorMessage = err.response.data.message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    setError(errorMessage);
+    setLoadingEstimatebyId(false);
+
+    return { success: false, message: errorMessage };
+  } finally {
+    setLoadingEstimatebyId(false);
+  }
+};
 
   const cancelBooking = async ({
     id = null,
@@ -930,7 +1059,6 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [attendanceList, setAttendanceList] = useState<Attendance[]>([]);
   const [loadingAttendance, setLoadingAttendance] = useState<Boolean>(false);
-
 
   const updateFeedbackWithTimer = async (
     data: Record<string, any> = {}
@@ -3149,8 +3277,12 @@ const value = {
     currentTask: currentTask,
     attOverview: attOverview,
     attendanceList: attendanceList,
+    estimatebyId: estimatebyId,
+    estimateAll: estimateAll,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
+    getEstimateGeneratedById: getEstimateGeneratedById,
+    getEstimateGenerated: getEstimateGenerated,
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
@@ -3194,7 +3326,6 @@ const value = {
     getAttendanceOverview: getAttendanceOverview,
     getMyMonthlyAttendance: getMyMonthlyAttendance,
     getTodayAttendance: getTodayAttendance,
-    addBrokerage:addBrokerage
 
   };
 
