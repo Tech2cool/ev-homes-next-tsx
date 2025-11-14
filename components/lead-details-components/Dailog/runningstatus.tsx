@@ -87,7 +87,7 @@ const RunningStatus: React.FC<RunningStatusProps> = ({ openclick }) => {
           }}
         />
 
-        {/* <div className={styles.fullList} style={{ width: "100%" }}>
+        <div className={styles.fullList} style={{ width: "100%" }}>
           {visits.map((item, index) => (
             <div key={index} className={styles.cont}>
               <div className={styles.iconSection}>
@@ -125,8 +125,8 @@ const RunningStatus: React.FC<RunningStatusProps> = ({ openclick }) => {
               </div>
             </div>
           ))}
-        </div> */}
-       <div
+        </div>
+       {/* <div
           style={{
             width: "100%",
             height: "200px",
@@ -139,7 +139,7 @@ const RunningStatus: React.FC<RunningStatusProps> = ({ openclick }) => {
           }}
         >
           Coming Soon 🚧
-        </div>
+        </div> */}
       </div>
     </div>,
     document.body
