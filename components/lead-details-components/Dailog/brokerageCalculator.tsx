@@ -20,6 +20,7 @@ import {
   FaChartBar,
 } from "react-icons/fa";
 import { useData } from "@/providers/dataContext";
+import { useUser } from "@/providers/userContext";
 
 interface BrokerageCalculatorProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -69,8 +70,12 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
     getChannelPartners,
     getProjects,
     // getLeadByPhoneNumber,
-    // addBrokerage,
+    addBrokerage,
   } = useData();
+
+    const {
+ user
+  } = useUser();
 
   const [formData, setFormData] = useState<FormState>({
     phone: lead?.phoneNumber?.toString() ?? "",
@@ -124,21 +129,38 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
     getChannelPartners();
     getProjects();
   }, []);
-
-  useEffect(() => {
-    if (lead) {
-      setFormData((prev) => ({
-        ...prev,
-        phone: lead.phoneNumber?.toString() ?? "",
-        firstName: lead.firstName ?? "",
-        lastName: lead.lastName ?? "",
-        allInclusive: lead.bookingRef?.flatCost?.toString() ?? "0",
-      }));
-      // setSelectedChannelPartner(lead.channelPartner);
-      setSelectedProject(lead.bookingRef?.project || null);
-      setDetailsVisible(true);
+useEffect(() => {
+  if (lead) {
+    setFormData((prev) => ({
+      ...prev,
+      phone: lead.phoneNumber?.toString() ?? "",
+      firstName: lead.firstName ?? "",
+      lastName: lead.lastName ?? "",
+      allInclusive: lead.bookingRef?.flatCost?.toString() ?? "0",
+    }));
+    
+    // Set channel partner if available
+    if (lead.channelPartner) {
+      setSelectedChannelPartner(lead.channelPartner);
     }
-  }, [lead]);
+    
+    // Set project if available
+    if (lead.bookingRef?.project) {
+      setSelectedProject(lead.bookingRef.project);
+    }
+    
+    // Set building, floor, and flat details
+    if (lead.bookingRef?.buildingNo) {
+      setSelectedBuildingNo(lead.bookingRef.buildingNo);
+    }
+    
+    if (lead.bookingRef?.floor) {
+      setSelectedFloor(lead.bookingRef.floor);
+    }
+    
+    setDetailsVisible(true);
+  }
+}, [lead]);
 
   useEffect(() => {
     if (
@@ -259,52 +281,57 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
     }).format(amount);
   };
 
-  const generatePDF = async () => {
-    if (!calculationResult) return;
+const generatePDF = async () => {
+  if (!calculationResult) return;
 
-    setIsGeneratingPDF(true);
-    try {
-      const calculationData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: parseInt(formData.phone) || 0,
-        project: selectedProject,
-        channelPartner: selectedChannelPartner,
-        selectedFlat: selectedFlat,
-        flatNo: formData.flatNo,
-        lead: foundLead || lead,
-        floor: selectedFloor,
-        buildingNo: selectedBuildingNo,
-        carpetArea: parseFloat(formData.carpetArea) || 0,
-        sellableCarpetArea: parseFloat(formData.sellableCarpetArea) || 0,
-        totalParking: parseInt(formData.totalParking) || 0,
-        parkingPrice: parseFloat(formData.parkingPrice) || 0,
-        developmentPrice: parseFloat(formData.developmentPrice) || 0,
-        allInclusiveValue: parseFloat(formData.allInclusive) || 0,
-        registrationCharges: parseFloat(formData.registration) || 0,
-        commissionRate: parseFloat(formData.percentage) || 0,
-        floorRiseSkip: parseInt(formData.floorRiseSkip) || 0,
-        sellablePercent: parseFloat(formData.sellablePercent) || 0,
-        agreementValue: calculationResult.agreementValue,
-        parkingCharges: calculationResult.parkingCharges,
-        developmentCharges: calculationResult.developmentCharges,
-        floorRiseCharges: calculationResult.floorRiseCharges,
-        totalBrokerage: calculationResult.totalBrokerage,
-        generatedBy: "User",
-      };
 
-      console.log("PDF Data:", calculationData);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      // await addBrokerage(calculationData);
+      let pdfData = null;
+        // const uploadResult = await uploadFile(formData.);
 
-      alert("PDF generated and saved successfully!");
-    } catch (error) {
-      console.error("PDF generation error:", error);
-      alert("Error generating PDF");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
+  setIsGeneratingPDF(true);
+  try {
+    const calculationData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone || "", // Keep as string instead of parsing to int
+      project: selectedProject,
+      channelPartner: selectedChannelPartner,
+      selectedFlat: selectedFlat,
+      flatNo: formData.flatNo,
+      lead: foundLead || lead,
+      floor: selectedFloor,
+      buildingNo: selectedBuildingNo,
+      number: selectedFlat?.number || null, // Fixed: use selectedFlat's number, not the entire flat object
+      carpetArea: parseFloat(formData.carpetArea) || 0,
+      sellableCarpetArea: parseFloat(formData.sellableCarpetArea) || 0,
+      totalParking: parseInt(formData.totalParking) || 0,
+      parkingPrice: parseFloat(formData.parkingPrice) || 0,
+      developmentPrice: parseFloat(formData.developmentPrice) || 0,
+      allInclusiveValue: parseFloat(formData.allInclusive) || 0,
+      registrationCharges: parseFloat(formData.registration) || 0,
+      commissionRate: parseFloat(formData.percentage) || 0,
+      floorRiseSkip: parseInt(formData.floorRiseSkip) || 0,
+      sellablePercent: parseFloat(formData.sellablePercent) || 0,
+      agreementValue: calculationResult.agreementValue,
+      parkingCharges: calculationResult.parkingCharges,
+      developmentCharges: calculationResult.developmentCharges,
+      floorRiseCharges: calculationResult.floorRiseCharges,
+      totalBrokerage: calculationResult.totalBrokerage,
+      generatedBy:user,
+    };
+
+    console.log("PDF Data:", calculationData);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await addBrokerage(calculationData);
+
+    alert("PDF generated and saved successfully!");
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    alert("Error generating PDF");
+  } finally {
+    setIsGeneratingPDF(false);
+  }
+};
 
   const handleCancel = () => {
     setFormData({
@@ -362,28 +389,64 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
   };
 
   // Get unique buildings and floors
-  const buildings = Array.from(
-    new Set(
-      selectedProject?.flatList
-        ?.map((f) => f.buildingNo)
-        .filter((b): b is number => b !== undefined) || []
-    )
-  ).sort();
 
-  const floors = Array.from(
-    new Set(
-      selectedProject?.flatList
-        ?.filter((f) => f.buildingNo === selectedBuildingNo)
-        .map((f) => f.floor)
-        .filter((f): f is number => f !== undefined) || []
-    )
-  ).sort();
 
-  const flats =
-    selectedProject?.flatList?.filter(
-      (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
-    ) || [];
+// Also update the building, floor, and flat selection logic
+const buildings = Array.from(
+  new Set(
+    selectedProject?.flatList
+      ?.map((f) => f.buildingNo)
+      .filter((b): b is number => b !== undefined && b !== null) || []
+  )
+).sort();
 
+const floors = Array.from(
+  new Set(
+    selectedProject?.flatList
+      ?.filter((f) => f.buildingNo === selectedBuildingNo)
+      .map((f) => f.floor)
+      .filter((f): f is number => f !== undefined && f !== null) || []
+  )
+).sort();
+
+const flats =
+  selectedProject?.flatList?.filter(
+    (f) => 
+      f.buildingNo === selectedBuildingNo && 
+      f.floor === selectedFloor &&
+      f.buildingNo !== undefined && 
+      f.floor !== undefined
+  ) || [];
+
+   useEffect(() => {
+  console.log("Selected Project:", selectedProject);
+  console.log("Selected Building:", selectedBuildingNo);
+  console.log("Selected Floor:", selectedFloor);
+  console.log("Selected Flat:", selectedFlat);
+  console.log("Buildings available:", buildings);
+  console.log("Floors available:", floors);
+  console.log("Flats available:", flats);
+}, [selectedProject, selectedBuildingNo, selectedFloor, selectedFlat, buildings, floors, flats]);
+
+
+// Add this useEffect to calculate brokerage in real-time
+useEffect(() => {
+  if (formData.allInclusive && parseFloat(formData.allInclusive) > 0) {
+    calculateBrokerage();
+  }
+}, [
+  formData.allInclusive,
+  formData.parkingPrice,
+  formData.totalParking,
+  formData.developmentPrice,
+  formData.floorRisePrice,
+  formData.percentage,
+  formData.sellableCarpetArea,
+  formData.floorRiseSkip,
+  selectedProject,
+  selectedBuildingNo,
+  selectedFloor,
+]);
   const customSelectStyles = (theme: "dark" | "light") => ({
     control: (base: any, state: any) => ({
       ...base,
@@ -618,6 +681,9 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
                   ))}
                 </select>
               </div>
+
+
+
 
               {/* Project Details */}
               <div className={styles.mainlable}>Project Details</div>
@@ -906,106 +972,110 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
               {calculationResult && (
                 <>
                   <div className={styles.mainlable}>Calculation Results</div>
+
                   <div
                     className={styles.card}
                     style={{
-                      backgroundColor: "#f0f9ff",
-                      border: "1px solid #bae6fd",
+                      backgroundColor: "#f8fafc",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "12px",
+                      padding: "16px",
                     }}
                   >
-                    <div
+                    <table
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
+                        width: "100%",
+                        borderCollapse: "separate",
+                        borderSpacing: "0 8px",
+                        fontSize: "15px",
                       }}
                     >
-                      <span>Agreement Value:</span>
-                      <span style={{ fontWeight: "bold" }}>
-                        {formatCurrency(calculationResult.agreementValue)}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                        color: "#dc2626",
-                      }}
-                    >
-                      <span>Parking Charges:</span>
-                      <span>
-                        - {formatCurrency(calculationResult.parkingCharges)}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                        color: "#dc2626",
-                      }}
-                    >
-                      <span>Development Charges:</span>
-                      <span>
-                        - {formatCurrency(calculationResult.developmentCharges)}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                        color: "#dc2626",
-                      }}
-                    >
-                      <span>Floor Rise Charges:</span>
-                      <span>
-                        - {formatCurrency(calculationResult.floorRiseCharges)}
-                      </span>
-                    </div>
-                    <hr style={{ margin: "12px 0", borderColor: "#cbd5e1" }} />
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      <span>Total:</span>
-                      <span style={{ fontWeight: "bold" }}>
-                        {formatCurrency(
-                          calculationResult.agreementValue -
-                            calculationResult.parkingCharges -
-                            calculationResult.developmentCharges -
-                            calculationResult.floorRiseCharges
-                        )}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      <span>Commission Rate:</span>
-                      <span>{calculationResult.commissionRate}%</span>
-                    </div>
-                    <hr style={{ margin: "12px 0", borderColor: "#cbd5e1" }} />
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      <span>Total Brokerage:</span>
-                      <span style={{ color: "#059669" }}>
-                        {formatCurrency(calculationResult.totalBrokerage)}
-                      </span>
-                    </div>
+                      <tbody>
+                        <tr>
+                          <td>Agreement Value</td>
+                          <td
+                            style={{ fontWeight: "bold", textAlign: "right" }}
+                          >
+                            {formatCurrency(calculationResult.agreementValue)}
+                          </td>
+                        </tr>
+
+                        <tr style={{ color: "#dc2626" }}>
+                          <td>Parking Charges</td>
+                          <td style={{ textAlign: "right" }}>
+                            - {formatCurrency(calculationResult.parkingCharges)}
+                          </td>
+                        </tr>
+
+                        <tr style={{ color: "#dc2626" }}>
+                          <td>Development Charges</td>
+                          <td style={{ textAlign: "right" }}>
+                            -{" "}
+                            {formatCurrency(
+                              calculationResult.developmentCharges
+                            )}
+                          </td>
+                        </tr>
+
+                        <tr style={{ color: "#dc2626" }}>
+                          <td>Floor Rise Charges</td>
+                          <td style={{ textAlign: "right" }}>
+                            -{" "}
+                            {formatCurrency(calculationResult.floorRiseCharges)}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td colSpan={2}>
+                            <hr
+                              style={{
+                                margin: "10px 0",
+                                borderColor: "#cbd5e1",
+                              }}
+                            />
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>Total</td>
+                          <td
+                            style={{ fontWeight: "bold", textAlign: "right" }}
+                          >
+                            {formatCurrency(
+                              calculationResult.agreementValue -
+                                calculationResult.parkingCharges -
+                                calculationResult.developmentCharges -
+                                calculationResult.floorRiseCharges
+                            )}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>Commission Rate</td>
+                          <td style={{ textAlign: "right" }}>
+                            {calculationResult.commissionRate}%
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td colSpan={2}>
+                            <hr
+                              style={{
+                                margin: "10px 0",
+                                borderColor: "#cbd5e1",
+                              }}
+                            />
+                          </td>
+                        </tr>
+
+                        <tr style={{ fontWeight: "bold", fontSize: "16px" }}>
+                          <td>Total Brokerage</td>
+                          <td style={{ textAlign: "right", color: "#059669" }}>
+                            {formatCurrency(calculationResult.totalBrokerage)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </>
               )}
