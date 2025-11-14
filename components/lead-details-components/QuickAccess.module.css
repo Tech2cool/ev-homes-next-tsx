@@ -481,6 +481,38 @@
   border: 1px solid rgba(1, 67, 22, 0.4);
 }
 
+.bookingMain {
+  background: linear-gradient(145deg, #3d0e621f, #5f1b9126);
+  border: 1px solid rgba(180, 64, 255, 0.2);
+  box-shadow: 0 0 15px rgba(180, 64, 255, 0.1);
+}
+
+.bookingMain .tag {
+  background: rgba(162, 0, 255, 0.888);
+  color: #ffffff;
+  border: 1px solid rgba(162, 0, 255, 0.4);
+}
+
+:global(html.light) .bookingMain .tag {
+  background: rgb(97, 0, 155);
+  border: 1px solid rgba(97, 0, 155, 0.4);
+}
+
+:global(html.light) .bookingMain {
+  background: linear-gradient(145deg, #f0e6f7, #e1d0f0);
+  border: 1px solid #9c27b0;
+  box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+}
+
+.bookingCircle {
+  background: rgba(162, 0, 255, 0.1);
+  border: 2px solid rgba(208, 198, 214, 0.5);
+}
+
+.bookingIcon {
+  color: rgba(162, 0, 255, 0.888);
+}
+
 .visitCircle {
   background: linear-gradient(135deg, #1b4220, #0f2b14);
   border: 1px solid rgba(64, 255, 124, 0.303);
