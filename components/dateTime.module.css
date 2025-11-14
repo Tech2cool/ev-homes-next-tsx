@@ -1,0 +1,201 @@
+/* Wrapper stays the same */
+.wrapper {
+  position: relative;
+}
+
+/* ---------------- LIGHT THEME ---------------- */
+:global(html.light) .inputBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  color: #444;
+  transition: 0.3s;
+}
+
+:global(html.light) .inputBox:hover {
+  border-color: #387478;
+}
+
+:global(html.light) .icon {
+  font-size: 20px;
+  color: #387478;
+}
+
+:global(html.light) .popup {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 260px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+:global(html.light) .pickerRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+:global(html.light) .pickerRow label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 600;
+}
+
+:global(html.light) .pickerRow input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: #333;
+}
+
+:global(html.light) .applyBtn {
+  width: 100%;
+  padding: 10px;
+  background: #387478;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+:global(html.light) .applyBtn:hover {
+  background: #2f5f63;
+}
+
+
+/* ---------------- DARK THEME ---------------- */
+:global(html.dark) .inputBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid #555;
+  border-radius: 10px;
+  background: #1f1f1f;
+  cursor: pointer;
+  font-size: 15px;
+  color: #eee;
+  transition: 0.3s;
+}
+
+:global(html.dark) .inputBox:hover {
+  border-color: #4aa3d3;
+}
+
+:global(html.dark) .icon {
+  font-size: 20px;
+  color: #4aa3d3;
+}
+
+:global(html.dark) .popup {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 260px;
+  background: #2a2a2a;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+:global(html.dark) .pickerRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+:global(html.dark) .pickerRow label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #ddd;
+  font-weight: 600;
+}
+
+:global(html.dark) .pickerRow input {
+  padding: 8px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #1f1f1f;
+  color: #eee;
+}
+
+:global(html.dark) .applyBtn {
+  width: 100%;
+  padding: 10px;
+  background: #4aa3d3;
+  border: none;
+  color: #111;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+:global(html.dark) .applyBtn:hover {
+  background: #3a89b1;
+}
+.clockRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clockRow input {
+  width: 50px;
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.clockRow select {
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.timeApplyBtn {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+  background: #387478;
+  color: #fff;
+  cursor: pointer;
+}
+
+.timeApplyBtn:hover {
+  background: #2f5f63;
+}
+
+/* Dark Theme */
+:global(html.dark) .clockRow input,
+:global(html.dark) .clockRow select {
+  background: #1f1f1f;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+:global(html.dark) .timeApplyBtn {
+  background: #4aa3d3;
+  color: #111;
+}
+
+:global(html.dark) .timeApplyBtn:hover {
+  background: #3a89b1;
+}

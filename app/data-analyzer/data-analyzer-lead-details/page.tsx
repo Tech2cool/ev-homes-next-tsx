@@ -49,6 +49,8 @@ import { dateFormatOnly } from "@/hooks/useDateFormat";
 import AnalyzerQuickaccess from "@/components/lead-details-components/analyzerquikaccess";
 import CPTransferHistory from "@/components/lead-details-components/cptransferhistory";
 import useDebounce from "@/hooks/useDebounce";
+import { FiPhoneCall } from "react-icons/fi";
+import VisitAprovedRejected from "@/components/lead-details-components/Dailog/visitAproveReject";
 
 const DataAnalyzerWrapper = () => {
   return (
@@ -896,6 +898,9 @@ const DataAnalyzerdetailspage = () => {
                   </div>
                 </div>
               </div>
+              {showApprovalDialog && (
+                <VisitAprovedRejected openclick={setShowApprovalDialog} />
+              )}
             </>
           ) : (
             <div className={styles.emptyState}>
@@ -1334,6 +1339,9 @@ const DataAnalyzerdetailspage = () => {
               )}
             </div>
           </div>
+           {showApprovalDialog && (
+                <VisitAprovedRejected openclick={setShowApprovalDialog} />
+              )}
         </>
       ) : (
         <div className={styles.emptyState}>
@@ -1475,10 +1483,10 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                  <MdAddCall
+                  <FiPhoneCall
                     size={15}
                     color="dodgerblue"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", color: "green" }}
                     onClick={() =>
                       onCall({
                         ...visit,
@@ -1505,10 +1513,10 @@ const VisitDetailsContent = ({
                 </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
-                    <MdAddCall
+                    <FiPhoneCall
                       size={15}
                       color="dodgerblue"
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer", color: "green" }}
                       onClick={() =>
                         onCall({
                           ...visit,
