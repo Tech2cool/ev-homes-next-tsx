@@ -595,6 +595,10 @@ type DataProviderState = {
     remark?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
 
+addBrokerage: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
 };
 
 //initial values should define here
@@ -788,6 +792,12 @@ const initialState: DataProviderState = {
   }),
 
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
+
+
+  addBrokerage: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 
 };
 
@@ -3052,6 +3062,47 @@ const uploadFile = async (
     }
   };
 
+
+const addBrokerage = async (
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: BrokerageCalculationData | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const url = `/api/add-brokerage`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const resp = res?.data;
+
+      console.log("resp", resp);
+      // setCurrentTask(task);
+
+      return { success: true, data: resp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
 const value = {
     projects: projects,
     testimonials: testimonials,
@@ -3143,6 +3194,7 @@ const value = {
     getAttendanceOverview: getAttendanceOverview,
     getMyMonthlyAttendance: getMyMonthlyAttendance,
     getTodayAttendance: getTodayAttendance,
+    addBrokerage:addBrokerage
 
   };
 
