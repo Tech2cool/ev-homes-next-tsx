@@ -76,6 +76,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     reportingToEmps,
     sendOtpSiteVisit,
     addSiteVisitV2,
+    uploadFile,
   } = useData();
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -186,11 +187,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     if (formData.visitType === "virtual-meeting") {
       await handleVerifiedOrSkipOtp(true);
     } else {
-      // ✅ If CP + taggingOver → show confirmation first
       if (visit?.leadType?.toLowerCase() === "cp" && tagginOver) {
         setShowConfirm(true);
       } else {
-        // For all other cases, generate OTP directly
         await generateOtp();
       }
     }
@@ -231,6 +230,23 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     try {
       setIsLoading(true);
 
+      let virtualMeetingDoc = null;
+
+      // Upload virtual meeting image (IF EXISTS)
+      if (formData.visitType === "virtual-meeting" && formData.photo) {
+        const uploadResult = await uploadFile(formData.photo);
+
+        if (uploadResult.success && uploadResult.file) {
+          // this is the uploaded file data
+          virtualMeetingDoc = uploadResult.file.downloadUrl;
+        } else {
+          alert(
+            "Failed to upload virtual meeting image: " + uploadResult.message
+          );
+          return;
+        }
+      }
+
       const visitMap = {
         visitType: formData.visitType,
         projects: formData.project?.map((p: OptionType) => p.value),
@@ -262,13 +278,15 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
             : null,
         location: formData.location,
         lead: visit, // optional
-        // createdThrough: formData.through || "web",
         propertyType: formData.propertyType || null,
+        virtualMeetingDoc: virtualMeetingDoc, // Add the uploaded file here
       };
+
       const res = await addSiteVisitV2(visitMap);
 
       if (res) {
         alert("✅ Site visit added successfully!");
+        openclick(false); // Close the dialog on success
       } else {
         alert("Error adding site visit");
       }

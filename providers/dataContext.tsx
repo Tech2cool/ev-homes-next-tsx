@@ -556,15 +556,15 @@ type DataProviderState = {
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
 
-
   addSiteVisitV2: (
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
 
-
-  // uploadFile: (
-  //   data: Record<string, any>
-  // ) => Promise<{ success: boolean; message?: string }>;
+  uploadFile: (file: File) => Promise<{
+    success: boolean;
+    message?: string;
+    file?: UploadFile | null;
+  }>;
 };
 
 //initial values should define here
@@ -734,18 +734,15 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
 
-
   addSiteVisitV2: async () => ({
     success: false,
     message: "Not initialized",
   }),
 
-
-  // uploadFile:async () => ({
-  //   success: false,
-  //   message: "Not initialized",
-  // }),
-
+  uploadFile: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -2728,11 +2725,13 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
-
-
- const addSiteVisitV2 = async (
+  const addSiteVisitV2 = async (
     data: Record<string, any>
-  ): Promise<{ success: boolean; message?: string; data?: SiteVisit | null }> => {
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: SiteVisit | null;
+  }> => {
     setLoadingTask(true);
     setError("");
 
@@ -2765,50 +2764,69 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       setLoadingTask(false);
     }
   };
+  const uploadFile = async (
+    file: File
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    file?: UploadFile | null;
+  }> => {
+    try {
+      console.log("initial pass 1");
+      const formData = new FormData();
+      formData.append("file", file, file.name);
 
+      console.log("initial pass 2");
 
+      const response = await fetch(`/api/upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "x-platform": "web",
+        },
+      });
 
-const uploadFile = async (file: File): Promise<UploadFile | null> => {
-  try {
-    const formData = new FormData();
-    formData.append("file", file, file.name);
+      console.log("initial pass 3");
 
-    const response = await fetchAdapter("/upload", {
-      method: "POST",
-      body: formData,
-      // do not manually set Content-Type for FormData
-      // timeout: 15 * 60 * 1000, // 15 minutes
-    });
+      // Check if the response is OK (status in the range 200-299)
+      if (!response.ok) {
+        // Try to get the error message from the response
+        let errorMessage = "Upload failed";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the status text
+          errorMessage = response.statusText;
+        }
+        throw new Error(errorMessage);
+      }
 
-    if (response.code!=200) {
-      console.error("Upload failed:", response.message);
-      return null;
+      // Parse the response as JSON
+      const data = await response.json();
+      return {
+        success: true,
+        file: data,
+      };
+    } catch (error: any) {
+      let errorMessage = "Something went wrong";
+
+      if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error("Upload error:", errorMessage);
+      return {
+        success: false,
+        message: errorMessage,
+        file: null,
+      };
     }
-
-    const data = await response.data();
-
-    if (!data) {
-      console.error("Upload failed: empty response");
-      return null;
-    }
-
-    return {
-      token: data.token,
-      filename: data.filename,
-      downloadUrl: data.downloadUrl,
-    } as UploadFile;
-  } catch (error: any) {
-    let errorMessage = "Something went wrong";
-
-    if (error?.message) {
-      errorMessage = error.message;
-    }
-
-    console.error("Upload error:", errorMessage);
-    return null;
-  }
-};
-
+  };
   const value = {
     projects: projects,
     testimonials: testimonials,
@@ -2892,8 +2910,8 @@ const uploadFile = async (file: File): Promise<UploadFile | null> => {
     getTaskById: getTaskById,
     assignTask: assignTask,
     sendOtpSiteVisit: sendOtpSiteVisit,
-    addSiteVisitV2:addSiteVisitV2,
-    uploadFile:uploadFile,
+    addSiteVisitV2: addSiteVisitV2,
+    uploadFile: uploadFile,
   };
 
   return (
