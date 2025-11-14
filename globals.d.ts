@@ -18,6 +18,7 @@ interface OurProject {
   address?: string | null;
   shortCode?: string | null;
   showCaseImageLandscape?: string | null;
+  flatList?:Flat[];
 }
 
 interface Amenity {
@@ -703,6 +704,7 @@ interface Flat {
   msp2?: number;
   msp3?: number;
   floorPlan?: string;
+}
 
 interface AttOverview {
   document?: string | null;
