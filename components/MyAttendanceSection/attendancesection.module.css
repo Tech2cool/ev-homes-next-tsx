@@ -1,10 +1,3 @@
-html,
-body {
-  overflow-x: hidden !important;
-  width: 100%;
-}
-
-
 .container {
   display: flex;
   gap: 16px;
@@ -149,7 +142,7 @@ body {
 }
 
 
-:global(.react-datepicker) {
+.react-datepicker {
   background-color: #161616 !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff !important;
@@ -160,11 +153,12 @@ body {
   z-index: 9999;
 }
 
-:global(.react-datepicker__month-container) {
+
+.react-datepicker__month-container {
   padding: 0.8vh 1vh;
 }
 
-:global(.react-datepicker__header) {
+.react-datepicker__header {
   background: none !important;
   border-bottom: none !important;
   padding: 0;

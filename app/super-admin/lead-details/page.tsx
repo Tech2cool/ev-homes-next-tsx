@@ -37,6 +37,7 @@ import {
   Search,
   SlidersHorizontal,
   PersonStanding,
+  X,
 } from "lucide-react";
 import useDebounce from "@/hooks/useDebounce";
 import { useUser } from "@/providers/userContext";
@@ -64,6 +65,7 @@ import { CiLink } from "react-icons/ci";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import AddFeedBaack from "@/components/lead-details-components/Dailog/addfeedback";
 import { FiPhoneCall } from "react-icons/fi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 const SuperAdminWrapper = () => {
   return (
@@ -96,6 +98,7 @@ const LeadDetailsPage = () => {
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Form states
   const [editFormData, setEditFormData] = useState({});
@@ -493,10 +496,19 @@ const LeadDetailsPage = () => {
     return (
       <div className={styles.desktopContainer}>
         {/* Left Sidebar - Visits List with Filters */}
+        {sidebarOpen && (
+          <DashboardSidebar />
+        )}
+
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
-              <h1 className={styles.title}>Leads</h1>
+              <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input
@@ -863,7 +875,10 @@ const LeadDetailsPage = () => {
                   </div>
                 </div>
               </div>
+
+
             </>
+
           ) : (
             <div className={styles.emptyState}>
               <FileText className={styles.emptyIcon} />
@@ -913,10 +928,17 @@ const LeadDetailsPage = () => {
   // Mobile view (details)
   if (!SelectedLead) {
     return (
+
       <div className={styles.leftSidebar}>
+        <DashboardSidebar />
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
-            <h1 className={styles.title}>Leads</h1>
+            <button
+            className={styles.filterBtn}
+            onClick={() => setShowFilterDialog(true)}
+          >
+            <SlidersHorizontal className={styles.filterIcon} />
+          </button>
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -929,12 +951,7 @@ const LeadDetailsPage = () => {
             </div>
           </div>
 
-          <button
-            className={styles.filterBtn}
-            onClick={() => setShowFilterDialog(true)}
-          >
-            <SlidersHorizontal className={styles.filterIcon} />
-          </button>
+         
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -1092,6 +1109,7 @@ const LeadDetailsPage = () => {
                   </div> */}
                 </div>
               ))}
+
               {searchLeadInfo?.page &&
                 searchLeadInfo.totalPages &&
                 searchLeadInfo.page < searchLeadInfo.totalPages && (
@@ -1105,6 +1123,7 @@ const LeadDetailsPage = () => {
                     </button>
                   </div>
                 )}
+
             </>
           ) : (
             <div className={styles.noResults}>No leads found</div>
