@@ -78,7 +78,7 @@
 }
 
 .section::-webkit-scrollbar-track {
-  background: #000;
+  /* background: #000; */
 }
 
 .sectionStacked {
@@ -102,8 +102,13 @@
   position: relative;
   margin-bottom: 20px;
   margin-top: 30px;
-  
 }
+
+.formControl * {
+
+
+}
+
 
 .inputWrapper {
   display: flex;

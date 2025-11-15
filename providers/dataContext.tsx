@@ -366,6 +366,7 @@ type TeamLeaderAssignFolloupUp = {
 //model
 type DataProviderState = {
   projects: OurProject[];
+  slabsbyproject: SlabInfo  | null;
   testimonials: Testimonial[];
   loadingTestimonial: boolean;
   loadingLeads: boolean;
@@ -414,6 +415,9 @@ type DataProviderState = {
 
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
+   getSlabByProject: (
+    project: string
+  ) => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
   getRankingTurns: () => Promise<{ success: boolean; message?: string }>;
   getChannelPartners: () => Promise<{ success: boolean; message?: string }>;
@@ -606,6 +610,7 @@ type DataProviderState = {
 //initial values should define here
 const initialState: DataProviderState = {
   projects: [],
+  slabsbyproject: null,
   testimonials: [],
   loadingTestimonial: false,
   fetchingMoreLeads: false,
@@ -654,6 +659,7 @@ const initialState: DataProviderState = {
   estimateAll: [],
 
   getProjects: async () => ({ success: false, message: "Not initialized" }),
+  getSlabByProject: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
 
@@ -809,6 +815,7 @@ const dataProviderContext =
 
 export function DataProvider({ children, ...props }: DataProviderProps) {
   const [projects, setProjects] = useState<OurProject[]>([]);
+  const [slabsbyproject, setSlabsbyproject] = useState<SlabInfo  | null>(null);
   const [requirements, setRequirements] = useState<string[]>([]);
   const [ranking, setRanking] = useState<RankingTurn | null>(null);
 
@@ -1333,6 +1340,45 @@ const [loadingEstimateAll, setLoadingEstimateAll] = useState<boolean>(false);
       setLoadingProject(false);
     }
   };
+
+   const getSlabByProject = async (project: string) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      console.log("slab 1");
+      const url = `/api/get-slab-by-project/${project}`;
+      console.log("slab 2");
+      const res = await fetchAdapter(url, {
+        method: "get",
+      });
+      console.log("slab 3");
+
+
+      const data = res?.data;
+      console.log("slab 4",data);
+
+      if (!data) {
+        return { success: false, message: "No data found" };
+      }
+      console.log("slab 5");
+
+      const info: SlabInfo  = data;
+      setSlabsbyproject(info);
+
+      return { success: true };
+    } catch (err: any) {
+      const message = err?.response?.data?.message || err.message || "Error";
+      console.log("slab 6");
+
+
+      setError(message);
+      return { success: false, message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   //requirement
   const getRequirements = async () => {
     setLoadingProject(true);
@@ -3243,6 +3289,7 @@ const addBrokerage = async (
 
 const value = {
     projects: projects,
+    slabsbyproject: slabsbyproject,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
     loadingLeads: loadingLeads,
@@ -3291,6 +3338,7 @@ const value = {
     estimateAll: estimateAll,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
+    getSlabByProject: getSlabByProject, 
     getEstimateGeneratedById: getEstimateGeneratedById,
     getEstimateGenerated: getEstimateGenerated,
     getRequirements: getRequirements,

@@ -201,6 +201,26 @@ interface Task {
   reminderCompleted?: boolean;
 }
 
+interface Slab {
+  id?: string | null;
+  index?: number | null;
+  name?: string | null;
+  remark?: string | null;
+  percent?: number | null;
+  completed?: boolean | null;
+  completedOn?: string | null; 
+  architectCertificate?: string | null;
+}
+
+interface SlabInfo {
+  id?: string | null;
+  project?: OurProject | null;
+  currentSlab?: string | null;
+  slabs: Slab[];
+}
+
+
+
 interface Cycle {
   _id?: string;
   stage: string | null;
