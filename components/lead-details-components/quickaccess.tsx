@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import FeedbackTwo from "./Dailog/feedbacktwo";
 import { useData } from "@/providers/dataContext";
+import Estimategenerator from "./Dailog/estimategenerator";
 interface QuickAccessProps {
   lead?: Lead | null;
   task?: Task | null;
@@ -50,6 +51,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
   const [showcancelboking, setshowcancelbooking] = useState(false);
   const [showmeeting, setshowmeeting] = useState(false);
   const [showrunstatus, setshowrunstatus] = useState(false);
+  const [estimategenerator, setestimategenerator] = useState(false);
   const [showaddbooking, setshowaddbooking] = useState(false);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const router = useRouter();
@@ -108,6 +110,9 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     }
     if (label === "Lead Running Status") {
       setshowrunstatus(true);
+    }
+    if (label === "Estimate Generator") {
+      setestimategenerator(true);
     }
     if (label === "Add Booking") {
       setshowaddbooking(true);
@@ -176,6 +181,9 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
       )}
       {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
       {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
+
+      {estimategenerator && <Estimategenerator openclick={setestimategenerator} />}
+
 
       {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
 
