@@ -19,6 +19,8 @@ interface OurProject {
   shortCode?: string | null;
   showCaseImageLandscape?: string | null;
   flatList?:Flat[];
+
+  parkingList?:Parking[];
 }
 
 interface EstimateGenerated {
@@ -728,29 +730,29 @@ interface BrokerageCalculationData {
   totalBrokerage?: number | null;
 }
 
-interface Flat {
-  id?: string;
-  type?: string;
-  floor?: number;
-  number?: number;
-  buildingNo?: number;
-  flatNo?: string;
-  carpetArea?: number;
-  sellableCarpetArea?: number;
-  allInclusiveValue?: number;
-  occupied?: boolean;
-  hold?: boolean;
-  readyOnly?: boolean;
-  occupiedBy?: string;
-  ssArea?: number;
-  reraArea?: number;
-  balconyArea?: number;
-  configuration?: string;
-  msp1?: number;
-  msp2?: number;
-  msp3?: number;
-  floorPlan?: string;
-}
+  interface Flat {
+    id?: string;
+    type?: string;
+    floor?: number;
+    number?: number;
+    buildingNo?: number;
+    flatNo?: string;
+    carpetArea?: number;
+    sellableCarpetArea?: number;
+    allInclusiveValue?: number;
+    occupied?: boolean;
+    hold?: boolean;
+    readyOnly?: boolean;
+    occupiedBy?: string;
+    ssArea?: number;
+    reraArea?: number;
+    balconyArea?: number;
+    configuration?: string;
+    msp1?: number;
+    msp2?: number;
+    msp3?: number;
+    floorPlan?: string;
+  }
 
 interface AttOverview {
   document?: string | null;
@@ -808,4 +810,12 @@ interface Attendance {
   breakStartTime: number | null;
   breakEndTime: string | null;
   lastUpdatedTime: string | null;
+}
+interface Parking {
+  floor?: number;
+  floorName?: string;
+  parkingNo?: string;
+  occupied?: boolean;
+  occupiedBy?: string;
+  number?: number;
 }
