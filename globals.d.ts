@@ -819,3 +819,31 @@ interface Parking {
   occupiedBy?: string;
   number?: number;
 }
+
+ interface Applicant {
+  prefix?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  countryCode?: string | null;
+  phoneNumber?: number | null;
+  address?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+  email?: string | null;
+  kyc?: Kyc | null;
+}
+
+ interface Kyc {
+  addhar?: KycDocument | null;
+  pan?: KycDocument | null;
+  other?: KycDocument | null;
+}
+
+ interface KycDocument {
+  verified: boolean;
+  document?: string | null;
+  remark?: string | null;
+  type?: string | null;
+}
