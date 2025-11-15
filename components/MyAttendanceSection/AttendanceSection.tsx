@@ -11,9 +11,7 @@ import moment from "moment-timezone";
 import Imglog from "../../public/images/Banquet hall.png";
 import Image from "next/image";
 import { tr } from "date-fns/locale";
-
-
-
+import { useData } from "@/providers/dataContext";
 
 // Dummy attendance summary
 interface SummaryItem {
@@ -105,7 +103,6 @@ const dummyAttendanceList: AttendanceItem[] = [
     checkInPhoto: "",
     checkOutPhoto: "",
   },
-
 ];
 
 // Hook for mobile detection
@@ -126,49 +123,55 @@ interface TimelineSectionProps {
   attendanceList?: AttendanceItem[];
 }
 
-const TimelineSection: React.FC<TimelineSectionProps> = ({
-  // data = dummySummary,
-  attendanceList = dummyAttendanceList,
-}) => {
+const TimelineSection: React.FC<TimelineSectionProps> = (
+  {
+    // data = dummySummary,
+  }
+) => {
+  const { attOverview, attendanceList } = useData();
+
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const isMobile = useIsMobile();
-  const COLORS = ["#52bb58", "#e75656", "#b444c8", "#faca2d", "#ec3974", "#fbae3a"];
+  const COLORS = [
+    "#52bb58",
+    "#e75656",
+    "#b444c8",
+    "#faca2d",
+    "#ec3974",
+    "#fbae3a",
+  ];
 
-  const totalHours = 234;
-  const presentHours = 210;
+  const totalHours = attOverview?.requiredHours ?? 0;
+  const presentHours = attOverview?.activeHours ?? 0;
 
   const [percent, setpercent] = useState(0);
   const targetPercent = Math.round((presentHours / totalHours) * 100);
 
-
-
-  const overtimeHours = presentHours > totalHours ? presentHours - totalHours : 0;
-  const remainingOvertime = overtimeHours > 0 ? Math.max(0, 20 - overtimeHours) : 20;
+  const overtimeHours =
+    presentHours > totalHours ? presentHours - totalHours : 0;
+  const remainingOvertime =
+    overtimeHours > 0 ? Math.max(0, 20 - overtimeHours) : 20;
 
   const Colors = ["green", "grey"];
 
   const overtimeData =
     presentHours >= totalHours
       ? [
-        { name: "Overtime Completed", value: overtimeHours },
-        { name: "Remaining", value: remainingOvertime },
-      ]
+          { name: "Overtime Completed", value: overtimeHours },
+          { name: "Remaining", value: remainingOvertime },
+        ]
       : [
-        { name: "Overtime Completed", value: 0 },
-        { name: "Remaining", value: 20 },
-      ];
+          { name: "Overtime Completed", value: 0 },
+          { name: "Remaining", value: 20 },
+        ];
 
   useEffect(() => {
     const timer = setTimeout(() => setpercent(targetPercent), 200);
     return () => clearTimeout(timer);
   }, [targetPercent]);
 
-
-
-
   return (
     <div className={styles.main}>
-
       {/* <div className={styles.container}>
 
         {data.map((item, idx) => (
@@ -178,9 +181,6 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
           </div>
         ))}
       </div> */}
-
-
-
 
       {/* Pie Chart */}
       {/* <div className={styles.mobilePieChart}>
@@ -211,7 +211,9 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
         <div className={styles.headerandTableContainer}>
           <div className={styles.headerContainer}>
             <div className={styles.monthPicker}>
-              <button className={`${styles.tab} ${styles.active}`}>Your Attendance</button>
+              <button className={`${styles.tab} ${styles.active}`}>
+                Your Attendance
+              </button>
 
               <div className={styles.monthPickerWrapper}>
                 <IoCalendar className={styles.calendarIcon} />
@@ -228,11 +230,19 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
                     increaseYear,
                   }) => (
                     <div className={styles.customHeader}>
-                      <button onClick={decreaseYear} className={styles.navButton}>
+                      <button
+                        onClick={decreaseYear}
+                        className={styles.navButton}
+                      >
                         Previous Year
                       </button>
-                      <span className={styles.currentYear}>{date.getFullYear()}</span>
-                      <button onClick={increaseYear} className={styles.navButton}>
+                      <span className={styles.currentYear}>
+                        {date.getFullYear()}
+                      </span>
+                      <button
+                        onClick={increaseYear}
+                        className={styles.navButton}
+                      >
                         Next Year
                       </button>
                     </div>
@@ -241,11 +251,15 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
               </div>
             </div>
 
-
-
             <div className={styles.searchContainer}>
-              <input type="text" placeholder="Search by Status" className={styles.searchInput} />
-              <button className={styles.searchButton}><FiSearch size={18} /></button>
+              <input
+                type="text"
+                placeholder="Search by Status"
+                className={styles.searchInput}
+              />
+              <button className={styles.searchButton}>
+                <FiSearch size={18} />
+              </button>
             </div>
           </div>
 
@@ -258,18 +272,15 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
               />
             </div>
           </div>
-
         </div>
 
         <div className={styles.OvertimeMaindesk}>
           <h2 className={styles.deskHeading}>Monthly Attendance</h2>
 
-
           <div className={styles.chartdesk}>
             <p className={styles.deskovertimeText}>Overtime</p>
 
             <div className={styles.deskPie}>
-
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -304,14 +315,13 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
-
             </div>
             <div className={styles.deskAttandanceLine}>
               <p className={styles.deskHrsInfo}>
-                {presentHours} Hrs / {totalHours} Hrs <span> ({percent}%)</span>
+                {presentHours.toFixed(0)} Hrs / {totalHours.toFixed(0)} Hrs{" "}
+                <span> ({percent}%)</span>
               </p>
-              <div className={styles.deskLineBackground}
-              >
+              <div className={styles.deskLineBackground}>
                 <div
                   className={styles.deskLineFill}
                   style={{ width: `${percent}%` }}
@@ -319,43 +329,37 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
               </div>
               <div className={styles.detailsContainer}>
                 <div className={styles.infoContainerWO}>
-                  <span className={styles.numContainerWO}>10</span>
+                  <span className={styles.numContainerWO}>
+                    {attOverview?.weekoff ?? 0}
+                  </span>
                   <p className={styles.daydetails}>Week Off</p>
                 </div>
 
                 <div className={styles.infoContainerP}>
-                  <span className={styles.numContainerP}>10</span>
+                  <span className={styles.numContainerP}>
+                    {attOverview?.presentDays ?? 0}
+                  </span>
                   <p>Present</p>
                 </div>
 
                 <div className={styles.infoContainerHD}>
-                  <span className={styles.numContainerHD}>10</span>
-                  <p>Half Day</p>
+                  <span className={styles.numContainerHD}>
+                    {attOverview?.holiday ?? 0}
+                  </span>
+                  <p>Holiday</p>
                 </div>
 
                 <div className={styles.infoContainerL}>
-                  <span className={styles.numContainerL}>10</span>
+                  <span className={styles.numContainerL}>
+                    {attOverview?.leave ?? 0}
+                  </span>
                   <p>Leave</p>
                 </div>
               </div>
-
-
-
-
             </div>
-
-
           </div>
-
         </div>
-
-
-
-
-
-
       </div>
-
 
       {/* mobile attendance chart */}
       <div className={styles.OvertimeMainMob}>
@@ -363,10 +367,10 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
           <h2 className={styles.Heading}>Monthly Attendance</h2>
 
           <div className={styles.ChartMain}>
-
             <div className={styles.AttendanceLineSec}>
               <p className={styles.HrsInfo}>
-                {presentHours} Hrs / {totalHours} Hrs <span> ({percent}%)</span>
+                {presentHours.toFixed(0)} Hrs / {totalHours.toFixed(0)} Hrs{" "}
+                <span> ({percent}%)</span>
               </p>
               <div className={styles.LineBackground}>
                 <div
@@ -374,15 +378,32 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
                   style={{ width: `${percent}%` }}
                 ></div>
               </div>
-              <div className={styles.workingDetails}><p>WO : <span style={{ color: "#476EAE" }}>4</span></p>
-                <p>P : <span style={{ color: "green" }} >26</span></p>
-                <p>HD : <span style={{ color: "orange" }}>3</span></p>
-                <p>L : <span style={{ color: "red" }}>5</span></p>
-
-
+              <div className={styles.workingDetails}>
+                <p>
+                  WO :{" "}
+                  <span style={{ color: "#476EAE" }}>
+                    {attOverview?.weekoff ?? 0}
+                  </span>
+                </p>
+                <p>
+                  P :{" "}
+                  <span style={{ color: "green" }}>
+                    {attOverview?.presentDays ?? 0}
+                  </span>
+                </p>
+                <p>
+                  HD :{" "}
+                  <span style={{ color: "orange" }}>
+                    {attOverview?.holiday ?? 0}
+                  </span>
+                </p>
+                <p>
+                  L :{" "}
+                  <span style={{ color: "red" }}>
+                    {attOverview?.leave ?? 0}
+                  </span>
+                </p>
               </div>
-
-
             </div>
 
             <div className={styles.piebox}>
@@ -422,56 +443,56 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
               </ResponsiveContainer>
 
               <p className={styles.overtimeText}>Overtime</p>
-
-
-
             </div>
           </div>
-
         </div>
       </div>
 
-
-
-
-
-
-
       {/* Attendance List */}
       {isMobile && (
-        <CalendarMobileView selectedMonth={selectedMonth} attendanceData={attendanceList} />
-
-      )
-      }
-
+        <CalendarMobileView
+          selectedMonth={selectedMonth}
+          attendanceData={attendanceList}
+        />
+      )}
     </div>
   );
-
 };
 
 // Attendance Section Component
 interface AttendanceSectionProps {
-  item: AttendanceItem;
+  item: Attendance;
   leaveInfo: LeaveInfo;
-  attendanceData?: AttendanceItem[];
+  attendanceData?: Attendance[];
 }
 
-const AttendanceSection: React.FC<AttendanceSectionProps> = ({ item, leaveInfo, attendanceData = [] }) => {
-  const endTimeOut = timeFormatOnly(item?.checkOutTime);
-  const checkIn = moment(item?.checkInTime);
-  const checkOut = moment(item?.checkOutTime);
-  const onLeave = ["on-paid-leave", "on-casual-leave", "on-compensation-off-leave"].includes(item?.status);
+const AttendanceSection: React.FC<AttendanceSectionProps> = ({
+  item,
+  leaveInfo,
+  attendanceData = [],
+}) => {
+  const endTimeOut = timeFormatOnly(item?.checkOutTime ?? "");
+  const checkIn = moment(item?.checkInTime ?? "");
+  const checkOut = moment(item?.checkOutTime ?? "");
+  const onLeave = [
+    "on-paid-leave",
+    "on-casual-leave",
+    "on-compensation-off-leave",
+  ].includes(item?.status ?? "");
 
   const duration = moment.duration(checkOut.diff(checkIn));
   const diff = checkOut.diff(checkIn);
   const hours = Math.floor(duration.asHours());
   const minutes = Math.floor(duration.minutes());
 
-  const total = `${isNaN(hours) ? "" : `${hours}hr`} ${isNaN(hours) ? "" : `${minutes}m`}`;
+  const total = `${isNaN(hours) ? "" : `${hours}hr`} ${
+    isNaN(hours) ? "" : `${minutes}m`
+  }`;
   const shiftStart = leaveInfo.shift.timeIn;
   const shiftEnd = leaveInfo.shift.timeOut;
 
   const [theme, setTheme] = useState<"light" | "dark">("light");
+
 
 
   useEffect(() => {
@@ -485,10 +506,22 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ item, leaveInfo, 
   }, []);
 
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isDark =
+        document.documentElement.classList.contains("dark") ||
+        document.body.classList.contains("dark");
+
+      setTheme(isDark ? "dark" : "light");
+    }
+  }, []);
 
   const lateDuration = diff - leaveInfo.shift.workingHours;
   const latePercent = (lateDuration / diff) * 100;
-  const overtimeDuration = Math.max(0, (parseFloat(endTimeOut) || 0) - shiftEnd);
+  const overtimeDuration = Math.max(
+    0,
+    (parseFloat(endTimeOut) || 0) - shiftEnd
+  );
 
   const [showText, setShowText] = useState(false);
 
@@ -500,86 +533,84 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ item, leaveInfo, 
       case "present":
         return isLight
           ? {
-            backgroundColor: "rgba(9, 161, 9, 0.12)",
-            border: "1px solid rgb(9, 161, 9)",
-            color: "#0b6a0b",
-          }
+              backgroundColor: "rgba(9, 161, 9, 0.12)",
+              border: "1px solid rgb(9, 161, 9)",
+              color: "#0b6a0b",
+            }
           : {
-            backgroundColor: "rgba(9, 161, 9, 0.2)",
-            border: "1px solid rgb(4, 134, 4)",
-            color: "white",
-          };
+              backgroundColor: "rgba(9, 161, 9, 0.2)",
+              border: "1px solid rgb(4, 134, 4)",
+              color: "white",
+            };
 
       case "absent":
         return isLight
           ? {
-            backgroundColor: "rgba(240, 53, 53, 0.12)",
-            border: "1px solid rgb(240, 53, 53)",
-            color: "#a30000",
-          }
+              backgroundColor: "rgba(240, 53, 53, 0.12)",
+              border: "1px solid rgb(240, 53, 53)",
+              color: "#a30000",
+            }
           : {
-            backgroundColor: "rgba(240, 53, 53, 0.2)",
-            border: "1px solid rgb(240, 53, 53)",
-            color: "white",
-          };
+              backgroundColor: "rgba(240, 53, 53, 0.2)",
+              border: "1px solid rgb(240, 53, 53)",
+              color: "white",
+            };
 
       case "weekoff":
         return isLight
           ? {
-            backgroundColor: "rgba(76, 76, 243, 0.12)",
-            border: "1px solid rgb(76, 76, 243)",
-            color: "#1e24a8",
-          }
+              backgroundColor: "rgba(76, 76, 243, 0.12)",
+              border: "1px solid rgb(76, 76, 243)",
+              color: "#1e24a8",
+            }
           : {
-            backgroundColor: "rgba(76, 76, 243, 0.2)",
-            border: "1px solid rgb(76, 76, 243)",
-            color: "white",
-          };
+              backgroundColor: "rgba(76, 76, 243, 0.2)",
+              border: "1px solid rgb(76, 76, 243)",
+              color: "white",
+            };
 
       case "half day":
         return isLight
           ? {
-            backgroundColor: "rgba(240, 173, 49, 0.15)",
-            border: "1px solid rgb(240, 173, 49)",
-            color: "#a46f00",
-          }
+              backgroundColor: "rgba(240, 173, 49, 0.15)",
+              border: "1px solid rgb(240, 173, 49)",
+              color: "#a46f00",
+            }
           : {
-            backgroundColor: "rgba(240, 173, 49, 0.2)",
-            border: "1px solid rgb(240, 173, 49)",
-            color: "white",
-          };
+              backgroundColor: "rgba(240, 173, 49, 0.2)",
+              border: "1px solid rgb(240, 173, 49)",
+              color: "white",
+            };
 
       case "on-paid-leave":
       case "on-casual-leave":
       case "on-compensation-off-leave":
         return isLight
           ? {
-            backgroundColor: "rgba(88, 205, 240, 0.15)",
-            border: "1px solid #58cdf0",
-            color: "#0b5f77",
-          }
+              backgroundColor: "rgba(88, 205, 240, 0.15)",
+              border: "1px solid #58cdf0",
+              color: "#0b5f77",
+            }
           : {
-            backgroundColor: "#58cdf062",
-            border: "1px solid #58cdf0ff",
-            color: "white",
-          };
+              backgroundColor: "#58cdf062",
+              border: "1px solid #58cdf0ff",
+              color: "white",
+            };
 
       default:
         return isLight
           ? {
-            backgroundColor: "#ffffff",
-            color: "#000000",
-            border: "1px solid #ddd",
-          }
+              backgroundColor: "#ffffff",
+              color: "#000000",
+              border: "1px solid #ddd",
+            }
           : {
-            backgroundColor: "#333",
-            color: "#fff",
-            border: "1px solid #444",
-          };
+              backgroundColor: "#333",
+              color: "#fff",
+              border: "1px solid #444",
+            };
     }
   };
-
-
 
   return (
     // <div className={styles.timelineRow}>
@@ -646,46 +677,74 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ item, leaveInfo, 
             <th>Check-out Image</th>
             <th> Time-Out</th>
             <th>Total</th>
-
           </tr>
         </thead>
         <tbody>
           {attendanceData.map((record, index) => (
-            <tr key={index} >
+            <tr key={index}>
               <td>{dateFormatOnly(record.date)}</td>
               <td>{timeFormatOnly(record.checkInTime) || "NA"}</td>
-              <td style={{
-                display: "flex", alignItems: "center", justifyContent: "center"
-              }}><Image src={Imglog} alt="Time In" width={100} height={100} className={styles.cardTimeImage} /></td>
+              <td
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Image
+                  src={record.checkInPhoto ?? Imglog}
+                  alt="Time In"
+                  width={100}
+                  height={100}
+                  className={styles.cardTimeImage}
+                />
+              </td>
               <td style={{ textTransform: "capitalize" }}>
-                <span className={styles.statusBadge} style={getStatusStyle(record.status, theme)}>
+                <span
+                  className={styles.statusBadge}
+                  style={getStatusStyle(record?.status ?? "", theme)}
+                >
                   {record.status || "NA"}
                 </span>
               </td>
-              <td style={{
-                display: "flex", alignItems: "center", justifyContent: "center"
-              }}><Image src={Imglog} alt="Time Out" width={100} height={100} className={styles.cardTimeImage} /></td>
+              <td
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Image
+                  src={record.checkOutPhoto ?? Imglog}
+                  alt="Time Out"
+                  width={100}
+                  height={100}
+                  className={styles.cardTimeImage}
+                />
+              </td>
               <td>{timeFormatOnly(record.checkOutTime) || "-"}</td>
               <td>
                 {record.checkInTime && record.checkOutTime
                   ? `${Math.floor(
-                    moment
-                      .duration(moment(record.checkOutTime).diff(moment(record.checkInTime)))
-                      .asHours()
-                  )} hr ${moment
-                    .duration(moment(record.checkOutTime).diff(moment(record.checkInTime)))
-                    .minutes()} m`
+                      moment
+                        .duration(
+                          moment(record.checkOutTime).diff(
+                            moment(record.checkInTime)
+                          )
+                        )
+                        .asHours()
+                    )} hr ${moment
+                      .duration(
+                        moment(record.checkOutTime).diff(
+                          moment(record.checkInTime)
+                        )
+                      )
+                      .minutes()} m`
                   : "-"}
               </td>
-
-
-
-
             </tr>
           ))}
-
         </tbody>
-
       </table>
     </div>
   );

@@ -1,50 +1,43 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/components/lead-details-components/estimatesistory/list.module.css";
-import Estinatelist from "@/components/lead-details-components/estimatesistory/estinatelist";
+import EstimateList from "@/components/lead-details-components/estimatesistory/estimateList";
 import EstimateHistoryDetails from "@/components/lead-details-components/estimatesistory/estimatehistorydetails";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import Headeres from "@/components/lead-details-components/estimatesistory/headeres";
 import ReactDOM from "react-dom";
+import leadDetails from "../lead-details/page";
+import { useData } from "@/providers/dataContext";
+import { useSearchParams } from "next/navigation";
 
-interface LeadData {
-  id: number;
-  lead: {
-    firstName: string;
-    lastName: string;
-    countryCode: string;
-    phoneNumber: string;
-  };
-  teamleader: {
-    firstName: string;
-    lastName: string;
-  };
-  generatedBy: {
-    firstName: string;
-    lastName: string;
-  };
-  project: {
-    name: string;
-  };
-  estID: string;
-  flatNo: string;
-  date: string;
-  select: string;
-  reject: string;
-  length: string;
-}
+
+// interface EstimatehistoryProps {
+//   lead?: Lead | null;
+//   teamLeader?: Employee;
+// }
 
 const EstimateHistory: React.FC = () => {
   const isMobile = useIsMobile();
-  const [selectedEstimate, setSelectedEstimate] = useState<LeadData | null>(null);
-
-  const handleCardClick = (lead: LeadData) => {
-    setSelectedEstimate(lead);
+  const { getEstimateGeneratedById, getClosingManagers } = useData();
+   const [estimatebyId, setEstimatebyId] = useState<EstimateGenerated[]>([]);
+    const [selectedEstimate, setSelectedEstimate] = useState<EstimateGenerated | null>(null);
+  const searchParams = useSearchParams();
+  const leadId = searchParams.get('leadId');
+    
+     useEffect(() => {
+      getEstimateGeneratedById(leadId ?? "");
+       console.log("Fetching estimates for lead:", leadId); 
+      //  getClosingManagers;
+   
+     }, [leadId]);
+ 
+  const handleCardClick = (estimate: EstimateGenerated) => {
+   setSelectedEstimate(estimate);
   };
 
   const handleBack = () => {
-    setSelectedEstimate(null);
+   setSelectedEstimate(null);
   };
 
   return (
@@ -53,7 +46,7 @@ const EstimateHistory: React.FC = () => {
 
       {isMobile ? (
         <div>
-          {selectedEstimate ? (
+          {selectedEstimate  ? (
             <>
               <div className={styles.backButtonWrapper}>
                 <IoArrowBackCircleOutline
@@ -62,20 +55,20 @@ const EstimateHistory: React.FC = () => {
                   onClick={handleBack}
                 />
               </div>
-              <EstimateHistoryDetails lead={selectedEstimate} />
+          <EstimateHistoryDetails estimate={selectedEstimate } />
             </>
           ) : (
-            <Estinatelist onCardClick={handleCardClick} />
+            <EstimateList onCardClick={handleCardClick} leadId={leadId} />
           )}
         </div>
       ) : (
         <div className={styles.listDetailsContainer}>
           <div className={styles.listContainerestm}>
-            <Estinatelist onCardClick={handleCardClick} />
+            <EstimateList onCardClick={handleCardClick} leadId={leadId} />
           </div>
           <div className={styles.listHistoryContainer}>
             {selectedEstimate ? (
-              <EstimateHistoryDetails lead={selectedEstimate} />
+             <EstimateHistoryDetails estimate={selectedEstimate} />
             ) : (
               <p className={styles.nocont}>
                 Select a lead to see details

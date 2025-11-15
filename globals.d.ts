@@ -18,7 +18,54 @@ interface OurProject {
   address?: string | null;
   shortCode?: string | null;
   showCaseImageLandscape?: string | null;
+  flatList?:Flat[];
 }
+
+interface EstimateGenerated {
+  id?: string | null;
+  estID?: string | null;
+  lead?: Lead | null;
+  slab?: string | null;
+  slabPercentage?: number | null;
+  floor?: number | null;
+  number?: number | null;
+  buildingNo?: number | null;
+  project?: OurProject | null;
+  flatNo?: string | null;
+  configuration?: string | null;
+  carpetArea?: number | null;
+  reraArea?: number | null;
+  ssArea?: number | null;
+  balconyArea?: number | null;
+  agreementValue?: number | null;
+  allInclusiveValue?: number | null;
+  coupon?: number | null;
+  discountedAgreementValue?: number | null;
+  discountedPayable?: number | null;
+  payableBookingValue?: number | null;
+  totalPayableValue?: number | null;
+  generatedBy?: Employee | null;
+  teamLeader?: Employee | null;
+  document?: string | null;
+  physicalDocument?: string | null;
+  physicalPrice?: number | null;
+  stampDutyAmount?: number | null;
+  gstAmount?: number | null;
+  stampDutyPercentage?: number | null;
+  discountStampDuty?: number | null;
+  discountedGstValue?: number | null;
+  estimateDate?: Date | string | null;
+  finalEstDoc?: string | null;
+  parking?: number | null;
+  qrscan?: string | null;
+  finalStamp?: number | null;
+  finalAgreementValue?: number | null;
+  status?: string | null;
+  statusChangedDate?: Date | string | null;
+  reason?: string | null;
+  company?: string | null;
+}
+
 
 interface Amenity {
   _id?: string | null;
@@ -233,7 +280,7 @@ interface Lead {
   revisitStatus?: string;
   revisitRef?: SiteVisit;
   bookingStatus?: string;
-  bookingRef?: string | null;
+  bookingRef?: PostSaleLead;
   followupStatus?: string;
   contactedStatus?: string;
   interestedStatus?: string;
@@ -330,7 +377,7 @@ interface ChannelPartner {
 }
 
 interface Task {
-  id?: string | null;
+  _id?: string | null;
   assignTo?: Employee | null;
   assignBy?: Employee | null;
   lead?: Lead | null;
@@ -556,7 +603,7 @@ interface PostSaleLead {
   address?: string | null;
   email?: string | null;
 
-  date?: string | Date | null;
+  date?: string;
   carpetArea?: number | null;
   sellableCarpetArea?: number | null;
   flatCost?: number | null;
@@ -623,4 +670,142 @@ interface PostSaleLead {
   paymentFourDueDate?: string | Date | null;
   paymentDetailSchema?: PaymentDetailSchema[];
 }
+
 //
+interface Otp {
+  id: string;
+  docId: string;
+  otp: string;
+  phoneNumber?: string;
+  email?: string;
+  type: string;
+  message: string;
+}
+
+interface UploadFile {
+  token: string;
+  filename: string;
+  downloadUrl: string;
+}
+
+interface BrokerageCalculationData {
+  id?: string | null;
+  brokerageId?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: number | null;
+
+  project?: OurProject;
+  channelPartner?: ChannelPartner;
+  lead?: Lead;
+  generatedBy?: Employee;
+  selectedFlat?: Flat | null;
+
+  flatNo?: string | null;
+  floor?: number | null;
+  buildingNo?: number | null;
+  number?: number | null;
+
+  carpetArea?: number | null;
+  sellableCarpetArea?: number | null;
+
+  totalParking?: number | null;
+  parkingPrice?: number | null;
+  developmentPrice?: number | null;
+  allInclusiveValue?: number | null;
+  registrationCharges?: number | null;
+  commissionRate?: number | null;
+  floorRiseSkip?: number | null;
+  sellablePercent?: number | null;
+
+  pdf?: string | null;
+  createdAt?: string | Date | null;
+
+  agreementValue?: number | null;
+  parkingCharges?: number | null;
+  developmentCharges?: number | null;
+  floorRiseCharges?: number | null;
+  totalBrokerage?: number | null;
+}
+
+interface Flat {
+  id?: string;
+  type?: string;
+  floor?: number;
+  number?: number;
+  buildingNo?: number;
+  flatNo?: string;
+  carpetArea?: number;
+  sellableCarpetArea?: number;
+  allInclusiveValue?: number;
+  occupied?: boolean;
+  hold?: boolean;
+  readyOnly?: boolean;
+  occupiedBy?: string;
+  ssArea?: number;
+  reraArea?: number;
+  balconyArea?: number;
+  configuration?: string;
+  msp1?: number;
+  msp2?: number;
+  msp3?: number;
+  floorPlan?: string;
+}
+
+interface AttOverview {
+  document?: string | null;
+  month: number | null;
+  year: number | null;
+  // hours
+  requiredHours: number | null;
+  activeHours: number | null;
+  // days
+  totalDays: number | null;
+  requiredDays: number | null;
+  presentDays: number | null;
+  present: number | null;
+  holiday: number | null;
+  weekoff: number | null;
+  minWeekoff: number | null;
+  leave: number | null;
+
+  // for old not breaking model
+  totalWorkingHrsInMonth: number | null;
+  totalWorkingHrs: number | null;
+  activeMintus: number | null;
+  ot: number | null;
+}
+
+interface Attendance {
+  userId: Employee | null;
+  date: Date | null;
+  day: number | null;
+  month: number | null;
+  year: number | null;
+  status: string | null;
+  wlStatus: string | null;
+  checkInTime: Date | null;
+  checkInAddress: string | null;
+  checkInLatitude: number | null;
+  checkInLongitude: number | null;
+  checkInPhoto: string | null;
+  checkOutTime: Date | null;
+  checkOutAddress: string | null;
+  checkOutLatitude: number | null;
+  checkOutLongitude: number | null;
+  checkOutPhoto: string | null;
+  totalActiveSeconds: number | null;
+  totalBreakSeconds: number | null;
+  overtimeSeconds: number | null;
+  overtimeMinutes: number | null;
+  lateMinutes: number | null;
+  checkInSimilarity: number | null;
+  checkOutSimilarity: number | null;
+
+  earlyMinutes: number | null;
+  leaveDuration: number | null;
+
+  breakStartTime: number | null;
+  breakEndTime: string | null;
+  lastUpdatedTime: string | null;
+}

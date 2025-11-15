@@ -620,7 +620,12 @@
   background-color: #ea580c;
   color: #ffffff;
 }
+:global(html.light) .statusBadge.pending {
+  background: linear-gradient(180deg, #e99c37, #c97233);
+  border: 1px solid #ee6f15;
+    box-shadow: 0 2px 5px rgba(67, 63, 63, 0.082);
 
+}
 /* Similar Visits Section */
 .similarVisitsSection {
   background-color: #111;
