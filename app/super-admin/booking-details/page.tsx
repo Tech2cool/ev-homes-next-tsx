@@ -61,7 +61,7 @@ const BookingDetails = () => {
     fetchPostSaleLeads,
     getLeadByBookingId,
     getClosingManagers,
-  } = useData();
+  } = useData(); 
   const { user, loading } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -498,7 +498,7 @@ const BookingDetails = () => {
           closingManagers={closingManagers}
           onApplyFilters={handleApplyFilters}
         />
-        {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
+        {showaddbooking && <AddBooking openclick={setshowaddbooking} lead={currentLead}/>}
       </>
     );
   }
@@ -833,7 +833,7 @@ const BookingDetails = () => {
         </div>
       </div>
 
-      {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
+      {showaddbooking && <AddBooking openclick={setshowaddbooking} lead={currentLead}/>}
     </>
   );
 };

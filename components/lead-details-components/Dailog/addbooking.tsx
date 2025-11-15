@@ -51,24 +51,42 @@ import { useData } from "@/providers/dataContext";
 
 interface AddBookingProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
+  lead?: Lead | null;
 }
-interface Applicant {
-  prefix: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  number: string;
-  aadhaarUploaded: boolean;
-  aadhaarFile: File | null;
 
-  panUploaded: boolean;
-  panFile: File | null;
-  otherUploaded: boolean;
-  otherFile: File | null;
-  clientOneDress: string;
-  clientTwoAdress: string;
-  clientCity: string;
-  clientPincode: string;
+interface Applicant {
+  prefix?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  countryCode?: string | null;
+  phoneNumber?: string | null; // Changed to string to match input handling
+  address?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+  email?: string | null;
+  kyc?: Kyc | null;
+  // File upload states for the form
+  aadhaarUploaded?: boolean;
+  aadhaarFile?: File | null;
+  panUploaded?: boolean;
+  panFile?: File | null;
+  otherUploaded?: boolean;
+  otherFile?: File | null;
+}
+
+interface Kyc {
+  addhar?: KycDocument | null;
+  pan?: KycDocument | null;
+  other?: KycDocument | null;
+}
+
+interface KycDocument {
+  verified: boolean;
+  document?: string | null;
+  remark?: string | null;
+  type?: string | null;
 }
 
 interface Payment {
@@ -80,10 +98,12 @@ interface Payment {
   receiptNo: string;
   transactionNo: string;
 }
+
 interface OptionType {
   value: string;
   label: string;
 }
+
 interface FormState {
   bookingDate: string;
   bookingstatus: string;
@@ -113,13 +133,14 @@ interface FormState {
 }
 
 type ParkingItem = {
-  prfloor: number | ""; // floor is number
-  parkingno: string; // parking number is string
+  prfloor: number | "";
+  parkingno: string;
   [key: string]: number | string;
 };
 
-const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
-  const { getProjects, projects, getRequirements } = useData();
+const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
+  const { getProjects, projects, getClosingManagers, closingManagers } =
+    useData();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
@@ -128,7 +149,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [parkingList, setParkingList] = useState<ParkingItem[]>([]);
-
   const [confirmChecked, setConfirmChecked] = useState(false);
   const [regDone, setRegDone] = useState<string>("");
   const [regDate, setRegDate] = useState<string>("");
@@ -136,11 +156,39 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   const [handoverDate, setHandoverDate] = useState<string>("");
   const [frontUploaded, setFrontUploaded] = useState(false);
   const [backUploaded, setBackUploaded] = useState(false);
+
   const setFieldValue = (name: string, value: string) => {
     onChangeField({
       target: { name, value } as any,
     } as React.ChangeEvent<HTMLInputElement>);
   };
+
+  // Default applicant template
+  const defaultApplicant: Applicant = {
+    prefix: "",
+    firstName: "",
+    lastName: "",
+    countryCode: "+91",
+    phoneNumber: "",
+    address: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    pincode: "",
+    email: "",
+    kyc: {
+      addhar: null,
+      pan: null,
+      other: null,
+    },
+    aadhaarUploaded: false,
+    aadhaarFile: null,
+    panUploaded: false,
+    panFile: null,
+    otherUploaded: false,
+    otherFile: null,
+  };
+
   const [formData, setformData] = useState<FormState>({
     bookingDate: new Date().toISOString().split("T")[0],
     bookingstatus: "",
@@ -170,7 +218,41 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   });
 
   useEffect(() => {
+    if (lead) {
+      // If lead is provided, pre-fill the first applicant with lead data
+      const leadApplicant: Applicant = {
+        prefix: lead.prefix || "",
+        firstName: lead.firstName || "",
+        lastName: lead.lastName || "",
+        countryCode: lead.countryCode || "+91",
+        phoneNumber: lead.phoneNumber?.toString() || "",
+        email: lead.email || "",
+        address: lead.address || "",
+        addressLine1: lead.address || "",
+        // addressLine2: lead.addressLine2 || "",
+        // city: lead.city || "",
+        // pincode: lead.pincode || "",
+        // kyc: lead.kyc || { addhar: null, pan: null, other: null },
+        aadhaarUploaded: false,
+        aadhaarFile: null,
+        panUploaded: false,
+        panFile: null,
+        otherUploaded: false,
+        otherFile: null,
+      };
+
+      formData.addressOne = lead.address || "";
+      formData.manager=lead.teamLeader?._id||"";
+      setformData((prev) => ({
+        ...prev,
+        applicants: [leadApplicant],
+      }));
+    }
+  }, [lead]);
+
+  useEffect(() => {
     getProjects();
+    getClosingManagers();
   }, []);
 
   const selectedProject = projects.find(
@@ -180,11 +262,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   const flats = selectedProject?.flatList ?? [];
 
   const hasBuildings = flats.length > 0 && flats.some((f) => f.buildingNo);
-  //bldg
+
   const buildingOptions = hasBuildings
     ? uniq(flats.map((f) => f.buildingNo).filter(Boolean))
     : [];
-  //floor
+
   const floorOptions = hasBuildings
     ? uniq(
         flats
@@ -195,7 +277,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     : uniq(flats.map((f) => f.floor).filter((v) => v !== undefined)).sort(
         (a, b) => a - b
       );
-  //unit
+
   const unitOptions = hasBuildings
     ? flats
         .filter(
@@ -239,25 +321,20 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
   useEffect(() => {
     if (!selectedProject) return;
-
-    // Reset building, floor, unit
     setFieldValue("blg", "");
     setFieldValue("floor", "");
     setFieldValue("unit", "");
-
-    // Reset computed values
     setFieldValue("Flatno", "");
     setFieldValue("carpet", "");
     setFieldValue("Cost", "");
   }, [formData.project]);
 
-  // All unique floors
   const parkingFloors = (
     selectedProject?.parkingList
       ?.map((p) => p.floor)
       .filter((f) => f !== null && f !== undefined) || []
   )
-    .filter((item, index, arr) => arr.indexOf(item) === index) // make unique
+    .filter((item, index, arr) => arr.indexOf(item) === index)
     .sort((a, b) => Number(a) - Number(b));
 
   const getParkingNumbers = (floor: number) => {
@@ -348,6 +425,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     });
     openclick(false);
   };
+
   const onChangeField = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -356,6 +434,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     const { name, value } = e.target;
     setformData((prev) => ({ ...prev, [name]: value }));
   };
+
   const validateStep = (stepIndex: number) => {
     const newErrors: any = {};
 
@@ -366,7 +445,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         newErrors.bookingstatus = "Booking status is required";
       if (!formData.project)
         newErrors.project = "Project selection is required";
-      if (!formData.blg) newErrors.blg = "blg selection is required";
+      if (hasBuildings && !formData.blg)
+        newErrors.blg = "Building selection is required";
       if (!formData.floor) newErrors.floor = "Floor selection is required";
       if (!formData.unit) newErrors.unit = "Unit selection is required";
 
@@ -380,15 +460,16 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       parkingList.forEach((p, index) => {
         if (!p.prfloor)
           newErrors[`parkingList-${index}-prfloor`] = "Select Parking Floor";
-        if (!p.parkingno)
-          newErrors[`parkingList-${index}-parkingno`] = "Select Parking Number";
+        // if (!p.parkingno)
+        //   newErrors[`parkingList-${index}-parkingno`] = "Select Parking Number";
       });
     }
+
     if (stepIndex === 1) {
       if (!formData.addressOne.trim())
-        newErrors.addressOne = "address line 1 is required";
+        newErrors.addressOne = "Address line 1 is required";
       if (!formData.addressTwo.trim())
-        newErrors.addressTwo = "address line 2 is required";
+        newErrors.addressTwo = "Address line 2 is required";
       if (!formData.city.trim()) newErrors.city = "City is required";
       if (!formData.pincode.trim()) newErrors.pincode = "Pincode is required";
 
@@ -397,47 +478,44 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       } else {
         formData.applicants.forEach((applicant, index) => {
           if (!applicant.prefix?.trim())
-            newErrors[`applicant-${index}-prefix`] = `required`;
+            newErrors[`applicant-${index}-prefix`] = "Title is required";
           if (!applicant.firstName?.trim())
-            newErrors[
-              `applicant-${index}-firstName`
-            ] = `First name is required `;
+            newErrors[`applicant-${index}-firstName`] =
+              "First name is required";
           if (!applicant.lastName?.trim())
-            newErrors[`applicant-${index}-lastName`] = `Last name is required `;
+            newErrors[`applicant-${index}-lastName`] = "Last name is required";
           if (!applicant.email?.trim())
-            newErrors[`applicant-${index}-email`] = `Email is required `;
-          if (!applicant.number?.trim())
-            newErrors[`applicant-${index}-number`] = `Number is required `;
-          if (!applicant.clientOneDress?.trim())
-            newErrors[
-              `applicant-${index}-clientOneDress`
-            ] = `Address Line 1 is required `;
-          if (!applicant.clientTwoAdress?.trim())
-            newErrors[
-              `applicant-${index}-clientTwoAdress`
-            ] = `Address Line 2 is required `;
-          if (!applicant.clientCity?.trim())
-            newErrors[`applicant-${index}-clientCity`] = `City is required `;
-          if (!applicant.clientPincode?.trim())
-            newErrors[
-              `applicant-${index}-clientPincode`
-            ] = `Pincode is required`;
+            newErrors[`applicant-${index}-email`] = "Email is required";
+          if (!applicant.phoneNumber?.trim())
+            newErrors[`applicant-${index}-phoneNumber`] =
+              "Phone number is required";
+          if (!applicant.addressLine1?.trim())
+            newErrors[`applicant-${index}-addressLine1`] =
+              "Address Line 1 is required";
+          if (!applicant.addressLine2?.trim())
+            newErrors[`applicant-${index}-addressLine2`] =
+              "Address Line 2 is required";
+          if (!applicant.city?.trim())
+            newErrors[`applicant-${index}-city`] = "City is required";
+          if (!applicant.pincode?.trim())
+            newErrors[`applicant-${index}-pincode`] = "Pincode is required";
         });
       }
     }
+
     if (stepIndex === 2) {
       if (!formData.manager.trim())
-        newErrors.manager = " Closing manager is required";
-
+        newErrors.manager = "Closing manager is required";
       if (formData.assignto.length === 0)
-        newErrors.assignto = "Select at least one assign.";
+        newErrors.assignto = "Select at least one assignee.";
     }
+
     if (stepIndex === 3) {
       if (!formData.frontphoto)
-        newErrors.frontphoto = "front Photo is required";
-      if (!formData.backphoto)
-        newErrors.backphoto = "Back Photo to is required";
+        newErrors.frontphoto = "Front photo is required";
+      if (!formData.backphoto) newErrors.backphoto = "Back photo is required";
     }
+
     if (stepIndex === 4) {
       if (payments.length === 0) {
         newErrors.payments = "Please add at least one payment";
@@ -468,7 +546,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
   const onSubmit = () => {
     const newErrors: { [key: string]: string } = {};
-
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) return;
@@ -478,6 +555,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     );
     openclick(false);
   };
+
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
     icon,
     text,
@@ -490,18 +568,51 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       </span>
     </label>
   );
+
   const handleApplicantsCountChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const count = parseInt(e.target.value);
-    if (!count) return setformData((prev) => ({ ...prev, applicants: [] }));
 
-    const newApplicants: Applicant[] = Array(count)
-      .fill(null)
-      .map((_, i) => formData.applicants[i] || { firstName: "", lastName: "" });
+    if (!count || count < 1) {
+      setformData((prev) => ({ ...prev, applicants: [] }));
+      return;
+    }
 
-    setformData((prev) => ({ ...prev, applicants: newApplicants }));
+    const currentApplicants = [...formData.applicants];
+
+    if (count > currentApplicants.length) {
+      // Add new applicants
+      const newApplicants = Array(count - currentApplicants.length)
+        .fill(null)
+        .map(() => ({ ...defaultApplicant }));
+
+      setformData((prev) => ({
+        ...prev,
+        applicants: [...currentApplicants, ...newApplicants],
+      }));
+    } else {
+      // Remove excess applicants
+      setformData((prev) => ({
+        ...prev,
+        applicants: currentApplicants.slice(0, count),
+      }));
+    }
   };
+
+  const handleApplicantChange = (
+    index: number,
+    field: keyof Applicant,
+    value: string
+  ) => {
+    const updatedApplicants = [...formData.applicants];
+    updatedApplicants[index] = {
+      ...updatedApplicants[index],
+      [field]: value,
+    };
+    setformData((prev) => ({ ...prev, applicants: updatedApplicants }));
+  };
+
   const handlePaymentChange = (
     id: number,
     field: keyof Payment,
@@ -511,13 +622,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
   };
+
   useEffect(() => {
     if (formData.floor && formData.unit) {
       const floorNum = Number(formData.floor);
       const unitNum = Number(formData.unit);
-
       const flat = floorNum * 100 + unitNum;
-
       setformData((prev: any) => ({
         ...prev,
         Flatno: flat.toString(),
@@ -527,34 +637,24 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
   const convertToIndianWords = (num: number) => {
     if (!num) return "";
-
     let crore = Math.floor(num / 10000000);
     num %= 10000000;
-
     let lakh = Math.floor(num / 100000);
     num %= 100000;
-
     let thousand = Math.floor(num / 1000);
     num %= 1000;
-
     let hundred = num;
-
     let result = "";
-
     if (crore) result += `${crore} Cr `;
     if (lakh) result += `${lakh} Lakh `;
     if (thousand) result += `${thousand} Thousand `;
     if (hundred) result += `${hundred}`;
-
     return result.trim();
   };
 
   const onChangeCost = (e: any) => {
     const { name, value } = e.target;
-
-    // Allow only numbers
     const onlyNumbers = value.replace(/\D/g, "");
-
     setformData((prev: any) => ({
       ...prev,
       Cost: onlyNumbers,
@@ -565,7 +665,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   const generatePDF = () => {
     const doc = new jsPDF();
     let y = 20;
-
     const lineGap = 8;
 
     const addSectionTitle = (title: string) => {
@@ -577,7 +676,10 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       y += 10;
     };
 
-    const addField = (label: string, value: string | number | undefined) => {
+    const addField = (
+      label: string,
+      value: string | number | undefined | null
+    ) => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
       doc.text(`${label}: ${value ?? "-"}`, 14, y);
@@ -600,7 +702,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     addField("Booking Date", formData.bookingDate);
     addField("Booking Status", formData.bookingstatus);
     addField("Project", formData.project);
-    addField("blg", formData.blg);
+    addField("Building", formData.blg);
     addField("Floor", formData.floor);
     addField("Unit", formData.unit);
     addField("Flat No", formData.Flatno);
@@ -618,10 +720,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
     // Applicants
     addSectionTitle("Applicants");
-    addField("addressOne", formData.addressOne);
-    addField("AddressTwo", formData.addressTwo);
+    addField("Address Line 1", formData.addressOne);
+    addField("Address Line 2", formData.addressTwo);
     addField("City", formData.city);
     addField("Pincode", formData.pincode);
+
     formData.applicants.forEach((a, i) => {
       doc.setFont("helvetica", "bold");
       doc.text(`Applicant ${i + 1}`, 14, y);
@@ -631,11 +734,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       addField("First Name", a.firstName);
       addField("Last Name", a.lastName);
       addField("Email", a.email);
-      addField("number", a.number);
-      addField("clientOneDress", a.clientOneDress);
-      addField("clientTwoAdress", a.clientTwoAdress);
-      addField("clientCity", a.clientCity);
-      addField("clientPincode", a.clientPincode);
+      addField("Phone Number", a.phoneNumber);
+      addField("Address Line 1", a.addressLine1);
+      addField("Address Line 2", a.addressLine2);
+      addField("City", a.city);
+      addField("Pincode", a.pincode);
       addField("Aadhaar Uploaded", a.aadhaarUploaded ? "Yes" : "No");
       addField("PAN Uploaded", a.panUploaded ? "Yes" : "No");
       addField("Other Document Uploaded", a.otherUploaded ? "Yes" : "No");
@@ -680,9 +783,9 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       align: "center",
     });
 
-    // Save the PDF
     doc.save("booking_details.pdf");
   };
+
   const steps = [
     "Booking Overview",
     "Applicants",
@@ -690,12 +793,14 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     "Pre-registration",
     "Payment",
   ];
+
   const optionssing: OptionType[] = [
     { value: "mona", label: "Mona" },
     { value: "snehal", label: "Snehal" },
     { value: "rahul", label: "Rahul" },
     { value: "ankit", label: "Ankit" },
   ];
+
   const customSelectStyles = (theme: "dark" | "light") => ({
     control: (base: any, state: any) => ({
       ...base,
@@ -708,7 +813,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
       minHeight: "40px",
       borderWidth: "2px",
       color: theme === "dark" ? "white" : "#201f1f",
-      fontSize: "14px", // ✅ smaller font
+      fontSize: "14px",
       boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
       "&:hover": {
         borderColor: "#007bff",
@@ -717,7 +822,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     menu: (base: any) => ({
       ...base,
       backgroundColor: theme === "dark" ? "#151414f5" : "white",
-      fontSize: "14px", // smaller font in dropdown
+      fontSize: "14px",
     }),
     option: (base: any, state: any) => ({
       ...base,
@@ -739,7 +844,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         : theme === "dark"
         ? "white"
         : "#201f1f",
-      fontSize: "14px", // smaller font
+      fontSize: "14px",
     }),
     singleValue: (base: any) => ({
       ...base,
@@ -792,10 +897,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             <input
               type="date"
               name="bookingDate"
-              value={
-                (formData as any).bookingDate ||
-                new Date().toISOString().split("T")[0]
-              }
+              value={formData.bookingDate}
               onChange={onChangeField}
             />
             {errors.bookingDate && (
@@ -830,21 +932,18 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   text="Project"
                 />
               </label>
-
               <select
                 value={formData.project}
                 name="project"
                 onChange={onChangeField}
               >
                 <option value="">Select Project</option>
-
                 {projectOptions.map((project) => (
                   <option key={project.value} value={project.value}>
                     {project.label}
                   </option>
                 ))}
               </select>
-
               {errors.project && (
                 <p className={styles.errorMsg}>{errors.project}</p>
               )}
@@ -853,8 +952,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
           <div className={styles.formControl}>
             <div className={styles.card}>
-              {/* If buildings exist show building dropdown */}
-
               {hasBuildings && (
                 <select
                   name="blg"
@@ -870,7 +967,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                 </select>
               )}
 
-              {/* Floors (always shown) */}
               <select
                 name="floor"
                 value={formData.floor}
@@ -885,7 +981,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                 ))}
               </select>
 
-              {/* Units (always shown) */}
               <select
                 name="unit"
                 value={formData.unit}
@@ -918,20 +1013,15 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                 onChange={onChangeField}
                 readOnly
               />
-
               {errors.Flatno && (
                 <p className={styles.errorMsg}>{errors.Flatno}</p>
               )}
             </div>
-            {formData.floor &&
-              formData.unit &&
-              (() => {
-                return flat?.occupied == true ? (
-                  <span style={{ color: "red", marginLeft: "3px" }}>
-                    Flat is Already Booked
-                  </span>
-                ) : null;
-              })()}
+            {formData.floor && formData.unit && flat?.occupied && (
+              <span style={{ color: "red", marginLeft: "3px" }}>
+                Flat is Already Booked
+              </span>
+            )}
             <div className={styles.formControl}>
               <label>
                 <RequiredLabel
@@ -949,7 +1039,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               {errors.carpet && (
                 <p className={styles.errorMsg}>{errors.carpet}</p>
               )}
-            </div>{" "}
+            </div>
           </div>
 
           <div className={styles.formControl}>
@@ -966,13 +1056,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               value={formData.Cost}
               onChange={onChangeCost}
             />
-
             {formData.CostWords && (
               <p className={styles.costvalue}>{formData.CostWords}</p>
             )}
-
             {errors.Cost && <p className={styles.errorMsg}>{errors.Cost}</p>}
           </div>
+
           <div className={styles.formControl}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <label
@@ -983,7 +1072,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   {parkingList.length}
                 </span>
               </label>
-
               <button
                 style={{
                   backgroundColor: "#0072ff",
@@ -1010,16 +1098,13 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             )}
 
             {parkingList.map((p, index) => {
-              // dependent dropdown like Flutter
               const parkingNumbers = getParkingNumbers(Number(p.prfloor));
-
               return (
                 <div
                   className={styles.card}
                   key={index}
                   style={{ marginTop: "10px", position: "relative" }}
                 >
-                  {/* Parking Floor */}
                   <div className={styles.formControl}>
                     <label>
                       <RequiredLabel
@@ -1027,7 +1112,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         text="Parking Floor"
                       />
                     </label>
-
                     <select
                       value={p.prfloor}
                       onChange={(e) =>
@@ -1035,7 +1119,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       }
                     >
                       <option value="">Select Floor</option>
-
                       {parkingFloors.map((floor) => (
                         <option key={floor} value={floor}>
                           {floor}
@@ -1044,7 +1127,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                     </select>
                   </div>
 
-                  {/* Parking Number */}
                   <div className={styles.formControl}>
                     <label>
                       <RequiredLabel
@@ -1052,16 +1134,14 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         text="Parking Number"
                       />
                     </label>
-
                     <select
                       value={p.parkingno}
                       onChange={(e) =>
                         updateParkingField(index, "parkingno", e.target.value)
                       }
-                      disabled={!p.prfloor} // like flutter: only enable if floor selected
+                      disabled={!p.prfloor}
                     >
                       <option value="">Select Number</option>
-
                       {parkingNumbers.map((num) => (
                         <option key={num} value={num}>
                           {num}
@@ -1070,7 +1150,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                     </select>
                   </div>
 
-                  {/* Remove Button */}
                   <MdCancel
                     style={{
                       position: "absolute",
@@ -1156,7 +1235,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                 />
               </label>
               <input
-                type="text"
+                type="number"
                 value={formData.pincode}
                 name="pincode"
                 placeholder="Enter pincode...."
@@ -1167,6 +1246,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               )}
             </div>
           </div>
+
           <div className={styles.formControl}>
             <label>
               <RequiredLabel
@@ -1182,6 +1262,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </select>
           </div>
 
@@ -1197,21 +1279,13 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       text="First Name"
                     />
                   </label>
-
                   <div style={{ display: "flex", gap: "10px" }}>
-                    {/* Title / Prefix */}
                     <div className={styles.formControl}>
                       <select
-                        name="prefix"
-                        value={applicant.prefix}
-                        onChange={(e) => {
-                          const updated = [...formData.applicants];
-                          updated[index].prefix = e.target.value;
-                          setformData((prev) => ({
-                            ...prev,
-                            applicants: updated,
-                          }));
-                        }}
+                        value={applicant.prefix || ""}
+                        onChange={(e) =>
+                          handleApplicantChange(index, "prefix", e.target.value)
+                        }
                       >
                         <option value="">Title</option>
                         <option value="Mr.">Mr.</option>
@@ -1225,23 +1299,19 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                         </p>
                       )}
                     </div>
-
-                    {/* First Name */}
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <input
                         type="text"
-                        name="firstName"
-                        value={applicant.firstName}
+                        value={applicant.firstName || ""}
                         placeholder="First Name"
                         style={{ flex: 1 }}
-                        onChange={(e) => {
-                          const updated = [...formData.applicants];
-                          updated[index].firstName = e.target.value;
-                          setformData((prev) => ({
-                            ...prev,
-                            applicants: updated,
-                          }));
-                        }}
+                        onChange={(e) =>
+                          handleApplicantChange(
+                            index,
+                            "firstName",
+                            e.target.value
+                          )
+                        }
                       />
                       {errors[`applicant-${index}-firstName`] && (
                         <p className={styles.errorMsg}>
@@ -1252,7 +1322,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   </div>
                 </div>
 
-                {/* Last Name */}
                 <div className={styles.formControl}>
                   <label>
                     <RequiredLabel
@@ -1262,14 +1331,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   </label>
                   <input
                     type="text"
-                    name="lastName"
-                    value={applicant.lastName}
+                    value={applicant.lastName || ""}
                     placeholder="Last Name"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].lastName = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(index, "lastName", e.target.value)
+                    }
                   />
                   {errors[`applicant-${index}-lastName`] && (
                     <p className={styles.errorMsg}>
@@ -1279,7 +1345,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                 </div>
               </div>
 
-              {/* Email + Address */}
               <div className={styles.card}>
                 <div className={styles.formControl}>
                   <label>
@@ -1290,14 +1355,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   </label>
                   <input
                     type="email"
-                    name="email"
-                    value={applicant.email}
+                    value={applicant.email || ""}
                     placeholder="Enter email address"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].email = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(index, "email", e.target.value)
+                    }
                   />
                   {errors[`applicant-${index}-email`] && (
                     <p className={styles.errorMsg}>
@@ -1313,23 +1375,25 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                     />
                   </label>
                   <input
-                    type="text"
-                    name="number"
-                    value={applicant.number}
+                    type="number"
+                    value={applicant.phoneNumber || ""}
                     placeholder="Enter Phone number"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].number = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(
+                        index,
+                        "phoneNumber",
+                        e.target.value
+                      )
+                    }
                   />
-                  {errors[`applicant-${index}-number`] && (
+                  {errors[`applicant-${index}-phoneNumber`] && (
                     <p className={styles.errorMsg}>
-                      {errors[`applicant-${index}-number`]}
+                      {errors[`applicant-${index}-phoneNumber`]}
                     </p>
                   )}
                 </div>
               </div>
+
               <div className={styles.card}>
                 <div className={styles.formControl}>
                   <label>
@@ -1340,18 +1404,19 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   </label>
                   <input
                     type="text"
-                    name="clientOneDress"
-                    value={applicant.clientOneDress || ""}
+                    value={applicant.addressLine1 || ""}
                     placeholder="Enter address Line 1"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].clientOneDress = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(
+                        index,
+                        "addressLine1",
+                        e.target.value
+                      )
+                    }
                   />
-                  {errors[`applicant-${index}-clientOneDress`] && (
+                  {errors[`applicant-${index}-addressLine1`] && (
                     <p className={styles.errorMsg}>
-                      {errors[`applicant-${index}-clientOneDress`]}
+                      {errors[`applicant-${index}-addressLine1`]}
                     </p>
                   )}
                 </div>
@@ -1364,22 +1429,24 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   </label>
                   <input
                     type="text"
-                    name="clientTwoAdress"
-                    value={applicant.clientTwoAdress || ""}
+                    value={applicant.addressLine2 || ""}
                     placeholder="Enter address Line 2"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].clientTwoAdress = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(
+                        index,
+                        "addressLine2",
+                        e.target.value
+                      )
+                    }
                   />
-                  {errors[`applicant-${index}-clientTwoAdress`] && (
+                  {errors[`applicant-${index}-addressLine2`] && (
                     <p className={styles.errorMsg}>
-                      {errors[`applicant-${index}-clientTwoAdress`]}
+                      {errors[`applicant-${index}-addressLine2`]}
                     </p>
                   )}
                 </div>
               </div>
+
               <div className={styles.card}>
                 <div className={styles.formControl}>
                   <label>
@@ -1390,18 +1457,15 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                   </label>
                   <input
                     type="text"
-                    name="clientCity"
-                    value={applicant.clientCity || ""}
+                    value={applicant.city || ""}
                     placeholder="Enter City Name"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].clientCity = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(index, "city", e.target.value)
+                    }
                   />
-                  {errors[`applicant-${index}-clientCity`] && (
+                  {errors[`applicant-${index}-city`] && (
                     <p className={styles.errorMsg}>
-                      {errors[`applicant-${index}-clientCity`]}
+                      {errors[`applicant-${index}-city`]}
                     </p>
                   )}
                 </div>
@@ -1413,23 +1477,21 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                     />
                   </label>
                   <input
-                    type="text"
-                    name="clientPincode"
-                    value={applicant.clientPincode || ""}
+                    type="number"
+                    value={applicant.pincode || ""}
                     placeholder="Enter Pincode"
-                    onChange={(e) => {
-                      const updated = [...formData.applicants];
-                      updated[index].clientPincode = e.target.value;
-                      setformData((prev) => ({ ...prev, applicants: updated }));
-                    }}
+                    onChange={(e) =>
+                      handleApplicantChange(index, "pincode", e.target.value)
+                    }
                   />
-                  {errors[`applicant-${index}-clientPincode`] && (
+                  {errors[`applicant-${index}-pincode`] && (
                     <p className={styles.errorMsg}>
-                      {errors[`applicant-${index}-clientPincode`]}
+                      {errors[`applicant-${index}-pincode`]}
                     </p>
                   )}
                 </div>
               </div>
+
               {/* Document Uploads */}
               <div className={styles.card} style={{ marginTop: "15px" }}>
                 {/* Aadhaar Upload */}
@@ -1462,7 +1524,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                     >
                       {applicant.aadhaarUploaded ? <FaCheck size={14} /> : "+"}
                     </span>
-                    {/* Remove button only if file uploaded */}
                     {applicant.aadhaarUploaded && (
                       <MdCancel
                         style={{
@@ -1487,11 +1548,9 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       />
                     )}
                   </label>
-
                   <input
                     id={`aadhaar-${index}`}
                     type="file"
-                    name="aadhaar"
                     accept=".pdf,.jpg,.jpeg,.png"
                     style={{ display: "none" }}
                     onChange={(e) => {
@@ -1502,8 +1561,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       setformData((prev) => ({ ...prev, applicants: updated }));
                     }}
                   />
-
-                  {/* View uploaded file */}
                   {applicant.aadhaarUploaded && applicant.aadhaarFile && (
                     <button
                       type="button"
@@ -1573,7 +1630,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       />
                     )}
                   </label>
-
                   <input
                     id={`pan-${index}`}
                     type="file"
@@ -1587,7 +1643,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       setformData((prev) => ({ ...prev, applicants: updated }));
                     }}
                   />
-
                   {applicant.panUploaded && applicant.panFile && (
                     <button
                       type="button"
@@ -1657,7 +1712,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       />
                     )}
                   </label>
-
                   <input
                     id={`other-${index}`}
                     type="file"
@@ -1671,7 +1725,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
                       setformData((prev) => ({ ...prev, applicants: updated }));
                     }}
                   />
-
                   {applicant.otherUploaded && applicant.otherFile && (
                     <button
                       type="button"
@@ -1693,6 +1746,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         </>
       ),
     },
+
     {
       title: "Team Overview",
       fields: (
@@ -1710,9 +1764,14 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               onChange={onChangeField}
             >
               <option value="">Select Closing Manager</option>
-              <option value="Deepak">Deepak</option>
-              <option value="mane">mane</option>
+
+              {closingManagers.map((m) => (
+                <option key={m._id} value={m._id ?? ""}>
+                  {m?.firstName ?? ""} {m?.lastName ?? ""}
+                </option>
+              ))}
             </select>
+
             {errors.manager && (
               <p className={styles.errorMsg}>{errors.manager}</p>
             )}
@@ -2485,7 +2544,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               className={styles.submitBtn}
               onClick={() => {
                 try {
-                  // if (flat?.occupied == true) return;
+                  if (flat?.occupied == true) return;
                   const isValid = validateStep(currentStep);
                   if (isValid) {
                     if (currentStep < steps.length - 1) {
