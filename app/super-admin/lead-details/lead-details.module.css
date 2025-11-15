@@ -1576,9 +1576,9 @@
 
 
 .clientStatus {
-  padding: 3px 6px;
+  padding: 0.1rem 6px;
   border-radius: 8px;
-  font-size: 1.8vh;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
 
   font-weight: 500;
@@ -1704,7 +1704,7 @@
     flex-direction: column-reverse;
     margin-top: 0.5rem;
   }
-
+ 
   .visitBtn {
 
     width: 50%;

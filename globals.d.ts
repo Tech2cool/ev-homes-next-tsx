@@ -329,7 +329,7 @@ interface SiteVisit {
   closingManager?: Employee | null;
   callBy?: Employee | null;
   entryBy?: Employee | null;
-  // channelPartner?: ChannelPartner | null;
+  channelPartner?: ChannelPartner | null;
   closingTeam: Employee[] | null;
   attendedBy?: Employee | null;
   dataEntryBy?: Employee | null;
