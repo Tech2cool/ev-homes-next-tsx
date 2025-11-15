@@ -48,6 +48,7 @@ import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import useDebounce from "@/hooks/useDebounce";
+import { FiPhoneCall } from "react-icons/fi";
 
 const SalesDetailsWrapper = () => {
   return (
@@ -1373,10 +1374,10 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                  <MdAddCall
+                  <FiPhoneCall
                     size={15}
                     color="dodgerblue"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", color: "green" }}
                     onClick={() =>
                       onCall({
                         ...visit,
@@ -1403,10 +1404,10 @@ const VisitDetailsContent = ({
                 </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
-                    <MdAddCall
-                      size={15}
-                      color="dodgerblue"
-                      style={{ cursor: "pointer" }}
+                    <FiPhoneCall
+                    size={15}
+                    color="dodgerblue"
+                    style={{ cursor: "pointer", color: "green" }}
                       onClick={() =>
                         onCall({
                           ...visit,

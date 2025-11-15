@@ -104,13 +104,15 @@
   color: #252425;
 }
 
+.visitbtn,
 .alertdailog,
 .dialogButtons {
   display: flex;
-  justify-content: center;   /* Center horizontally */
+  justify-content: center;
+  /* Center horizontally */
   align-items: center;
   gap: 10px;
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .alertdailog {
@@ -556,12 +558,17 @@
     font-size: 0.85rem;
   }
 
+  .visitbtn,
   .alertdailog,
   .dialogButtons {
     flex-direction: column;
     gap: 8px;
     justify-content: center;
     align-items: center;
+  }
+
+  .visitbtn {
+    flex-direction: row;
   }
 
   .cancelBtn,
@@ -770,6 +777,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   flex-direction: column;
   gap: 10px;
 }
@@ -789,16 +797,63 @@
 
 :global(html.light) .costvalue {
   color: #206524;
-font-weight: 600;
+  font-weight: 600;
 }
-.upladfile{
+
+.upladfile {
   margin-top: 8px;
-  font-size:12px ;
-  color:#4CAF50;
-  background-color :#37363981;
-  padding:4px ;
+  font-size: 12px;
+  color: #4CAF50;
+  background-color: #37363981;
+  padding: 4px;
 }
+
 :global(html.light) .upladfile {
-  color:#124614;
-  background-color :#86d88581;
+  color: #124614;
+  background-color: #86d88581;
+}
+
+.dateTimeWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
+
+.dateTimeContainer {
+  position: relative;
+  width: 100%;
+}
+
+.dateTimeInput {
+  width: 100%;
+  padding: 12px 40px 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #ffffff;
+  transition: all 0.25s ease;
+}
+
+.dateTimeInput:focus {
+  border-color: #4a90e2;
+  box-shadow: 0px 0px 6px rgba(74, 144, 226, 0.4);
+  outline: none;
+  background: #f9fcff;
+}
+
+.icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+  opacity: 0.6;
 }

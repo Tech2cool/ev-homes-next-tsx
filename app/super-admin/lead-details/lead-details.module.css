@@ -617,7 +617,8 @@
 }
 
 .statusBadge.pending {
-  background-color: #ea580c;
+ background: linear-gradient(180deg, #cc8930, #bc5e1b);
+  border: 1px solid #f29d61;
   color: #ffffff;
 }
 :global(html.light) .statusBadge.pending {
@@ -1584,6 +1585,9 @@
   background: rgb(188, 124, 3);
   color: white;
   display: inline-block;
+    white-space: nowrap;       /* text wrap nahi hoga */
+  overflow: hidden;          /* extra text hide */
+  text-overflow: ellipsis;   /* ... show */
 }
 
 :global(html.light) .clientStatus {
