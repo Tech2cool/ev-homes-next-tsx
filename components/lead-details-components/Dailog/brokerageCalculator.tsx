@@ -282,7 +282,7 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
   const generatePDF = async () => {
     if (!calculationResult) return;
 
-    let pdfData = null;
+   const pdfData = null;
     // const uploadResult = await uploadFile(formData.);
 
     setIsGeneratingPDF(true);
