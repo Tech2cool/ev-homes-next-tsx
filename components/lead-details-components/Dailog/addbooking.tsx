@@ -112,6 +112,12 @@ interface FormState {
   frontphoto: File | null;
 }
 
+type ParkingItem = {
+  prfloor: number | ""; // floor is number
+  parkingno: string; // parking number is string
+  [key: string]: number | string;
+};
+
 const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   const { getProjects, projects, getRequirements } = useData();
   const currentTheme = document.documentElement.classList.contains("light")
@@ -121,9 +127,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [parkingList, setParkingList] = useState<
-    { prfloor: string; parkingno: string }[]
-  >([]);
+  const [parkingList, setParkingList] = useState<ParkingItem[]>([]);
+
   const [confirmChecked, setConfirmChecked] = useState(false);
   const [regDone, setRegDone] = useState<string>("");
   const [regDate, setRegDate] = useState<string>("");
@@ -172,33 +177,32 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     (p: OurProject) => p._id === formData.project
   );
 
-  const hasBuildings =
-    selectedProject?.flatList &&
-    selectedProject.flatList.length > 0 &&
-    selectedProject.flatList.some((f) => f.buildingNo);
+  const flats = selectedProject?.flatList ?? [];
 
-  const buildingOptions = selectedProject?.flatList
-    ? [
-        ...new Set(
-          selectedProject.flatList.map((f) => f.buildingNo).filter(Boolean)
-        ),
-      ]
+  const hasBuildings = flats.length > 0 && flats.some((f) => f.buildingNo);
+  //bldg
+  const buildingOptions = hasBuildings
+    ? uniq(flats.map((f) => f.buildingNo).filter(Boolean))
     : [];
-
-  // Unique Floors for selected building
-  const floorOptions =
-    selectedProject?.flatList
-      ?.filter((f) => f.buildingNo == formData.blg)
-      .map((f) => f.floor)
-      .filter((v): v is number => v !== undefined) // removes undefined safely
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .sort((a, b) => a - b) || [];
-
-  // Units for selected floor + building
-  const unitOptions =
-    selectedProject?.flatList
-      ?.filter((f) => f.buildingNo == formData.blg && f.floor == formData.floor)
-      .map((f) => f.number) || [];
+  //floor
+  const floorOptions = hasBuildings
+    ? uniq(
+        flats
+          .filter((f) => f.buildingNo == formData.blg)
+          .map((f) => f.floor)
+          .filter((v) => v !== undefined)
+      ).sort((a, b) => a - b)
+    : uniq(flats.map((f) => f.floor).filter((v) => v !== undefined)).sort(
+        (a, b) => a - b
+      );
+  //unit
+  const unitOptions = hasBuildings
+    ? flats
+        .filter(
+          (f) => f.buildingNo == formData.blg && f.floor == formData.floor
+        )
+        .map((f) => f.number)
+    : flats.filter((f) => f.floor == formData.floor).map((f) => f.number);
 
   useEffect(() => {
     if (selectedProject && formData.floor && formData.unit) {
@@ -213,9 +217,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
         setFieldValue("Flatno", flat.flatNo?.toString() ?? "");
         setFieldValue("carpet", flat.carpetArea?.toString() ?? "");
         setFieldValue("Cost", flat.allInclusiveValue?.toString() ?? "");
-        
       } else {
-        // Generate flat number if not found in project data
         const generatedFlatNo = formData.floor * 100 + Number(formData.unit);
         setFieldValue("Flatno", generatedFlatNo.toString());
       }
@@ -228,23 +230,57 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
     hasBuildings,
   ]);
 
+  const flat = flats.find(
+    (f) =>
+      (hasBuildings ? f.buildingNo == formData.blg : true) &&
+      f.floor == formData.floor &&
+      f.number == formData.unit
+  );
+
+  useEffect(() => {
+    if (!selectedProject) return;
+
+    // Reset building, floor, unit
+    setFieldValue("blg", "");
+    setFieldValue("floor", "");
+    setFieldValue("unit", "");
+
+    // Reset computed values
+    setFieldValue("Flatno", "");
+    setFieldValue("carpet", "");
+    setFieldValue("Cost", "");
+  }, [formData.project]);
+
+  // All unique floors
+  const parkingFloors = (
+    selectedProject?.parkingList
+      ?.map((p) => p.floor)
+      .filter((f) => f !== null && f !== undefined) || []
+  )
+    .filter((item, index, arr) => arr.indexOf(item) === index) // make unique
+    .sort((a, b) => Number(a) - Number(b));
+
+  const getParkingNumbers = (floor: number) => {
+    return (
+      selectedProject?.parkingList
+        ?.filter((p) => p.floor === floor)
+        .map((p) => p.number?.toString()) || []
+    );
+  };
+
   const addParking = () => {
     setParkingList([...parkingList, { prfloor: "", parkingno: "" }]);
   };
 
-  const removeParking = (index: number) => {
+  const removeParking = (i: number) => {
     const updated = [...parkingList];
-    updated.splice(index, 1);
+    updated.splice(i, 1);
     setParkingList(updated);
   };
 
-  const updateParkingField = (
-    index: number,
-    field: "prfloor" | "parkingno",
-    value: string
-  ) => {
+  const updateParkingField = (i: number, field: string, value: any) => {
     const updated = [...parkingList];
-    updated[index][field] = value;
+    updated[i][field] = value;
     setParkingList(updated);
   };
 
@@ -817,73 +853,105 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 
           <div className={styles.formControl}>
             <div className={styles.card}>
+              {/* If buildings exist show building dropdown */}
+
               {hasBuildings && (
-                <div className={styles.card}>
-                  {/* Building Dropdown */}
-                  <select
-                    name="blg"
-                    value={formData.blg}
-                    onChange={onChangeField}
-                  >
-                    <option value="">Select Building</option>
-                    {buildingOptions.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* Floor Dropdown */}
-                  <select
-                    name="floor"
-                    value={formData.floor}
-                    onChange={onChangeField}
-                    disabled={!formData.blg}
-                  >
-                    <option value="">Select Floor</option>
-                    {floorOptions.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* Unit Dropdown */}
-                  <select
-                    name="unit"
-                    value={formData.unit}
-                    onChange={onChangeField}
-                    disabled={!formData.floor}
-                  >
-                    <option value="">Select Unit</option>
-                    {unitOptions.map((u) => (
-                      <option key={u} value={u}>
-                        {u}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  name="blg"
+                  value={formData.blg}
+                  onChange={onChangeField}
+                >
+                  <option value="">Select Building</option>
+                  {buildingOptions.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
               )}
+
+              {/* Floors (always shown) */}
+              <select
+                name="floor"
+                value={formData.floor}
+                onChange={onChangeField}
+                disabled={hasBuildings ? !formData.blg : false}
+              >
+                <option value="">Select Floor</option>
+                {floorOptions.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
+              </select>
+
+              {/* Units (always shown) */}
+              <select
+                name="unit"
+                value={formData.unit}
+                onChange={onChangeField}
+                disabled={!formData.floor}
+              >
+                <option value="">Select Unit</option>
+                {unitOptions.map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-          <div className={styles.formControl}>
-            <label>
-              <RequiredLabel
-                icon={<CiSquareAlert className={styles.iconcolor} />}
-                text="Carpet Area (sq.ft)"
+
+          <div className={styles.card}>
+            <div className={styles.formControl}>
+              <label>
+                <RequiredLabel
+                  icon={<FaDoorClosed className={styles.iconcolor} />}
+                  text="Flat No"
+                />
+              </label>
+              <input
+                type="text"
+                name="Flatno"
+                placeholder="Enter Flat no...."
+                value={formData.Flatno}
+                onChange={onChangeField}
+                readOnly
               />
-            </label>
-            <input
-              type="text"
-              name="carpet"
-              placeholder=" Enter Carpet Area..."
-              value={formData.carpet}
-              onChange={onChangeField}
-            />
-            {errors.carpet && (
-              <p className={styles.errorMsg}>{errors.carpet}</p>
-            )}
+
+              {errors.Flatno && (
+                <p className={styles.errorMsg}>{errors.Flatno}</p>
+              )}
+            </div>
+            {formData.floor &&
+              formData.unit &&
+              (() => {
+                return flat?.occupied == true ? (
+                  <span style={{ color: "red", marginLeft: "3px" }}>
+                    Flat is Already Booked
+                  </span>
+                ) : null;
+              })()}
+            <div className={styles.formControl}>
+              <label>
+                <RequiredLabel
+                  icon={<CiSquareAlert className={styles.iconcolor} />}
+                  text="Carpet Area (sq.ft)"
+                />
+              </label>
+              <input
+                type="text"
+                name="carpet"
+                placeholder=" Enter Carpet Area..."
+                value={formData.carpet}
+                onChange={onChangeField}
+              />
+              {errors.carpet && (
+                <p className={styles.errorMsg}>{errors.carpet}</p>
+              )}
+            </div>{" "}
           </div>
+
           <div className={styles.formControl}>
             <label>
               <RequiredLabel
@@ -906,20 +974,16 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             {errors.Cost && <p className={styles.errorMsg}>{errors.Cost}</p>}
           </div>
           <div className={styles.formControl}>
-            <div
-              style={{
-                display: "flex",
-                gap: "15px",
-                alignItems: "center",
-                paddingTop: "12px",
-              }}
-            >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <label
                 style={{ display: "flex", alignItems: "center", gap: "5px" }}
               >
                 <FaParking className={styles.iconcolor} /> No. Parking:{" "}
-                <span style={{ color: "red" }}>{parkingList.length}</span>
+                <span style={{ color: "red", fontWeight: "600" }}>
+                  {parkingList.length}
+                </span>
               </label>
+
               <button
                 style={{
                   backgroundColor: "#0072ff",
@@ -939,80 +1003,87 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
               </button>
             </div>
 
-            {parkingList.map((p, index) => (
-              <div
-                className={styles.card}
-                key={index}
-                style={{ marginTop: "10px", position: "relative" }}
-              >
-                <div className={styles.formControl}>
-                  <label>
-                    <RequiredLabel
-                      icon={<MdLocalParking className={styles.iconcolor} />}
-                      text="Parking Floor"
-                    />
-                  </label>
-                  <select
-                    value={p.prfloor}
-                    onChange={(e) =>
-                      updateParkingField(index, "prfloor", e.target.value)
-                    }
-                  >
-                    <option value="">Select Floor</option>
-                    <option value="Ground">Ground</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                  </select>
-                  {errors[`parkingList-${index}-prfloor`] && (
-                    <p className={styles.errorMsg}>
-                      {errors[`parkingList-${index}-prfloor`]}
-                    </p>
-                  )}
-                </div>
+            {parkingList.length === 0 && (
+              <p style={{ textAlign: "center", marginTop: "10px" }}>
+                No Parking Selected
+              </p>
+            )}
 
-                <div className={styles.formControl}>
-                  <label>
-                    <RequiredLabel
-                      icon={<MdOutlineNumbers className={styles.iconcolor} />}
-                      text="Parking Number"
-                    />
-                  </label>
-                  <select
-                    value={p.parkingno}
-                    onChange={(e) =>
-                      updateParkingField(index, "parkingno", e.target.value)
-                    }
-                  >
-                    <option value="">Select Number</option>
-                    <option value="P1">P1</option>
-                    <option value="P2">P2</option>
-                    <option value="P3">P3</option>
-                  </select>
-                  {errors[`parkingList-${index}-parkingno`] && (
-                    <p className={styles.errorMsg}>
-                      {errors[`parkingList-${index}-parkingno`]}
-                    </p>
-                  )}
-                </div>
+            {parkingList.map((p, index) => {
+              // dependent dropdown like Flutter
+              const parkingNumbers = getParkingNumbers(Number(p.prfloor));
 
-                <MdCancel
-                  style={{
-                    position: "absolute",
-                    top: "-2px",
-                    right: "5px",
-                    color: "red",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "23px",
-                    height: "23px",
-                    cursor: "pointer",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  onClick={() => removeParking(index)}
-                />
-              </div>
-            ))}
+              return (
+                <div
+                  className={styles.card}
+                  key={index}
+                  style={{ marginTop: "10px", position: "relative" }}
+                >
+                  {/* Parking Floor */}
+                  <div className={styles.formControl}>
+                    <label>
+                      <RequiredLabel
+                        icon={<MdLocalParking className={styles.iconcolor} />}
+                        text="Parking Floor"
+                      />
+                    </label>
+
+                    <select
+                      value={p.prfloor}
+                      onChange={(e) =>
+                        updateParkingField(index, "prfloor", e.target.value)
+                      }
+                    >
+                      <option value="">Select Floor</option>
+
+                      {parkingFloors.map((floor) => (
+                        <option key={floor} value={floor}>
+                          {floor}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Parking Number */}
+                  <div className={styles.formControl}>
+                    <label>
+                      <RequiredLabel
+                        icon={<MdOutlineNumbers className={styles.iconcolor} />}
+                        text="Parking Number"
+                      />
+                    </label>
+
+                    <select
+                      value={p.parkingno}
+                      onChange={(e) =>
+                        updateParkingField(index, "parkingno", e.target.value)
+                      }
+                      disabled={!p.prfloor} // like flutter: only enable if floor selected
+                    >
+                      <option value="">Select Number</option>
+
+                      {parkingNumbers.map((num) => (
+                        <option key={num} value={num}>
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Remove Button */}
+                  <MdCancel
+                    style={{
+                      position: "absolute",
+                      top: "-2px",
+                      right: "5px",
+                      color: "red",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => removeParking(index)}
+                  />
+                </div>
+              );
+            })}
           </div>
         </>
       ),
@@ -2413,14 +2484,18 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
             <button
               className={styles.submitBtn}
               onClick={() => {
-                const isValid = validateStep(currentStep);
-                if (isValid) {
-                  if (currentStep < steps.length - 1) {
-                    setCurrentStep(currentStep + 1);
-                  } else {
-                    onSubmit();
+                try {
+                  // if (flat?.occupied == true) return;
+                  const isValid = validateStep(currentStep);
+                  if (isValid) {
+                    if (currentStep < steps.length - 1) {
+                      setCurrentStep(currentStep + 1);
+                    } else {
+                      onSubmit();
+                    }
                   }
-                } else {
+                } catch (e) {
+                  console.log(e);
                   console.log(
                     "Validation failed — fix errors before next step"
                   );
@@ -2438,3 +2513,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick }) => {
 };
 
 export default AddBooking;
+
+function uniq(arr: any[]) {
+  return arr.filter((v, i) => arr.indexOf(v) === i);
+}

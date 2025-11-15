@@ -596,6 +596,11 @@ type DataProviderState = {
     id: string;
     remark?: string | null;
   }) => Promise<{ success: boolean; message?: string }>;
+
+
+  addBrokerage: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -792,6 +797,11 @@ const initialState: DataProviderState = {
   }),
 
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
+
+  addBrokerage: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -3326,7 +3336,7 @@ const value = {
     getAttendanceOverview: getAttendanceOverview,
     getMyMonthlyAttendance: getMyMonthlyAttendance,
     getTodayAttendance: getTodayAttendance,
-
+addBrokerage:addBrokerage
   };
 
   return (

@@ -19,6 +19,8 @@ interface OurProject {
   shortCode?: string | null;
   showCaseImageLandscape?: string | null;
   flatList?:Flat[];
+
+  parkingList?:Parking[];
 }
 
 interface EstimateGenerated {
@@ -808,4 +810,12 @@ interface Attendance {
   breakStartTime: number | null;
   breakEndTime: string | null;
   lastUpdatedTime: string | null;
+}
+interface Parking {
+  floor?: number;
+  floorName?: string;
+  parkingNo?: string;
+  occupied?: boolean;
+  occupiedBy?: string;
+  number?: number;
 }
