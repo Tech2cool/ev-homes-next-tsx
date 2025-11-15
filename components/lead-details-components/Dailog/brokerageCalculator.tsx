@@ -70,12 +70,10 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
     getChannelPartners,
     getProjects,
     // getLeadByPhoneNumber,
-    addBrokerage,
+    // addBrokerage,
   } = useData();
 
-    const {
- user
-  } = useUser();
+  const { user } = useUser();
 
   const [formData, setFormData] = useState<FormState>({
     phone: lead?.phoneNumber?.toString() ?? "",
@@ -129,59 +127,59 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
     getChannelPartners();
     getProjects();
   }, []);
-useEffect(() => {
-  if (lead) {
-    setFormData((prev) => ({
-      ...prev,
-      phone: lead.phoneNumber?.toString() ?? "",
-      firstName: lead.firstName ?? "",
-      lastName: lead.lastName ?? "",
-      allInclusive: lead.bookingRef?.flatCost?.toString() ?? "0",
-    }));
-    
-    // Set channel partner if available
-    if (lead.channelPartner) {
-      setSelectedChannelPartner(lead.channelPartner);
-    }
-    
-    // Set project if available
-    if (lead.bookingRef?.project) {
-      setSelectedProject(lead.bookingRef.project);
-    }
-    
-    // Set building, floor, and flat details
-    if (lead.bookingRef?.buildingNo) {
-      setSelectedBuildingNo(lead.bookingRef.buildingNo);
-    }
-    
-    if (lead.bookingRef?.floor) {
-      setSelectedFloor(lead.bookingRef.floor);
-    }
-    
-    setDetailsVisible(true);
-  }
-}, [lead]);
-
   useEffect(() => {
-    if (
-      selectedProject &&
-      selectedBuildingNo !== null &&
-      selectedFloor !== null
-    ) {
-      const flat = selectedProject.flatList?.find(
-        (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
-      );
-      if (flat) {
-        setSelectedFlat(flat);
-        setFormData((prev) => ({
-          ...prev,
-          flatNo: flat.flatNo || "",
-          carpetArea: flat.carpetArea?.toString() || "",
-        }));
-        calculateSellableArea(flat.carpetArea?.toString() || "");
+    if (lead) {
+      setFormData((prev) => ({
+        ...prev,
+        phone: lead.phoneNumber?.toString() ?? "",
+        firstName: lead.firstName ?? "",
+        lastName: lead.lastName ?? "",
+        allInclusive: lead.bookingRef?.flatCost?.toString() ?? "0",
+      }));
+
+      // Set channel partner if available
+      if (lead.channelPartner) {
+        setSelectedChannelPartner(lead.channelPartner);
       }
+
+      // Set project if available
+      if (lead.bookingRef?.project) {
+        setSelectedProject(lead.bookingRef.project);
+      }
+
+      // Set building, floor, and flat details
+      if (lead.bookingRef?.buildingNo) {
+        setSelectedBuildingNo(lead.bookingRef.buildingNo);
+      }
+
+      if (lead.bookingRef?.floor) {
+        setSelectedFloor(lead.bookingRef.floor);
+      }
+
+      setDetailsVisible(true);
     }
-  }, [selectedProject, selectedBuildingNo, selectedFloor]);
+  }, [lead]);
+
+  // useEffect(() => {
+  //   if (
+  //     selectedProject &&
+  //     selectedBuildingNo !== null &&
+  //     selectedFloor !== null
+  //   ) {
+  //     const flat = selectedProject.flatList?.find(
+  //       (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
+  //     );
+  //     if (flat) {
+  //       setSelectedFlat(flat);
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         flatNo: flat.flatNo || "",
+  //         carpetArea: flat.carpetArea?.toString() || "",
+  //       }));
+  //       calculateSellableArea(flat.carpetArea?.toString() || "");
+  //     }
+  //   }
+  // }, [selectedProject, selectedBuildingNo, selectedFloor]);
 
   const calculateSellableArea = (carpetArea: string) => {
     const carpet = parseFloat(carpetArea) || 0;
@@ -281,57 +279,56 @@ useEffect(() => {
     }).format(amount);
   };
 
-const generatePDF = async () => {
-  if (!calculationResult) return;
+  const generatePDF = async () => {
+    if (!calculationResult) return;
 
+    let pdfData = null;
+    // const uploadResult = await uploadFile(formData.);
 
-      let pdfData = null;
-        // const uploadResult = await uploadFile(formData.);
+    setIsGeneratingPDF(true);
+    try {
+      const calculationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone || "", // Keep as string instead of parsing to int
+        project: selectedProject,
+        channelPartner: selectedChannelPartner,
+        selectedFlat: selectedFlat,
+        flatNo: formData.flatNo,
+        lead: foundLead || lead,
+        floor: selectedFloor,
+        buildingNo: selectedBuildingNo,
+        number: selectedFlat?.number || null, // Fixed: use selectedFlat's number, not the entire flat object
+        carpetArea: parseFloat(formData.carpetArea) || 0,
+        sellableCarpetArea: parseFloat(formData.sellableCarpetArea) || 0,
+        totalParking: parseInt(formData.totalParking) || 0,
+        parkingPrice: parseFloat(formData.parkingPrice) || 0,
+        developmentPrice: parseFloat(formData.developmentPrice) || 0,
+        allInclusiveValue: parseFloat(formData.allInclusive) || 0,
+        registrationCharges: parseFloat(formData.registration) || 0,
+        commissionRate: parseFloat(formData.percentage) || 0,
+        floorRiseSkip: parseInt(formData.floorRiseSkip) || 0,
+        sellablePercent: parseFloat(formData.sellablePercent) || 0,
+        agreementValue: calculationResult.agreementValue,
+        parkingCharges: calculationResult.parkingCharges,
+        developmentCharges: calculationResult.developmentCharges,
+        floorRiseCharges: calculationResult.floorRiseCharges,
+        totalBrokerage: calculationResult.totalBrokerage,
+        generatedBy: user,
+      };
 
-  setIsGeneratingPDF(true);
-  try {
-    const calculationData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone || "", // Keep as string instead of parsing to int
-      project: selectedProject,
-      channelPartner: selectedChannelPartner,
-      selectedFlat: selectedFlat,
-      flatNo: formData.flatNo,
-      lead: foundLead || lead,
-      floor: selectedFloor,
-      buildingNo: selectedBuildingNo,
-      number: selectedFlat?.number || null, // Fixed: use selectedFlat's number, not the entire flat object
-      carpetArea: parseFloat(formData.carpetArea) || 0,
-      sellableCarpetArea: parseFloat(formData.sellableCarpetArea) || 0,
-      totalParking: parseInt(formData.totalParking) || 0,
-      parkingPrice: parseFloat(formData.parkingPrice) || 0,
-      developmentPrice: parseFloat(formData.developmentPrice) || 0,
-      allInclusiveValue: parseFloat(formData.allInclusive) || 0,
-      registrationCharges: parseFloat(formData.registration) || 0,
-      commissionRate: parseFloat(formData.percentage) || 0,
-      floorRiseSkip: parseInt(formData.floorRiseSkip) || 0,
-      sellablePercent: parseFloat(formData.sellablePercent) || 0,
-      agreementValue: calculationResult.agreementValue,
-      parkingCharges: calculationResult.parkingCharges,
-      developmentCharges: calculationResult.developmentCharges,
-      floorRiseCharges: calculationResult.floorRiseCharges,
-      totalBrokerage: calculationResult.totalBrokerage,
-      generatedBy:user,
-    };
+      console.log("PDF Data:", calculationData);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // await addBrokerage(calculationData);
 
-    console.log("PDF Data:", calculationData);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await addBrokerage(calculationData);
-
-    alert("PDF generated and saved successfully!");
-  } catch (error) {
-    console.error("PDF generation error:", error);
-    alert("Error generating PDF");
-  } finally {
-    setIsGeneratingPDF(false);
-  }
-};
+      alert("PDF generated and saved successfully!");
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      alert("Error generating PDF");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   const handleCancel = () => {
     setFormData({
@@ -390,63 +387,157 @@ const generatePDF = async () => {
 
   // Get unique buildings and floors
 
+  // Also update the building, floor, and flat selection logic
+  // const buildings = Array.from(
+  //   new Set(
+  //     selectedProject?.flatList
+  //       ?.map((f) => f.buildingNo)
+  //       .filter((b): b is number => b !== undefined && b !== null) || []
+  //   )
+  // ).sort();
 
-// Also update the building, floor, and flat selection logic
-const buildings = Array.from(
-  new Set(
-    selectedProject?.flatList
-      ?.map((f) => f.buildingNo)
-      .filter((b): b is number => b !== undefined && b !== null) || []
-  )
-).sort();
+  // const floors = Array.from(
+  //   new Set(
+  //     selectedProject?.flatList
+  //       ?.filter((f) => f.buildingNo === selectedBuildingNo)
+  //       .map((f) => f.floor)
+  //       .filter((f): f is number => f !== undefined && f !== null) || []
+  //   )
+  // ).sort();
 
-const floors = Array.from(
-  new Set(
-    selectedProject?.flatList
-      ?.filter((f) => f.buildingNo === selectedBuildingNo)
-      .map((f) => f.floor)
-      .filter((f): f is number => f !== undefined && f !== null) || []
-  )
-).sort();
+  // const flats =
+  //   selectedProject?.flatList?.filter(
+  //     (f) =>
+  //       f.buildingNo === selectedBuildingNo &&
+  //       f.floor === selectedFloor &&
+  //       f.buildingNo !== undefined &&
+  //       f.floor !== undefined
+  //   ) || [];
 
-const flats =
-  selectedProject?.flatList?.filter(
-    (f) => 
-      f.buildingNo === selectedBuildingNo && 
-      f.floor === selectedFloor &&
-      f.buildingNo !== undefined && 
-      f.floor !== undefined
-  ) || [];
+  const flats = selectedProject?.flatList ?? [];
 
-   useEffect(() => {
-  console.log("Selected Project:", selectedProject);
-  console.log("Selected Building:", selectedBuildingNo);
-  console.log("Selected Floor:", selectedFloor);
-  console.log("Selected Flat:", selectedFlat);
-  console.log("Buildings available:", buildings);
-  console.log("Floors available:", floors);
-  console.log("Flats available:", flats);
-}, [selectedProject, selectedBuildingNo, selectedFloor, selectedFlat, buildings, floors, flats]);
+  // Check if project has building numbers
+  const hasBuildings = flats.length > 0 && flats.some((f) => f.buildingNo);
 
+  const buildingOptions = hasBuildings
+    ? Array.from(
+        new Set(
+          flats
+            .map((f) => f.buildingNo)
+            .filter((b): b is number => b !== undefined && b !== null)
+        )
+      ).sort()
+    : [];
 
-// Add this useEffect to calculate brokerage in real-time
-useEffect(() => {
-  if (formData.allInclusive && parseFloat(formData.allInclusive) > 0) {
-    calculateBrokerage();
+  // ---------------------------
+  // Floor Options - filtered based on selected building
+  // ---------------------------
+  const floorOptions = hasBuildings
+    ? Array.from(
+        new Set(
+          flats
+            .filter((f) => f.buildingNo === selectedBuildingNo)
+            .map((f) => f.floor)
+            .filter((f): f is number => f !== undefined && f !== null)
+        )
+      ).sort((a, b) => a - b)
+    : Array.from(
+        new Set(
+          flats
+            .map((f) => f.floor)
+            .filter((f): f is number => f !== undefined && f !== null)
+        )
+      ).sort((a, b) => a - b);
+
+  // ---------------------------
+  // Unit/Flat Options - filtered based on selected building and floor
+  // ---------------------------
+  const unitOptions = hasBuildings
+    ? flats.filter(
+        (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
+      )
+    : flats.filter((f) => f.floor === selectedFloor);
+
+  // Now replace your existing buildings, floors, flats variables with these:
+  const buildings = buildingOptions;
+  const floors = floorOptions;
+  const flatsForSelection = unitOptions;
+
+  useEffect(() => {
+    console.log("Selected Project:", selectedProject);
+    console.log("Selected Building:", selectedBuildingNo);
+    console.log("Selected Floor:", selectedFloor);
+    console.log("Selected Flat:", selectedFlat);
+    console.log("Buildings available:", buildings);
+    console.log("Floors available:", floors);
+    console.log("Flats available:", flats);
+  }, [
+    selectedProject,
+    selectedBuildingNo,
+    selectedFloor,
+    selectedFlat,
+    buildings,
+    floors,
+    flats,
+  ]);
+
+  useEffect(() => {
+  if (selectedFloor !== null && selectedFlat?.number != null) {
+    const floorNum = Number(selectedFloor);
+    const unitNum = Number(selectedFlat.number);
+    const flatNumber = floorNum * 100 + unitNum;
+
+    setFormData((prev) => ({
+      ...prev,
+      flatNo: flatNumber.toString(),
+    }));
   }
-}, [
-  formData.allInclusive,
-  formData.parkingPrice,
-  formData.totalParking,
-  formData.developmentPrice,
-  formData.floorRisePrice,
-  formData.percentage,
-  formData.sellableCarpetArea,
-  formData.floorRiseSkip,
-  selectedProject,
-  selectedBuildingNo,
-  selectedFloor,
-]);
+}, [selectedFloor, selectedFlat]);
+
+// Update carpet area when flat is selected
+useEffect(() => {
+  if (selectedFlat && selectedFlat.carpetArea) {
+    setFormData((prev) => ({
+      ...prev,
+      carpetArea: selectedFlat.carpetArea?.toString() || "",
+    }));
+    calculateSellableArea(selectedFlat.carpetArea.toString());
+  }
+}, [selectedFlat]);
+
+  // useEffect(() => {
+  //   if (selectedFloor && selectedFlat?.number != null) {
+  //     const floorNum = Number(selectedFloor);
+  //     const unitNum = Number(selectedFlat.number);
+
+  //     const flatNumber = floorNum * 100 + unitNum;
+
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       flatNo: flatNumber.toString(),
+  //     }));
+  //   }
+  // }, [selectedFloor, selectedFlat]);
+
+  // Add this useEffect to calculate brokerage in real-time
+  useEffect(() => {
+    if (formData.allInclusive && parseFloat(formData.allInclusive) > 0) {
+      calculateBrokerage();
+    }
+  }, [
+    formData.allInclusive,
+    formData.parkingPrice,
+    formData.totalParking,
+    formData.developmentPrice,
+    formData.floorRisePrice,
+    formData.percentage,
+    formData.sellableCarpetArea,
+    formData.floorRiseSkip,
+    selectedProject,
+    selectedBuildingNo,
+    selectedFloor,
+    flats,
+  ]);
   const customSelectStyles = (theme: "dark" | "light") => ({
     control: (base: any, state: any) => ({
       ...base,
@@ -682,9 +773,6 @@ useEffect(() => {
                 </select>
               </div>
 
-
-
-
               {/* Project Details */}
               <div className={styles.mainlable}>Project Details</div>
 
@@ -755,7 +843,7 @@ useEffect(() => {
               </div>
 
               <div className={styles.card}>
-                {flats.length > 0 && (
+                {flatsForSelection.length > 0 && (
                   <div className={styles.formControl}>
                     <label>
                       <RequiredLabel icon={<FaHome />} text="Flat No" />
@@ -763,14 +851,14 @@ useEffect(() => {
                     <select
                       value={selectedFlat?.number || ""}
                       onChange={(e) => {
-                        const flat = flats.find(
+                        const flat = flatsForSelection.find(
                           (f) => f.number?.toString() === e.target.value
                         );
                         setSelectedFlat(flat || null);
                       }}
                     >
                       <option value="">Select Flat</option>
-                      {flats.map((flat) => (
+                      {flatsForSelection.map((flat) => (
                         <option key={flat.number} value={flat.number}>
                           {flat.number}
                         </option>

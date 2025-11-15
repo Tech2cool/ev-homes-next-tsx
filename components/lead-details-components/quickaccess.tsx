@@ -182,7 +182,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
       {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
       {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
 
-      {estimategenerator && <Estimategenerator openclick={setestimategenerator} lead={lead??""}/>}
+      {estimategenerator && <Estimategenerator openclick={setestimategenerator} />}
 
 
       {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
