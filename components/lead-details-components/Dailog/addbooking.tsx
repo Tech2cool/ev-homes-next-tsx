@@ -48,6 +48,7 @@ import { LuBuilding2 } from "react-icons/lu";
 import { TbHexagonNumber1Filled } from "react-icons/tb";
 import { jsPDF } from "jspdf";
 import { useData } from "@/providers/dataContext";
+import { exec } from "apexcharts";
 
 interface AddBookingProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -89,16 +90,6 @@ interface KycDocument {
   type?: string | null;
 }
 
-interface Payment {
-  id: number;
-  paymentType: string;
-  paymentMode: string;
-  date: string;
-  tdsAmount: string;
-  receiptNo: string;
-  transactionNo: string;
-}
-
 interface OptionType {
   value: string;
   label: string;
@@ -133,18 +124,29 @@ interface FormState {
 }
 
 type ParkingItem = {
-  prfloor: number | "";
+  prfloor: number ;
   parkingno: string;
   [key: string]: number | string;
 };
 
 const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
-  const { getProjects, projects, getClosingManagers, closingManagers } =
-    useData();
+  const {
+    getProjects,
+    projects,
+    getClosingManagers,
+    closingManagers,
+    postSalesExecutives,
+    getPostSalesExecutives,
+    addPostSaleLead,
+    uploadFile,
+    addPayment,
+  } = useData();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
   const dialogRef = useRef<HTMLDivElement>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -242,7 +244,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       };
 
       formData.addressOne = lead.address || "";
-      formData.manager=lead.teamLeader?._id||"";
+      formData.manager = lead.teamLeader?._id || "";
       setformData((prev) => ({
         ...prev,
         applicants: [leadApplicant],
@@ -253,8 +255,33 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   useEffect(() => {
     getProjects();
     getClosingManagers();
+    getPostSalesExecutives();
   }, []);
 
+  const [preRegistrationChecklist, setPreRegistrationChecklist] = useState({
+    tenPercentRecieved: { recieved: "no", remark: "" },
+    stampDuty: { recieved: "no", percent: 0, remark: "" },
+    gst: { recieved: "no", percent: 0, remark: "" },
+    noc: { recieved: "no" },
+    tds: { recieved: "no", remark: "" },
+    legalCharges: { recieved: "no" },
+    kyc: { recieved: "no" },
+    agreement: {
+      prepared: false,
+      handOver: { status: "no" },
+      document: {},
+    },
+  });
+
+  const updateChecklistField = (section: string, field: string, value: any) => {
+    setPreRegistrationChecklist((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section as keyof typeof prev],
+        [field]: value,
+      },
+    }));
+  };
   const selectedProject = projects.find(
     (p: OurProject) => p._id === formData.project
   );
@@ -319,6 +346,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       f.number == formData.unit
   );
 
+  const optionssing = postSalesExecutives.map((exec) => ({
+    value: exec?._id ?? "",
+    label: `${exec?.firstName ?? ""} ${exec?.lastName ?? ""}`,
+  }));
+
   useEffect(() => {
     if (!selectedProject) return;
     setFieldValue("blg", "");
@@ -346,7 +378,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   };
 
   const addParking = () => {
-    setParkingList([...parkingList, { prfloor: "", parkingno: "" }]);
+    setParkingList([...parkingList, { prfloor: 0, parkingno: "" }]);
   };
 
   const removeParking = (i: number) => {
@@ -363,18 +395,18 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
   const handleAddPayment = () => {
     const newPayment: Payment = {
-      id: Date.now(),
+      _id: "",
       paymentType: "",
       paymentMode: "",
-      date: "",
-      tdsAmount: "",
+      date: null,
+      tds: 0,
       receiptNo: "",
-      transactionNo: "",
+      transactionId: "",
     };
     setPayments((prev) => [...prev, newPayment]);
   };
 
-  const handleRemovePayment = (id: number) => {
+  const handleRemovePayment = (id: string) => {
     setPayments((prev) => prev.filter((payment) => payment.id !== id));
   };
 
@@ -521,18 +553,16 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
         newErrors.payments = "Please add at least one payment";
       } else {
         payments.forEach((payment, index) => {
-          if (!payment.paymentType.trim())
-            newErrors[`payment-${index}-type`] = "Select payment type";
-          if (!payment.paymentMode.trim())
+          if (!payment.paymentMode?.trim())
             newErrors[`payment-${index}-mode`] = "Select payment mode";
-          if (!payment.date.trim())
+          if (!payment.date?.toISOString())
             newErrors[`payment-${index}-date`] = "Select payment date";
-          if (!payment.tdsAmount.trim())
+          if (!payment.tds)
             newErrors[`payment-${index}-tds`] = "Enter TDS amount";
-          if (!payment.receiptNo.trim())
+          if (!payment.transactionId)
             newErrors[`payment-${index}-receipt`] = "Enter receipt number";
-          if (!payment.transactionNo.trim())
-            newErrors[`payment-${index}-txn`] = "Enter transaction number";
+          // if (!payment.transactionNo.trim())
+          //   newErrors[`payment-${index}-txn`] = "Enter transaction number";
         });
       }
       if (!confirmChecked)
@@ -544,16 +574,239 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const onSubmit = () => {
-    const newErrors: { [key: string]: string } = {};
-    setErrors(newErrors);
+  const onSubmit = async () => {
 
-    if (Object.keys(newErrors).length > 0) return;
+    console.log("padd 1");
+    if (!confirmChecked) {
+      alert(
+        "Please confirm that all details are correct and select the checkbox."
+      );
+      return;
+    }
 
-    alert(
-      "Form submitted successfully: \n" + JSON.stringify(formData, null, 2)
-    );
-    openclick(false);
+    if (!formData.frontphoto || !formData.backphoto) {
+      alert("Please upload both front and back photos of the booking form.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Upload documents
+      let uploadedBookingFormFront: string | undefined;
+      let uploadedBookingFormBack: string | undefined;
+      let uploadedBookingPdf: string | undefined;
+
+      // Upload booking form front
+      if (formData.frontphoto) {
+        const frontResponse = await uploadFile(formData.frontphoto);
+        uploadedBookingFormFront = frontResponse?.file?.downloadUrl;
+      }
+
+      // Upload booking form back
+      if (formData.backphoto) {
+        const backResponse = await uploadFile(formData.backphoto);
+        uploadedBookingFormBack = backResponse?.file?.downloadUrl;
+      }
+
+      // Upload PDF if generated
+      // You'll need to generate the PDF as a file first
+      // const pdfBlob = generatePDFAsBlob();
+      // const pdfFile = new File([pdfBlob], 'booking_details.pdf', { type: 'application/pdf' });
+      // const pdfResponse = await uploadFile(pdfFile);
+      // uploadedBookingPdf = pdfResponse?.file?.downloadUrl;
+
+      // Upload applicant documents and create applicants array
+      const applicantsWithKyc = await Promise.all(
+        formData.applicants.map(async (applicant, index) => {
+          let uploadedAdhar = "";
+          let uploadedPan = "";
+          let uploadedOther = "";
+
+          try {
+            if (applicant.aadhaarFile) {
+              const aadharResponse = await uploadFile(applicant.aadhaarFile);
+              uploadedAdhar = aadharResponse?.file?.downloadUrl || "";
+            }
+
+            if (applicant.panFile) {
+              const panResponse = await uploadFile(applicant.panFile);
+              uploadedPan = panResponse?.file?.downloadUrl || "";
+            }
+
+            if (applicant.otherFile) {
+              const otherResponse = await uploadFile(applicant.otherFile);
+              uploadedOther = otherResponse?.file?.downloadUrl || "";
+            }
+          } catch (error) {
+            console.error(
+              `Error uploading documents for applicant ${index + 1}:`,
+              error
+            );
+          }
+
+          return {
+            prefix: applicant.prefix || "",
+            firstName: applicant.firstName || "",
+            lastName: applicant.lastName || "",
+            email: applicant.email || "",
+            address: applicant.addressLine1 || "",
+            addressLine1: applicant.addressLine1 || "",
+            addressLine2: applicant.addressLine2 || "",
+            city: applicant.city || "",
+            pincode: applicant.pincode || "",
+            phoneNumber: parseInt(applicant.phoneNumber || "0"),
+            kyc: {
+              addhar: { document: uploadedAdhar, type: "aadhar" },
+              pan: { document: uploadedPan, type: "pan" },
+              other: { document: uploadedOther, type: "other" },
+            },
+          };
+        })
+      );
+
+      // Create parking array
+      const parkings = parkingList.map((parking) => {
+        const foundParking = selectedProject?.parkingList?.find(
+          (p: Parking) =>
+            p.floor === parking.prfloo &&
+            p.number?.toString() === parking.parkingno
+        );
+
+        return {
+          floor: parking.prfloor,
+          floorName: foundParking?.floorName,
+          parkingNo: foundParking?.number?.toString(),
+          occupied: true,
+          occupiedBy: foundParking?.occupiedBy,
+        };
+      });
+
+      // Prepare the lead data
+      const leadData: PostSaleLead = {
+
+        // Flat details
+        project: projects.find((e) => e._id === formData.project),
+        buildingNo: formData.blg || undefined,
+        floor: formData.floor,
+        number: formData.unit,
+        unitNo: formData.Flatno,
+        parking: parkings,
+
+        // Applicant details
+        firstName: formData.applicants[0]?.firstName || "",
+        lastName: formData.applicants[0]?.lastName || "",
+        phoneNumber: parseInt(formData.applicants[0]?.phoneNumber || "0"),
+        email: formData.applicants[0]?.email || "",
+        applicants: applicantsWithKyc,
+
+        // Primary address
+        address: formData.addressOne,
+        pincode: formData.pincode,
+        city: formData.city,
+        addressLine1: formData.addressOne,
+        addressLine2: formData.addressTwo,
+
+        // Team
+        closingManager: closingManagers.find((e) => e._id === formData.manager),
+        postSaleAssignTo: formData.assignto
+          .map((opt) =>
+            postSalesExecutives.find((exec) => exec._id === opt.value)
+          )
+          .filter((exec): exec is Employee => Boolean(exec)),
+        // Booking
+        registrationDone: regDone === "yes",
+        flatCost: parseFloat(formData.Cost) || 0,
+        carpetArea: parseFloat(formData.carpet) || 0,
+        date: formData.bookingDate ? new Date(formData.bookingDate) : null,
+
+        bookingFormFront: uploadedBookingFormFront,
+        bookingFormBack: uploadedBookingFormBack,
+        bookingPdf: uploadedBookingPdf,
+        status: formData.bookingstatus,
+        bookingStatus: { type: formData.bookingstatus },
+
+        // Pre-registration checklist
+        preRegistrationCheckList: {
+          tenPercentRecieved: {
+            remark: preRegistrationChecklist.tenPercentRecieved.remark,
+            recieved: preRegistrationChecklist.tenPercentRecieved.recieved,
+          },
+          stampDuty: {
+            remark: preRegistrationChecklist.stampDuty.remark,
+            recieved: preRegistrationChecklist.stampDuty.recieved,
+            percent: preRegistrationChecklist.stampDuty.percent,
+          },
+          gst: {
+            remark: preRegistrationChecklist.gst.remark,
+            recieved: preRegistrationChecklist.gst.recieved,
+            percent: preRegistrationChecklist.gst.percent,
+          },
+          noc: {
+            recieved: preRegistrationChecklist.noc.recieved,
+          },
+          tds: {
+            remark: preRegistrationChecklist.tds.remark,
+            recieved: preRegistrationChecklist.tds.recieved,
+          },
+          legalCharges: {
+            recieved: preRegistrationChecklist.legalCharges.recieved,
+          },
+          kyc: {
+            recieved: preRegistrationChecklist.kyc.recieved,
+          },
+          agreement: {
+            handOver: {
+              status: handover,
+            },
+            document: {},
+            prepared: preRegistrationChecklist.agreement.prepared,
+          },
+        },
+
+        // Other fields
+        // pricingRemark: formData.remarkLast,
+      };
+
+      // Add the lead
+      const response = await addPostSaleLead(leadData);
+      console.log("Lead created successfully:", response);
+
+      // Add payments separately
+      if (payments.length > 0) {
+        await Promise.all(
+          payments.map(async (payment) => {
+            const paymentData: Payment = {
+              _id: payment._id?.toString(),
+
+              bookingAmt: Number(payment.tds) || 0,
+              // amtReceived: Number(payment.amountReceived) || 0,
+              tds: payment?.tds,
+              cgst: payment.cgst,
+
+              date: payment.date ? new Date(payment.date) : undefined,
+              transactionId: payment?.transactionId,
+              paymentMode: payment.paymentMode,
+              paymentType: payment.paymentType,
+              receiptNo: payment.receiptNo,
+
+              projects: projects.find((e) => e._id === formData.project),
+              flatNo: formData.Flatno,
+            };
+
+            addPayment(paymentData);
+          })
+        );
+      }
+
+      alert("Booking created successfully!");
+      openclick(false);
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      alert("Failed to create booking. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const RequiredLabel: React.FC<{ icon: React.ReactNode; text: string }> = ({
@@ -614,7 +867,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   };
 
   const handlePaymentChange = (
-    id: number,
+    id: string,
     field: keyof Payment,
     value: string
   ) => {
@@ -634,23 +887,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       }));
     }
   }, [formData.floor, formData.unit]);
-
-  const convertToIndianWords = (num: number) => {
-    if (!num) return "";
-    let crore = Math.floor(num / 10000000);
-    num %= 10000000;
-    let lakh = Math.floor(num / 100000);
-    num %= 100000;
-    let thousand = Math.floor(num / 1000);
-    num %= 1000;
-    let hundred = num;
-    let result = "";
-    if (crore) result += `${crore} Cr `;
-    if (lakh) result += `${lakh} Lakh `;
-    if (thousand) result += `${thousand} Thousand `;
-    if (hundred) result += `${hundred}`;
-    return result.trim();
-  };
 
   const onChangeCost = (e: any) => {
     const { name, value } = e.target;
@@ -766,10 +1002,10 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       doc.setFont("helvetica", "normal");
       addField("Payment Type", p.paymentType);
       addField("Payment Mode", p.paymentMode);
-      addField("Date", p.date);
-      addField("TDS Amount", p.tdsAmount);
-      addField("Receipt No", p.receiptNo);
-      addField("Transaction No", p.transactionNo);
+      // addField("Date", p.date);
+      // addField("TDS Amount", p.tdsAmount);
+      // addField("Receipt No", p.receiptNo);
+      // addField("Transaction No", p.transactionNo);
     });
 
     // Confirmation
@@ -793,14 +1029,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     "Pre-registration",
     "Payment",
   ];
-
-  const optionssing: OptionType[] = [
-    { value: "mona", label: "Mona" },
-    { value: "snehal", label: "Snehal" },
-    { value: "rahul", label: "Rahul" },
-    { value: "ankit", label: "Ankit" },
-  ];
-
   const customSelectStyles = (theme: "dark" | "light") => ({
     control: (base: any, state: any) => ({
       ...base,
@@ -1113,7 +1341,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                       />
                     </label>
                     <select
-                      value={p.prfloor}
+                      value={p?.prfloor ?? 0}
                       onChange={(e) =>
                         updateParkingField(index, "prfloor", e.target.value)
                       }
@@ -1804,10 +2032,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
         </>
       ),
     },
+
     {
       title: "Pre-registration",
       fields: (
         <>
+          {/* Upload Booking Form Frontside */}
           <div className={styles.card}>
             <div className={styles.formControl}>
               <label
@@ -1830,7 +2060,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     }}
                     onClick={() => {
                       setformData((prev) => ({ ...prev, frontphoto: null }));
-                      setFrontUploaded(false); // Enable input again
+                      setFrontUploaded(false);
                     }}
                   />
                 )}
@@ -1844,12 +2074,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     const file = e.target.files?.[0] || null;
                     if (!file) return;
                     setformData((prev) => ({ ...prev, frontphoto: file }));
-                    setFrontUploaded(true); // Disable input
+                    setFrontUploaded(true);
                   }}
                 />
               )}
 
-              {/* Show file name */}
               {formData.frontphoto && <p>{formData.frontphoto.name}</p>}
 
               {formData.frontphoto && (
@@ -1869,7 +2098,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
             </div>
           </div>
 
-          {/* Backside */}
+          {/* Upload Booking Form Backside */}
           <div className={styles.card}>
             <div className={styles.formControl}>
               <label
@@ -1892,7 +2121,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     }}
                     onClick={() => {
                       setformData((prev) => ({ ...prev, backphoto: null }));
-                      setBackUploaded(false); // Enable input again
+                      setBackUploaded(false);
                     }}
                   />
                 )}
@@ -1906,12 +2135,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     const file = e.target.files?.[0] || null;
                     if (!file) return;
                     setformData((prev) => ({ ...prev, backphoto: file }));
-                    setBackUploaded(true); // Disable input
+                    setBackUploaded(true);
                   }}
                 />
               )}
 
-              {/* Show file name */}
               {formData.backphoto && <p>{formData.backphoto.name}</p>}
 
               {formData.backphoto && (
@@ -1931,6 +2159,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
             </div>
           </div>
 
+          {/* 10% Received & Stamp Duty */}
           <div className={styles.card}>
             <div className={styles.formControl}>
               <label>
@@ -1939,17 +2168,59 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="tenPercentReceived" value="yes" />{" "}
+                  <input
+                    type="radio"
+                    name="tenPercentReceived"
+                    value="yes"
+                    checked={
+                      preRegistrationChecklist.tenPercentRecieved.recieved ===
+                      "yes"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "tenPercentRecieved",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
+                  />{" "}
                   Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="tenPercentReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="tenPercentReceived"
+                    value="no"
+                    checked={
+                      preRegistrationChecklist.tenPercentRecieved.recieved ===
+                      "no"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "tenPercentRecieved",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
+                  />{" "}
+                  No
                 </label>
                 <label className={styles.radioLabel}>
                   <input
                     type="radio"
                     name="tenPercentReceived"
                     value="partial"
+                    checked={
+                      preRegistrationChecklist.tenPercentRecieved.recieved ===
+                      "partial"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "tenPercentRecieved",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
                   />{" "}
                   Partial
                 </label>
@@ -1959,6 +2230,14 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                 type="text"
                 placeholder="Remark"
                 className={styles.remarkInput}
+                value={preRegistrationChecklist.tenPercentRecieved.remark}
+                onChange={(e) =>
+                  updateChecklistField(
+                    "tenPercentRecieved",
+                    "remark",
+                    e.target.value
+                  )
+                }
               />
             </div>
 
@@ -1969,23 +2248,74 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="StampDutyReceived" value="yes" />{" "}
+                  <input
+                    type="radio"
+                    name="StampDutyReceived"
+                    value="yes"
+                    checked={
+                      preRegistrationChecklist.stampDuty.recieved === "yes"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "stampDuty",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
+                  />{" "}
                   Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="StampDutyReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="StampDutyReceived"
+                    value="no"
+                    checked={
+                      preRegistrationChecklist.stampDuty.recieved === "no"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "stampDuty",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
+                  />{" "}
+                  No
                 </label>
                 <label className={styles.radioLabel}>
                   <input
                     type="radio"
                     name="StampDutyReceived"
                     value="partial"
+                    checked={
+                      preRegistrationChecklist.stampDuty.recieved === "partial"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "stampDuty",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
                   />{" "}
                   Partial
-                  <select className={styles.percentDropdown}>
+                  <select
+                    className={styles.percentDropdown}
+                    value={preRegistrationChecklist.stampDuty.percent}
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "stampDuty",
+                        "percent",
+                        e.target.value
+                      )
+                    }
+                  >
                     <option value="">%</option>
                     <option value="5">5%</option>
                     <option value="6">6%</option>
+                    <option value="7">7%</option>
+                    <option value="8">8%</option>
                   </select>
                 </label>
               </div>
@@ -1994,10 +2324,15 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                 type="text"
                 placeholder="Remark"
                 className={styles.remarkInput}
+                value={preRegistrationChecklist.stampDuty.remark}
+                onChange={(e) =>
+                  updateChecklistField("stampDuty", "remark", e.target.value)
+                }
               />
             </div>
           </div>
 
+          {/* TDS Received & GST Received */}
           <div className={styles.card}>
             <div className={styles.formControl}>
               <label>
@@ -2007,13 +2342,41 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="tdsReceived" value="yes" /> Yes
+                  <input
+                    type="radio"
+                    name="tdsReceived"
+                    value="yes"
+                    checked={preRegistrationChecklist.tds.recieved === "yes"}
+                    onChange={(e) =>
+                      updateChecklistField("tds", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="tdsReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="tdsReceived"
+                    value="no"
+                    checked={preRegistrationChecklist.tds.recieved === "no"}
+                    onChange={(e) =>
+                      updateChecklistField("tds", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  No
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="tdsReceived" value="partial" />{" "}
+                  <input
+                    type="radio"
+                    name="tdsReceived"
+                    value="partial"
+                    checked={
+                      preRegistrationChecklist.tds.recieved === "partial"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField("tds", "recieved", e.target.value)
+                    }
+                  />{" "}
                   Partial
                 </label>
               </div>
@@ -2022,6 +2385,10 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                 type="text"
                 placeholder="Remark"
                 className={styles.remarkInput}
+                value={preRegistrationChecklist.tds.remark}
+                onChange={(e) =>
+                  updateChecklistField("tds", "remark", e.target.value)
+                }
               />
             </div>
 
@@ -2032,18 +2399,56 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="gstReceived" value="yes" /> Yes
+                  <input
+                    type="radio"
+                    name="gstReceived"
+                    value="yes"
+                    checked={preRegistrationChecklist.gst.recieved === "yes"}
+                    onChange={(e) =>
+                      updateChecklistField("gst", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="gstReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="gstReceived"
+                    value="no"
+                    checked={preRegistrationChecklist.gst.recieved === "no"}
+                    onChange={(e) =>
+                      updateChecklistField("gst", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  No
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="gstReceived" value="partial" />{" "}
+                  <input
+                    type="radio"
+                    name="gstReceived"
+                    value="partial"
+                    checked={
+                      preRegistrationChecklist.gst.recieved === "partial"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField("gst", "recieved", e.target.value)
+                    }
+                  />{" "}
                   Partial
-                  <select className={styles.percentDropdown}>
+                  <select
+                    className={styles.percentDropdown}
+                    value={preRegistrationChecklist.gst.percent}
+                    onChange={(e) =>
+                      updateChecklistField("gst", "percent", e.target.value)
+                    }
+                  >
                     <option value="">%</option>
                     <option value="5">5%</option>
                     <option value="6">6%</option>
+                    <option value="7">7%</option>
+                    <option value="8">8%</option>
+                    <option value="12">12%</option>
+                    <option value="18">18%</option>
                   </select>
                 </label>
               </div>
@@ -2052,10 +2457,15 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                 type="text"
                 placeholder="Remark"
                 className={styles.remarkInput}
+                value={preRegistrationChecklist.gst.remark}
+                onChange={(e) =>
+                  updateChecklistField("gst", "remark", e.target.value)
+                }
               />
             </div>
           </div>
 
+          {/* NOC Received, KYC Received & Legal Charges */}
           <div className={styles.card}>
             <div className={styles.formControl}>
               <label>
@@ -2064,10 +2474,28 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="nocReceived" value="yes" /> Yes
+                  <input
+                    type="radio"
+                    name="nocReceived"
+                    value="yes"
+                    checked={preRegistrationChecklist.noc.recieved === "yes"}
+                    onChange={(e) =>
+                      updateChecklistField("noc", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="nocReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="nocReceived"
+                    value="no"
+                    checked={preRegistrationChecklist.noc.recieved === "no"}
+                    onChange={(e) =>
+                      updateChecklistField("noc", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  No
                 </label>
               </div>
             </div>
@@ -2079,10 +2507,28 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="kycReceived" value="yes" /> Yes
+                  <input
+                    type="radio"
+                    name="kycReceived"
+                    value="yes"
+                    checked={preRegistrationChecklist.kyc.recieved === "yes"}
+                    onChange={(e) =>
+                      updateChecklistField("kyc", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="kycReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="kycReceived"
+                    value="no"
+                    checked={preRegistrationChecklist.kyc.recieved === "no"}
+                    onChange={(e) =>
+                      updateChecklistField("kyc", "recieved", e.target.value)
+                    }
+                  />{" "}
+                  No
                 </label>
               </div>
             </div>
@@ -2094,15 +2540,46 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="legalReceived" value="yes" /> Yes
+                  <input
+                    type="radio"
+                    name="legalReceived"
+                    value="yes"
+                    checked={
+                      preRegistrationChecklist.legalCharges.recieved === "yes"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "legalCharges",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
+                  />{" "}
+                  Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="legalReceived" value="no" /> No
+                  <input
+                    type="radio"
+                    name="legalReceived"
+                    value="no"
+                    checked={
+                      preRegistrationChecklist.legalCharges.recieved === "no"
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "legalCharges",
+                        "recieved",
+                        e.target.value
+                      )
+                    }
+                  />{" "}
+                  No
                 </label>
               </div>
             </div>
           </div>
 
+          {/* Registration Done, Agreement Prepared & Agreement Handover */}
           <div className={styles.card}>
             <div className={styles.formControl}>
               <label>
@@ -2153,10 +2630,40 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               <div className={`${styles.checkboxGroup} ${styles.formSpacing}`}>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="Preagrement" value="yes" /> Yes
+                  <input
+                    type="radio"
+                    name="Preagrement"
+                    value="yes"
+                    checked={
+                      preRegistrationChecklist.agreement.prepared === true
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "agreement",
+                        "prepared",
+                        e.target.value === "yes"
+                      )
+                    }
+                  />{" "}
+                  Yes
                 </label>
                 <label className={styles.radioLabel}>
-                  <input type="radio" name="Preagrement" value="no" /> No
+                  <input
+                    type="radio"
+                    name="Preagrement"
+                    value="no"
+                    checked={
+                      preRegistrationChecklist.agreement.prepared === false
+                    }
+                    onChange={(e) =>
+                      updateChecklistField(
+                        "agreement",
+                        "prepared",
+                        e.target.value === "yes"
+                      )
+                    }
+                  />{" "}
+                  No
                 </label>
               </div>
             </div>
@@ -2201,6 +2708,24 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   />
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Additional Remarks Section */}
+          <div className={styles.card}>
+            <div className={styles.formControl}>
+              <label>
+                <IoLocation className={styles.iconcolor} />
+                Additional Remarks
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Any additional remarks or notes..."
+                value={formData.remarkLast}
+                name="remarkLast"
+                onChange={onChangeField}
+                className={styles.remarkTextarea}
+              />
             </div>
           </div>
         </>
@@ -2250,7 +2775,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   ({index + 1}) Payment - online - null
                 </p>
                 <MdCancel
-                  onClick={() => handleRemovePayment(payment.id)}
+                  onClick={() => handleRemovePayment(payment?._id)}
                   style={{
                     position: "absolute",
                     top: "-2px",
@@ -2279,7 +2804,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment.paymentType}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment.id,
+                        payment._id,
                         "paymentType",
                         e.target.value
                       )
@@ -2309,7 +2834,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment.paymentMode}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment.id,
+                        payment?._id,
                         "paymentMode",
                         e.target.value
                       )
@@ -2339,9 +2864,9 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   <input
                     type="date"
                     name="date"
-                    value={payment.date}
+                    value={payment?.date?.toISOString() ?? ""}
                     onChange={(e) =>
-                      handlePaymentChange(payment.id, "date", e.target.value)
+                      handlePaymentChange(payment?._id, "date", e.target.value)
                     }
                   />
                   {errors[`payment-${index}-date`] && (
@@ -2360,14 +2885,10 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   </label>
                   <input
                     type="text"
-                    name="tdsAmount"
-                    value={payment.tdsAmount}
+                    name="tds"
+                    value={payment?.tds}
                     onChange={(e) =>
-                      handlePaymentChange(
-                        payment.id,
-                        "tdsAmount",
-                        e.target.value
-                      )
+                      handlePaymentChange(payment?._id, "tds", e.target.value)
                     }
                     placeholder="Enter TDS Amount..."
                   />
@@ -2394,7 +2915,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment.receiptNo}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment.id,
+                        payment._id,
                         "receiptNo",
                         e.target.value
                       )
@@ -2417,12 +2938,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   </label>
                   <input
                     type="text"
-                    name="transactionNo"
-                    value={payment.transactionNo}
+                    name="transactionId"
+                    value={payment?.transactionId}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment.id,
-                        "transactionNo",
+                        payment._id,
+                        "transactionId",
                         e.target.value
                       )
                     }
@@ -2545,14 +3066,16 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
               onClick={() => {
                 try {
                   if (flat?.occupied == true) return;
-                  const isValid = validateStep(currentStep);
-                  if (isValid) {
+                  // const isValid = validateStep(currentStep);
+                  // if (isValid) {
+
+
                     if (currentStep < steps.length - 1) {
                       setCurrentStep(currentStep + 1);
                     } else {
                       onSubmit();
                     }
-                  }
+                  // }
                 } catch (e) {
                   console.log(e);
                   console.log(
@@ -2561,7 +3084,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                 }
               }}
             >
-              {currentStep === steps.length - 1 ? "Submit" : "Next"}
+              {isLoading
+                ? "Creating..."
+                : currentStep === steps.length - 1
+                ? "Submit"
+                : "Next"}
             </button>
           </div>
         </div>
@@ -2576,3 +3103,29 @@ export default AddBooking;
 function uniq(arr: any[]) {
   return arr.filter((v, i) => arr.indexOf(v) === i);
 }
+
+const convertToIndianWords = (num: number) => {
+    if (!num) return "";
+
+    let remaining = num;
+
+    const crore = Math.floor(remaining / 10000000);
+    remaining %= 10000000;
+
+    const lakh = Math.floor(remaining / 100000);
+    remaining %= 100000;
+
+    const thousand = Math.floor(remaining / 1000);
+    remaining %= 1000;
+
+    const hundred = remaining;
+
+    let result = "";
+
+    if (crore) result += `${crore} Cr `;
+    if (lakh) result += `${lakh} Lakh `;
+    if (thousand) result += `${thousand} Thousand `;
+    if (hundred) result += `${hundred}`;
+
+    return result.trim();
+  };
