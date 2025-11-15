@@ -272,8 +272,8 @@
   color: #fff;
   background: linear-gradient(180deg, #2fccf7, #0288db);
   border-radius: 50%;
-  height: 3.5vh;
-  width: 3.5vh;
+  height:16px;
+  width:16px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -281,7 +281,10 @@
   cursor: default;
   transition: transform 0.2s ease;
 }
-
+.editb{
+  height:25px;
+  width:25px;
+}
 .whatsbtn:hover,
 .editb:hover,
 .verifiedBadge:hover {
@@ -508,7 +511,7 @@
   color: #ffffff;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   word-wrap: break-word;
   min-height: 1.5rem;
   line-height: 1.4;
@@ -617,16 +620,18 @@
 }
 
 .statusBadge.pending {
- background: linear-gradient(180deg, #cc8930, #bc5e1b);
+  background: linear-gradient(180deg, #cc8930, #bc5e1b);
   border: 1px solid #f29d61;
   color: #ffffff;
 }
+
 :global(html.light) .statusBadge.pending {
   background: linear-gradient(180deg, #e99c37, #c97233);
   border: 1px solid #ee6f15;
-    box-shadow: 0 2px 5px rgba(67, 63, 63, 0.082);
+  box-shadow: 0 2px 5px rgba(67, 63, 63, 0.082);
 
 }
+
 /* Similar Visits Section */
 .similarVisitsSection {
   background-color: #111;
@@ -1180,6 +1185,7 @@
   .leftSidebar {
     width: 30%;
   }
+
 }
 
 /* /////////new  */
@@ -1585,9 +1591,12 @@
   background: rgb(188, 124, 3);
   color: white;
   display: inline-block;
-    white-space: nowrap;       /* text wrap nahi hoga */
-  overflow: hidden;          /* extra text hide */
-  text-overflow: ellipsis;   /* ... show */
+  white-space: nowrap;
+  /* text wrap nahi hoga */
+  overflow: hidden;
+  /* extra text hide */
+  text-overflow: ellipsis;
+  /* ... show */
 }
 
 :global(html.light) .clientStatus {
@@ -1704,7 +1713,7 @@
     flex-direction: column-reverse;
     margin-top: 0.5rem;
   }
- 
+
   .visitBtn {
 
     width: 50%;
@@ -1794,7 +1803,7 @@
 
 }
 
-@media screen and (max-width: 1200px) and (min-width: 1025px) {
+@media screen and (max-width: 1200px) and (min-width:  616px) {
   .cardrow {
     display: flex;
     flex-direction: column;
@@ -1904,6 +1913,11 @@
     flex-direction: row;
     min-width: 0;
     display: flex;
+  }
+
+  .searchInput {
+    width: 90%;
+
   }
 
 
@@ -2086,7 +2100,7 @@
 .trnsname {
   position: absolute;
   top: 5px;
-  z-index: 100;
+  z-index: 5;
   font-size: 9px;
   left: 7px;
   color: white;

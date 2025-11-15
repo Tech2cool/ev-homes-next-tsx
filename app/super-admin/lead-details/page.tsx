@@ -47,7 +47,7 @@ import { LeadFilterDialog } from "@/components/lead-details-components/filter-di
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MdEmail } from "react-icons/md";
 import { BsFillBuildingFill } from "react-icons/bs";
-import { PiBuildingApartmentBold } from "react-icons/pi";
+import { PiBuildingApartmentBold, PiSidebarSimple } from "react-icons/pi";
 import {
   FaBolt,
   FaClipboardList,
@@ -507,7 +507,7 @@ const LeadDetailsPage = () => {
                 className={styles.sidebarOpenBtn}
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
               </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
@@ -717,7 +717,7 @@ const LeadDetailsPage = () => {
                     >
                       <Edit size={15} />
                     </button>
-                    <button
+                    {/* <button
                       className={styles.verifiedBadge}
                       onClick={() => {
                         handleCall({
@@ -727,9 +727,9 @@ const LeadDetailsPage = () => {
                       }}
                     >
                       <MdCall size={15} />
-                    </button>
+                    </button> */}
 
-                    <button
+                    {/* <button
                       className={styles.whatsbtn}
                       onClick={() => {
                         console.log("clicked 1");
@@ -746,7 +746,7 @@ const LeadDetailsPage = () => {
                       }}
                     >
                       <IoLogoWhatsapp size={15} />
-                    </button>
+                    </button> */}
 
                     <ThemeToggle />
                     {/* {SelectedLead.approvalStatus === "pending" && (
@@ -770,6 +770,7 @@ const LeadDetailsPage = () => {
                       visit={SelectedLead}
                       onCall={handleCall}
                       user={user}
+                      socket={socket}
                     />
                   )}
 
@@ -934,11 +935,11 @@ const LeadDetailsPage = () => {
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
             <button
-            className={styles.filterBtn}
-            onClick={() => setShowFilterDialog(true)}
-          >
-            <SlidersHorizontal className={styles.filterIcon} />
-          </button>
+              className={styles.filterBtn}
+              onClick={() => setShowFilterDialog(true)}
+            >
+              <SlidersHorizontal className={styles.filterIcon} />
+            </button>
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -951,7 +952,7 @@ const LeadDetailsPage = () => {
             </div>
           </div>
 
-         
+
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -1155,7 +1156,7 @@ const LeadDetailsPage = () => {
           </button>
 
           <div className={styles.actionButtons}>
-            <button
+            {/* <button
               className={styles.verifiedBadge}
               onClick={() => {
                 handleCall({
@@ -1165,9 +1166,9 @@ const LeadDetailsPage = () => {
               }}
             >
               <MdCall size={15} />
-            </button>
+            </button> */}
 
-            <button
+            {/* <button
               className={styles.whatsbtn}
               onClick={() => {
                 console.log("clicked 1");
@@ -1184,7 +1185,7 @@ const LeadDetailsPage = () => {
               }}
             >
               <IoLogoWhatsapp size={15} />
-            </button>
+            </button> */}
 
             <button
               className={styles.menuBtn}
@@ -1304,6 +1305,7 @@ const LeadDetailsPage = () => {
               visit={SelectedLead}
               onCall={handleCall}
               user={user}
+              socket={socket}
             />
           )}
 
@@ -1370,10 +1372,12 @@ const VisitDetailsContent = ({
   visit,
   onCall,
   user,
+  socket,
 }: {
   visit: Lead;
   onCall: (lead: any) => void;
   user: any;
+  socket: any,
 }) => {
   const formatDate = (date: any) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -1473,7 +1477,36 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                  <FiPhoneCall
+                  <button
+                    className={styles.whatsbtn}
+                    onClick={() => {
+                      console.log("clicked 1");
+
+                      socket?.emit("callCustomerWeb", {
+                        lead: visit?._id,
+                        phoneNumber: `${visit?.countryCode}${visit?.phoneNumber}`,
+                        type: "whatsapp",
+                        message: "hey",
+                        userId: user?._id,
+                      });
+
+                      console.log("clicked 2");
+                    }}
+                  >
+                    <IoLogoWhatsapp size={12} />
+                  </button>
+                  <button
+                    className={styles.verifiedBadge}
+                    onClick={() => {
+                      onCall({
+                        ...visit,
+                        phoneNumber: visit.phoneNumber,
+                      });
+                    }}
+                  >
+                    <MdCall size={12} />
+                  </button>
+                  {/* <FiPhoneCall
                     size={15}
                     color="dodgerblue"
                     style={{ cursor: "pointer", color: "green" }}
@@ -1484,7 +1517,7 @@ const VisitDetailsContent = ({
                       })
                     }
                     title="Make a call to number"
-                  />
+                  /> */}
                   {visit?.phoneNumber ?? "NA"}
                 </p>
               </div>
@@ -1503,18 +1536,36 @@ const VisitDetailsContent = ({
                 </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
-                    <FiPhoneCall
-                      size={15}
-                      color="dodgerblue"
-                      style={{ cursor: "pointer", color: "green" }}
-                      onClick={() =>
+
+                    <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: visit?._id,
+                          phoneNumber: `${visit?.countryCode}${visit.altPhoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
+                      <IoLogoWhatsapp size={12} />
+                    </button>
+                    <button
+                      className={styles.verifiedBadge}
+                      onClick={() => {
                         onCall({
                           ...visit,
                           phoneNumber: visit.altPhoneNumber,
-                        })
-                      }
-                      title="Make a call to alternate number"
-                    />
+                        });
+                      }}
+                    >
+                      <MdCall size={12} />
+                    </button>
                     {visit.countryCode} {visit.altPhoneNumber}
                   </p>
                 </div>
