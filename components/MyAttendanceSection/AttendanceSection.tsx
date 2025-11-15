@@ -493,6 +493,19 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({
 
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
+
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isDark =
+        document.documentElement.classList.contains("dark") ||
+        document.body.classList.contains("dark");
+
+      setTheme(isDark ? "dark" : "light");
+    }
+  }, []);
+
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const isDark =

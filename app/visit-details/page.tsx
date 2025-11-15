@@ -266,6 +266,7 @@ const
     //   ];
     // };
 
+
     // Desktop view - Two panel layout
     if (!isMobile) {
       return (
@@ -656,124 +657,196 @@ const
               onGenerate={async () => {
                 if (!selectedVisit) return;
 
+                function drawTag(doc: any, label: any, x: any, y: any) {
+                  doc.setFont("helvetica", "bold");
+                  doc.setFontSize(13);
+
+                  const paddingX = 3;
+                  const paddingY = 2;
+
+                  const textWidth = doc.getTextWidth(label);
+                  const boxWidth = textWidth + paddingX * 2;
+                  const boxHeight = 7;
+
+                  doc.setFillColor(255, 165, 0);
+                  doc.rect(x, y, boxWidth, boxHeight, "F");
+
+
+                  doc.setTextColor(255, 255, 255);
+                  doc.text(label, x + paddingX, y + boxHeight - paddingY);
+
+
+                  doc.setTextColor(0, 0, 0);
+
+                  return y + boxHeight + 6;
+                }
+
+
                 try {
                   setPdfGenerating(true);
 
                   const { jsPDF } = await import("jspdf");
                   const doc = new jsPDF();
 
-                  const keyX = 14;
-                  const valueX = 70;
+                  const keyX = 7;
+                  const sectionContentX = keyX + 3;
+                  const valueX = sectionContentX + 75;
 
-                  let y = 20;
+                  const img = "/images/pdfbackground.jpg"
+
+                  doc.addImage(img, "JPG", 4, 4, 203, 200);
+
+                  // Determine logo
+                  const logoUrl =
+                    selectedVisit.projects?.some(
+                      (project: any) =>
+                        project.id === "project-ev-10-marina-bay-vashi-sector-10"
+                    )
+                      ? "/images/9 square.png"
+                      : "/images/marinalogo.png"
+                     
+
+                  async function getBase64Image(url:any) {
+                    const res = await fetch(url);
+                    const blob = await res.blob();
+
+                    return new Promise((resolve) => {
+                      const reader = new FileReader();
+                      reader.onloadend = () => resolve(reader.result);
+                      reader.readAsDataURL(blob);
+                    });
+                  }
+
+                  const logoBase64 = await getBase64Image(logoUrl) as string;
+
+                  // center logo
+                  const imgWidth = 25;
+                  const imgX = (doc.internal.pageSize.width - imgWidth) / 2;
+
+                  doc.addImage(logoBase64, "PNG", imgX, 10, imgWidth, 20);
+
+                  // shift content lower (because logo uses 10–40 Y)
+
+
+                  let y = 40;
+
 
                   // ----- CLIENT INFO -----
                   doc.setFontSize(13);
                   doc.setFont("helvetica", "bold");
-                  doc.text("Client Information", keyX, y);
-                  y += 12;
+                  y = drawTag(doc, "Client Information", keyX, y);
+                  y += 3;
 
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Client Name:", keyX, y);
+                  doc.text("Client Name:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
 
                   doc.text("Umashankar Varma", valueX, y);
-                  y += 10;
+                  y += 13;
 
 
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Client Phone:", keyX, y);
-                  doc.text("+91 9892147500", valueX, y);
-                  y += 10;
+                  doc.text("Client Phone:", sectionContentX, y);
+                  doc.setFont("helvetica", "normal");
 
-                  doc.text("Client Email:", keyX, y);
+                  doc.text("+91 9892147500", valueX, y);
+                  y += 13;
+                  doc.setFont("helvetica", "bold");
+
+                  doc.text("Client Email:", sectionContentX, y);
+                  doc.setFont("helvetica", "normal");
+
                   doc.text("Umashankarvarma@yahoo.com", valueX, y);
-                  y += 15;
+                  y += 10;
 
 
                   // ----- VISIT DETAILS -----
                   doc.setFont("helvetica", "bold");
-                  doc.text("Visit Details", keyX, y);
-                  y += 12;
+                  y = drawTag(doc, "Visit Details", keyX, y);
+                  y += 3;
 
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Date:", keyX, y);
+                  doc.text("Date:", sectionContentX, y);
 
                   doc.setFont("helvetica", "normal");
 
 
                   doc.text("13 Nov 25 11:06 AM", valueX, y);
-                  y += 10;
+                  y += 13;
                   doc.setFont("helvetica", "bold");
 
 
-                  doc.text("Projects:", keyX, y);
+                  doc.text("Projects:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
                   doc.text("EV 9 Square, EV Marina Bay", valueX, y);
-                  y += 10;
+                  y += 13;
 
 
 
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Requirements:", keyX, y);
+                  doc.text("Requirements:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
                   doc.text("2BHK 3BHK", valueX, y);
-                  y += 15;
+                  y += 10;
 
 
                   // ----- MANAGEMENT -----
                   doc.setFont("helvetica", "bold");
-                  doc.text("Management", keyX, y);
-                  y += 12;
+                  y = drawTag(doc, "Management", keyX, y);
+                  y += 3;
 
                   doc.setFont("helvetica", "normal");
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Closing Manager:", keyX, y);
+                  doc.text("Closing Manager:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
 
                   doc.text("Deepak Karki", valueX, y);
-                  y += 10;
+                  y += 13;
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Status:", keyX, y);
+                  doc.text("Status:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
                   doc.text("Not Verified", valueX, y);
-                  y += 10;
+                  y += 13;
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Source:", keyX, y);
+                  doc.text("Source:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
                   doc.text("cp", valueX, y);
-                  y += 10;
+                  y += 13;
                   doc.setFont("helvetica", "bold");
 
-                  doc.text("Attended By:", keyX, y);
+                  doc.text("Attended By:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
                   doc.text("Monika Parmar, Suraj Ravindran", valueX, y);
-                  y += 15;
+                  y += 10;
 
 
                   // ----- FEEDBACK -----
                   doc.setFont("helvetica", "bold");
-                  doc.text("Feedback", keyX, y);
-                  y += 12;
+                  y = drawTag(doc, "Feedback", keyX, y);
+                  y += 3;
+
+                  doc.setFont("helvetica", "bold");
+
+                  doc.text("Feedback:", sectionContentX, y);
 
                   doc.setFont("helvetica", "normal");
-                  doc.text("Feedback:", keyX, y);
+
                   doc.text("No feedback provided", valueX, y);
-                  y += 10;
+                  y += 13;
 
                   doc.save(`site_visit_${selectedVisit._id}.pdf`);
 
