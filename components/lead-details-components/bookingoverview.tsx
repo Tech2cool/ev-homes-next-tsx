@@ -9,30 +9,12 @@ import {  MdEmail } from "react-icons/md";
 import { IoIosPerson } from "react-icons/io";
 import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
-const visit = {
-  prefix: "Mr.",
-  firstName: "Rahul",
-  lastName: "Sharma",
-  countryCode: "+91",
-  phoneNumber: "9876543210",
-  altPhoneNumber: "9123456789",
-  email: "rahulsharma@gmail.com",
-  propertyType: "2BHK",
-  channelPartner: { firmName: "Sunrise Realtors" },
-  requirement: ["2BHK", "3BHK", "Penthouse"],
-  project: [
-    { name: "Green Valley Residency" },
-    { name: "Ocean View Towers" }
-  ],
-  occupation: "Software Engineer",
-  additionLinRemark: "Client is interested in sea-facing units.",
-  linkedIn: "https://linkedin.com/in/rahulsharma",
-  uploadedLinkedIn: "https://evhomes.tech/sample-doc.pdf",
-  _id: "12345"
-};
 
+interface BookingOverviewProps {
+  lead?: Lead | null;
+}
 
-const BookingOverview = () => {
+const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
   const [visible, setVisible] = useState(false);
   const [bookingdetails, setbookingdetails] = useState(false);
 
@@ -68,17 +50,16 @@ const BookingOverview = () => {
               <div className={styles.detailsCard}>
                 <div className={styles.cardTitle}>
                   <User className={styles.titleIcon} />
-                  Personal Information
+                  Unit Information
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.infoGrid}>
                     <div className={styles.infoItem}>
                       <label className={styles.infoLabel}>
-                        <IoPersonSharp size={11} color="#4a84ff" /> Full Name
+                        <IoPersonSharp size={11} color="#4a84ff" /> Project Name
                       </label>
                       <p className={styles.infoValue}>
-                        {visit?.prefix ?? ""} {visit?.firstName ?? ""}{" "}
-                        {visit?.lastName ?? ""}
+                        {lead?.bookingRef?.project?.name ?? ""} 
                       </p>
                     </div>
 
@@ -91,7 +72,7 @@ const BookingOverview = () => {
                       <p className={styles.infoValue}>
 
 
-                        {visit?.phoneNumber ?? "NA"}
+                        {lead?.phoneNumber ?? "NA"}
                       </p>
                     </div>
                     <div className={styles.infoItem}>
@@ -99,7 +80,7 @@ const BookingOverview = () => {
                         <MdEmail size={11} color="#4a84ff" />
                         Email
                       </label>
-                      <p className={styles.infoValue}>{visit.email ?? "NA"}</p>
+                      <p className={styles.infoValue}>{lead?.email ?? "NA"}</p>
                     </div>
 
                     <div className={styles.infoItem}>
@@ -110,7 +91,7 @@ const BookingOverview = () => {
                       <div className={styles.phoneContainer}>
                         <p className={styles.infoValue}>
 
-                          {visit.countryCode} {visit.altPhoneNumber}
+                          {lead?.countryCode??""} {lead?.altPhoneNumber??""}
                         </p>
                       </div>
                     </div>
@@ -121,7 +102,7 @@ const BookingOverview = () => {
               <div className={styles.detailsCard}>
                 <div className={styles.cardTitle}>
                   <Building className={styles.titleIcon} />
-                  Lead Information
+                  Booking Information
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.infoGrid}>
@@ -131,7 +112,7 @@ const BookingOverview = () => {
                         Property Type
                       </label>
                       <p className={styles.infoValue}>
-                        {visit?.propertyType ?? "NA"}
+                        {lead?.propertyType ?? "NA"}
                       </p>
                     </div>
                     <div className={styles.infoItem}>
@@ -140,7 +121,7 @@ const BookingOverview = () => {
                         Channel Partner
                       </label>
                       <p className={styles.infoValue}>
-                        {visit?.channelPartner?.firmName ?? ""}
+                        {lead?.channelPartner?.firmName ?? ""}
                       </p>
                     </div>
                     <div className={styles.infoItem} style={{ paddingLeft: "5px" }}>
@@ -149,7 +130,7 @@ const BookingOverview = () => {
                         Apartment Choices
                       </label>
                       <div className={styles.choicesList}>
-                        {visit.requirement?.map((choice: any, index: number) => (
+                        {lead?.requirement?.map((choice: any, index: number) => (
                           <span key={choice} className={styles.choiceBadge}>
                             {choice}
                           </span>
@@ -162,7 +143,7 @@ const BookingOverview = () => {
                         Projects
                       </label>
                       <div className={styles.projectsList}>
-                        {visit.project?.map((project: any, index: number) => (
+                        {lead?.project?.map((project: any, index: number) => (
                           <span key={index} className={styles.projectBadge}>
                             {project?.name ?? ""}
                           </span>
@@ -190,9 +171,9 @@ const BookingOverview = () => {
                         Occupation
                       </label>
                       <p className={styles.infoValue}>
-                        {visit?.occupation == "" || visit?.occupation == null
+                        {lead?.occupation == "" || lead?.occupation == null
                           ? "NA"
-                          : visit?.occupation}
+                          : lead?.occupation}
                       </p>
                     </div>
                     <div className={styles.infoItem}>
@@ -203,35 +184,35 @@ const BookingOverview = () => {
                       </label>
                       <p className={styles.infoValue}>
                         {" "}
-                        {visit?.additionLinRemark ?? "NA"}
+                        {lead?.additionLinRemark ?? "NA"}
                       </p>
                     </div>
                     <div
                       className={styles.infoItem}
                       style={{ flexDirection: "column" }}
                     >
-                      {visit?.linkedIn && visit.linkedIn !== "" && (
+                      {lead?.linkedIn && lead.linkedIn !== "" && (
                         <div className={styles.buttonGroup}>
-                          {visit?.linkedIn && (
+                          {lead?.linkedIn && (
                             <button
-                              className={`${styles.infoButton} ${styles.visitBtn}`}
+                              className={`${styles.infoButton} ${styles.leadBtn}`}
                               onClick={() =>
                                 window.open(
-                                  visit.linkedIn || "https://evhomes.tech/",
+                                  lead.linkedIn || "https://evhomes.tech/",
                                   "_blank"
                                 )
                               }
                             >
-                              <span>🔗 Visit Profile</span>
+                              <span>🔗 lead Profile</span>
                             </button>
                           )}
 
-                          {visit?.uploadedLinkedIn && (
+                          {lead?.uploadedLinkedIn && (
                             <button
-                              className={`${styles.infoButton} ${styles.visitBtn}`}
+                              className={`${styles.infoButton} ${styles.leadBtn}`}
                               onClick={() =>
                                 window.open(
-                                  visit.uploadedLinkedIn || "https://evhomes.tech/",
+                                  lead.uploadedLinkedIn || "https://evhomes.tech/",
                                   "_blank"
                                 )
                               }
