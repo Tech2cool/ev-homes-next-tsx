@@ -1,0 +1,113 @@
+.overlay {
+  z-index: 999999999;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #181818;
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.Heading {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  color: white;
+}
+
+.Instruction {
+  font-size: 0.8rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1rem;
+}
+
+.formVertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.formgroupFull {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.formgroupFull label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.formgroupFull input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #1e1e1e;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.formgroupFull input:focus {
+  border-color: #6d6daa;
+}
+
+.SubmitFrom {
+  margin-top: 1rem;
+  background-color: rgb(60, 60, 240);
+  color: white;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  align-self: center;
+  width: 60%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.SubmitFrom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cancelbtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  background-color: #3c3cf0;
+  border-radius: 50%;
+  padding: 0.25rem;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  transition: background-color 0.25s ease;
+}
+
+.cancelbtn:hover {
+  background-color: red;
+}

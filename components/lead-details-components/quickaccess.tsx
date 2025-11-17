@@ -8,7 +8,7 @@ import {
 } from "react-icons/md";
 import { IoCarSport, IoReceipt } from "react-icons/io5";
 import { HiKey } from "react-icons/hi2";
-import { FaLinkedin, FaReceipt } from "react-icons/fa6";
+import { FaLinkedin, FaReceipt, FaRegFilePdf } from "react-icons/fa6";
 import { GrCycle } from "react-icons/gr";
 import { LuReceiptIndianRupee } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
@@ -29,7 +29,12 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import FeedbackTwo from "./Dailog/feedbacktwo";
 import { useData } from "@/providers/dataContext";
+import GeneratePdf from "./Dailog/EoipdfGenerate"
+import PdfForm from "./Dailog/EoipdfForm"
+import ConfirmationPdf from "./Dailog/ConfirmationPdf"
+import ConfirmationPdfForm from "./Dailog/ConfirmationPdfForm"
 import Estimategenerator from "./Dailog/estimategenerator";
+
 interface QuickAccessProps {
   lead?: Lead | null;
   task?: Task | null;
@@ -53,7 +58,17 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
   const [showrunstatus, setshowrunstatus] = useState(false);
   const [estimategenerator, setestimategenerator] = useState(false);
   const [showaddbooking, setshowaddbooking] = useState(false);
+  const [showpdfDialog, setshowpdfDialog] = useState(false);
+  const [showpdfForm, setshowpdfForm] = useState(false);
+  const [showpdf, setshowpdf] = useState(false);
+  const [pdfData, setPdfData] = useState<any>(null);
+
+  const [showConfirmationForm, setShowConfirmationForm] = useState(false);
+  const [showConfirmationPdf, setShowConfirmationPdf] = useState(false);
+  const [confirmationData, setConfirmationData] = useState<any>(null);
+
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+
   const router = useRouter();
   const { user } = useUser();
   const pagenavigate = () => {
@@ -85,6 +100,10 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     { icon: <TbCancel />, label: "Cancel Booking" },
     { icon: <FaLinkedin />, label: "LinkedIn Update" },
     { icon: <AiFillCalculator />, label: "Brokerage Calculator" },
+    { icon: <FaRegFilePdf />, label: "EOI Pdf" },
+    { icon: <FaRegFilePdf />, label: "Confirmation Pdf" }
+
+
   ];
 
   const handleClick = (label: string) => {
@@ -108,6 +127,14 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     if (label === "Schedule Meeting") {
       setshowmeeting(true);
     }
+    if (label === "EOI Pdf") {
+      setshowpdfDialog(true)
+    }
+    if(label ==="Confirmation Pdf"){
+              setShowConfirmationForm(true);
+
+    }
+
     if (label === "Lead Running Status") {
       setshowrunstatus(true);
     }
@@ -124,13 +151,34 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     if (label === "Estimate History") return pagenavigate();
     if (label === "Generate") return costsheetnavigate();
   };
+
+  const handlePdfOption = (type: string) => {
+    setshowpdfDialog(false);
+    localStorage.setItem("pdfType", type);
+    setshowpdfForm(true);
+  };
+
+  const handlePdfSubmit = (data: any) => {
+    console.log("Form data received from PdfForm:", data);
+    setPdfData(data);
+    setshowpdfForm(false);
+    setshowpdf(true);
+  };
+   const handleConfirmationPdfSubmit = (data: any) => {
+    console.log("✅ Confirmation PDF Data:", data);
+    setShowConfirmationForm(false);
+    setConfirmationData(data);
+    setShowConfirmationPdf(true);
+  };
+
   return (
-    <div className={styles.quickAccessContainer}>
+    <>    <div className={styles.quickAccessContainer}>
       <h3 className={styles.title}>⚡ Quick Access</h3>
 
       <div className={styles.buttonGrid}>
         {actions.map((action, index) =>
           user?.designation?._id === "desg-sales-manager" ||
+
           (user?.designation?._id === "desg-sales-executive" &&
             [
               "Schedule Meeting",
@@ -149,14 +197,17 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
         )}
       </div>
 
+
       {showfb && (
         <FeedbackTwo openclick={setshowfb} lead={lead} task={lead?.taskRef} />
       )}
+
       {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
 
       {showtask && (
         <AssignTask openclick={setshowtask} lead={lead} task={lead?.taskRef} />
       )}
+
 
       {showlinkdin && (
         <LinkdinUpdate
@@ -195,6 +246,56 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
         />
       )}
     </div>
+
+      {showpdfForm && (
+        <PdfForm
+          onClose={() => setshowpdfForm(false)}
+          onSubmit={handlePdfSubmit}
+        />
+      )}
+
+      {showpdf && pdfData && <GeneratePdf openclick={setshowpdf} formData={pdfData} />}
+
+
+      {/* eoi pdf dialog */}
+      {showpdfDialog && (
+        <div className={styles.overlay}>
+          <div className={styles.dialog}>
+            <h3 style={{ color: "white" }}>Select Type</h3>
+            <div className={styles.btnGroup}>
+              <button
+                className={`${styles.btn} ${styles.notFullPaid}`}
+                onClick={() => handlePdfOption("Not Full Paid")}
+              >
+                Not Full Paid
+              </button>
+              <button
+                className={`${styles.btn} ${styles.fullPaid}`}
+                onClick={() => handlePdfOption("Full Paid")}
+              >                    
+                Full Paid
+              </button>
+            </div>
+            <button  
+              className={styles.cancel}
+              onClick={() => setshowpdfDialog(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+       {showConfirmationForm && (
+        <ConfirmationPdfForm
+          onClose={() => setShowConfirmationForm(false)}
+          onSubmit={handleConfirmationPdfSubmit}
+        />
+      )}
+      {showConfirmationPdf && confirmationData && (
+        <ConfirmationPdf formData={confirmationData} />
+      )}
+    </>
   );
 };
 
