@@ -24,16 +24,18 @@ import RunningStatus from "./Dailog/runningstatus";
 import AddBooking from "./Dailog/addbooking";
 import BrokerageCalculator from "./Dailog/brokerageCalculator";
 
-
 import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
 import FeedbackTwo from "./Dailog/feedbacktwo";
 import { useData } from "@/providers/dataContext";
-import GeneratePdf from "./Dailog/EoipdfGenerate"
-import PdfForm from "./Dailog/EoipdfForm"
-import ConfirmationPdf from "./Dailog/ConfirmationPdf"
-import ConfirmationPdfForm from "./Dailog/ConfirmationPdfForm"
+import GeneratePdf from "./Dailog/EoipdfGenerate";
+import PdfForm from "./Dailog/EoipdfForm";
+import ConfirmationPdf from "./Dailog/ConfirmationPdf";
+import ConfirmationPdfForm from "./Dailog/ConfirmationPdfForm";
 import Estimategenerator from "./Dailog/estimategenerator";
+import PaymenSchedule from "./Dailog/paymentSchedule";
+import { Payment16Regular } from "@fluentui/react-icons";
+import PaymentSchedule from "./Dailog/paymentSchedule";
 
 interface QuickAccessProps {
   lead?: Lead | null;
@@ -68,21 +70,22 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
   const [confirmationData, setConfirmationData] = useState<any>(null);
 
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [isPaymentSchedule, setPaymentSchedule] = useState(false);
+
 
   const router = useRouter();
   const { user } = useUser();
   const pagenavigate = () => {
-  router.push(`/estimate-history?leadId=${lead?._id}`);
-
+    router.push(`/estimate-history?leadId=${lead?._id}`);
   };
 
-//   const pagenavigate = () => {
-//   const params = new URLSearchParams();
-//   if (lead?._id) {
-//     params.set('leadId', lead._id);
-//   }
-//   router.push(`/estimate-history?${params.toString()}`);
-// };
+  //   const pagenavigate = () => {
+  //   const params = new URLSearchParams();
+  //   if (lead?._id) {
+  //     params.set('leadId', lead._id);
+  //   }
+  //   router.push(`/estimate-history?${params.toString()}`);
+  // };
   const costsheetnavigate = () => {
     router.push("/generate/costsheetgenerator");
   };
@@ -101,8 +104,8 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     { icon: <FaLinkedin />, label: "LinkedIn Update" },
     { icon: <AiFillCalculator />, label: "Brokerage Calculator" },
     { icon: <FaRegFilePdf />, label: "EOI Pdf" },
-    { icon: <FaRegFilePdf />, label: "Confirmation Pdf" }
-
+    { icon: <FaRegFilePdf />, label: "Confirmation Pdf" },
+    { icon: <Payment16Regular />, label: "Payment Schedule" },
 
   ];
 
@@ -128,11 +131,10 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
       setshowmeeting(true);
     }
     if (label === "EOI Pdf") {
-      setshowpdfDialog(true)
+      setshowpdfDialog(true);
     }
-    if(label ==="Confirmation Pdf"){
-              setShowConfirmationForm(true);
-
+    if (label === "Confirmation Pdf") {
+      setShowConfirmationForm(true);
     }
 
     if (label === "Lead Running Status") {
@@ -148,8 +150,15 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     if (label === "Brokerage Calculator") {
       setIsCalculatorOpen(true);
     }
+
+
+       if (label === "Payment Schedule") {
+      setPaymentSchedule(true);
+    }
     if (label === "Estimate History") return pagenavigate();
     if (label === "Generate") return costsheetnavigate();
+
+
   };
 
   const handlePdfOption = (type: string) => {
@@ -164,7 +173,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     setshowpdfForm(false);
     setshowpdf(true);
   };
-   const handleConfirmationPdfSubmit = (data: any) => {
+  const handleConfirmationPdfSubmit = (data: any) => {
     console.log("✅ Confirmation PDF Data:", data);
     setShowConfirmationForm(false);
     setConfirmationData(data);
@@ -172,91 +181,106 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
   };
 
   return (
-    <>    <div className={styles.quickAccessContainer}>
-      <h3 className={styles.title}>⚡ Quick Access</h3>
+    <>
+      {" "}
+      <div className={styles.quickAccessContainer}>
+        <h3 className={styles.title}>⚡ Quick Access</h3>
 
-      <div className={styles.buttonGrid}>
-        {actions.map((action, index) =>
-          user?.designation?._id === "desg-sales-manager" ||
+        <div className={styles.buttonGrid}>
+          {actions.map((action, index) =>
+            user?.designation?._id === "desg-sales-manager" ||
+            (user?.designation?._id === "desg-sales-executive" &&
+              [
+                "Schedule Meeting",
+                "Cancel Booking",
+                // "Brokerage Calculator",
+              ].includes(action.label)) ? null : (
+              <button
+                key={index}
+                className={styles.actionButton}
+                onClick={() => handleClick(action.label)}
+              >
+                <div className={styles.circleicon}>{action.icon}</div>
+                <div className={styles.iconlable}>{action.label}</div>
+              </button>
+            )
+          )}
+        </div>
 
-          (user?.designation?._id === "desg-sales-executive" &&
-            [
-              "Schedule Meeting",
-              "Cancel Booking",
-              // "Brokerage Calculator",
-            ].includes(action.label)) ? null : (
-            <button
-              key={index}
-              className={styles.actionButton}
-              onClick={() => handleClick(action.label)}
-            >
-              <div className={styles.circleicon}>{action.icon}</div>
-              <div className={styles.iconlable}>{action.label}</div>
-            </button>
-          )
+        {showfb && (
+          <FeedbackTwo openclick={setshowfb} lead={lead} task={lead?.taskRef} />
         )}
-      </div>
 
+        {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
 
-      {showfb && (
-        <FeedbackTwo openclick={setshowfb} lead={lead} task={lead?.taskRef} />
-      )}
+        {showtask && (
+          <AssignTask
+            openclick={setshowtask}
+            lead={lead}
+            task={lead?.taskRef}
+          />
+        )}
 
-      {showsite && <SiteVisit openclick={setshowsite} visit={lead} />}
+        {showlinkdin && (
+          <LinkdinUpdate
+            openclick={setshowlinkdin}
+            lead={lead}
+            onSave={async (payload) => {
+              console.log("payload", payload);
+              const response = await updateLeadDetails(
+                lead?._id ?? "",
+                payload
+              );
 
-      {showtask && (
-        <AssignTask openclick={setshowtask} lead={lead} task={lead?.taskRef} />
-      )}
+              console.log(response);
+              if (response.success) {
+                setshowlinkdin(false);
+              } else {
+                console.error(response.message);
+              }
+            }}
+          />
+        )}
 
+        {showcancelboking && (
+          <CancelBooking openclick={setshowcancelbooking} leadId={lead} />
+        )}
+        {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
+        {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
 
-      {showlinkdin && (
-        <LinkdinUpdate
-          openclick={setshowlinkdin}
-          lead={lead}
-          onSave={async (payload) => {
-            console.log("payload", payload);
-            const response = await updateLeadDetails(lead?._id ?? "", payload);
+        {estimategenerator && (
+          <Estimategenerator openclick={setestimategenerator} lead={lead} />
+        )}
 
-            console.log(response);
-            if (response.success) {
-              setshowlinkdin(false);
-            } else {
-              console.error(response.message);
-            }
-          }}
-        />
-      )}
+        {showaddbooking && (
+          <AddBooking openclick={setshowaddbooking} lead={lead} />
+        )}
 
-      {showcancelboking && (
-        <CancelBooking openclick={setshowcancelbooking} leadId={lead} />
-      )}
-      {showmeeting && <ScheduleMeeting openclick={setshowmeeting} />}
-      {showrunstatus && <RunningStatus openclick={setshowrunstatus} />}
+        {isCalculatorOpen && (
+          <BrokerageCalculator
+            openclick={setIsCalculatorOpen}
+            // Optional: pass a lead if you have one
+            lead={lead}
+          />
+        )}
 
-      {estimategenerator && <Estimategenerator openclick={setestimategenerator} lead={lead} />}
-
-
-      {showaddbooking && <AddBooking openclick={setshowaddbooking}lead={lead} />}
-
-      {isCalculatorOpen && (
-        <BrokerageCalculator
-          openclick={setIsCalculatorOpen}
+          {isPaymentSchedule && (
+        <PaymentSchedule
+          openclick={setPaymentSchedule}
           // Optional: pass a lead if you have one
-          lead={lead}
+          // lead={lead}
         />
       )}
-    </div>
-
+      </div>
       {showpdfForm && (
         <PdfForm
           onClose={() => setshowpdfForm(false)}
           onSubmit={handlePdfSubmit}
         />
       )}
-
-      {showpdf && pdfData && <GeneratePdf openclick={setshowpdf} formData={pdfData} />}
-
-
+      {showpdf && pdfData && (
+        <GeneratePdf openclick={setshowpdf} formData={pdfData} />
+      )}
       {/* eoi pdf dialog */}
       {showpdfDialog && (
         <div className={styles.overlay}>
@@ -272,11 +296,11 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
               <button
                 className={`${styles.btn} ${styles.fullPaid}`}
                 onClick={() => handlePdfOption("Full Paid")}
-              >                    
+              >
                 Full Paid
               </button>
             </div>
-            <button  
+            <button
               className={styles.cancel}
               onClick={() => setshowpdfDialog(false)}
             >
@@ -285,8 +309,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
           </div>
         </div>
       )}
-
-       {showConfirmationForm && (
+      {showConfirmationForm && (
         <ConfirmationPdfForm
           onClose={() => setShowConfirmationForm(false)}
           onSubmit={handleConfirmationPdfSubmit}
