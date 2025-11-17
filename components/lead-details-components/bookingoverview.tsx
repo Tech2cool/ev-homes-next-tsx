@@ -18,6 +18,7 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
   const [visible, setVisible] = useState(false);
   const [bookingdetails, setbookingdetails] = useState(false);
 
+  const booking= lead?.bookingRef;
   return (
 
     <>
@@ -50,7 +51,7 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
               <div className={styles.detailsCard}>
                 <div className={styles.cardTitle}>
                   <User className={styles.titleIcon} />
-                  Unit Information
+                  Project Information
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.infoGrid}>
@@ -59,7 +60,7 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
                         <IoPersonSharp size={11} color="#4a84ff" /> Project Name
                       </label>
                       <p className={styles.infoValue}>
-                        {lead?.bookingRef?.project?.name ?? ""} 
+                        {booking?.project?.name ?? ""} 
                       </p>
                     </div>
 
@@ -67,31 +68,31 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
                     <div className={styles.infoItem}>
                       <label className={styles.infoLabel}>
                         <FaPhoneAlt size={11} color="#4a84ff" />
-                        Phone Number
+                        Floor
                       </label>
                       <p className={styles.infoValue}>
 
 
-                        {lead?.phoneNumber ?? "NA"}
+                        {booking?.floor ?? "NA"}
                       </p>
                     </div>
                     <div className={styles.infoItem}>
                       <label className={styles.infoLabel}>
                         <MdEmail size={11} color="#4a84ff" />
-                        Email
+                        Building
                       </label>
-                      <p className={styles.infoValue}>{lead?.email ?? "NA"}</p>
+                      <p className={styles.infoValue}>{booking?.buildingNo ?? "NA"}</p>
                     </div>
 
                     <div className={styles.infoItem}>
                       <label className={styles.infoLabel}>
                         <FaPhoneAlt size={11} color="#4a84ff" />
-                        Alt Phone
+                        Unit Number
                       </label>
                       <div className={styles.phoneContainer}>
                         <p className={styles.infoValue}>
 
-                          {lead?.countryCode??""} {lead?.altPhoneNumber??""}
+                          {booking?.unitNo??""}
                         </p>
                       </div>
                     </div>
@@ -109,7 +110,7 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
                     <div className={styles.infoItem}>
                       <label className={styles.infoLabel}>
                         <IoIosPerson size={12} color="#4a84ff" />
-                        Property Type
+                       Configuration
                       </label>
                       <p className={styles.infoValue}>
                         {lead?.propertyType ?? "NA"}
