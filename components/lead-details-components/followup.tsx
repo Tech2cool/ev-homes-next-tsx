@@ -6,6 +6,7 @@ import { IoCall } from "react-icons/io5";
 import { FaHome, FaMobile, FaPhone } from "react-icons/fa";
 
 import { useData } from "@/providers/dataContext";
+import { formatStatus } from "@/app/helper";
 
 
 interface FollowUpProps {
@@ -70,7 +71,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
             `${call?.caller?.firstName || ""} ${
               call?.caller?.lastName || ""
             }`.trim() || "Customer",
-          status: call.interestedStatus || call.stage || "No Status",
+          status: formatStatus(call.interestedStatus || call.stage || "No Status"),
           callType: call.remark || "Call",
           date: formatDateTime(call.callDate),
           feedback: call.feedback || call.feedback || "No feedback provided",
@@ -127,7 +128,7 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
         type: "booking",
         status: lead.bookingStatus,
         name: "Booking Confirmed",
-        date: formatDateTime(lead?.bookingRef?.date),
+        date: formatDateTime(lead?.bookingRef?.date.toString()??""),
         feedback: `${
           lead.bookingRef.project?.name || "No project name"
         }\nFlat No: ${lead.bookingRef.unitNo || "Not specified"}`,
@@ -255,5 +256,8 @@ const FollowUp: React.FC<FollowUpProps> = ({ lead }) => {
     </div>
   );
 };
+
+
+
 
 export default FollowUp;

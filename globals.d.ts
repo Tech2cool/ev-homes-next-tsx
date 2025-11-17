@@ -883,14 +883,14 @@ interface Agreement {
 
 
 interface Payment {
-  _id:string;
+  _id?:string;
   projects?: OurProject;  
   slab?: string;
   customerName?: string;
   booking?: string;
   phoneNumber?: number;
-  dateOfAmtReceive?: string;
-  date?: Date|null;   // ISO string recommended
+  dateOfAmtReceive?: Date;
+  date?: Date | null;   
   receiptNo?: string;
   account?: string;
   paymentType?: string;
@@ -913,4 +913,5 @@ interface Payment {
   chequeReturned?: string;
   chequeRedeposit?: string;
   createdAt?: Date;
+  remark?:string | null;
 }
