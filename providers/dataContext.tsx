@@ -605,6 +605,10 @@ type DataProviderState = {
   addBrokerage: (
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
+
+    getEstimateGeneratedById: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -805,6 +809,11 @@ const initialState: DataProviderState = {
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
 
   addBrokerage: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+    getEstimateGeneratedById: async () => ({
     success: false,
     message: "Not initialized",
   }),
