@@ -36,12 +36,13 @@ import {
   ChevronUp,
   Search,
   SlidersHorizontal,
+  X,
 } from "lucide-react";
 import EditDialog from "@/components/lead-details-components/edit-dialog";
 import { LeadFilterDialog } from "@/components/lead-details-components/filter-dialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BsFillBuildingFill } from "react-icons/bs";
-import { PiBuildingApartmentBold } from "react-icons/pi";
+import { PiBuildingApartmentBold, PiSidebarSimple } from "react-icons/pi";
 import { CiLink } from "react-icons/ci";
 import { IoIosPerson } from "react-icons/io";
 import { useData } from "@/providers/dataContext";
@@ -49,6 +50,7 @@ import { useUser } from "@/providers/userContext";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import useDebounce from "@/hooks/useDebounce";
 import { FiPhoneCall } from "react-icons/fi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 const SalesDetailsWrapper = () => {
   return (
@@ -84,6 +86,7 @@ const Salesdetaispage = () => {
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [editFormData, setEditFormData] = useState({});
   const [approvalData, setApprovalData] = useState({
@@ -474,10 +477,19 @@ const Salesdetaispage = () => {
   if (!isMobile) {
     return (
       <div className={styles.desktopContainer}>
+        {sidebarOpen && (
+          <DashboardSidebar />
+        )}
+
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
-              <h1 className={styles.title}>Leads</h1>
+              <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
+              </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input
@@ -675,7 +687,7 @@ const Salesdetaispage = () => {
                     >
                       <Edit size={15} />
                     </button>
-                    <button
+                    {/* <button
                       className={styles.verifiedBadge}
                       onClick={() => {
                         handleCall({
@@ -704,7 +716,7 @@ const Salesdetaispage = () => {
                       }}
                     >
                       <IoLogoWhatsapp size={15} />
-                    </button>
+                    </button> */}
 
                     <ThemeToggle />
                     {/* {SelectedLead.approvalStatus === "pending" && (
@@ -726,6 +738,7 @@ const Salesdetaispage = () => {
                       visit={SelectedLead}
                       onCall={handleCall}
                       user={user}
+                       socket={socket}
                     />
                   )}
 
@@ -881,9 +894,15 @@ const Salesdetaispage = () => {
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
+        <DashboardSidebar />
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
-            <h1 className={styles.title}>Leads</h1>
+           <button
+            className={styles.filterBtn}
+            onClick={() => setShowFilterDialog(true)}
+          >
+            <SlidersHorizontal className={styles.filterIcon} />
+          </button>
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -896,12 +915,7 @@ const Salesdetaispage = () => {
             </div>
           </div>
 
-          <button
-            className={styles.filterBtn}
-            onClick={() => setShowFilterDialog(true)}
-          >
-            <SlidersHorizontal className={styles.filterIcon} />
-          </button>
+          
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -1076,7 +1090,7 @@ const Salesdetaispage = () => {
           </button>
 
           <div className={styles.actionButtons}>
-            <button
+            {/* <button
               className={styles.verifiedBadge}
               onClick={() => {
                 handleCall({
@@ -1086,9 +1100,9 @@ const Salesdetaispage = () => {
               }}
             >
               <MdCall size={15} />
-            </button>
+            </button> */}
 
-            <button
+            {/* <button
               className={styles.whatsbtn}
               onClick={() => {
                 console.log("clicked 1");
@@ -1105,7 +1119,7 @@ const Salesdetaispage = () => {
               }}
             >
               <IoLogoWhatsapp size={15} />
-            </button>
+            </button> */}
 
             <button
               className={styles.menuBtn}
@@ -1226,6 +1240,7 @@ const Salesdetaispage = () => {
               visit={SelectedLead}
               onCall={handleCall}
               user={user}
+               socket={socket}
             />
           )}
 
@@ -1288,10 +1303,12 @@ const VisitDetailsContent = ({
   visit,
   onCall,
   user,
+  socket,
 }: {
   visit: Lead;
   onCall: (lead: any) => void;
   user: any;
+  socket: any,
 }) => {
   const formatDate = (date: any) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -1374,7 +1391,36 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                  <FiPhoneCall
+                   <button
+                    className={styles.whatsbtn}
+                    onClick={() => {
+                      console.log("clicked 1");
+
+                      socket?.emit("callCustomerWeb", {
+                        lead: visit?._id,
+                        phoneNumber: `${visit?.countryCode}${visit?.phoneNumber}`,
+                        type: "whatsapp",
+                        message: "hey",
+                        userId: user?._id,
+                      });
+
+                      console.log("clicked 2");
+                    }}
+                  >
+                    <IoLogoWhatsapp size={12} />
+                  </button>
+                  <button
+                    className={styles.verifiedBadge}
+                    onClick={() => {
+                      onCall({
+                        ...visit,
+                        phoneNumber: visit.phoneNumber,
+                      });
+                    }}
+                  >
+                    <MdCall size={12} />
+                  </button>
+                  {/* <FiPhoneCall
                     size={15}
                     color="dodgerblue"
                     style={{ cursor: "pointer", color: "green" }}
@@ -1385,7 +1431,7 @@ const VisitDetailsContent = ({
                       })
                     }
                     title="Make a call to number"
-                  />
+                  /> */}
                   {visit?.phoneNumber ?? "NA"}
                 </p>
               </div>
@@ -1404,10 +1450,10 @@ const VisitDetailsContent = ({
                 </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
-                    <FiPhoneCall
-                    size={15}
-                    color="dodgerblue"
-                    style={{ cursor: "pointer", color: "green" }}
+                    {/* <FiPhoneCall
+                      size={15}
+                      color="dodgerblue"
+                      style={{ cursor: "pointer", color: "green" }}
                       onClick={() =>
                         onCall({
                           ...visit,
@@ -1415,7 +1461,36 @@ const VisitDetailsContent = ({
                         })
                       }
                       title="Make a call to alternate number"
-                    />
+                    /> */}
+                    <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: visit?._id,
+                          phoneNumber: `${visit?.countryCode}${visit.altPhoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
+                      <IoLogoWhatsapp size={12} />
+                    </button>
+                    <button
+                      className={styles.verifiedBadge}
+                      onClick={() => {
+                        onCall({
+                          ...visit,
+                          phoneNumber: visit.altPhoneNumber,
+                        });
+                      }}
+                    >
+                       <MdCall size={12} />
+                    </button>
                     {visit.countryCode} {visit.altPhoneNumber ?? "NA"}
                   </p>
                 </div>
