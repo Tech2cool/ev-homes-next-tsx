@@ -124,7 +124,7 @@ interface FormState {
 }
 
 type ParkingItem = {
-  prfloor: number ;
+  prfloor: number;
   parkingno: string;
   [key: string]: number | string;
 };
@@ -394,6 +394,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   };
 
   const handleAddPayment = () => {
+    console.log("problem is here");
     const newPayment: Payment = {
       _id: "",
       paymentType: "",
@@ -407,7 +408,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   };
 
   const handleRemovePayment = (id: string) => {
-    setPayments((prev) => prev.filter((payment) => payment.id !== id));
+    setPayments((prev) => prev.filter((payment) => payment._id !== id));
   };
 
   const projectOptions = projects.map((p: any) => ({
@@ -484,6 +485,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
       if (!formData.Flatno || !formData.Flatno.trim())
         newErrors.Flatno = "Flat number is required";
+
       if (!formData.carpet || !formData.carpet.trim())
         newErrors.carpet = "Carpet area is required";
       if (!formData.Cost || !formData.Cost.trim())
@@ -555,14 +557,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
         payments.forEach((payment, index) => {
           if (!payment.paymentMode?.trim())
             newErrors[`payment-${index}-mode`] = "Select payment mode";
-          if (!payment.date?.toISOString())
-            newErrors[`payment-${index}-date`] = "Select payment date";
-          if (!payment.tds)
-            newErrors[`payment-${index}-tds`] = "Enter TDS amount";
+          // if (!payment.date?.toISOString())
+          //   newErrors[`payment-${index}-date`] = "Select payment date";
+          // if (!payment.tds)
+          //   newErrors[`payment-${index}-tds`] = "Enter TDS amount";
           if (!payment.transactionId)
             newErrors[`payment-${index}-receipt`] = "Enter receipt number";
-          // if (!payment.transactionNo.trim())
-          //   newErrors[`payment-${index}-txn`] = "Enter transaction number";
         });
       }
       if (!confirmChecked)
@@ -575,7 +575,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   };
 
   const onSubmit = async () => {
-
     console.log("padd 1");
     if (!confirmChecked) {
       alert(
@@ -684,7 +683,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
       // Prepare the lead data
       const leadData: PostSaleLead = {
-
         // Flat details
         project: projects.find((e) => e._id === formData.project),
         buildingNo: formData.blg || undefined,
@@ -777,13 +775,10 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
         await Promise.all(
           payments.map(async (payment) => {
             const paymentData: Payment = {
-              _id: payment._id?.toString(),
-
-              bookingAmt: Number(payment.tds) || 0,
-              // amtReceived: Number(payment.amountReceived) || 0,
-              tds: payment?.tds,
+              // booking:,
+              bookingAmt: payment.bookingAmt,
               cgst: payment.cgst,
-
+              tds: payment.tds,
               date: payment.date ? new Date(payment.date) : undefined,
               transactionId: payment?.transactionId,
               paymentMode: payment.paymentMode,
@@ -792,6 +787,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
               projects: projects.find((e) => e._id === formData.project),
               flatNo: formData.Flatno,
+              remark: formData.remarkLast,
             };
 
             addPayment(paymentData);
@@ -872,7 +868,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     value: string
   ) => {
     setPayments((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
+      prev.map((p) => (p._id === id ? { ...p, [field]: value } : p))
     );
   };
 
@@ -2314,8 +2310,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     <option value="">%</option>
                     <option value="5">5%</option>
                     <option value="6">6%</option>
-                    <option value="7">7%</option>
-                    <option value="8">8%</option>
                   </select>
                 </label>
               </div>
@@ -2445,10 +2439,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     <option value="">%</option>
                     <option value="5">5%</option>
                     <option value="6">6%</option>
-                    <option value="7">7%</option>
-                    <option value="8">8%</option>
-                    <option value="12">12%</option>
-                    <option value="18">18%</option>
                   </select>
                 </label>
               </div>
@@ -2775,7 +2765,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   ({index + 1}) Payment - online - null
                 </p>
                 <MdCancel
-                  onClick={() => handleRemovePayment(payment?._id)}
+                  onClick={() => handleRemovePayment(payment?._id ?? "")}
                   style={{
                     position: "absolute",
                     top: "-2px",
@@ -2804,16 +2794,16 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment.paymentType}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment._id,
+                        payment._id ?? "",
                         "paymentType",
                         e.target.value
                       )
                     }
                   >
                     <option value="">Select Payment Type</option>
-                    <option value="Booking">Booking</option>
-                    <option value="GST">GST</option>
-                    <option value="TDS">TDS</option>
+                    <option value="booking">Booking</option>
+                    <option value="gst">GST</option>
+                    <option value="tds">TDS</option>
                   </select>
                   {errors[`payment-${index}-type`] && (
                     <p className={styles.errorMsg}>
@@ -2834,7 +2824,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment.paymentMode}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment?._id,
+                        payment?._id ?? "",
                         "paymentMode",
                         e.target.value
                       )
@@ -2864,9 +2854,17 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   <input
                     type="date"
                     name="date"
-                    value={payment?.date?.toISOString() ?? ""}
+                    value={
+                      payment?.date
+                        ? new Date(payment.date).toISOString().split("T")[0]
+                        : ""
+                    }
                     onChange={(e) =>
-                      handlePaymentChange(payment?._id, "date", e.target.value)
+                      handlePaymentChange(
+                        payment?._id ?? "",
+                        "date",
+                        e.target.value
+                      )
                     }
                   />
                   {errors[`payment-${index}-date`] && (
@@ -2877,21 +2875,44 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                 </div>
 
                 <div className={styles.formControl}>
-                  <label>
-                    <RequiredLabel
-                      icon={<CiSquareAlert className={styles.iconcolor} />}
-                      text="Received TDS Amount"
-                    />
-                  </label>
-                  <input
-                    type="text"
-                    name="tds"
-                    value={payment?.tds}
-                    onChange={(e) =>
-                      handlePaymentChange(payment?._id, "tds", e.target.value)
-                    }
-                    placeholder="Enter TDS Amount..."
-                  />
+                  {(() => {
+                    const { label, field } = getPaymentFieldConfig(
+                      payment?.paymentType ?? ""
+                    );
+
+                    return (
+                      <div className={styles.formControl}>
+                        <label>
+                          <RequiredLabel
+                            icon={
+                              <CiSquareAlert className={styles.iconcolor} />
+                            }
+                            text={label}
+                          />
+                        </label>
+
+                        <input
+                          type="number"
+                          name={field}
+                          value={payment[field] ?? ""}
+                          onChange={(e) =>
+                            handlePaymentChange(
+                              payment?._id ?? "",
+                              field,
+                              e.target.value
+                            )
+                          }
+                          placeholder={`Enter ${label}...`}
+                        />
+
+                        {errors[`payment-${index}-${field}`] && (
+                          <p className={styles.errorMsg}>
+                            {errors[`payment-${index}-${field}`]}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })()}
                   {errors[`payment-${index}-tds`] && (
                     <p className={styles.errorMsg}>
                       {errors[`payment-${index}-tds`]}
@@ -2915,7 +2936,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment.receiptNo}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment._id,
+                        payment?._id ?? "",
                         "receiptNo",
                         e.target.value
                       )
@@ -2942,7 +2963,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                     value={payment?.transactionId}
                     onChange={(e) =>
                       handlePaymentChange(
-                        payment._id,
+                        payment?._id ?? "",
                         "transactionId",
                         e.target.value
                       )
@@ -3066,16 +3087,17 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
               onClick={() => {
                 try {
                   if (flat?.occupied == true) return;
-                  // const isValid = validateStep(currentStep);
-                  // if (isValid) {
 
+                  // console.log(validateStep);
+                  const isValid = validateStep(currentStep);
+                  if (isValid) {
 
-                    if (currentStep < steps.length - 1) {
-                      setCurrentStep(currentStep + 1);
-                    } else {
-                      onSubmit();
-                    }
-                  // }
+                  if (currentStep < steps.length - 1) {
+                    setCurrentStep(currentStep + 1);
+                  } else {
+                    onSubmit();
+                  }
+                  }
                 } catch (e) {
                   console.log(e);
                   console.log(
@@ -3105,27 +3127,44 @@ function uniq(arr: any[]) {
 }
 
 const convertToIndianWords = (num: number) => {
-    if (!num) return "";
+  if (!num) return "";
 
-    let remaining = num;
+  let remaining = num;
 
-    const crore = Math.floor(remaining / 10000000);
-    remaining %= 10000000;
+  const crore = Math.floor(remaining / 10000000);
+  remaining %= 10000000;
 
-    const lakh = Math.floor(remaining / 100000);
-    remaining %= 100000;
+  const lakh = Math.floor(remaining / 100000);
+  remaining %= 100000;
 
-    const thousand = Math.floor(remaining / 1000);
-    remaining %= 1000;
+  const thousand = Math.floor(remaining / 1000);
+  remaining %= 1000;
 
-    const hundred = remaining;
+  const hundred = remaining;
 
-    let result = "";
+  let result = "";
 
-    if (crore) result += `${crore} Cr `;
-    if (lakh) result += `${lakh} Lakh `;
-    if (thousand) result += `${thousand} Thousand `;
-    if (hundred) result += `${hundred}`;
+  if (crore) result += `${crore} Cr `;
+  if (lakh) result += `${lakh} Lakh `;
+  if (thousand) result += `${thousand} Thousand `;
+  if (hundred) result += `${hundred}`;
 
-    return result.trim();
-  };
+  return result.trim();
+};
+
+type PaymentAmountField = "bookingAmt" | "cgst" | "tds";
+
+const getPaymentFieldConfig = (
+  type: string
+): { label: string; field: PaymentAmountField } => {
+  switch (type) {
+    case "Booking":
+      return { label: "Received Net Amount", field: "bookingAmt" };
+    case "GST":
+      return { label: "Received GST Amount", field: "cgst" };
+    case "TDS":
+      return { label: "Received TDS Amount", field: "tds" };
+    default:
+      return { label: "Received Amount", field: "tds" };
+  }
+};
