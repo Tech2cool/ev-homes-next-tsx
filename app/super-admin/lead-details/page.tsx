@@ -537,9 +537,8 @@ const LeadDetailsPage = () => {
                 {leads?.map((visit, index) => (
                   <div
                     key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
-                    className={`${styles.visitCard} ${
-                      SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                    }`}
+                    className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                      }`}
                     onClick={() => {
                       setSelectedLead(visit);
 
@@ -616,9 +615,8 @@ const LeadDetailsPage = () => {
                         </div>
 
                         <span className={styles.taskName}>
-                          {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
-                            visit.taskRef?.assignTo?.lastName ?? ""
-                          }`}
+                          {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
+                            }`}
                           <span className={styles.status}>
                             <span
                               className={styles.statusText}
@@ -657,17 +655,20 @@ const LeadDetailsPage = () => {
                             {formatStatus(visit.clientInterestedStatus)}
                           </div>
                         ) : null}
+                        {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
+                          (visit.leadType !== "cp" && visit.leadType) ? (
+                          <div
+                            style={{
+                              backgroundColor: "#387478",
+                            }}
+                            className={styles.clientStatus}
+                          >
+                            {visit.leadType === "cp"
+                              ? visit.channelPartner?.firmName ?? ""
+                              : visit.leadType ?? ""}
+                          </div>)
+                          : null}
 
-                        <div
-                          style={{
-                            backgroundColor: "#387478",
-                          }}
-                          className={styles.clientStatus}
-                        >
-                          {visit.leadType === "cp"
-                            ? visit.channelPartner?.firmName ?? "-"
-                            : visit.leadType ?? "-"}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -820,45 +821,40 @@ const LeadDetailsPage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "overview" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "access" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "taskDetails" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "followup" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "siteVisit" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
                       <FaMapMarkedAlt className={styles.icon} /> Site Visit
@@ -866,9 +862,8 @@ const LeadDetailsPage = () => {
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${
-                        activeTab === "transfer" ? styles.active : ""
-                      }`}
+                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
+                        }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
@@ -876,9 +871,8 @@ const LeadDetailsPage = () => {
 
                     {SelectedLead?.bookingRef != null && (
                       <button
-                        className={`${styles.navItem} ${
-                          activeTab === "booking" ? styles.active : ""
-                        }`}
+                        className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
+                          }`}
                         onClick={() => setActiveTab("booking")}
                       >
                         <FaFileContract className={styles.icon} /> Booking
@@ -1054,9 +1048,8 @@ const LeadDetailsPage = () => {
                       </div>
 
                       <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
-                          visit.taskRef?.assignTo?.lastName ?? ""
-                        }`}
+                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
+                          }`}
                         <span className={styles.status}>
                           <span
                             className={styles.statusText}
@@ -1097,16 +1090,18 @@ const LeadDetailsPage = () => {
                       ) : (
                         <span>Not available</span>
                       )}
-                      <div
-                        style={{
-                          backgroundColor: "#387478",
-                        }}
-                        className={styles.clientStatus}
-                      >
-                        {visit.leadType === "cp"
-                          ? visit.channelPartner?.firmName ?? "-"
-                          : visit.leadType ?? "-"}
-                      </div>
+                      {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
+                        (visit.leadType !== "cp" && visit.leadType) ? (
+                        <div
+                          style={{ backgroundColor: "#387478" }}
+                          className={styles.clientStatus}
+                        >
+                          {visit.leadType === "cp"
+                            ? visit.channelPartner?.firmName
+                            : visit.leadType}
+                        </div>
+                      ) : null}
+
                     </div>
                   </div>
 
@@ -1248,63 +1243,56 @@ const LeadDetailsPage = () => {
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "overview" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "access" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "taskDetails" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "followup" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "siteVisit" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "transfer" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("transfer")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${
-                  activeTab === "booking" ? styles.active : ""
-                }`}
+                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
+                  }`}
                 onClick={() => setActiveTab("booking")}
               >
                 <FaFileContract className={styles.icon} /> Booking Overview

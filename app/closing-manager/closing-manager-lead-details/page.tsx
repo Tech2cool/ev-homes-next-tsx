@@ -587,16 +587,21 @@ const Closingdetaispage = () => {
                         {visit?.clientInterestedStatus}
                       </div>
                     ) : null}
-                    <div
-                      style={{
-                        backgroundColor: "rgba(3, 84, 214, 1)",
-                      }}
-                      className={styles.clientStatus}
-                    >
-                      {visit.leadType === "cp"
+ {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
+                          (visit.leadType !== "cp" && visit.leadType) ? (
+                          <div
+                            style={{
+                              backgroundColor: "#387478",
+                            }}
+                            className={styles.clientStatus}
+                          >
+                           {visit.leadType === "cp"
                         ? visit.channelPartner?.firmName ?? "-"
                         : visit.leadType ?? "-"}
-                    </div>
+                          </div>)
+                          : null}
+
+                    
                   </div>
                 </div>
               </div>
@@ -1003,16 +1008,21 @@ const Closingdetaispage = () => {
                   ) : (
                     <span>Not available</span>
                   )}
-                  <div
-                    style={{
-                      backgroundColor: "rgba(3, 84, 214, 1)",
-                    }}
-                    className={styles.clientStatus}
-                  >
-                    {visit.leadType === "cp"
+                  {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
+                          (visit.leadType !== "cp" && visit.leadType) ? (
+                          <div
+                            style={{
+                              backgroundColor: "#387478",
+                            }}
+                            className={styles.clientStatus}
+                          >
+                               {visit.leadType === "cp"
                       ? visit.channelPartner?.firmName ?? "-"
                       : visit.leadType ?? "-"}
-                  </div>
+                          </div>)
+                          : null}
+
+                
                 </div>
               </div>
             </div>
