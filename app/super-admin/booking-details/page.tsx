@@ -34,6 +34,7 @@ import {
   Menu,
   Search,
   SlidersHorizontal,
+  X,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -50,6 +51,8 @@ import { Leadbookingfilter } from "@/components/lead-details-components/Booking-
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import useDebounce from "@/hooks/useDebounce";
+import { PiSidebarSimple } from "react-icons/pi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 const BookingDetails = () => {
   const {
@@ -79,6 +82,7 @@ const BookingDetails = () => {
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const currentStage = "Confirm Booking";
   const isConfirmed =
@@ -223,10 +227,18 @@ const BookingDetails = () => {
     return (
       <>
         <div className={styles.desktopContainer}>
+           {sidebarOpen && (
+                    <DashboardSidebar />
+                  )}
           <div className={styles.leftSidebar}>
             <div className={styles.sidebarHeader}>
               <div className={styles.serchlable}>
-                <h1 className={styles.title}>Leads</h1>
+                <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
+              </button>
                 <div className={styles.searchContainer}>
                   <Search className={styles.searchIcon} />
                   <input
@@ -388,25 +400,7 @@ const BookingDetails = () => {
                       >
                         <Edit size={15} />
                       </button>
-                      <button
-                        className={styles.verifiedBadge}
-                        onClick={() =>
-                          alert("Calling " + SelectedLead.phoneNumber)
-                        }
-                      >
-                        <MdCall size={15} />
-                      </button>
 
-                      <button
-                        className={styles.whatsbtn}
-                        onClick={() =>
-                          alert(
-                            `Opening WhatsApp chat with ${SelectedLead.phoneNumber}`
-                          )
-                        }
-                      >
-                        <IoLogoWhatsapp size={15} />
-                      </button>
 
                       <ThemeToggle />
                     </div>
@@ -509,7 +503,14 @@ const BookingDetails = () => {
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
-              <h1 className={styles.title}>Leads</h1>
+             <button
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/super-admin/supar-admin-dashboard");
+              }}
+            >
+              <ArrowLeft className={styles.backIcon} />
+            </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input
@@ -712,26 +713,7 @@ const BookingDetails = () => {
                   }}
                 >
                   {" "}
-                  <button
-                    className={styles.verifiedBadge}
-                    onClick={() =>
-                      SelectedLead &&
-                      alert("Calling " + SelectedLead.phoneNumber)
-                    }
-                  >
-                    <MdCall size={15} />
-                  </button>
-                  <button
-                    className={styles.whatsbtn}
-                    onClick={() =>
-                      SelectedLead &&
-                      alert(
-                        `Opening WhatsApp chat with ${SelectedLead.phoneNumber}`
-                      )
-                    }
-                  >
-                    <IoLogoWhatsapp size={15} />
-                  </button>
+                  
                   <ThemeToggle />
                   <button
                     onClick={() => setIsOpen(false)}

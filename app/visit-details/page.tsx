@@ -31,6 +31,8 @@ import { useData } from "@/providers/dataContext";
 import { FilterDialog } from "@/components/visit-components/filterDialog";
 import ApprovalDialog from "@/components/visit-components/approvalDialog";
 import PdfDialog from "@/components/visit-components/pdfDialog";
+import { PiSidebarSimple } from "react-icons/pi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 const VisitDetailWrapper = () => {
   return (
@@ -60,6 +62,7 @@ const
     const [showApprovalDialog, setShowApprovalDialog] = useState<boolean>(false);
     const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
     const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Form states
     const [editFormData, setEditFormData] = useState({});
@@ -272,9 +275,17 @@ const
       return (
         <div className={styles.desktopContainer}>
           {/* Left Sidebar - Visits List with Filters */}
+          {sidebarOpen && (
+            <DashboardSidebar />
+          )}
           <div className={styles.leftSidebar}>
             <div className={styles.sidebarHeader}>
-              <h1 className={styles.title}>Site Visits</h1>
+              <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
+              </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input

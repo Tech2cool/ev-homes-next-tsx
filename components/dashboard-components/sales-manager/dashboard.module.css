@@ -2,19 +2,21 @@
 
 .container {
   width: 100%;
- 
+
 }
 
 .dashboardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem; /* space between all items */
+  gap: 2rem;
+  /* space between all items */
   padding: 1rem 1.5rem;
   background-color: hsl(var(--background));
   border-bottom: 1px solid hsl(var(--border));
   width: 100%;
 }
+
 .overviewContainer {
   /* border:  1px solid black; */
 
@@ -42,7 +44,8 @@
 
 .metricCardContent {
   flex: 1;
-  padding: 8px; /* reduce padding for compact design */
+  padding: 8px;
+  /* reduce padding for compact design */
   display: flex;
   flex-direction: column;
 }
@@ -63,6 +66,7 @@
   height: 1rem;
   color: hsl(var(--muted-foreground));
 }
+
 /* .cardmain{
   width: 100%;
   height: 100%;
@@ -76,7 +80,8 @@
 
 .metricCardContent {
   flex: 1;
-  padding: 0.5rem !important; /* override any py-6 */
+  padding: 0.5rem !important;
+  /* override any py-6 */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -86,7 +91,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-left: auto; /* pushes user profile to the far right */
+  margin-left: auto;
+  /* pushes user profile to the far right */
 }
 
 .userAvatar {
@@ -112,6 +118,7 @@
   /* justify-content: space-between; */
   /* gap: 10px; */
 }
+
 .Monthlytarget {
   display: flex;
   gap: 20px;
@@ -121,10 +128,11 @@
 .cardWrapper {
   position: relative;
   flex: 1;
-} 
-.SalesCard{
-    display: flex;
-    flex-direction: row;
+}
+
+.SalesCard {
+  display: flex;
+  flex-direction: row;
 }
 
 .cardtarget {
@@ -167,7 +175,8 @@
   /* box-shadow: 0 5px 15px #0009; */
   border-radius: 0 0 16px 16px;
   overflow: hidden;
-  max-height: 0; /* collapsed */
+  max-height: 0;
+  /* collapsed */
   opacity: 0;
   padding: 0;
   gap: 12px;
@@ -176,22 +185,28 @@
 
 .headerRight {
   display: flex;
-  flex-direction: column; /* stack user profile and date range */
-  align-items: flex-end; /* align both to the right edge */
+  flex-direction: column;
+  /* stack user profile and date range */
+  align-items: flex-end;
+  /* align both to the right edge */
   gap: 0.5rem;
 }
 
 /* Show on hover or click */
 .cardWrapper:hover .bottomSheet,
 .show {
-  max-height: 300px; /* adjust based on content height */
+  max-height: 300px;
+  /* adjust based on content height */
   opacity: 1;
-  padding: 1rem 1.2rem; /* restore padding */
+  padding: 1rem 1.2rem;
+  /* restore padding */
 }
 
 .sheetItem {
-  flex: 1; /* ⬅️ ensures equal width distribution */
-  display: flex; /* so text inside can still align */
+  flex: 1;
+  /* ⬅️ ensures equal width distribution */
+  display: flex;
+  /* so text inside can still align */
   justify-content: center;
   align-items: center;
   /* background: #eb5f5f57; */
@@ -234,7 +249,8 @@
 .btnGroup {
   display: flex;
   gap: 12px;
-  align-items: center; /* vertical alignment */
+  align-items: center;
+  /* vertical alignment */
 }
 
 .feedbackpendibg,
@@ -242,7 +258,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px; /* icon and number spacing */
+  gap: 6px;
+  /* icon and number spacing */
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -270,7 +287,8 @@
 
 .assignpendibg:hover {
   background: var(--hover-color);
-  color: #fff; /* optional: ensures text stays visible */
+  color: #fff;
+  /* optional: ensures text stays visible */
   transform: translateY(-2px);
 }
 
@@ -292,6 +310,7 @@
   flex: 1;
   min-width: 350px;
 }
+
 .mainContainer {
   display: flex;
   flex-direction: row;
@@ -354,7 +373,8 @@
 
 .cardWrap:hover .bottomSheet2,
 .show2 {
-  max-height: 300px; /* adjust as needed */
+  max-height: 300px;
+  /* adjust as needed */
   opacity: 1;
   padding: 1rem 1.2rem;
 }
@@ -496,16 +516,62 @@
 }
 
 .no-scrollbar::-webkit-scrollbar-track {
-  background: transparent; /* 🔑 removes the faint line */
+  background: transparent;
+  /* 🔑 removes the faint line */
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE/Edge */
-  scrollbar-width: none; /* Firefox */
-  scrollbar-gutter: stable; /* prevents extra gutter space */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  scrollbar-gutter: stable;
+  /* prevents extra gutter space */
 }
 
 @media (max-width: 768px) {
+  .Monthtarget {
+    width: 100%;
+  }
+
+  .cardassignFeedback h3 {
+    font-size: 15px;
+  }
+
+  .feedbackpending,
+  .assignpending {
+
+    gap: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+
+  }
+
+  .cardassignFeedback {
+
+    padding: 0 17px;
+    height: 50px;
+
+  }
+
+  .cardWrap {
+
+    min-width: 270px;
+  }
+.sheetItem2 {
+
+  padding: 0.5rem 0.4rem;
+
+}
+.sheetValue2 {
+    font-size: 17px;
+    font-weight: 600;
+}
+.sheetLabel2 {
+
+    font-size: 13px;
+    font-weight: 500;
+}
   .Monthlytarget {
     flex-direction: column;
     gap: 15px;
@@ -541,10 +607,12 @@
   .dashboardHeader {
     padding: 0.75rem 1rem;
   }
+
   .calendarIcon {
     height: 7vh;
     width: 7vw;
   }
+
   .dateRangeText {
     font-size: 3vw;
   }
@@ -565,6 +633,7 @@
     /* display: none; */
     font-size: 3vw;
   }
+
   .mainContainer {
     display: flex;
     flex-direction: column;
