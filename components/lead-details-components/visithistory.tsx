@@ -44,6 +44,20 @@ const VisitHistory: React.FC<VisitHistoryProps> = ({ lead }) => {
       
     }
 
+     if (lead?.revisitStatus || lead?.revisitDate) {
+      history.push({
+        status: lead.revisitStatus || "Site Visit",
+        teamleader:
+          lead.visitRef?.closingManager?.firstName ||
+          lead.visitRef?.closingManager?.lastName ||
+          "Team Leader",
+        date: formatDateTime(lead.revisitDate),
+        cpFeedback: lead.revisitRef?.cpfeedback || "No CP feedback provided",
+        evFeedback: lead.revisitRef?.feedback || "No EV feedback provided",
+        icon: <FaCheck />,
+      });  
+    }
+
     return history;
   };
 
