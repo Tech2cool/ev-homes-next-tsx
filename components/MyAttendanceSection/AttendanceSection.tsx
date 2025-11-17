@@ -12,7 +12,7 @@ import Imglog from "../../public/images/Banquet hall.png";
 import Image from "next/image";
 import { tr } from "date-fns/locale";
 import { useData } from "@/providers/dataContext";
-
+import 'react-datepicker/dist/react-datepicker.css';
 // Dummy attendance summary
 interface SummaryItem {
   title: string;
