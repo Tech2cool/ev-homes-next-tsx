@@ -29,7 +29,7 @@ import { Download } from "lucide-react";
 import { useData } from "@/providers/dataContext";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/providers/userContext";
-import Select from "react-select";
+import Select, { components } from "react-select";
 import { dateFormatWithTime } from "@/hooks/useDateFormat";
 import ReactDOM from "react-dom";
 import { MdCancel } from "react-icons/md";
@@ -43,7 +43,7 @@ interface EstimategeneratorProps {
 // Types
 interface OptionType {
   value: string | number;
-  label: string;
+  label: string | number;
   percent?: number;
   index?: number;
   codeValue?: number;
@@ -54,9 +54,9 @@ interface CustomSelectProps {
   id: string;
   label: string;
   icon?: any;
-  options: any[]; // raw objects like projects[]
-  value: string; // selected _id
-  onChange: (value: any) => void; // returns _id like normal select
+  options: any[];
+  value: string | number;
+  onChange: (value: any) => void;
   placeholder?: string;
   disabled?: boolean;
 
@@ -154,6 +154,107 @@ interface TeamLeader {
 
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
+const currentTheme = document.documentElement.classList.contains("light")
+  ? "light"
+  : "dark";
+
+const CustomOption = (props: any) => (
+  <components.Option {...props}>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <span>{props.data.label}</span>
+      <span
+        style={{
+          color: props.data.status === "Present" ? "green" : "red",
+          fontWeight: 500,
+        }}
+      >
+        {props.data.status}
+      </span>
+    </div>
+  </components.Option>
+);
+
+const customSelectStyles = (theme: "dark" | "light") => ({
+  control: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: theme === "dark" ? "#151414f5" : "white",
+    borderColor: state.isFocused
+      ? "#007bff"
+      : theme === "dark"
+      ? "#444444f5"
+      : "#ccc",
+    minHeight: "40px",
+    borderWidth: "2px",
+    color: theme === "dark" ? "white" : "#201f1f",
+    fontSize: "14px", // ✅ smaller font
+    boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
+    "&:hover": {
+      borderColor: "#007bff",
+    },
+  }),
+  menu: (base: any) => ({
+    ...base,
+    backgroundColor: theme === "dark" ? "#151414f5" : "white",
+    fontSize: "14px", // smaller font in dropdown
+  }),
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? theme === "dark"
+        ? "#007bff"
+        : "#cce5ff"
+      : state.isFocused
+      ? theme === "dark"
+        ? "#0056b3"
+        : "#e6f0ff"
+      : theme === "dark"
+      ? "#151414f5"
+      : "white",
+    color: state.isSelected
+      ? theme === "dark"
+        ? "white"
+        : "#201f1f"
+      : theme === "dark"
+      ? "white"
+      : "#201f1f",
+    fontSize: "14px", // smaller font
+  }),
+  singleValue: (base: any) => ({
+    ...base,
+    color: theme === "dark" ? "white" : "#201f1f",
+    fontSize: "14px",
+  }),
+  multiValue: (base: any) => ({
+    ...base,
+    backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
+    fontSize: "14px",
+  }),
+  multiValueLabel: (base: any) => ({
+    ...base,
+    color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+    fontSize: "14px",
+  }),
+  multiValueRemove: (base: any) => ({
+    ...base,
+    color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+    fontSize: "14px",
+    ":hover": {
+      backgroundColor: "red",
+      color: "#e4e4e4ff",
+    },
+  }),
+  input: (base: any) => ({
+    ...base,
+    color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+    fontSize: "14px",
+  }),
+  placeholder: (base: any) => ({
+    ...base,
+    color: theme === "dark" ? "#aaa" : "#999",
+    fontSize: "14px",
+  }),
+});
+
 const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   lead,
   openclick,
@@ -180,23 +281,22 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const [selectedBuildingNo, setSelectedBuildingNo] = useState<number | null>(
     lead?.bookingRef?.buildingNo || null
   );
-  const [selectedSlab, setSelectedSlab] = useState<Slab | null>(null);
-  const [selectedNumber, setSelectedNumber] = useState<OptionType | null>(null);
-  const [selectedFlat, setSelectedFlat] = useState<OptionType | null>(null);
-  const [selectedStampDuty, setSelectedStampDuty] = useState<OptionType>({
-    value: 6,
-    label: "6%",
-  });
+  const [selectedSlab, setSelectedSlab] = useState<Slab | null>();
+  const [selectedNumber, setSelectedNumber] = useState<Flat | null>(null);
+  const [selectedFlat, setSelectedFlat] = useState<Flat | null>(null);
+  const [selectedStampDuty, setSelectedStampDuty] = useState(
+ 6
+  );
 
   const [projectOptions, setProjectOptions] = useState<OptionType[]>([]);
   const [slabOptions, setSlabOption] = useState<OptionType[]>([]);
-  const [floorOptions, setFloorOptions] = useState<OptionType[]>([]);
+  // const [floorOptions, setFloorOptions] = useState<OptionType[]>([]);
   const [selectedFloor, setSelectedFloor] = useState<number | null>(
     lead?.bookingRef?.floor || null
   );
-  const [buildingOptions, setBuildingOptions] = useState<OptionType[]>([]);
-  const [selectedBuilding, setSelectedBuilding] = useState<OptionType | null>(
-    null
+  // const [buildingOptions, setBuildingOptions] = useState<OptionType[]>([]);
+  const [selectedBuilding, setSelectedBuilding] = useState<OurProject | null>(
+    lead?.bookingRef?.project || null
   );
   const [numberOptions, setNumberOptions] = useState<OptionType[]>([]);
 
@@ -211,7 +311,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     allInclusiveValue: "",
   });
 
-  const stampDutyOptions: OptionType[] = [
+  const stampDutyOptions = [
     { value: 5, label: "5%" },
     { value: 6, label: "6%" },
   ];
@@ -220,7 +320,15 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
 
   const dialogRef = useRef<HTMLDivElement>(null);
 
+  //  const floors =
+  //   selectedProject?.flatList
+  //     ?.filter((f) => f.buildingNo === selectedBuildingNo)
+  //     .map((f) => f.floor)
+  //     .filter((f): f is number => f !== undefined)
+  //     .sort((a, b) => a - b) || [];
+
   // Close dialog when clicking outside
+  
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
@@ -240,11 +348,78 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
       // getSlabByProject(selectedProject._id).then(() => {
       //   console.log(slabsbyproject?.slabs ?? []);
       // });
-       getSlabByProject(selectedProject._id);
+      getSlabByProject(selectedProject._id);
     }
   }, [selectedProject]);
 
   const slabsproj = slabsbyproject?.slabs ?? [];
+
+  const flats = selectedProject?.flatList ?? [];
+
+  // Check if project has building numbers
+  const hasBuildings = flats.length > 0 && flats.some((f) => f.buildingNo);
+
+  const buildingOptions = hasBuildings
+    ? Array.from(
+        new Set(
+          flats
+            .map((f) => f.buildingNo)
+            .filter((b): b is number => b !== undefined && b !== null)
+        )
+      ).sort()
+    : [];
+
+  // ---------------------------
+  // Floor Options - filtered based on selected building
+  // ---------------------------
+  const floorOptions = hasBuildings
+    ? Array.from(
+        new Set(
+          flats
+            .filter((f) => f.buildingNo === selectedBuildingNo)
+            .map((f) => f.floor)
+            .filter((f): f is number => f !== undefined && f !== null)
+        )
+      ).sort((a, b) => a - b)
+    : Array.from(
+        new Set(
+          flats
+            .map((f) => f.floor)
+            .filter((f): f is number => f !== undefined && f !== null)
+        )
+      ).sort((a, b) => a - b);
+
+  // ---------------------------
+  // Unit/Flat Options - filtered based on selected building and floor
+  // ---------------------------
+  const unitOptions = hasBuildings
+    ? flats.filter(
+        (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
+      )
+    : flats.filter((f) => f.floor === selectedFloor);
+
+  // Now replace your existing buildings, floors, flats variables with these:
+  const buildings = buildingOptions;
+  const floors = floorOptions;
+  const flatsForSelection = unitOptions;
+
+  useEffect(() => {
+    console.log("Selected Project:", selectedProject);
+    console.log("Selected Building:", selectedBuildingNo);
+    console.log("Selected Floor:", selectedFloor);
+    console.log("Selected Flat:", selectedFlat);
+    console.log("Buildings available:", buildings);
+    console.log("Floors available:", floors);
+    console.log("Flats available:", flats);
+  }, [
+    selectedProject,
+    selectedBuildingNo,
+    selectedFloor,
+    selectedFlat,
+    buildings,
+    floors,
+    flats,
+  ]);
 
   const onSelectChange = (name: string, value: any) => {
     if (name === "project") {
@@ -253,6 +428,38 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
       setSelectedBuildingNo(parseInt(value));
     } else if (name === "floor") {
       setSelectedFloor(parseInt(value));
+    }
+  };
+
+  const autoPopulateFlatNumber = (
+    floor: number,
+    unitNumber: string | number
+  ) => {
+    // Find the flat based on floor and unit number
+    const matchingFlat = flats.find(
+      (flat) =>
+        flat.floor === floor &&
+        (flat.number === flat.number?.toString() ||
+          flat.number?.toString() === unitNumber.toString())
+    );
+
+    if (matchingFlat) {
+      const flatOption: OptionType = {
+        value: matchingFlat.id || matchingFlat.number?.toString() || "",
+        label:
+          matchingFlat.number ||
+          matchingFlat.number?.toString() ||
+          `Flat ${matchingFlat.id}`,
+      };
+
+      // setSelectedFlat(flat || null);
+
+      // Also update flat details
+      setFlatDetails({
+        carpetArea: matchingFlat.carpetArea?.toString() || "",
+        configuration: matchingFlat.configuration || "",
+        allInclusiveValue: matchingFlat.allInclusiveValue?.toString() || "",
+      });
     }
   };
 
@@ -301,84 +508,98 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
             closeMenuOnSelect
             isDisabled={disabled}
             isSearchable
+            styles={customSelectStyles(currentTheme)}
+            components={{ Option: CustomOption }}
           />
         </div>
       </div>
     );
   };
 
-const CustomSelect: React.FC<CustomSelectProps> = ({
-  id,
-  label,
-  icon: Icon,
-  options,
-  value,
-  onChange,
-  placeholder = "Select...",
-  disabled = false,
-  returnObject = false,
-}) => {
-  // Transform options for react-select
-  const formattedOptions = React.useMemo(() => {
-    return options.map((opt) => {
-      // Handle different object structures
-      const valueKey = opt._id !== undefined ? opt._id : 
-                      opt.id !== undefined ? opt.id : 
-                      opt.value;
-      
-      const labelKey = opt.name || opt.label || 
-                      (opt.value !== undefined ? String(opt.value) : String(valueKey));
-      
-      return {
-        value: String(valueKey), // Ensure value is string for consistent comparison
-        label: labelKey,
-        original: opt,
-      };
-    }).filter(opt => opt.value !== undefined && opt.value !== null && opt.value !== '');
-  }, [options]);
-
-  // Find the currently selected option - use strict comparison
-  const selectedOption = React.useMemo(() => {
-    const stringValue = String(value);
-    return formattedOptions.find((opt) => opt.value === stringValue) || null;
-  }, [formattedOptions, value]);
-
-  console.log(`CustomSelect ${label}:`, {
-    options: formattedOptions,
+  const CustomSelect: React.FC<CustomSelectProps> = ({
+    id,
+    label,
+    icon: Icon,
+    options,
     value,
-    valueType: typeof value,
-    selectedOption
-  });
+    onChange,
+    placeholder = "Select...",
+    disabled = false,
+    returnObject = false,
+  }) => {
+    // Transform options for react-select
+    const formattedOptions = React.useMemo(() => {
+      return options
+        .map((opt) => {
+          // Handle different object structures
+          const valueKey =
+            opt._id !== undefined
+              ? opt._id
+              : opt.id !== undefined
+              ? opt.id
+              : opt.value;
 
-  return (
-    <div className={styles.formControl}>
-      <label htmlFor={id}>{label}</label>
-      <div className={styles.inputWrapper}>
-        {Icon && <Icon className={styles.inputIcon} />}
+          const labelKey =
+            opt.name ||
+            opt.label ||
+            (opt.value !== undefined ? String(opt.value) : String(valueKey));
 
-        <Select
-          key={value} // Add key to force re-render when value changes
-          id={id}
-          options={formattedOptions}
-          value={selectedOption}
-          onChange={(selected) => {
-            console.log(`Select ${label} changed:`, selected);
-            if (returnObject) {
-              onChange(selected?.original || null);
-            } else {
-              onChange(selected?.value || "");
-            }
-          }}
-          placeholder={placeholder}
-          classNamePrefix="react-select"
-          closeMenuOnSelect
-          isDisabled={disabled}
-          isSearchable
-        />
+          return {
+            value: String(valueKey), // Ensure value is string for consistent comparison
+            label: labelKey,
+            original: opt,
+          };
+        })
+        .filter(
+          (opt) =>
+            opt.value !== undefined && opt.value !== null && opt.value !== ""
+        );
+    }, [options]);
+
+    // Find the currently selected option - use strict comparison
+    const selectedOption = React.useMemo(() => {
+      const stringValue = String(value);
+      return formattedOptions.find((opt) => opt.value === stringValue) || null;
+    }, [formattedOptions, value]);
+
+    console.log(`CustomSelect ${label}:`, {
+      options: formattedOptions,
+      value,
+      valueType: typeof value,
+      selectedOption,
+    });
+
+    return (
+      <div className={styles.formControl}>
+        <label htmlFor={id}>{label}</label>
+        <div className={styles.inputWrapper}>
+          {Icon && <Icon className={styles.inputIcon} />}
+
+          <Select
+            key={value} // Add key to force re-render when value changes
+            id={id}
+            options={formattedOptions}
+            value={selectedOption}
+            onChange={(selected) => {
+              console.log(`Select ${label} changed:`, selected);
+              if (returnObject) {
+                onChange(selected?.original || null);
+              } else {
+                onChange(selected?.value || "");
+              }
+            }}
+            placeholder={placeholder}
+            classNamePrefix="react-select"
+            closeMenuOnSelect
+            isDisabled={disabled}
+            isSearchable
+            styles={customSelectStyles(currentTheme)}
+            components={{ Option: CustomOption }}
+          />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
   //   useEffect(() => {
   //     fetchEstimatCount(currentLead.teamLeader._id);
@@ -660,8 +881,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     if (!allInc || !selectedSlab) return;
 
     console.log(selectedSlab.percent);
-    let stamp = selectedStampDuty || { value: 6, label: "6%" };
-    let st = Number(stamp.value);
+    let stamp = selectedStampDuty || 6;
+    let st = stamp;
     console.log(stamp);
     let agreementValue = (allInc - 30000) / ((st + gstPercentage) / 100 + 1);
 
@@ -848,59 +1069,105 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 label="Slab"
                 icon={IoLayers}
                 slabs={slabsbyproject?.slabs ?? []}
-                value={selectedSlab?.name || ""}
+                value={selectedSlab?.id || ""}
                 onChange={(slab: Slab | null) => setSelectedSlab(slab)}
                 placeholder="Select Slab"
               />
-              {/* {buildingOptions.length > 1 && ( */}
-              {/* <CustomSelect
-                id="building"
-                label="Building"
-                options={buildingOptions}
-                value={selectedBuilding}
-                onChange={(ele: OptionType | null) => {
-                  setSelectedBuilding(ele);
-                }}
-                placeholder="Select building"
-              /> */}
-              {/* )} */}
 
-              {/* <CustomSelect
-                id="floors"
-                label="Floors"
-                options={floorOptions}
-                value={selectedFloor}
-                onChange={(ele: OptionType | null) => {
-                  setSelectedFloor(ele);
-                }}
-                placeholder="Select floor"
-                disabled={!floorOptions.length}
-              /> */}
+              {buildingOptions.length > 0 && (
+                <CustomSelect
+                  id="building"
+                  label="Building"
+                  options={buildingOptions.map((building) => ({
+                    value: building,
+                    label: `Building ${building}`,
+                    original: building,
+                  }))}
+                  value={selectedBuildingNo || ""}
+                  onChange={(value: string) => {
+                    const buildingNo = value ? parseInt(value) : null;
+                    setSelectedBuildingNo(buildingNo);
+                    // Reset dependent fields when building changes
+                    setSelectedFloor(null);
+                    setSelectedFlat(null);
+                  }}
+                  placeholder="Select building"
+                />
+              )}
 
-              {/* <CustomSelect
-                id="number"
-                label="Unit Number"
-                options={numberOptions}
-                value={selectedNumber}
-                onChange={(ele: OptionType | null) => {
-                  setSelectedNumber(ele);
-                }}
-                placeholder="Select number"
-                disabled={!numberOptions.length}
-              /> */}
-              {/* <CustomSelect
-                id="flatNumber"
-                label="Select Flat Number"
-                icon={FaBuilding}
-                options={flatOptions}
-                value={selectedFlat}
-                onChange={(ele: OptionType | null) => {
-                  setSelectedFlat(ele);
-                }}
-                placeholder="Select Flat No."
-                disabled={!flatOptions.length}
-              /> */}
+              {/* Floor Selection */}
+              {/* Floor Selection */}
+              {floorOptions.length > 0 && (
+                <CustomSelect
+                  id="floors"
+                  label="Floors"
+                  options={floorOptions.map((floor) => ({
+                    value: floor,
+                    label: `Floor ${floor}`,
+                  }))}
+                  value={selectedFloor || ""}
+                  onChange={(value: string | number) => {
+                    const floor = value ? parseInt(value.toString()) : null;
+                    setSelectedFloor(floor);
+                    setSelectedNumber(null); // Reset the selected flat
+                  }}
+                  placeholder="Select floor"
+                  disabled={!floorOptions.length}
+                />
+              )}
 
+              {/* Unit/Flat Selection - Directly select Flat objects */}
+              {selectedFloor && flatsForSelection.length > 0 && (
+                <CustomSelect
+                  id="number"
+                  label="Select Unit"
+                  options={flatsForSelection.map((flat) => ({
+                    value: flat.id, // Use _id as value
+                    label:
+                      flat.number || `Unit ${flat.number}` || `Flat ${flat.id}`,
+                    original: flat, // Store the full flat object
+                  }))}
+                  value={selectedFlat?.id || ""}
+                  onChange={(value: string | number) => {
+                    const flat = flatsForSelection.find((f) => f.id === value);
+                    setSelectedFlat(flat || null);
+
+                    // Auto-populate flat details
+                    if (flat) {
+                      setFlatDetails({
+                        carpetArea: flat.carpetArea?.toString() || "",
+                        configuration: flat.configuration || "",
+                        allInclusiveValue:
+                          flat.allInclusiveValue?.toString() || "",
+                      });
+                    }
+                  }}
+                  placeholder="Select unit"
+                  disabled={!flatsForSelection.length}
+                  returnObject={false}
+                />
+              )}
+
+              {/* Display Flat Number (Read-only) */}
+              {selectedFlat && (
+                <div className={styles.formControl}>
+                  <label htmlFor="flatNumber">Flat Number</label>
+                  <div className={styles.inputWrapper}>
+                    <FaBuilding className={styles.inputIcon} />
+                    <input
+                      type="text"
+                      id="flatNumber"
+                      value={selectedFlat.number || selectedFlat.id || "N/A"}
+                      readOnly
+                      className={styles.inputField}
+                      style={{
+                        backgroundColor: "#f5f5f5",
+                        cursor: "not-allowed",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
               <div className={styles.formControl}>
                 <label htmlFor="carpetArea">Carpet Area </label>
                 <div className={styles.inputWrapper}>
@@ -943,7 +1210,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 </div>
               </div>
 
-              {/* <CustomSelect
+              <CustomSelect
                 id="stampDuty"
                 label="Select Stamp Duty (%)"
                 icon={PiSealPercentFill}
@@ -953,7 +1220,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                   setSelectedStampDuty;
                 }}
                 placeholder="Select Stamp Duty"
-              /> */}
+              />
             </div>
 
             <div className={`${styles.section} ${styles.sectionStacked}`}>
