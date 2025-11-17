@@ -317,7 +317,7 @@
 
 .stageLabel {
   white-space: nowrap;
-    color: #1e1d1d;
+    color: #0528a6;
 }
 :global(html.light) .stageLabel{
     color: #3d3a3a;

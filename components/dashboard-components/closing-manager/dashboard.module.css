@@ -7,12 +7,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem; /* space between all items */
+  gap: 2rem;
+  /* space between all items */
   padding: 1rem 1.5rem;
   background-color: hsl(var(--background));
   border-bottom: 1px solid hsl(var(--border));
   width: 100%;
 }
+
 .overviewContainer {
   /* border:  1px solid black; */
 
@@ -40,7 +42,8 @@
 
 .metricCardContent {
   flex: 1;
-  padding: 8px; /* reduce padding for compact design */
+  padding: 8px;
+  /* reduce padding for compact design */
   display: flex;
   flex-direction: column;
 }
@@ -61,6 +64,7 @@
   height: 1rem;
   color: hsl(var(--muted-foreground));
 }
+
 /* .cardmain{
   width: 100%;
   height: 100%;
@@ -74,7 +78,8 @@
 
 .metricCardContent {
   flex: 1;
-  padding: 0.5rem !important; /* override any py-6 */
+  padding: 0.5rem !important;
+  /* override any py-6 */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -84,7 +89,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-left: auto; /* pushes user profile to the far right */
+  margin-left: auto;
+  /* pushes user profile to the far right */
 }
 
 .userAvatar {
@@ -110,11 +116,13 @@
   /* justify-content: space-between; */
   /* gap: 10px; */
 }
+
 .Monthlytarget {
   display: flex;
   gap: 20px;
   width: fit-content;
 }
+
 /* 
 .cardWrapper {
   position: relative;
@@ -138,8 +146,10 @@
 .cardHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* pushes name & task box apart */
-  gap: 12px; /* adds breathing space */
+  justify-content: space-between;
+  /* pushes name & task box apart */
+  gap: 12px;
+  /* adds breathing space */
 }
 
 :global(html.light) .cardtarget {
@@ -164,7 +174,8 @@
   /* box-shadow: 0 5px 15px #0009; */
   border-radius: 0 0 16px 16px;
   overflow: hidden;
-  max-height: 0; /* collapsed */
+  max-height: 0;
+  /* collapsed */
   opacity: 0;
   padding: 0;
   gap: 12px;
@@ -173,22 +184,28 @@
 
 .headerRight {
   display: flex;
-  flex-direction: column; /* stack user profile and date range */
-  align-items: flex-end; /* align both to the right edge */
+  flex-direction: column;
+  /* stack user profile and date range */
+  align-items: flex-end;
+  /* align both to the right edge */
   gap: 0.5rem;
 }
 
 /* Show on hover or click */
 .cardWrapper:hover .bottomSheet,
 .show {
-  max-height: 300px; /* adjust based on content height */
+  max-height: 300px;
+  /* adjust based on content height */
   opacity: 1;
-  padding: 1rem 1.2rem; /* restore padding */
+  padding: 1rem 1.2rem;
+  /* restore padding */
 }
 
 .sheetItem {
-  flex: 1; /* ⬅️ ensures equal width distribution */
-  display: flex; /* so text inside can still align */
+  flex: 1;
+  /* ⬅️ ensures equal width distribution */
+  display: flex;
+  /* so text inside can still align */
   justify-content: center;
   align-items: center;
   /* background: #eb5f5f57; */
@@ -231,7 +248,8 @@
 .btnGroup {
   display: flex;
   gap: 12px;
-  align-items: center; /* vertical alignment */
+  align-items: center;
+  /* vertical alignment */
 }
 
 .feedbackpendibg,
@@ -239,7 +257,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px; /* icon and number spacing */
+  gap: 6px;
+  /* icon and number spacing */
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -267,7 +286,8 @@
 
 .assignpendibg:hover {
   background: var(--hover-color);
-  color: #fff; /* optional: ensures text stays visible */
+  color: #fff;
+  /* optional: ensures text stays visible */
   transform: translateY(-2px);
 }
 
@@ -289,6 +309,7 @@
   flex: 1;
   min-width: 350px;
 }
+
 .mainContainer {
   display: flex;
   flex-direction: row;
@@ -351,7 +372,8 @@
 
 .cardWrap:hover .bottomSheet2,
 .show2 {
-  max-height: 300px; /* adjust as needed */
+  max-height: 300px;
+  /* adjust as needed */
   opacity: 1;
   padding: 1rem 1.2rem;
 }
@@ -479,6 +501,7 @@
   color: #ececec;
   font-weight: 500;
 }
+
 :global(html.light) .label {
   color: black;
 }
@@ -496,13 +519,17 @@
 }
 
 .no-scrollbar::-webkit-scrollbar-track {
-  background: transparent; /* 🔑 removes the faint line */
+  background: transparent;
+  /* 🔑 removes the faint line */
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE/Edge */
-  scrollbar-width: none; /* Firefox */
-  scrollbar-gutter: stable; /* prevents extra gutter space */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  scrollbar-gutter: stable;
+  /* prevents extra gutter space */
 }
 
 .graf {
@@ -583,6 +610,7 @@
   z-index: 2;
   color: white;
 }
+
 :global(html.light) .centerNumber {
   position: absolute;
   font-size: 22px;
@@ -698,8 +726,10 @@
   position: relative;
   display: inline-block;
 }
+
 .selectHeader {
-  appearance: none; /* Remove browser default arrow */
+  appearance: none;
+  /* Remove browser default arrow */
   -webkit-appearance: none;
   -moz-appearance: none;
 
@@ -720,10 +750,12 @@
   background-position: right 10px center;
   background-size: 12px;
 }
+
 .selectHeader:hover {
   background-color: #2a2a3d;
   border-color: #666;
 }
+
 :global(html.light) .selectHeader {
   background-color: white;
   color: black;
@@ -766,18 +798,19 @@
   display: none;
 }
 
-@media screen and (max-width:768px){
-  
-.monthGrid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 10%;
-  width: 100%;
-}
-.texttarget {
- 
-  width: 100%;
-}
+@media screen and (max-width:768px) {
+
+  .monthGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10%;
+    width: 100%;
+  }
+
+  .texttarget {
+
+    width: 100%;
+  }
 }
 
 @media (max-width: 1135px) {
@@ -857,10 +890,11 @@
   .graf {
     display: none;
   }
-  .description{
+
+  .description {
     margin-left: 2.5vw;
   }
-  
+
 
   .grafMobile {
     display: flex;
@@ -899,7 +933,7 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    
+
     /* background-color: red; */
   }
 
@@ -918,7 +952,7 @@
   .targetLabel {
     font-size: 12px;
     color: #fff;
-    
+
   }
 
   :global(html.light) .targetLabel {
@@ -1012,11 +1046,12 @@
   }
 
   :global(html.light) .filterButton {
-    background:rgba(0, 0, 0, 0.774);
+    background: rgba(0, 0, 0, 0.774);
     /* box-shadow: #090909; */
     color: white;
   }
-/* mobiletarget */
+
+  /* mobiletarget */
   .monthDropdown {
     position: absolute;
     top: 40px;
@@ -1091,6 +1126,52 @@
 }
 
 @media (max-width: 768px) {
+  .Monthtarget {
+    width: 100%;
+  }
+
+  .cardassignFeedback h3 {
+    font-size: 15px;
+  }
+
+  .feedbackpending,
+  .assignpending {
+
+    gap: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+
+  }
+
+  .cardassignFeedback {
+
+    padding: 0 17px;
+    height: 50px;
+
+  }
+
+  .cardWrap {
+
+    min-width: 270px;
+  }
+
+  .sheetItem2 {
+
+    padding: 0.5rem 0.4rem;
+
+  }
+
+  .sheetValue2 {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .sheetLabel2 {
+
+    font-size: 13px;
+    font-weight: 500;
+  }
+
   .Monthlytarget {
     flex-direction: column;
     gap: 15px;
@@ -1126,10 +1207,12 @@
   .dashboardHeader {
     padding: 0.75rem 1rem;
   }
+
   .calendarIcon {
     height: 7vh;
     width: 7vw;
   }
+
   .dateRangeText {
     font-size: 3vw;
   }
@@ -1150,11 +1233,13 @@
     /* display: none; */
     font-size: 3vw;
   }
+
   .mainContainer {
     display: flex;
     flex-direction: column;
   }
 }
+
 .optionMain {
   background-color: #1a1a1a;
   color: white;
@@ -1166,6 +1251,7 @@
   background-color: white;
   color: black;
 }
+
 /* .selectHeader{
    background-color: #1a1a1a;
   color: #fff;
@@ -1190,6 +1276,7 @@
   color: black;
   margin-bottom: 2vh;
 }
+
 :global(html.light) .customSelect {
   background-color: white;
   color: black;
@@ -1200,11 +1287,13 @@
   border: 1px solid rgba(128, 128, 128, 0.124);
   border-radius: 4px;
   display: flex;
-  justify-content: space-between; /* year on left, arrow on right */
+  justify-content: space-between;
+  /* year on left, arrow on right */
   align-items: center;
   background-color: rgba(0, 0, 0, 0.075);
   color: rgba(255, 255, 255, 0.782);
 }
+
 :global(html.light) .selected {
   color: black;
 }
@@ -1229,21 +1318,25 @@
   margin-top: 2px;
   z-index: 10;
 
-  max-height: 200px; /* control height */
-  overflow-y: auto; /* scrollable */
+  max-height: 200px;
+  /* control height */
+  overflow-y: auto;
+  /* scrollable */
   display: grid;
   gap: 5px;
 
   border-radius: 6px;
   z-index: 10;
 }
-:global(html.light) .optionsGrid{
+
+:global(html.light) .optionsGrid {
   background-color: white;
 }
 
-:global(html.light) .optionMain{
+:global(html.light) .optionMain {
   background-color: rgba(128, 128, 128, 0.178);
 }
+
 .optionMain {
   padding: 8px;
   text-align: center;

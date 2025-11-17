@@ -738,7 +738,7 @@ const Salesdetaispage = () => {
                       visit={SelectedLead}
                       onCall={handleCall}
                       user={user}
-                       socket={socket}
+                      socket={socket}
                     />
                   )}
 
@@ -894,15 +894,18 @@ const Salesdetaispage = () => {
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
-        <DashboardSidebar />
+
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
-           <button
-            className={styles.filterBtn}
-            onClick={() => setShowFilterDialog(true)}
-          >
-            <SlidersHorizontal className={styles.filterIcon} />
-          </button>
+            <button
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/sales-manager/sales-manager-dashboard");
+              }}
+            >
+              <ArrowLeft className={styles.backIcon} />
+            </button>
+
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -914,8 +917,13 @@ const Salesdetaispage = () => {
               />
             </div>
           </div>
+          <button
+            className={styles.filterBtn}
+            onClick={() => setShowFilterDialog(true)}
+          >
+            <SlidersHorizontal className={styles.filterIcon} />
+          </button>
 
-          
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -1240,7 +1248,7 @@ const Salesdetaispage = () => {
               visit={SelectedLead}
               onCall={handleCall}
               user={user}
-               socket={socket}
+              socket={socket}
             />
           )}
 
@@ -1391,7 +1399,7 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                   <button
+                  <button
                     className={styles.whatsbtn}
                     onClick={() => {
                       console.log("clicked 1");
@@ -1489,7 +1497,7 @@ const VisitDetailsContent = ({
                         });
                       }}
                     >
-                       <MdCall size={12} />
+                      <MdCall size={12} />
                     </button>
                     {visit.countryCode} {visit.altPhoneNumber ?? "NA"}
                   </p>

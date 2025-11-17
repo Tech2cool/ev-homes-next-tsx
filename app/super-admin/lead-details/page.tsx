@@ -939,15 +939,18 @@ const LeadDetailsPage = () => {
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
             <button
-              className={styles.filterBtn}
-              onClick={() => setShowFilterDialog(true)}
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/super-admin/supar-admin-dashboard");
+              }}
             >
-              <SlidersHorizontal className={styles.filterIcon} />
+              <ArrowLeft className={styles.backIcon} />
             </button>
+
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -959,6 +962,14 @@ const LeadDetailsPage = () => {
               />
             </div>
           </div>
+          <button
+            className={styles.filterBtn}
+            onClick={() => setShowFilterDialog(true)}
+          >
+            <SlidersHorizontal className={styles.filterIcon} />
+          </button>
+
+
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (

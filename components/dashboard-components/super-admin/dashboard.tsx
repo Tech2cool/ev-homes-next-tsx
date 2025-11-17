@@ -706,7 +706,7 @@ const handleBookingClick = async (status?: string) => {
       <div className={styles.headtitle}>
         <div className={styles.ding}>Conversion Metrics</div>
       </div>
-      <div className="p-4 sm:p-6 pt-0 ">
+      <div className="p-0 sm:p-6 pt-0 ">
         <div className="flex flex-col lg:flex-row gap-4  ">
           <div className="flex-1 ">
 

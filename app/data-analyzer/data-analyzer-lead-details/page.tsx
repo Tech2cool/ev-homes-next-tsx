@@ -963,15 +963,17 @@ const DataAnalyzerdetailspage = () => {
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
             <button
-            className={styles.filterBtn}
-            onClick={() => setShowFilterDialog(true)}
-          >
-            <SlidersHorizontal className={styles.filterIcon} />
-          </button>
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/data-analyzer/data-analyzer-dashboard");
+              }}
+            >
+              <ArrowLeft className={styles.backIcon} />
+            </button>
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -983,8 +985,13 @@ const DataAnalyzerdetailspage = () => {
               />
             </div>
           </div>
+          <button
+            className={styles.filterBtn}
+            onClick={() => setShowFilterDialog(true)}
+          >
+            <SlidersHorizontal className={styles.filterIcon} />
+          </button>
 
-          
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -1418,7 +1425,7 @@ const VisitDetailsContent = ({
   visit,
   onCall,
   user,
-   socket,
+  socket,
 }: {
   visit: Lead;
   onCall: (lead: any) => void;
@@ -1511,7 +1518,7 @@ const VisitDetailsContent = ({
                     }
                     title="Make a call to number"
                   /> */}
-                   <button
+                  <button
                     className={styles.whatsbtn}
                     onClick={() => {
                       console.log("clicked 1");
@@ -1570,7 +1577,7 @@ const VisitDetailsContent = ({
                       }
                       title="Make a call to alternate number"
                     /> */}
-                     <button
+                    <button
                       className={styles.whatsbtn}
                       onClick={() => {
                         console.log("clicked 1");

@@ -443,14 +443,14 @@ const Closingdetaispage = () => {
   if (!isMobile) {
     return (
       <div className={styles.desktopContainer}>
-         {sidebarOpen && (
-                  <DashboardSidebar />
-                )}
-        
+        {sidebarOpen && (
+          <DashboardSidebar />
+        )}
+
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
-               <button
+              <button
                 className={styles.sidebarOpenBtn}
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
@@ -863,15 +863,17 @@ const Closingdetaispage = () => {
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
-         <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
             <button
-            className={styles.filterBtn}
-            onClick={() => setShowFilterDialog(true)}
-          >
-            <SlidersHorizontal className={styles.filterIcon} />
-          </button>
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/closing-manager/closing-manager-dashboard");
+              }}
+            >
+              <ArrowLeft className={styles.backIcon} />
+            </button>
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -883,8 +885,13 @@ const Closingdetaispage = () => {
               />
             </div>
           </div>
+          <button
+            className={styles.filterBtn}
+            onClick={() => setShowFilterDialog(true)}
+          >
+            <SlidersHorizontal className={styles.filterIcon} />
+          </button>
 
-          
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {leads?.map((visit, index) => (
@@ -1202,7 +1209,7 @@ const Closingdetaispage = () => {
                   visit={SelectedLead}
                   onCall={handleCall}
                   user={user}
-                   socket={socket}
+                  socket={socket}
                 />
               )}
 
@@ -1314,7 +1321,7 @@ const VisitDetailsContent = ({
   visit: Lead;
   onCall: (lead: any) => void;
   user: any;
-    socket: any,
+  socket: any,
 }) => {
   const formatDate = (date: any) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -1397,7 +1404,7 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                   {/* <FiPhoneCall
+                  {/* <FiPhoneCall
                     size={15}
                     color="dodgerblue"
                     style={{ cursor: "pointer", color: "green" }}
@@ -1409,7 +1416,7 @@ const VisitDetailsContent = ({
                     }
                     title="Make a call to number"
                   /> */}
-                     <button
+                  <button
                     className={styles.whatsbtn}
                     onClick={() => {
                       console.log("clicked 1");
@@ -1468,7 +1475,7 @@ const VisitDetailsContent = ({
                       }
                       title="Make a call to alternate number"
                     /> */}
-                     <button
+                    <button
                       className={styles.whatsbtn}
                       onClick={() => {
                         console.log("clicked 1");
