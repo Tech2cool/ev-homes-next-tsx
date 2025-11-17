@@ -23,6 +23,12 @@ interface OurProject {
   parkingList?: Parking[];
 }
 
+interface Estimator {
+  teamLeader?: Employee | null;
+  count?: number | null;
+  generatedDate?: string | null; 
+}
+
 interface EstimateGenerated {
   id?: string | null;
   estID?: string | null;
