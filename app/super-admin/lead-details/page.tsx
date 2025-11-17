@@ -794,7 +794,7 @@ const LeadDetailsPage = () => {
 
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
-                      <BookingOverview />
+                                <BookingOverview lead={SelectedLead} />
                     </div>
                   )}
                   {/* Similar Visits Section */}
@@ -1349,7 +1349,7 @@ const LeadDetailsPage = () => {
 
           {activeTab === "booking" && (
             <div className={styles.tabContent}>
-              <BookingOverview />
+              <BookingOverview lead={SelectedLead} />
             </div>
           )}
           {/* Similar Visits Section */}
