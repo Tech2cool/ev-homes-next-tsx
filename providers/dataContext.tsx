@@ -604,6 +604,17 @@ type DataProviderState = {
   addBrokerage: (
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
+
+  getPostSalesExecutives: () => Promise<{ success: boolean; message?: string }>;
+
+  addPostSaleLead:(
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+
+  addPayment:(
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
 };
 
 //initial values should define here
@@ -805,6 +816,21 @@ const initialState: DataProviderState = {
   cancelBooking: async () => ({ success: false, message: "Not initialized" }),
 
   addBrokerage: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  getPostSalesExecutives: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  addPostSaleLead: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  addPayment: async () => ({
     success: false,
     message: "Not initialized",
   }),
