@@ -284,9 +284,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const [selectedSlab, setSelectedSlab] = useState<Slab | null>();
   const [selectedNumber, setSelectedNumber] = useState<Flat | null>(null);
   const [selectedFlat, setSelectedFlat] = useState<Flat | null>(null);
-  const [selectedStampDuty, setSelectedStampDuty] = useState(
- 6
-  );
+  const [selectedStampDuty, setSelectedStampDuty] = useState(6);
 
   const [projectOptions, setProjectOptions] = useState<OptionType[]>([]);
   const [slabOptions, setSlabOption] = useState<OptionType[]>([]);
@@ -328,7 +326,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   //     .sort((a, b) => a - b) || [];
 
   // Close dialog when clicking outside
-  
+
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
@@ -431,37 +429,37 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     }
   };
 
-  const autoPopulateFlatNumber = (
-    floor: number,
-    unitNumber: string | number
-  ) => {
-    // Find the flat based on floor and unit number
-    const matchingFlat = flats.find(
-      (flat) =>
-        flat.floor === floor &&
-        (flat.number === flat.number?.toString() ||
-          flat.number?.toString() === unitNumber.toString())
-    );
+  // const autoPopulateFlatNumber = (
+  //   floor: number,
+  //   unitNumber: string | number
+  // ) => {
+  //   // Find the flat based on floor and unit number
+  //   const matchingFlat = flats.find(
+  //     (flat) =>
+  //       flat.floor === floor &&
+  //       (flat.number === flat.number?.toString() ||
+  //         flat.number?.toString() === unitNumber.toString())
+  //   );
 
-    if (matchingFlat) {
-      const flatOption: OptionType = {
-        value: matchingFlat.id || matchingFlat.number?.toString() || "",
-        label:
-          matchingFlat.number ||
-          matchingFlat.number?.toString() ||
-          `Flat ${matchingFlat.id}`,
-      };
+  //   if (matchingFlat) {
+  //     const flatOption: OptionType = {
+  //       value: matchingFlat.id || matchingFlat.number?.toString() || "",
+  //       label:
+  //         matchingFlat.number ||
+  //         matchingFlat.number?.toString() ||
+  //         `Flat ${matchingFlat.id}`,
+  //     };
 
-      // setSelectedFlat(flat || null);
+  //     // setSelectedFlat(flat || null);
 
-      // Also update flat details
-      setFlatDetails({
-        carpetArea: matchingFlat.carpetArea?.toString() || "",
-        configuration: matchingFlat.configuration || "",
-        allInclusiveValue: matchingFlat.allInclusiveValue?.toString() || "",
-      });
-    }
-  };
+  //     // Also update flat details
+  //     setFlatDetails({
+  //       carpetArea: matchingFlat.carpetArea?.toString() || "",
+  //       configuration: matchingFlat.configuration || "",
+  //       allInclusiveValue: matchingFlat.allInclusiveValue?.toString() || "",
+  //     });
+  //   }
+  // };
 
   const SlabSelect: React.FC<{
     id: string;
@@ -1117,36 +1115,36 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               )}
 
               {/* Unit/Flat Selection - Directly select Flat objects */}
-              {selectedFloor && flatsForSelection.length > 0 && (
-                <CustomSelect
-                  id="number"
-                  label="Select Unit"
-                  options={flatsForSelection.map((flat) => ({
-                    value: flat.id, // Use _id as value
-                    label:
-                      flat.number || `Unit ${flat.number}` || `Flat ${flat.id}`,
-                    original: flat, // Store the full flat object
-                  }))}
-                  value={selectedFlat?.id || ""}
-                  onChange={(value: string | number) => {
-                    const flat = flatsForSelection.find((f) => f.id === value);
-                    setSelectedFlat(flat || null);
+              <CustomSelect
+                id="number"
+                label="Select Unit"
+                options={flatsForSelection.map((flat: any) => ({
+                  value: flat._id ?? flat.id ?? flat.number?.toString(),
+                  label: flat.number?.toString() ?? flat.flatNo ?? "Unit",
+                  original: flat,
+                }))}
+                value={
+                  selectedFlat?.id?.toString() ??
+                  selectedFlat?.id ??
+                  selectedFlat?.number?.toString() ??
+                  ""
+                }
+                onChange={(value) => {
+                  const flat = flatsForSelection.find(
+                    (f: any) =>
+                      (f._id && f._id === value) ||
+                      (f.id && f.id === value) ||
+                      f.number?.toString() === value
+                  );
 
-                    // Auto-populate flat details
-                    if (flat) {
-                      setFlatDetails({
-                        carpetArea: flat.carpetArea?.toString() || "",
-                        configuration: flat.configuration || "",
-                        allInclusiveValue:
-                          flat.allInclusiveValue?.toString() || "",
-                      });
-                    }
-                  }}
-                  placeholder="Select unit"
-                  disabled={!flatsForSelection.length}
-                  returnObject={false}
-                />
-              )}
+                  setSelectedFlat(flat || null);
+
+                  console.log("Unit flat selected:", flat);
+                }}
+                placeholder="Select unit"
+                disabled={!flatsForSelection.length}
+                returnObject={false}
+              />
 
               {/* Display Flat Number (Read-only) */}
               {selectedFlat && (
@@ -1157,17 +1155,22 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                     <input
                       type="text"
                       id="flatNumber"
-                      value={selectedFlat.number || selectedFlat.id || "N/A"}
+                      value={
+                        selectedFlat.flatNo ||
+                        selectedFlat.number?.toString() ||
+                        selectedFlat.id ||
+                        "N/A"
+                      }
                       readOnly
                       className={styles.inputField}
                       style={{
-                        backgroundColor: "#f5f5f5",
                         cursor: "not-allowed",
                       }}
                     />
                   </div>
                 </div>
               )}
+
               <div className={styles.formControl}>
                 <label htmlFor="carpetArea">Carpet Area </label>
                 <div className={styles.inputWrapper}>
@@ -1175,7 +1178,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     readOnly
                     id="carpetArea"
-                    value={flatDetails.carpetArea}
+                    value={selectedFlat?.carpetArea?.toString()}
                     placeholder="Carpet Area"
                     className={styles.inputField}
                   />
@@ -1189,7 +1192,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     readOnly
                     id="configuration"
-                    value={flatDetails.configuration}
+                     value={selectedFlat?.configuration?.toString()}
                     placeholder="Configuration"
                     className={styles.inputField}
                   />
@@ -1203,7 +1206,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     readOnly
                     id="allInclusiveValue"
-                    value={flatDetails.allInclusiveValue}
+                value={selectedFlat?.allInclusiveValue?.toString()}
                     placeholder="Value"
                     className={styles.inputField}
                   />
