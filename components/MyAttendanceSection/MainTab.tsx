@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./maintab.module.css";
 import { MdBadge } from "react-icons/md";
@@ -15,35 +15,40 @@ import ReimbursementSection from "./ReimbursementSection";
 import ApprovalSection from "./ApprovalSection/ApprovalSection";
 import GracetimeSection from "./GracetimeSection";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/providers/userContext";
+import { useData } from "@/providers/dataContext";
 
 const MainTab = () => {
   const router = useRouter();
 
   const [selectedTab, setSelectedTab] = useState("Attendance");
   const [approvalPendingCount, setApprovalPendingCount] = useState(2); // dummy count
+  const { user } = useUser();
+  const {
+    leaveCount,
+    getShiftInfoByUserId,
+    getAttendanceOverview,
+    getMyMonthlyAttendance,
+  } = useData();
 
-  // Dummy user
-  const user = {
-    firstName: "John",
-    lastName: "Doe",
-    employeeId: "EMP12345",
-    designation: { designation: "Software Engineer" },
-    status: "active",
-    profilePic: "",
-    permissions: [],
-  };
-
+  useEffect(() => {
+    if (user?._id != null) {
+      getShiftInfoByUserId(user?._id ?? "");
+      getAttendanceOverview(user?._id ?? "");
+      getMyMonthlyAttendance(user?._id ?? "");
+    }
+  }, [user]);
 
   const renderSection = () => {
     switch (selectedTab) {
       case "Personal":
-        return <Personalsection  />;
+        return <Personalsection />;
       case "Attendance":
-        return <AttendanceSection />
+        return <AttendanceSection />;
       case "Leave":
         return <LeaveSection />;
       case "Weekoff":
-        return <WeekOffSection  />;
+        return <WeekOffSection />;
       case "Regularization":
         return <Regularization />;
       case "Gracetime":
@@ -53,13 +58,10 @@ const MainTab = () => {
       case "Assets":
         return <Assets />;
       case "ShiftPlannerRequest":
-        return <ShiftPlannerSection  />;
+        return <ShiftPlannerSection />;
       case "Approval":
         return (
-<ApprovalSection onPendingCountChange={setApprovalPendingCount} />
-
-
-
+          <ApprovalSection onPendingCountChange={setApprovalPendingCount} />
         );
       default:
         return null;
@@ -85,17 +87,23 @@ const MainTab = () => {
               <div className={styles.name}>
                 {user?.firstName} {user?.lastName}
               </div>
-              <div className={`${styles.status} ${user?.status === "active" ? styles.active : styles.inactive}`}>
+              <div
+                className={`${styles.status} ${
+                  user?.status === "active" ? styles.active : styles.inactive
+                }`}
+              >
                 {user?.status === "active" ? "Active" : "Inactive"}
               </div>
             </div>
           </div>
           <div>
             <div className={styles.empid}>
-              <IoPersonCircle size={15} color="#d3af1f" /> Emp Id: {user?.employeeId}
+              <IoPersonCircle size={15} color="#d3af1f" /> Emp Id:{" "}
+              {user?.employeeId}
             </div>
             <div className={styles.desgination}>
-              <MdBadge size={15} color="#d3af1f" /> {user?.designation?.designation}
+              <MdBadge size={15} color="#d3af1f" />{" "}
+              {user?.designation?.designation}
             </div>
           </div>
         </div>
@@ -107,7 +115,10 @@ const MainTab = () => {
           <svg>
             <defs>
               <filter id="glow">
-                                <feGaussianBlur result="coloredBlur" stdDeviation="3"></feGaussianBlur>
+                <feGaussianBlur
+                  result="coloredBlur"
+                  stdDeviation="3"
+                ></feGaussianBlur>
 
                 <feMerge>
                   <feMergeNode in="coloredBlur" />
@@ -147,10 +158,14 @@ const MainTab = () => {
           <div className={styles.rightAligned}>
             <span
               onClick={() => setSelectedTab("Approval")}
-              className={`${selectedTab === "Approval" ? styles.activeTab : ""} ${styles.approvalTab}`}
+              className={`${
+                selectedTab === "Approval" ? styles.activeTab : ""
+              } ${styles.approvalTab}`}
             >
               Approval Section
-              {approvalPendingCount > 0 && <span className={styles.badge}>{approvalPendingCount}</span>}
+              {approvalPendingCount > 0 && (
+                <span className={styles.badge}>{approvalPendingCount}</span>
+              )}
             </span>
           </div>
         </div>

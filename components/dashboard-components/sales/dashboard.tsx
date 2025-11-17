@@ -98,10 +98,8 @@ export default function DashboardPage() {
       console.log("use effect dashboard");
       fetchSaleExecutiveLeads({ id: user?._id, query: "", page: 1, limit: 10 });
       fetchDataAnalyzerVisits({ query: "", page: 1, limit: 10 });
-      getSalesManagerDashBoardCount({  id: user?._id ?? null});
+      getSalesManagerDashBoardCount({ id: user?._id ?? null });
       fetchAssignFeedbackLeads({ query: "", page: 1, limit: 10 });
-
-
     }
   }, [user, loading]);
 
@@ -184,7 +182,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <OverviewCard
             title="Total Visits"
-            value= {siteInfo?.totalItems?? 0}
+            value={siteInfo?.totalItems ?? 0}
             description="+10% from last month"
             linkHref="/visit-details"
             linkText="View all visits"
@@ -202,17 +200,17 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Physical Visits"
-            value={siteInfo?.visitCount?? 0}
+            value={siteInfo?.visitCount ?? 0}
             description="+12% from last month"
             linkHref="/dashboard/visits?status=physical"
             linkText="View physical visits"
             icon={Home}
             iconColorClass="text-cyan-500"
           />
-          <OverviewCard 
+          <OverviewCard
             title="Revisits"
-            value={siteInfo?.revisitCount?? 0}
-             description="+7% from last month"
+            value={siteInfo?.revisitCount ?? 0}
+            description="+7% from last month"
             linkHref="/dashboard/visits?status=revisits"
             linkText="View revisits"
             icon={ArrowRight}
@@ -227,7 +225,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <OverviewCard
             title="Total Tasks"
-            value={dashCount?.task?.total??0}
+            value={dashCount?.task?.total ?? 0}
             // description="5 new tasks this week"
             linkHref="/dashboard/tasks?status=total"
             linkText="View all tasks"
@@ -236,7 +234,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Completed Tasks"
-            value={dashCount?.task?.completed?? 0}
+            value={dashCount?.task?.completed ?? 0}
             // description="80% completion rate"
             linkHref="/dashboard/tasks?status=completed"
             linkText="View completed tasks"
@@ -245,7 +243,7 @@ export default function DashboardPage() {
           />
           <OverviewCard
             title="Pending Tasks"
-            value={dashCount?.task?.pending?? 0}
+            value={dashCount?.task?.pending ?? 0}
             // description="Action required"
             linkHref="/dashboard/tasks?status=pending"
             linkText="View pending tasks"
@@ -267,7 +265,9 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0">
-                <p className="text-4xl font-bold text-red-500">{assignInfo?.notFollowUpCount}</p>
+                <p className="text-4xl font-bold text-red-500">
+                  {assignInfo?.notFollowUpCount}
+                </p>
                 <Link
                   href="/dashboard/feedback"
                   className="text-sm text-primary hover:underline mt-2 block"
@@ -283,7 +283,9 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0">
-                <p className="text-4xl font-bold text-orange-500">{assignInfo?.notAssignedCount}</p>
+                <p className="text-4xl font-bold text-orange-500">
+                  {assignInfo?.notAssignedCount}
+                </p>
                 <Link
                   href="/dashboard/assignments"
                   className="text-sm text-primary hover:underline mt-2 block"

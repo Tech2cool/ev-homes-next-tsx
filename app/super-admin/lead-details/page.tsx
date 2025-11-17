@@ -37,6 +37,7 @@ import {
   Search,
   SlidersHorizontal,
   PersonStanding,
+  X,
 } from "lucide-react";
 import useDebounce from "@/hooks/useDebounce";
 import { useUser } from "@/providers/userContext";
@@ -46,7 +47,7 @@ import { LeadFilterDialog } from "@/components/lead-details-components/filter-di
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MdEmail } from "react-icons/md";
 import { BsFillBuildingFill } from "react-icons/bs";
-import { PiBuildingApartmentBold } from "react-icons/pi";
+import { PiBuildingApartmentBold, PiSidebarSimple } from "react-icons/pi";
 import {
   FaBolt,
   FaClipboardList,
@@ -63,6 +64,9 @@ import { FaAddressBook } from "react-icons/fa";
 import { CiLink } from "react-icons/ci";
 import { dateFormatOnly } from "@/hooks/useDateFormat";
 import AddFeedBaack from "@/components/lead-details-components/Dailog/addfeedback";
+import { FiPhoneCall } from "react-icons/fi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { formatStatus } from "@/app/helper";
 
 const SuperAdminWrapper = () => {
   return (
@@ -95,6 +99,7 @@ const LeadDetailsPage = () => {
   const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
   const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Form states
   const [editFormData, setEditFormData] = useState({});
@@ -492,10 +497,17 @@ const LeadDetailsPage = () => {
     return (
       <div className={styles.desktopContainer}>
         {/* Left Sidebar - Visits List with Filters */}
+        {sidebarOpen && <DashboardSidebar />}
+
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
-              <h1 className={styles.title}>Leads</h1>
+              <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
+              </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input
@@ -517,7 +529,6 @@ const LeadDetailsPage = () => {
           </div>
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
             {loadingSearch ? (
-              // 🔹 Jab search API call chal rahi hai
               <div className={styles.loadingContainer}>
                 <span className={styles.loadingText}>Loading...</span>
               </div>
@@ -526,9 +537,9 @@ const LeadDetailsPage = () => {
                 {leads?.map((visit, index) => (
                   <div
                     key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
-
-                    className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                      }`}
+                    className={`${styles.visitCard} ${
+                      SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                    }`}
                     onClick={() => {
                       setSelectedLead(visit);
 
@@ -572,7 +583,9 @@ const LeadDetailsPage = () => {
                       <p>
                         Assign Date :{" "}
                         {visit.cycle?.startDate ? (
-                          <span>{formatDate(new Date(visit.cycle.startDate))}</span>
+                          <span>
+                            {formatDate(new Date(visit.cycle.startDate))}
+                          </span>
                         ) : (
                           <span>Not available</span>
                         )}
@@ -580,7 +593,9 @@ const LeadDetailsPage = () => {
                       <p>
                         Visit Deadline:{" "}
                         {visit.cycle?.validTill ? (
-                          <span>{formatDate(new Date(visit.cycle.validTill))}</span>
+                          <span>
+                            {formatDate(new Date(visit.cycle.validTill))}
+                          </span>
                         ) : (
                           <span>Not available</span>
                         )}
@@ -601,8 +616,9 @@ const LeadDetailsPage = () => {
                         </div>
 
                         <span className={styles.taskName}>
-                          {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                            }`}
+                          {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                            visit.taskRef?.assignTo?.lastName ?? ""
+                          }`}
                           <span className={styles.status}>
                             <span
                               className={styles.statusText}
@@ -624,8 +640,12 @@ const LeadDetailsPage = () => {
 
                       {visit.teamLeader ? (
                         <div className={styles.assignby}>
-                          {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
-                          {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                          {visit?.teamLeader?.firstName
+                            ?.charAt(0)
+                            ?.toUpperCase()}
+                          {visit?.teamLeader?.lastName
+                            ?.charAt(0)
+                            ?.toUpperCase()}
                         </div>
                       ) : (
                         <span>Not available</span>
@@ -634,9 +654,10 @@ const LeadDetailsPage = () => {
                       <div className={styles.lastpart}>
                         {visit?.clientInterestedStatus ? (
                           <div className={styles.clientStatus}>
-                            {visit?.clientInterestedStatus}
+                            {formatStatus(visit.clientInterestedStatus)}
                           </div>
                         ) : null}
+
                         <div
                           style={{
                             backgroundColor: "#387478",
@@ -698,7 +719,7 @@ const LeadDetailsPage = () => {
                     >
                       <Edit size={15} />
                     </button>
-                    <button
+                    {/* <button
                       className={styles.verifiedBadge}
                       onClick={() => {
                         handleCall({
@@ -708,9 +729,9 @@ const LeadDetailsPage = () => {
                       }}
                     >
                       <MdCall size={15} />
-                    </button>
+                    </button> */}
 
-                    <button
+                    {/* <button
                       className={styles.whatsbtn}
                       onClick={() => {
                         console.log("clicked 1");
@@ -727,7 +748,7 @@ const LeadDetailsPage = () => {
                       }}
                     >
                       <IoLogoWhatsapp size={15} />
-                    </button>
+                    </button> */}
 
                     <ThemeToggle />
                     {/* {SelectedLead.approvalStatus === "pending" && (
@@ -751,11 +772,13 @@ const LeadDetailsPage = () => {
                       visit={SelectedLead}
                       onCall={handleCall}
                       user={user}
+                      socket={socket}
                     />
                   )}
 
-
-                  {activeTab === "access" && <QuickAccess lead={SelectedLead} />}
+                  {activeTab === "access" && (
+                    <QuickAccess lead={SelectedLead} />
+                  )}
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
                   )}
@@ -768,6 +791,7 @@ const LeadDetailsPage = () => {
                       cycleHistory={SelectedLead?.cycleHistoryNew}
                     />
                   )}
+
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
                       <BookingOverview />
@@ -796,40 +820,45 @@ const LeadDetailsPage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "siteVisit" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
                       <FaMapMarkedAlt className={styles.icon} /> Site Visit
@@ -837,21 +866,25 @@ const LeadDetailsPage = () => {
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "transfer" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
                     </button>
 
-                    <button
-                      className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
+                    {SelectedLead?.bookingRef != null && (
+                      <button
+                        className={`${styles.navItem} ${
+                          activeTab === "booking" ? styles.active : ""
                         }`}
-                      onClick={() => setActiveTab("booking")}
-                    >
-                      <FaFileContract className={styles.icon} /> Booking
-                      Overview
-                    </button>
+                        onClick={() => setActiveTab("booking")}
+                      >
+                        <FaFileContract className={styles.icon} /> Booking
+                        Overview
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -890,7 +923,6 @@ const LeadDetailsPage = () => {
 
               console.log(response);
               if (response.success) {
-
                 // setSelectedLead(response);
                 setShowEditDialog(false);
               } else {
@@ -907,9 +939,18 @@ const LeadDetailsPage = () => {
   if (!SelectedLead) {
     return (
       <div className={styles.leftSidebar}>
+        {/* <DashboardSidebar /> */}
         <div className={styles.sidebarHeader}>
           <div className={styles.serchlable}>
-            <h1 className={styles.title}>Leads</h1>
+            <button
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/super-admin/supar-admin-dashboard");
+              }}
+            >
+              <ArrowLeft className={styles.backIcon} />
+            </button>
+
             <div className={styles.searchContainer}>
               <Search className={styles.searchIcon} />
               <input
@@ -921,13 +962,14 @@ const LeadDetailsPage = () => {
               />
             </div>
           </div>
-
           <button
             className={styles.filterBtn}
             onClick={() => setShowFilterDialog(true)}
           >
             <SlidersHorizontal className={styles.filterIcon} />
           </button>
+
+
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -947,9 +989,12 @@ const LeadDetailsPage = () => {
                     // router.push(`/super-admin/lead-details?id=${visit._id}`, {
                     //   scroll: false,
                     // });
-                    router.push(`/lead-details?status=${status}&id=${visit._id}`, {
-                      scroll: false,
-                    });
+                    router.push(
+                      `/lead-details?status=${status}&id=${visit._id}`,
+                      {
+                        scroll: false,
+                      }
+                    );
                   }}
                 >
                   <div className={styles.leadInfo}>
@@ -967,7 +1012,8 @@ const LeadDetailsPage = () => {
                         {visit?.firstName ?? ""} {visit?.lastName ?? ""}
                       </div>
                       <p className={styles.phone}>
-                        {visit?.countryCode ?? "91"} {visit?.phoneNumber ?? "NA"}
+                        {visit?.countryCode ?? "91"}{" "}
+                        {visit?.phoneNumber ?? "NA"}
                       </p>
                     </div>
                   </div>
@@ -1008,8 +1054,9 @@ const LeadDetailsPage = () => {
                       </div>
 
                       <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                          }`}
+                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                          visit.taskRef?.assignTo?.lastName ?? ""
+                        }`}
                         <span className={styles.status}>
                           <span
                             className={styles.statusText}
@@ -1040,8 +1087,12 @@ const LeadDetailsPage = () => {
 
                       {visit.teamLeader ? (
                         <div className={styles.assignby}>
-                          {visit?.teamLeader?.firstName?.charAt(0)?.toUpperCase()}
-                          {visit?.teamLeader?.lastName?.charAt(0)?.toUpperCase()}
+                          {visit?.teamLeader?.firstName
+                            ?.charAt(0)
+                            ?.toUpperCase()}
+                          {visit?.teamLeader?.lastName
+                            ?.charAt(0)
+                            ?.toUpperCase()}
                         </div>
                       ) : (
                         <span>Not available</span>
@@ -1077,6 +1128,7 @@ const LeadDetailsPage = () => {
                   </div> */}
                 </div>
               ))}
+
               {searchLeadInfo?.page &&
                 searchLeadInfo.totalPages &&
                 searchLeadInfo.page < searchLeadInfo.totalPages && (
@@ -1121,7 +1173,7 @@ const LeadDetailsPage = () => {
           </button>
 
           <div className={styles.actionButtons}>
-            <button
+            {/* <button
               className={styles.verifiedBadge}
               onClick={() => {
                 handleCall({
@@ -1131,9 +1183,9 @@ const LeadDetailsPage = () => {
               }}
             >
               <MdCall size={15} />
-            </button>
+            </button> */}
 
-            <button
+            {/* <button
               className={styles.whatsbtn}
               onClick={() => {
                 console.log("clicked 1");
@@ -1150,7 +1202,7 @@ const LeadDetailsPage = () => {
               }}
             >
               <IoLogoWhatsapp size={15} />
-            </button>
+            </button> */}
 
             <button
               className={styles.menuBtn}
@@ -1196,56 +1248,63 @@ const LeadDetailsPage = () => {
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "overview" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "access" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "taskDetails" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "followup" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "siteVisit" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "transfer" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("transfer")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "booking" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("booking")}
               >
                 <FaFileContract className={styles.icon} /> Booking Overview
@@ -1270,6 +1329,7 @@ const LeadDetailsPage = () => {
               visit={SelectedLead}
               onCall={handleCall}
               user={user}
+              socket={socket}
             />
           )}
 
@@ -1336,10 +1396,12 @@ const VisitDetailsContent = ({
   visit,
   onCall,
   user,
+  socket,
 }: {
   visit: Lead;
   onCall: (lead: any) => void;
   user: any;
+  socket: any;
 }) => {
   const formatDate = (date: any) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -1439,10 +1501,39 @@ const VisitDetailsContent = ({
                   Phone Number
                 </label>
                 <p className={styles.infoValue}>
-                  <MdAddCall
+                  <button
+                    className={styles.whatsbtn}
+                    onClick={() => {
+                      console.log("clicked 1");
+
+                      socket?.emit("callCustomerWeb", {
+                        lead: visit?._id,
+                        phoneNumber: `${visit?.countryCode}${visit?.phoneNumber}`,
+                        type: "whatsapp",
+                        message: "hey",
+                        userId: user?._id,
+                      });
+
+                      console.log("clicked 2");
+                    }}
+                  >
+                    <IoLogoWhatsapp size={12} />
+                  </button>
+                  <button
+                    className={styles.verifiedBadge}
+                    onClick={() => {
+                      onCall({
+                        ...visit,
+                        phoneNumber: visit.phoneNumber,
+                      });
+                    }}
+                  >
+                    <MdCall size={12} />
+                  </button>
+                  {/* <FiPhoneCall
                     size={15}
                     color="dodgerblue"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", color: "green" }}
                     onClick={() =>
                       onCall({
                         ...visit,
@@ -1450,7 +1541,7 @@ const VisitDetailsContent = ({
                       })
                     }
                     title="Make a call to number"
-                  />
+                  /> */}
                   {visit?.phoneNumber ?? "NA"}
                 </p>
               </div>
@@ -1469,18 +1560,35 @@ const VisitDetailsContent = ({
                 </label>
                 <div className={styles.phoneContainer}>
                   <p className={styles.infoValue}>
-                    <MdAddCall
-                      size={15}
-                      color="dodgerblue"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
+                    <button
+                      className={styles.whatsbtn}
+                      onClick={() => {
+                        console.log("clicked 1");
+
+                        socket?.emit("callCustomerWeb", {
+                          lead: visit?._id,
+                          phoneNumber: `${visit?.countryCode}${visit.altPhoneNumber}`,
+                          type: "whatsapp",
+                          message: "hey",
+                          userId: user?._id,
+                        });
+
+                        console.log("clicked 2");
+                      }}
+                    >
+                      <IoLogoWhatsapp size={12} />
+                    </button>
+                    <button
+                      className={styles.verifiedBadge}
+                      onClick={() => {
                         onCall({
                           ...visit,
                           phoneNumber: visit.altPhoneNumber,
-                        })
-                      }
-                      title="Make a call to alternate number"
-                    />
+                        });
+                      }}
+                    >
+                      <MdCall size={12} />
+                    </button>
                     {visit.countryCode} {visit.altPhoneNumber}
                   </p>
                 </div>
@@ -1560,7 +1668,11 @@ const VisitDetailsContent = ({
                   <Calendar size={14} color="#4a84ff" />
                   Occupation
                 </label>
-                <p className={styles.infoValue}> {visit?.occupation ?? "NA"}</p>
+                <p className={styles.infoValue}>
+                  {visit?.occupation == "" || visit?.occupation == null
+                    ? "NA"
+                    : visit?.occupation}
+                </p>
               </div>
               <div className={styles.infoItem}>
                 <label className={styles.infoLabel}>
@@ -1577,20 +1689,37 @@ const VisitDetailsContent = ({
                 className={styles.infoItem}
                 style={{ flexDirection: "column" }}
               >
-                <div className={`${styles.infoHeader} ${styles.center}`}>
-                  <CiLink size={18} color="#4a84ff" />
+                {visit?.linkedIn && visit.linkedIn !== "" && (
+                  <div className={styles.buttonGroup}>
+                    {visit?.linkedIn && (
+                      <button
+                        className={`${styles.infoButton} ${styles.visitBtn}`}
+                        onClick={() =>
+                          window.open(
+                            visit.linkedIn || "https://evhomes.tech/",
+                            "_blank"
+                          )
+                        }
+                      >
+                        <span>🔗 Visit Profile</span>
+                      </button>
+                    )}
 
-                  <label className={styles.infoLabel}>LinkedIn</label>
-                </div>
-
-                <div className={styles.buttonGroup}>
-                  <button className={`${styles.infoButton} ${styles.visitBtn}`}>
-                    <span>🔗 Visit Profile</span>
-                  </button>
-                  <button className={`${styles.infoButton} ${styles.visitBtn}`}>
-                    <span>📄 View Document</span>
-                  </button>
-                </div>
+                    {visit?.uploadedLinkedIn && (
+                      <button
+                        className={`${styles.infoButton} ${styles.visitBtn}`}
+                        onClick={() =>
+                          window.open(
+                            visit.uploadedLinkedIn || "https://evhomes.tech/",
+                            "_blank"
+                          )
+                        }
+                      >
+                        <span>📄 View Document</span>
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

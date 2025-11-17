@@ -538,7 +538,7 @@ export function ClosingManagerDashboardHeader({
                   {lastSyncText}
                 </span>
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-end gap-2">
                 <Button
                   size="sm"
                   variant="outline"

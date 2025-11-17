@@ -16,6 +16,8 @@
 :global(html.light) .dialogOverlay {
   background: rgba(45, 45, 45, 0.401);
 }
+
+.alertbox,
 .dialog,
 .dialogBox {
   background: #1e1e1e;
@@ -32,9 +34,17 @@
   scrollbar-color: #4a4d4c #222;
   position: relative;
 }
-.dialog{
- width: 60vw;
+
+.dialog {
+  width: 60vw;
 }
+
+.alertbox {
+  width: 400px;
+
+}
+
+:global(html.light) .alertbox,
 :global(html.light) .dialog,
 :global(html.light) .dialogBox {
   background: #ebebeb;
@@ -43,16 +53,22 @@
   scrollbar-color: #a065ff #d8d4e9;
 
 }
+
+.dialogBox::-webkit-scrollbar,
 .dialog::-webkit-scrollbar,
 .dialogBox::-webkit-scrollbar {
   width: 6px;
 
 }
-.dialog::-webkit-scrollbar-thumb ,
+
+.dialogBox::-webkit-scrollbar-thumb,
+.dialog::-webkit-scrollbar-thumb,
 .dialogBox::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #3d4140, #1a1b1c);
   border-radius: 30px;
 }
+
+.dialogBox::-webkit-scrollbar-track,
 .dialog::-webkit-scrollbar-track,
 .dialogBox::-webkit-scrollbar-track {
   background: #222;
@@ -88,12 +104,21 @@
   color: #252425;
 }
 
-
+.visitbtn,
+.alertdailog,
 .dialogButtons {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+  justify-content: center;
+  /* Center horizontally */
+  align-items: center;
   gap: 10px;
+  margin-top: 20px;
+}
+
+.alertdailog {
+  justify-content: center;
+  margin-top: 1.5rem;
+
 }
 
 .cancelBtn {
@@ -118,6 +143,7 @@
   background: #ffffff;
 }
 
+.altersub,
 .submitBtn {
   background: linear-gradient(90deg, #16476A, #132440);
   color: #ffffff;
@@ -127,6 +153,11 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
+}
+
+.altersub {
+  background: linear-gradient(90deg, #25ad2a, #1d6421);
+  width: 150px;
 }
 
 .submitBtn:hover {
@@ -159,7 +190,7 @@
   color: rgb(142, 141, 141);
   align-items: center;
   padding-left: 0.5rem;
-  padding-bottom: 2px;
+  padding-top: 0px;
   display: flex;
   gap: 7px;
 }
@@ -177,10 +208,35 @@
   border: 1px solid #444444f5;
 }
 
+.formControl select {
+  padding: 0.7rem;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 8px;
+  background-color: #151414f5;
+  border: 1px solid #444444f5;
+}
+
+.formControl select:-webkit-autofill,
+.formControl select:-webkit-autofill:hover,
+.formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #151414f5 inset !important;
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 :global(html.light) .formControl select {
   color: #201f1f;
   border: 2px solid #927fbff5;
   background-color: transparent;
+}
+
+:global(html.light) .formControl select:-webkit-autofill,
+:global(html.light) .formControl select:-webkit-autofill:hover,
+:global(html.light) .formControl select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .formControl input {
@@ -192,9 +248,36 @@
   border-radius: 8px;
 }
 
+.formControl input:-webkit-autofill,
+.formControl input:-webkit-autofill:hover,
+.formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+.formControl input[type="number"]::-webkit-inner-spin-button,
+.formControl input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.formControl input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
 :global(html.light) .formControl input {
   color: #201f1f;
   border: 2px solid #927fbff5;
+}
+
+:global(html.light) .formControl input:-webkit-autofill,
+:global(html.light) .formControl input:-webkit-autofill:hover,
+:global(html.light) .formControl input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #201f1f !important;
+  transition: background-color 5000s ease-in-out 0s;
+  border: 2px solid #927fbff5 !important;
 
 }
 
@@ -202,7 +285,7 @@
   -webkit-box-shadow: 0 0 0 1000px #000000f5 inset !important;
   -webkit-text-fill-color: #fff !important;
   font-size: 1vw !important;
-  border: 1px solid #444444f5 !important;
+  border: 2px solid #19191af5 !important;
   border-radius: 8px !important;
 }
 
@@ -364,6 +447,7 @@
 :global(html.light) .infoValue {
   color: #222;
 }
+
 .checkboxGroup {
   display: flex;
   gap: 15px;
@@ -380,19 +464,21 @@
   gap: 5px;
 
 }
-.formControl .radioLabel{
+
+.formControl .radioLabel {
   color: white;
 }
 
-.radioLabel .percentDropdown {  
+.radioLabel .percentDropdown {
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 11px;
- padding: 0.1rem 0.1rem;
- margin-left: 5px;
+  padding: 0.2rem 0.3rem;
+  margin-left: 5px;
 }
-.pdfcnt{
-   background: linear-gradient(135deg, #16476A, #132440);
+
+.pdfcnt {
+  background: linear-gradient(135deg, #16476A, #132440);
   padding: 5px;
   border-radius: 8px;
   display: flex;
@@ -404,17 +490,18 @@
 }
 
 .confirm {
-    display: flex;
-    padding-top: 1rem;
-    justify-content: right;
-    align-items: center;
-    gap: 5px;
-    font-size: 2.2vh;
-    font-weight: 400;
-    color: rgb(208, 208, 208);
-    width: 95%;
+  display: flex;
+  padding-top: 1rem;
+  justify-content: right;
+  align-items: center;
+  gap: 5px;
+  font-size: 2.2vh;
+  font-weight: 400;
+  color: rgb(208, 208, 208);
+  width: 95%;
 }
-:global(html.light) .confirm{
+
+:global(html.light) .confirm {
   color: #2c2b2b;
 }
 
@@ -427,6 +514,7 @@
 }
 
 @media screen and (max-width: 1024px) {
+
   .dialog,
   .dialogBox {
     width: 80vw;
@@ -437,6 +525,7 @@
 
 /* Mobile devices */
 @media screen and (max-width: 768px) {
+
   .dialog,
   .dialogBox {
     width: 95vw;
@@ -478,11 +567,17 @@
     font-size: 0.85rem;
   }
 
+  .visitbtn,
+  .alertdailog,
   .dialogButtons {
     flex-direction: column;
     gap: 8px;
     justify-content: center;
     align-items: center;
+  }
+
+  .visitbtn {
+    flex-direction: row;
   }
 
   .cancelBtn,
@@ -495,6 +590,7 @@
 
 /* Extra small screens */
 @media screen and (max-width: 480px) {
+
   .dialog,
   .dialogBox {
     padding: 0.8rem;
@@ -679,8 +775,94 @@
     gap: 2px;
   }
 }
-.varning{
+
+.varning {
   font-size: 12px;
   padding: 0px 0px 12px 12px;
   color: rgb(241, 89, 89);
+}
+
+.altertext {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.numberhide {
+  color: gray;
+  font-size: 14px;
+}
+
+.costvalue {
+
+  font-size: 13px;
+  color: #3cbf43;
+  margin-top: 2px;
+  text-align: right;
+}
+
+:global(html.light) .costvalue {
+  color: #206524;
+  font-weight: 600;
+}
+
+.upladfile {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #4CAF50;
+  background-color: #37363981;
+  padding: 4px;
+}
+
+:global(html.light) .upladfile {
+  color: #124614;
+  background-color: #86d88581;
+}
+
+.dateTimeWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
+
+.dateTimeContainer {
+  position: relative;
+  width: 100%;
+}
+
+.dateTimeInput {
+  width: 100%;
+  padding: 12px 40px 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #ffffff;
+  transition: all 0.25s ease;
+}
+
+.dateTimeInput:focus {
+  border-color: #4a90e2;
+  box-shadow: 0px 0px 6px rgba(74, 144, 226, 0.4);
+  outline: none;
+  background: #f9fcff;
+}
+
+.icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+  opacity: 0.6;
 }

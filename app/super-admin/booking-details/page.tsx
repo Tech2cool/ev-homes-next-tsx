@@ -34,6 +34,7 @@ import {
   Menu,
   Search,
   SlidersHorizontal,
+  X,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -50,6 +51,8 @@ import { Leadbookingfilter } from "@/components/lead-details-components/Booking-
 import { useData } from "@/providers/dataContext";
 import { useUser } from "@/providers/userContext";
 import useDebounce from "@/hooks/useDebounce";
+import { PiSidebarSimple } from "react-icons/pi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 const BookingDetails = () => {
   const {
@@ -61,7 +64,7 @@ const BookingDetails = () => {
     fetchPostSaleLeads,
     getLeadByBookingId,
     getClosingManagers,
-  } = useData();
+  } = useData(); 
   const { user, loading } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -79,6 +82,7 @@ const BookingDetails = () => {
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const currentStage = "Confirm Booking";
   const isConfirmed =
@@ -187,7 +191,7 @@ const BookingDetails = () => {
     [loadMoreLeads, loadingPostSaleLeads, searchPostSaleLeadInfo]
   );
 
-  const handleSearchChange =async (query: string) => {
+  const handleSearchChange = async (query: string) => {
     setSearchQuery(query);
     setLoadingSearch(true);
 
@@ -223,10 +227,18 @@ const BookingDetails = () => {
     return (
       <>
         <div className={styles.desktopContainer}>
+           {sidebarOpen && (
+                    <DashboardSidebar />
+                  )}
           <div className={styles.leftSidebar}>
             <div className={styles.sidebarHeader}>
               <div className={styles.serchlable}>
-                <h1 className={styles.title}>Leads</h1>
+                <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
+              </button>
                 <div className={styles.searchContainer}>
                   <Search className={styles.searchIcon} />
                   <input
@@ -247,118 +259,128 @@ const BookingDetails = () => {
             </div>
 
             <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-              {postSaleleads?.map((lead, index) => (
-                <div
-                  key={`${lead._id}-${index}-${lead.phoneNumber}`} // Add index and phone as fallback
-                  className={`${bookstyle.visitCard} ${SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
-                    }`}
-                  onClick={() => {
-                    setSelectedLead(lead);
-                    // router.push(
-                    //   `/lead-details?status=${status}&id=${lead._id}`,
-                    //   {
-                    //     scroll: false,
-                    //   }
-                    // );
-                  }}
-                >
-                  <div className={bookstyle.topRow}>
-                    <div className={bookstyle.nameBlock}>
-                      <div>
-                        <div className={bookstyle.clientName}>
-                          {lead.firstName} {lead.lastName}
+              {loadingSearch ? (
+                <div className={styles.loadingContainer}>
+                  <span className={styles.loadingText}>Loading...</span>
+                </div>
+              ) : postSaleleads && postSaleleads.length > 0 ? (
+                <>
+                  {postSaleleads?.map((lead, index) => (
+                    <div
+                      key={`${lead._id}-${index}-${lead.phoneNumber}`} // Add index and phone as fallback
+                      className={`${bookstyle.visitCard} ${SelectedLead?._id === lead._id ? bookstyle.selectedCard : ""
+                        }`}
+                      onClick={() => {
+                        setSelectedLead(lead);
+                        // router.push(
+                        //   `/lead-details?status=${status}&id=${lead._id}`,
+                        //   {
+                        //     scroll: false,
+                        //   }
+                        // );
+                      }}
+                    >
+                      <div className={bookstyle.topRow}>
+                        <div className={bookstyle.nameBlock}>
+                          <div>
+                            <div className={bookstyle.clientName}>
+                              {lead.firstName} {lead.lastName}
+                            </div>
+                            <div className={bookstyle.clientPhone}>
+                              {lead.countryCode} {lead.phoneNumber}
+                            </div>
+                          </div>
                         </div>
-                        <div className={bookstyle.clientPhone}>
-                          {lead.countryCode} {lead.phoneNumber}
+                        <div className={bookstyle.statusBlock}>
+                          <div className={bookstyle.dateText}>05 Nov 25</div>
+                          <button className={bookstyle.confirmButton}>
+                            CONFIRM-BOOKING
+                          </button>
+                        </div>
+                      </div>
+
+                      <hr className={bookstyle.divider} />
+
+                      <div className={bookstyle.statusTimeline}>
+                        <div className={bookstyle.statusItem}>
+                          <HiDocumentCheck
+                            className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
+                          />
+                          <span
+                            className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
+                          >
+                            EOI
+                          </span>
+                        </div>
+
+                        <div
+                          className={`${bookstyle.connector} ${bookstyle.connectorDone}`}
+                        >
+                          <IoMdRemove className={bookstyle.dashIcon} />
+                        </div>
+
+                        <div className={bookstyle.statusItem}>
+                          <FaClipboardList
+                            className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
+                          />
+                          <span
+                            className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
+                          >
+                            Confirm Booking
+                          </span>
+                        </div>
+
+                        <div className={bookstyle.connector}>
+                          <IoMdRemove className={bookstyle.dashIcon} />
+                        </div>
+
+                        <div className={bookstyle.statusItem}>
+                          <MdNoteAlt className={bookstyle.statusIcon} />
+                          <span className={bookstyle.statusLabel}>
+                            Registration Done
+                          </span>
+                        </div>
+                      </div>
+                      <div className={bookstyle.detailsGrid}>
+                        <div className={bookstyle.gridItem}>
+                          <p className={bookstyle.label}>
+                            <FaBuilding />
+                            Project
+                          </p>
+                          <p className={bookstyle.value}>
+                            {lead.project?.name ?? "N/A"}
+                          </p>
+                        </div>
+                        <div className={bookstyle.gridItem}>
+                          <p className={bookstyle.label}>
+                            <FaHouseChimney />
+                            Unit No
+                          </p>
+                          <p className={bookstyle.value}>{lead.unitNo ?? "N/A"}</p>
+                        </div>
+                        <div className={bookstyle.gridItem}>
+                          <p className={bookstyle.label}>
+                            <FaUserTie />
+                            Closing Manager
+                          </p>
+                          <p className={bookstyle.value}>
+                            {lead.closingManager?.firstName ?? "NA"}
+                          </p>
+                        </div>
+                        <div className={bookstyle.gridItem}>
+                          <p className={bookstyle.label}>
+                            <FaUser />
+                            Post Sales Executive
+                          </p>
+                          <p className={bookstyle.value}>N/A</p>
                         </div>
                       </div>
                     </div>
-                    <div className={bookstyle.statusBlock}>
-                      <div className={bookstyle.dateText}>05 Nov 25</div>
-                      <button className={bookstyle.confirmButton}>
-                        CONFIRM-BOOKING
-                      </button>
-                    </div>
-                  </div>
-
-                  <hr className={bookstyle.divider} />
-
-                  <div className={bookstyle.statusTimeline}>
-                    <div className={bookstyle.statusItem}>
-                      <HiDocumentCheck
-                        className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
-                      />
-                      <span
-                        className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
-                      >
-                        EOI
-                      </span>
-                    </div>
-
-                    <div
-                      className={`${bookstyle.connector} ${bookstyle.connectorDone}`}
-                    >
-                      <IoMdRemove className={bookstyle.dashIcon} />
-                    </div>
-
-                    <div className={bookstyle.statusItem}>
-                      <FaClipboardList
-                        className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
-                      />
-                      <span
-                        className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
-                      >
-                        Confirm Booking
-                      </span>
-                    </div>
-
-                    <div className={bookstyle.connector}>
-                      <IoMdRemove className={bookstyle.dashIcon} />
-                    </div>
-
-                    <div className={bookstyle.statusItem}>
-                      <MdNoteAlt className={bookstyle.statusIcon} />
-                      <span className={bookstyle.statusLabel}>
-                        Registration Done
-                      </span>
-                    </div>
-                  </div>
-                  <div className={bookstyle.detailsGrid}>
-                    <div className={bookstyle.gridItem}>
-                      <p className={bookstyle.label}>
-                        <FaBuilding />
-                        Project
-                      </p>
-                      <p className={bookstyle.value}>
-                        {lead.project?.name ?? "N/A"}
-                      </p>
-                    </div>
-                    <div className={bookstyle.gridItem}>
-                      <p className={bookstyle.label}>
-                        <FaHouseChimney />
-                        Unit No
-                      </p>
-                      <p className={bookstyle.value}>{lead.unitNo ?? "N/A"}</p>
-                    </div>
-                    <div className={bookstyle.gridItem}>
-                      <p className={bookstyle.label}>
-                        <FaUserTie />
-                        Closing Manager
-                      </p>
-                      <p className={bookstyle.value}>
-                        {lead.closingManager?.firstName ?? "NA"}
-                      </p>
-                    </div>
-                    <div className={bookstyle.gridItem}>
-                      <p className={bookstyle.label}>
-                        <FaUser />
-                        Post Sales Executive
-                      </p>
-                      <p className={bookstyle.value}>N/A</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  ))}
+                </>
+              ) : (
+                <div className={styles.noResults}>No leads found</div>
+              )}
             </div>
           </div>
 
@@ -378,25 +400,7 @@ const BookingDetails = () => {
                       >
                         <Edit size={15} />
                       </button>
-                      <button
-                        className={styles.verifiedBadge}
-                        onClick={() =>
-                          alert("Calling " + SelectedLead.phoneNumber)
-                        }
-                      >
-                        <MdCall size={15} />
-                      </button>
 
-                      <button
-                        className={styles.whatsbtn}
-                        onClick={() =>
-                          alert(
-                            `Opening WhatsApp chat with ${SelectedLead.phoneNumber}`
-                          )
-                        }
-                      >
-                        <IoLogoWhatsapp size={15} />
-                      </button>
 
                       <ThemeToggle />
                     </div>
@@ -488,7 +492,7 @@ const BookingDetails = () => {
           closingManagers={closingManagers}
           onApplyFilters={handleApplyFilters}
         />
-        {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
+        {showaddbooking && <AddBooking openclick={setshowaddbooking} lead={currentLead}/>}
       </>
     );
   }
@@ -499,7 +503,14 @@ const BookingDetails = () => {
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
             <div className={styles.serchlable}>
-              <h1 className={styles.title}>Leads</h1>
+             <button
+              className={styles.backBtn}
+              onClick={() => {
+                router.push("/super-admin/supar-admin-dashboard");
+              }}
+            >
+              <ArrowLeft className={styles.backIcon} />
+            </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input
@@ -520,119 +531,118 @@ const BookingDetails = () => {
           </div>
 
           <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
-             {loadingSearch ? (
-              // 🔹 Jab search API call chal rahi hai
+            {loadingSearch ? (
               <div className={styles.loadingContainer}>
                 <span className={styles.loadingText}>Loading...</span>
               </div>
             ) : postSaleleads && postSaleleads.length > 0 ? (
-                <>
-                 {postSaleleads?.map((lead) => (
-              <div
-                key={lead._id}
-                className={bookstyle.visitCard}
-                onClick={() => {
-                  setSelectedLead(lead);
-                }}
-              >
-                <div className={bookstyle.topRow}>
-                  <div className={bookstyle.nameBlock}>
-                    <div>
-                      <div className={bookstyle.clientName}>
-                        {lead.firstName} {lead.lastName}
+              <>
+                {postSaleleads?.map((lead) => (
+                  <div
+                    key={lead._id}
+                    className={bookstyle.visitCard}
+                    onClick={() => {
+                      setSelectedLead(lead);
+                    }}
+                  >
+                    <div className={bookstyle.topRow}>
+                      <div className={bookstyle.nameBlock}>
+                        <div>
+                          <div className={bookstyle.clientName}>
+                            {lead.firstName} {lead.lastName}
+                          </div>
+                          <div className={bookstyle.clientPhone}>
+                            {lead.countryCode} {lead.phoneNumber}
+                          </div>
+                        </div>
                       </div>
-                      <div className={bookstyle.clientPhone}>
-                        {lead.countryCode} {lead.phoneNumber}
+                      <div className={bookstyle.statusBlock}>
+                        <div className={bookstyle.dateText}>05 Nov 25</div>
+                        <button className={bookstyle.confirmButton}>
+                          CONFIRM-BOOKING
+                        </button>
+                      </div>
+                    </div>
+
+                    <hr className={bookstyle.divider} />
+
+                    <div className={bookstyle.statusTimeline}>
+                      <div className={bookstyle.statusItem}>
+                        <HiDocumentCheck
+                          className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
+                        />
+                        <span
+                          className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
+                        >
+                          EOI
+                        </span>
+                      </div>
+
+                      <div
+                        className={`${bookstyle.connector} ${bookstyle.connectorDone}`}
+                      >
+                        <IoMdRemove className={bookstyle.dashIcon} />
+                      </div>
+
+                      <div className={bookstyle.statusItem}>
+                        <FaClipboardList
+                          className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
+                        />
+                        <span
+                          className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
+                        >
+                          Confirm Booking
+                        </span>
+                      </div>
+
+                      <div className={bookstyle.connector}>
+                        <IoMdRemove className={bookstyle.dashIcon} />
+                      </div>
+
+                      <div className={bookstyle.statusItem}>
+                        <MdNoteAlt className={bookstyle.statusIcon} />
+                        <span className={bookstyle.statusLabel}>
+                          Registration Done
+                        </span>
+                      </div>
+                    </div>
+                    <div className={bookstyle.detailsGrid}>
+                      <div className={bookstyle.gridItem}>
+                        <p className={bookstyle.label}>
+                          <FaBuilding />
+                          Project
+                        </p>
+                        <p className={bookstyle.value}>
+                          {lead.project?.name ?? "N/A"}
+                        </p>
+                      </div>
+                      <div className={bookstyle.gridItem}>
+                        <p className={bookstyle.label}>
+                          <FaHouseChimney />
+                          Unit No
+                        </p>
+                        <p className={bookstyle.value}>{lead.unitNo ?? "N/A"}</p>
+                      </div>
+                      <div className={bookstyle.gridItem}>
+                        <p className={bookstyle.label}>
+                          <FaUserTie />
+                          Closing Manager
+                        </p>
+                        <p className={bookstyle.value}>
+                          {lead.closingManager?.firstName ?? ""}
+                        </p>
+                      </div>
+                      <div className={bookstyle.gridItem}>
+                        <p className={bookstyle.label}>
+                          <FaUser />
+                          Post Sales Executive
+                        </p>
+                        <p className={bookstyle.value}>N/A</p>
                       </div>
                     </div>
                   </div>
-                  <div className={bookstyle.statusBlock}>
-                    <div className={bookstyle.dateText}>05 Nov 25</div>
-                    <button className={bookstyle.confirmButton}>
-                      CONFIRM-BOOKING
-                    </button>
-                  </div>
-                </div>
-
-                <hr className={bookstyle.divider} />
-
-                <div className={bookstyle.statusTimeline}>
-                  <div className={bookstyle.statusItem}>
-                    <HiDocumentCheck
-                      className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
-                    />
-                    <span
-                      className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
-                    >
-                      EOI
-                    </span>
-                  </div>
-
-                  <div
-                    className={`${bookstyle.connector} ${bookstyle.connectorDone}`}
-                  >
-                    <IoMdRemove className={bookstyle.dashIcon} />
-                  </div>
-
-                  <div className={bookstyle.statusItem}>
-                    <FaClipboardList
-                      className={`${bookstyle.statusIcon} ${bookstyle.iconDone}`}
-                    />
-                    <span
-                      className={`${bookstyle.statusLabel} ${bookstyle.labelActive}`}
-                    >
-                      Confirm Booking
-                    </span>
-                  </div>
-
-                  <div className={bookstyle.connector}>
-                    <IoMdRemove className={bookstyle.dashIcon} />
-                  </div>
-
-                  <div className={bookstyle.statusItem}>
-                    <MdNoteAlt className={bookstyle.statusIcon} />
-                    <span className={bookstyle.statusLabel}>
-                      Registration Done
-                    </span>
-                  </div>
-                </div>
-                <div className={bookstyle.detailsGrid}>
-                  <div className={bookstyle.gridItem}>
-                    <p className={bookstyle.label}>
-                      <FaBuilding />
-                      Project
-                    </p>
-                    <p className={bookstyle.value}>
-                      {lead.project?.name ?? "N/A"}
-                    </p>
-                  </div>
-                  <div className={bookstyle.gridItem}>
-                    <p className={bookstyle.label}>
-                      <FaHouseChimney />
-                      Unit No
-                    </p>
-                    <p className={bookstyle.value}>{lead.unitNo ?? "N/A"}</p>
-                  </div>
-                  <div className={bookstyle.gridItem}>
-                    <p className={bookstyle.label}>
-                      <FaUserTie />
-                      Closing Manager
-                    </p>
-                    <p className={bookstyle.value}>
-                      {lead.closingManager?.firstName ?? ""}
-                    </p>
-                  </div>
-                  <div className={bookstyle.gridItem}>
-                    <p className={bookstyle.label}>
-                      <FaUser />
-                      Post Sales Executive
-                    </p>
-                    <p className={bookstyle.value}>N/A</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            </>
+                ))}
+              </>
             ) : (
               <div className={styles.noResults}>No leads found</div>
             )}
@@ -703,26 +713,7 @@ const BookingDetails = () => {
                   }}
                 >
                   {" "}
-                  <button
-                    className={styles.verifiedBadge}
-                    onClick={() =>
-                      SelectedLead &&
-                      alert("Calling " + SelectedLead.phoneNumber)
-                    }
-                  >
-                    <MdCall size={15} />
-                  </button>
-                  <button
-                    className={styles.whatsbtn}
-                    onClick={() =>
-                      SelectedLead &&
-                      alert(
-                        `Opening WhatsApp chat with ${SelectedLead.phoneNumber}`
-                      )
-                    }
-                  >
-                    <IoLogoWhatsapp size={15} />
-                  </button>
+                  
                   <ThemeToggle />
                   <button
                     onClick={() => setIsOpen(false)}
@@ -824,7 +815,7 @@ const BookingDetails = () => {
         </div>
       </div>
 
-      {showaddbooking && <AddBooking openclick={setshowaddbooking} />}
+      {showaddbooking && <AddBooking openclick={setshowaddbooking} lead={currentLead}/>}
     </>
   );
 };

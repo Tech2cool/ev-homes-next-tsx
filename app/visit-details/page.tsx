@@ -31,6 +31,8 @@ import { useData } from "@/providers/dataContext";
 import { FilterDialog } from "@/components/visit-components/filterDialog";
 import ApprovalDialog from "@/components/visit-components/approvalDialog";
 import PdfDialog from "@/components/visit-components/pdfDialog";
+import { PiSidebarSimple } from "react-icons/pi";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 const VisitDetailWrapper = () => {
   return (
@@ -60,6 +62,7 @@ const
     const [showApprovalDialog, setShowApprovalDialog] = useState<boolean>(false);
     const [showPdfDialog, setShowPdfDialog] = useState<boolean>(false);
     const [pdfGenerating, setPdfGenerating] = useState<boolean>(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Form states
     const [editFormData, setEditFormData] = useState({});
@@ -272,9 +275,17 @@ const
       return (
         <div className={styles.desktopContainer}>
           {/* Left Sidebar - Visits List with Filters */}
+          {sidebarOpen && (
+            <DashboardSidebar />
+          )}
           <div className={styles.leftSidebar}>
             <div className={styles.sidebarHeader}>
-              <h1 className={styles.title}>Site Visits</h1>
+              <button
+                className={styles.sidebarOpenBtn}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X size={20} /> : <PiSidebarSimple size={25} />}
+              </button>
               <div className={styles.searchContainer}>
                 <Search className={styles.searchIcon} />
                 <input
@@ -704,9 +715,9 @@ const
                     )
                       ? "/images/9 square.png"
                       : "/images/marinalogo.png"
-                     
 
-                  async function getBase64Image(url:any) {
+
+                  async function getBase64Image(url: any) {
                     const res = await fetch(url);
                     const blob = await res.blob();
 
@@ -743,7 +754,7 @@ const
                   doc.setFont("helvetica", "normal");
 
 
-                  doc.text("Umashankar Varma", valueX, y);
+                  doc.text(`${selectedVisit.namePrefix ?? ""} ${selectedVisit.firstName ?? ""} ${selectedVisit.lastName ?? ""}`, valueX, y);
                   y += 13;
 
 
@@ -752,14 +763,14 @@ const
                   doc.text("Client Phone:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("+91 9892147500", valueX, y);
+                  doc.text(`${selectedVisit.countryCode ?? ""} ${(selectedVisit.phoneNumber ?? "").toString()}`, valueX, y);
                   y += 13;
                   doc.setFont("helvetica", "bold");
 
                   doc.text("Client Email:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("Umashankarvarma@yahoo.com", valueX, y);
+                  doc.text(selectedVisit.email ?? "", valueX, y);
                   y += 10;
 
 
@@ -775,7 +786,11 @@ const
                   doc.setFont("helvetica", "normal");
 
 
-                  doc.text("13 Nov 25 11:06 AM", valueX, y);
+                  doc.text(
+                    selectedVisit.date
+                      ? `${formatDate(new Date(selectedVisit.date))} ${formatTime(new Date(selectedVisit.date))}`
+                      : ""
+                    , valueX, y);
                   y += 13;
                   doc.setFont("helvetica", "bold");
 
@@ -783,7 +798,10 @@ const
                   doc.text("Projects:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("EV 9 Square, EV Marina Bay", valueX, y);
+                  doc.text(Array.isArray(selectedVisit.projects)
+                    ? selectedVisit.projects.map((p) => p.name).join(", ")
+                    : ""
+                    , valueX, y);
                   y += 13;
 
 
@@ -793,7 +811,10 @@ const
                   doc.text("Requirements:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("2BHK 3BHK", valueX, y);
+                  doc.text(Array.isArray(selectedVisit.choiceApt)
+                    ? selectedVisit.choiceApt.map((p) => p).join(", ")
+                    : ""
+                    , valueX, y);
                   y += 10;
 
 
@@ -809,28 +830,50 @@ const
                   doc.setFont("helvetica", "normal");
 
 
-                  doc.text("Deepak Karki", valueX, y);
+                  doc.text(`${selectedVisit.closingManager?.firstName ?? ""} ${selectedVisit.closingManager?.lastName ?? ""}`, valueX, y);
                   y += 13;
                   doc.setFont("helvetica", "bold");
 
                   doc.text("Status:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("Not Verified", valueX, y);
+                  doc.text(selectedVisit.verified == true
+                    ? "Verified"
+                    : "Not Verified"
+                    , valueX, y);
                   y += 13;
                   doc.setFont("helvetica", "bold");
 
                   doc.text("Source:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("cp", valueX, y);
+                  doc.text((selectedVisit.source ?? "").toUpperCase(), valueX, y);
                   y += 13;
                   doc.setFont("helvetica", "bold");
+
+                  if (selectedVisit?.channelPartner) {
+                    doc.text("Channel Partner:", sectionContentX, y);
+                    doc.setFont("helvetica", "normal");
+
+                    doc.text(selectedVisit?.channelPartner.firmName ?? "", valueX, y);
+                    y += 13;
+
+                    doc.setFont("helvetica", "bold");
+                  }
+
 
                   doc.text("Attended By:", sectionContentX, y);
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("Monika Parmar, Suraj Ravindran", valueX, y);
+                  doc.text(
+                    Array.isArray(selectedVisit?.closingTeam) && selectedVisit.closingTeam.length > 0
+                      ? selectedVisit.closingTeam
+                        .map((ele) => `${ele.firstName ?? ""} ${ele.lastName ?? ""}`.trim())
+                        .join(", ")
+                      : "NA",
+                    valueX,
+                    y
+                  );
                   y += 10;
 
 
@@ -845,7 +888,7 @@ const
 
                   doc.setFont("helvetica", "normal");
 
-                  doc.text("No feedback provided", valueX, y);
+                  doc.text(selectedVisit.feedback ?? "", valueX, y);
                   y += 13;
 
                   doc.save(`site_visit_${selectedVisit._id}.pdf`);
@@ -1513,8 +1556,11 @@ const VisitDetailsContent = ({ visit }: any) => {
             <div className={styles.infoItem}>
               <label className={styles.infoLabel}>Attended By</label>
               <p className={styles.infoValue}>
-                {visit?.attendedBy?.firstName ?? ""}{" "}
-                {visit?.attendedBy?.lastName ?? ""}
+                {Array.isArray(visit?.closingTeam) && visit.closingTeam.length > 0
+                  ? visit.closingTeam
+                    .map((ele: { firstName: string; lastName: string }) => `${ele.firstName} ${ele.lastName}`)
+                    .join(", ")
+                  : "NA"}
               </p>
             </div>
             <div className={styles.infoItem}>

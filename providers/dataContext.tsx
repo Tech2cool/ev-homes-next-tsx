@@ -71,6 +71,11 @@ type FetchLeadsParams = {
   propertyType?: string | null;
 };
 
+type CancelBookingParams = {
+  id: string | null;
+  remark?: string | null;
+};
+
 type FetchTeamLeaderParams = {
   id?: string | null | undefined;
   query?: string;
@@ -364,6 +369,8 @@ type DataProviderState = {
   testimonials: Testimonial[];
   loadingTestimonial: boolean;
   loadingLeads: boolean;
+  loadingTask: boolean;
+
   loadingPostSaleLeads: boolean;
 
   fetchingMoreLeads: boolean;
@@ -396,9 +403,15 @@ type DataProviderState = {
   ranking: RankingTurn | null;
   leaveCount: EmployeeShiftInfoModel | null;
   currentLead: Lead | null;
+  currentTask: Task | null;
   dataEntryUsers: Employee[];
   closingManagers: Employee[];
   reportingToEmps: Employee[];
+  attOverview: AttOverview | null;
+  attendanceList: Attendance[];
+  estimatebyId: EstimateGenerated[];
+  estimateAll: EstimateGenerated[];
+  postSalesExecutives: Employee[];
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
   getRequirements: () => Promise<{ success: boolean; message?: string }>;
@@ -535,10 +548,69 @@ type DataProviderState = {
   getDataEntryEmployees: () => Promise<{ success: boolean; message?: string }>;
 
   getClosingManagers: () => Promise<{ success: boolean; message?: string }>;
-  updateFeedbackWithTimer: () => Promise<{
+  updateFeedbackWithTimer: (data: Record<string, any>) => Promise<{
     success: boolean;
     message?: string;
   }>;
+
+  getLeadById: (id: string) => Promise<{ success: boolean; message?: string }>;
+
+  getTaskById: (id: string) => Promise<{ success: boolean; message?: string }>;
+  getAttendanceOverview: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
+  getMyMonthlyAttendance: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
+  getTodayAttendance: ({
+    date,
+    filter,
+    startDate,
+    endDate,
+  }: {
+    date?: string;
+    filter?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => Promise<{ success: boolean; message?: string }>;
+  assignTask: (
+    id: string,
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  sendOtpSiteVisit: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  addSiteVisitV2: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  uploadFile: (file: File) => Promise<{
+    success: boolean;
+    message?: string;
+    file?: UploadFile | null;
+  }>;
+  cancelBooking: (params: {
+    // Add this
+    id: string;
+    remark?: string | null;
+  }) => Promise<{ success: boolean; message?: string }>;
+
+  addBrokerage: (
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+  getPostSalesExecutives: () => Promise<{ success: boolean; message?: string }>;
+
+  addPostSaleLead:(
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
+
+  addPayment:(
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
 };
 
 //initial values should define here
@@ -557,6 +629,8 @@ const initialState: DataProviderState = {
   postSaleleads: null,
 
   loadingLeads: false,
+  loadingTask: false,
+
   loadingPostSaleLeads: false,
 
   siteInfo: null,
@@ -580,9 +654,16 @@ const initialState: DataProviderState = {
   ranking: null,
   leaveCount: null,
   currentLead: null,
+  currentTask: null,
   dataEntryUsers: [],
   closingManagers: [],
   reportingToEmps: [],
+  attOverview: null,
+  attendanceList: [],
+  estimatebyId: [],
+  estimateAll: [],
+  postSalesExecutives: [],
+
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getRequirements: async () => ({ success: false, message: "Not initialized" }),
   getRankingTurns: async () => ({ success: false, message: "Not initialized" }),
@@ -684,6 +765,68 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+
+  getLeadById: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  getTaskById: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getAttendanceOverview: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getMyMonthlyAttendance: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getTodayAttendance: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  assignTask: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  sendOtpSiteVisit: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  addSiteVisitV2: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  uploadFile: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  cancelBooking: async () => ({ success: false, message: "Not initialized" }),
+
+  addBrokerage: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+  getPostSalesExecutives: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  addPostSaleLead: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  addPayment: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -701,12 +844,22 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [teamOverview, setTeamReprotingTo] = useState<TeamInsight[]>([]);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [reportingToEmps, setReportingToEmployees] = useState<Employee[]>([]);
 
   const [loadingLeads, setLoadingLeads] = useState<boolean>(false);
+  const [loadingTask, setLoadingTask] = useState<boolean>(false);
+
+  const [estimatebyId, setEstimatebyId] = useState<EstimateGenerated[]>([]);
+  const [loadingEstimatebyId, setLoadingEstimatebyId] =
+    useState<boolean>(false);
+
+  const [estimateAll, setEstimateAll] = useState<EstimateGenerated[]>([]);
+  const [loadingEstimateAll, setLoadingEstimateAll] = useState<boolean>(false);
+
   const [loadingPostSaleLeads, setLoadingPostSaleLeads] =
     useState<boolean>(false);
 
@@ -775,27 +928,200 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   );
 
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
-
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
+  // const [otp, setSiteVisitOtp] = useState<Task | null>(null);
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
-
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
+  const [postSalesExecutives, setPostSaleExecutives] = useState<Employee[]>([]);
 
-  const updateFeedbackWithTimer = async (): Promise<{
+  //get all estimates
+  const getEstimateGenerated = async (
+    teamLeader: string
+  ): Promise<{ success: boolean; message?: string }> => {
+    setLoadingEstimateAll(true);
+    setError("");
+
+    try {
+      let url = `/api/estimates`;
+      if (teamLeader) {
+        url += `?teamLeader=${teamLeader}`;
+      }
+
+      console.log("Fetching estimates:", url);
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      // Expected structure: { data: [...] }
+      const items = res?.data ?? [];
+
+      setEstimateAll(items);
+      setLoadingEstimateAll(false);
+
+      return { success: true };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      setError(errorMessage);
+      setLoadingEstimateAll(false);
+
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoadingEstimateAll(false);
+    }
+  };
+
+  const getEstimateGeneratedById = async (
+    id: string
+  ): Promise<{ success: boolean; data?: any[]; message?: string }> => {
+    setLoadingEstimatebyId(true);
+    setError("");
+
+    try {
+      let url = `/api/estimateGenerated-lead/${id}`;
+      console.log("🔍 Fetching estimate by ID:", url);
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      console.log("📦 Full API Response:", res);
+      console.log("📦 Response data:", res.data);
+
+      // Debug: Check the actual structure
+      console.log("🔍 Checking response structure:");
+      console.log("res.data:", res.data);
+      console.log("res.data.data:", res.data?.data);
+      console.log("res.data.data length:", res.data?.data?.length);
+
+      // Extract data array from response - FIXED VERSION
+      let items: any[] = [];
+
+      // Try different possible response structures
+      if (Array.isArray(res.data?.data)) {
+        items = res.data.data;
+        console.log("✅ Using res.data.data structure");
+      } else if (Array.isArray(res.data)) {
+        items = res.data;
+        console.log("✅ Using res.data structure");
+      } else if (Array.isArray(res)) {
+        items = res;
+        console.log("✅ Using res structure");
+      } else {
+        console.log("❌ No array found in expected locations");
+        console.log("Available keys:", Object.keys(res));
+        if (res.data) {
+          console.log("res.data keys:", Object.keys(res.data));
+        }
+      }
+
+      console.log("📊 Final extracted items:", items);
+
+      let estimateGeneratedItems: any[] = [];
+      if (items.length > 0) {
+        estimateGeneratedItems = items;
+        console.log(
+          "✅ Setting estimates:",
+          estimateGeneratedItems.length,
+          "items"
+        );
+        console.log("✅ First estimate:", estimateGeneratedItems[0]);
+      } else {
+        console.log("❌ No estimates found after extraction");
+      }
+
+      setEstimatebyId(estimateGeneratedItems);
+      setLoadingEstimatebyId(false);
+
+      return { success: true, data: estimateGeneratedItems };
+    } catch (err: any) {
+      console.error("🚨 Error fetching estimates:", err);
+      let errorMessage = "Something went wrong";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
+      setLoadingEstimatebyId(false);
+
+      return { success: false, message: errorMessage };
+    } finally {
+      setLoadingEstimatebyId(false);
+    }
+  };
+
+  const cancelBooking = async ({
+    id = null,
+    remark = null,
+  }: CancelBookingParams): Promise<{ success: boolean; message?: string }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      let url = `/api/cancel-booking?id=${id}`;
+      if (remark != null) {
+        url += `&remark=${remark}`;
+      }
+
+      console.log(url);
+      const res = await fetchAdapter(url, { method: "POST" });
+
+      console.log(res);
+      return { success: true };
+    } catch (err: any) {
+      const errorMsg = err?.message || "Something went wrong";
+      setError(errorMsg);
+      return { success: false, message: errorMsg };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [attOverview, setAttOverview] = useState<AttOverview | null>(null);
+  const [loadingAttOverview, setLoadingAttOverview] = useState<Boolean>(false);
+
+  const [attendanceList, setAttendanceList] = useState<Attendance[]>([]);
+  const [loadingAttendance, setLoadingAttendance] = useState<Boolean>(false);
+
+  const updateFeedbackWithTimer = async (
+    data: Record<string, any> = {}
+  ): Promise<{
     success: boolean;
     message?: string;
+    data?: Lead | null;
   }> => {
     try {
-      const response = await fetchAdapter("/api/update-feedback-timer-v2");
+      console.log(" passed 1");
 
-      // if (response.data.code !== 200) {
-      //   // showCustomSnackBar(response.data.message);
-      //   return null;
-      // }
+      const url = `/api/update-feedback-timer-v2`;
+      const response = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
 
-      // showCustomSnackBar(response.data.message, 'green');
       console.log(response);
-      const reqs = response?.data || [];
-      setTimer(reqs); // ✅ update state
+      console.log(" passed 2");
+
+      const reqs = response?.data;
+      setCurrentLead(reqs);
+
+      setTimer(reqs);
+
+      console.log("last end ");
 
       return { success: true };
     } catch (error: any) {
@@ -2138,6 +2464,45 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const assignTask = async (
+    id: string,
+    data: Record<string, any> = {}
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Task | null;
+  }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      console.log("test1");
+      const url = `/api/assign-task/${id}`;
+      console.log("test1");
+
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      // The API is assumed to return something like:
+      // { data: Lead, message, code }
+      setCurrentTask(res?.data as Task);
+      setLoadingTask(false);
+
+      return { success: true };
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message);
+      setLoadingTask(false);
+
+      return { success: false, message: err.message };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
   const fetchTeamLeaderGraphForDA = async ({
     interval = "monthly",
     year = null,
@@ -2513,11 +2878,512 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+  const getLeadById = async (
+    id: string
+  ): Promise<{ success: boolean; message?: string }> => {
+    setLoadingLeads(true);
+    setError("");
+
+    try {
+      const url = `/api/lead/${id}`;
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      // Assuming res.data is your lead object type
+      setCurrentLead(res?.data);
+
+      return { success: true };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch lead";
+
+      setError(message);
+
+      return { success: false, message };
+    } finally {
+      setLoadingLeads(false);
+    }
+  };
+
+  const getTaskById = async (
+    id: string
+  ): Promise<{ success: boolean; message?: string; data?: Task | null }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/task-by-id/${id}`;
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const task = res?.data as Task;
+      setCurrentTask(task);
+
+      return { success: true, data: task };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+  const getAttendanceOverview = async (
+    id: string,
+    date?: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: AttOverview | null;
+  }> => {
+    setLoadingAttOverview(true);
+    setError("");
+
+    try {
+      let url = `/api/monthly-attendance-overview/${id}`;
+      if (date != null) {
+        url += `?date=${date}`;
+      }
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const dta = res?.data;
+      console.log(dta);
+      setAttOverview(dta);
+
+      return { success: true, data: dta };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch attendance overview";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingAttOverview(false);
+    }
+  };
+
+  const getMyMonthlyAttendance = async (
+    id: string,
+    date?: string
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Attendance[];
+  }> => {
+    setLoadingAttendance(true);
+    setError("");
+
+    try {
+      let url = `/api/attendance/${id}`;
+      if (date != null) {
+        url += `?date=${date}`;
+      }
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const dta = res?.data;
+      console.log(dta);
+      setAttendanceList(dta);
+
+      return { success: true, data: dta };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch attendance list";
+
+      setError(message);
+
+      return { success: false, message, data: [] };
+    } finally {
+      setLoadingAttendance(false);
+    }
+  };
+
+  const sendOtpSiteVisit = async (
+    data: Record<string, any>
+  ): Promise<{ success: boolean; message?: string; data?: Otp | null }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/site-visit-generate-otp`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const otp = res?.data;
+
+      console.log("otp", otp);
+      // setCurrentTask(task);
+
+      return { success: true, data: otp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+  const addSiteVisitV2 = async (
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: SiteVisit | null;
+  }> => {
+    setLoadingTask(true);
+    setError("");
+
+    try {
+      const url = `/api/site-visit-add-v2`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const otp = res?.data;
+
+      console.log("otp", otp);
+      // setCurrentTask(task);
+
+      return { success: true, data: otp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoadingTask(false);
+    }
+  };
+
+  const uploadFile = async (
+    file: File
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    file?: UploadFile | null;
+  }> => {
+    try {
+      console.log("initial pass 1");
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+
+      console.log("initial pass 2");
+
+      const response = await fetch(`/api/upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "x-platform": "web",
+        },
+      });
+
+      console.log("initial pass 3");
+
+      // Check if the response is OK (status in the range 200-299)
+      if (!response.ok) {
+        // Try to get the error message from the response
+        let errorMessage = "Upload failed";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the status text
+          errorMessage = response.statusText;
+        }
+        throw new Error(errorMessage);
+      }
+
+      // Parse the response as JSON
+      const data = await response.json();
+      return {
+        success: true,
+        file: data,
+      };
+    } catch (error: any) {
+      let errorMessage = "Something went wrong";
+
+      if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error("Upload error:", errorMessage);
+      return {
+        success: false,
+        message: errorMessage,
+        file: null,
+      };
+    }
+  };
+
+  const getTodayAttendance = async ({
+    date,
+    filter,
+    startDate,
+    endDate,
+  }: {
+    date?: string;
+    filter?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<{
+    success: boolean;
+    message?: string;
+    data?: Attendance[];
+  }> => {
+    setLoadingAttendance(true);
+    setError("");
+
+    try {
+      const nwDate = !date ? new Date().toISOString() : date;
+      let url = `/api/get-check-in-by-date?date=${nwDate}`;
+      if (filter != null) {
+        url += `?filter=${filter}`;
+      }
+      if (startDate != null) {
+        url += `?startDate=${startDate}`;
+      }
+
+      if (endDate != null) {
+        url += `?endDate=${endDate}`;
+      }
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      const dta = res?.data;
+      console.log(dta);
+      setAttendanceList(dta);
+
+      return { success: true, data: dta };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch attendance list";
+
+      setError(message);
+
+      return { success: false, message, data: [] };
+    } finally {
+      setLoadingAttendance(false);
+    }
+  };
+
+  const addBrokerage = async (
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: BrokerageCalculationData | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const url = `/api/add-brokerage`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const resp = res?.data;
+
+      console.log("resp", resp);
+      // setCurrentTask(task);
+
+      return { success: true, data: resp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getPostSalesExecutives = async (): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    try {
+      const url = `/api/employee-post-sales-executive`;
+
+      const res = await fetchAdapter(url, {
+        method: "GET",
+      });
+
+      if (res?.data) {
+        setPostSaleExecutives(res.data ?? []);
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      let errorMessage = "Something went wrong";
+
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      if (errorMessage.trim().toLowerCase() === "null") {
+        errorMessage = "Something went wrong";
+      }
+
+      console.error(errorMessage);
+      return { success: false, message: errorMessage };
+    }
+  };
+
+  const addPostSaleLead = async (
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: PostSaleLead | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const url = `/api/post-sale-lead-add`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const response = res?.data as PostSaleLead;
+
+      console.log("response", response);
+      // setCurrentTask(task);
+
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const addPayment = async (
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: PostSaleLead | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const url = `/api/payment-add`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const response = res?.data;
+
+      console.log("response", response);
+      // setCurrentTask(task);
+
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch task";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const value = {
     projects: projects,
     testimonials: testimonials,
     loadingTestimonial: loadingTestimonial,
     loadingLeads: loadingLeads,
+    loadingTask: loadingTask,
+
     loadingPostSaleLeads: loadingPostSaleLeads,
 
     employees: employees,
@@ -2554,8 +3420,16 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     dataEntryUsers: dataEntryUsers,
     closingManagers: closingManagers, //list of closing manager
     reportingToEmps: reportingToEmps,
+    currentTask: currentTask,
+    attOverview: attOverview,
+    attendanceList: attendanceList,
+    estimatebyId: estimatebyId,
+    estimateAll: estimateAll,
+    postSalesExecutives: postSalesExecutives,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
+    getEstimateGeneratedById: getEstimateGeneratedById,
+    getEstimateGenerated: getEstimateGenerated,
     getRequirements: getRequirements,
     getTestimonals: getTestimonals,
     setLoadingTestimonial: setLoadingTestimonial,
@@ -2589,6 +3463,20 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     updateLeadDetails: updateLeadDetails,
     getDataEntryEmployees: getDataEntryEmployees,
     updateFeedbackWithTimer: updateFeedbackWithTimer,
+    getLeadById: getLeadById,
+    getTaskById: getTaskById,
+    assignTask: assignTask,
+    sendOtpSiteVisit: sendOtpSiteVisit,
+    addSiteVisitV2: addSiteVisitV2,
+    uploadFile: uploadFile,
+    cancelBooking: cancelBooking,
+    getAttendanceOverview: getAttendanceOverview,
+    getMyMonthlyAttendance: getMyMonthlyAttendance,
+    getTodayAttendance: getTodayAttendance,
+    addBrokerage: addBrokerage,
+    getPostSalesExecutives: getPostSalesExecutives,
+    addPostSaleLead:addPostSaleLead,
+    addPayment:addPayment,
   };
 
   return (
