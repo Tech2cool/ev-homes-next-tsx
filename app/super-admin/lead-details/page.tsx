@@ -183,7 +183,7 @@ const LeadDetailsPage = () => {
     };
 
     fetchSearch();
-  }, [debouncedSearchQuery,]);
+  }, [debouncedSearchQuery]);
 
   // Sync with URL status parameter
   // useEffect(() => {
@@ -1349,7 +1349,7 @@ const LeadDetailsPage = () => {
             />
           )}
 
-          {activeTab === "access" && <QuickAccess />}
+          {activeTab === "access" && <QuickAccess lead={SelectedLead} />}
 
           {activeTab === "taskDetails" && (
             <TaskOverview task={SelectedLead?.taskRef} />
