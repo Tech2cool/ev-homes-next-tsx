@@ -161,16 +161,29 @@ const LeadDetailsPage = () => {
 
   const socket = getSocket();
 
-  const handleSearchChange = async (query: string) => {
+  const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    setLoadingSearch(true);
-
-    try {
-      await fetchSearchLeads({ query });
-    } finally {
-      setLoadingSearch(false);
-    }
+    setLoadingSearch(true); // show loading instantly
   };
+
+  useEffect(() => {
+    if (!debouncedSearchQuery?.trim()) {
+      setLoadingSearch(false);
+      return;
+    }
+
+    const fetchSearch = async () => {
+      setLoadingSearch(true);
+
+      try {
+        await fetchSearchLeads({ query: debouncedSearchQuery });
+      } finally {
+        setLoadingSearch(false);
+      }
+    };
+
+    fetchSearch();
+  }, [debouncedSearchQuery,]);
 
   // Sync with URL status parameter
   // useEffect(() => {
@@ -537,8 +550,9 @@ const LeadDetailsPage = () => {
                 {leads?.map((visit, index) => (
                   <div
                     key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
-                    className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                      }`}
+                    className={`${styles.visitCard} ${
+                      SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                    }`}
                     onClick={() => {
                       setSelectedLead(visit);
 
@@ -615,8 +629,9 @@ const LeadDetailsPage = () => {
                         </div>
 
                         <span className={styles.taskName}>
-                          {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                            }`}
+                          {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                            visit.taskRef?.assignTo?.lastName ?? ""
+                          }`}
                           <span className={styles.status}>
                             <span
                               className={styles.statusText}
@@ -655,8 +670,9 @@ const LeadDetailsPage = () => {
                             {formatStatus(visit.clientInterestedStatus)}
                           </div>
                         ) : null}
-                        {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
-                          (visit.leadType !== "cp" && visit.leadType) ? (
+                        {(visit.leadType === "cp" &&
+                          visit.channelPartner?.firmName) ||
+                        (visit.leadType !== "cp" && visit.leadType) ? (
                           <div
                             style={{
                               backgroundColor: "#387478",
@@ -666,9 +682,8 @@ const LeadDetailsPage = () => {
                             {visit.leadType === "cp"
                               ? visit.channelPartner?.firmName ?? ""
                               : visit.leadType ?? ""}
-                          </div>)
-                          : null}
-
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -795,7 +810,7 @@ const LeadDetailsPage = () => {
 
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
-                                <BookingOverview lead={SelectedLead} />
+                      <BookingOverview lead={SelectedLead} />
                     </div>
                   )}
                   {/* Similar Visits Section */}
@@ -821,40 +836,45 @@ const LeadDetailsPage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "siteVisit" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
                       <FaMapMarkedAlt className={styles.icon} /> Site Visit
@@ -862,8 +882,9 @@ const LeadDetailsPage = () => {
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "transfer" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
@@ -871,8 +892,9 @@ const LeadDetailsPage = () => {
 
                     {SelectedLead?.bookingRef != null && (
                       <button
-                        className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                          }`}
+                        className={`${styles.navItem} ${
+                          activeTab === "booking" ? styles.active : ""
+                        }`}
                         onClick={() => setActiveTab("booking")}
                       >
                         <FaFileContract className={styles.icon} /> Booking
@@ -962,8 +984,6 @@ const LeadDetailsPage = () => {
           >
             <SlidersHorizontal className={styles.filterIcon} />
           </button>
-
-
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {loadingSearch ? (
@@ -1048,8 +1068,9 @@ const LeadDetailsPage = () => {
                       </div>
 
                       <span className={styles.taskName}>
-                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                          }`}
+                        {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                          visit.taskRef?.assignTo?.lastName ?? ""
+                        }`}
                         <span className={styles.status}>
                           <span
                             className={styles.statusText}
@@ -1090,8 +1111,9 @@ const LeadDetailsPage = () => {
                       ) : (
                         <span>Not available</span>
                       )}
-                      {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
-                        (visit.leadType !== "cp" && visit.leadType) ? (
+                      {(visit.leadType === "cp" &&
+                        visit.channelPartner?.firmName) ||
+                      (visit.leadType !== "cp" && visit.leadType) ? (
                         <div
                           style={{ backgroundColor: "#387478" }}
                           className={styles.clientStatus}
@@ -1101,7 +1123,6 @@ const LeadDetailsPage = () => {
                             : visit.leadType}
                         </div>
                       ) : null}
-
                     </div>
                   </div>
 
@@ -1243,56 +1264,63 @@ const LeadDetailsPage = () => {
                 ✕
               </button>
               <button
-                className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "overview" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("overview")}
               >
                 <FaUser className={styles.icon} /> Client Overview
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "access" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("access")}
               >
                 <FaBolt className={styles.icon} /> Quick Access
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "taskDetails" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("taskDetails")}
               >
                 <FaTasks className={styles.icon} /> Task Details
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "followup" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("followup")}
               >
                 <FaHistory className={styles.icon} /> Follow-up History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "siteVisit" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("siteVisit")}
               >
                 <FaMapMarkedAlt className={styles.icon} /> Site Visit History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "transfer" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("transfer")}
               >
                 <FaExchangeAlt className={styles.icon} /> Transfer History
               </button>
 
               <button
-                className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                  }`}
+                className={`${styles.navItem} ${
+                  activeTab === "booking" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("booking")}
               >
                 <FaFileContract className={styles.icon} /> Booking Overview
