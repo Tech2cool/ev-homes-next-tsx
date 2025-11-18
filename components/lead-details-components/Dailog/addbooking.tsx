@@ -296,21 +296,21 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
   const floorOptions = hasBuildings
     ? uniq(
-        flats
-          .filter((f) => f.buildingNo == formData.blg)
-          .map((f) => f.floor)
-          .filter((v) => v !== undefined)
-      ).sort((a, b) => a - b)
+      flats
+        .filter((f) => f.buildingNo == formData.blg)
+        .map((f) => f.floor)
+        .filter((v) => v !== undefined)
+    ).sort((a, b) => a - b)
     : uniq(flats.map((f) => f.floor).filter((v) => v !== undefined)).sort(
-        (a, b) => a - b
-      );
+      (a, b) => a - b
+    );
 
   const unitOptions = hasBuildings
     ? flats
-        .filter(
-          (f) => f.buildingNo == formData.blg && f.floor == formData.floor
-        )
-        .map((f) => f.number)
+      .filter(
+        (f) => f.buildingNo == formData.blg && f.floor == formData.floor
+      )
+      .map((f) => f.number)
     : flats.filter((f) => f.floor == formData.floor).map((f) => f.number);
 
   useEffect(() => {
@@ -886,12 +886,32 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       CostWords: convertToIndianWords(Number(onlyNumbers)),
     }));
   };
+  const toDataUrl = (url: string) =>
+    fetch(url)
+      .then((response) => response.blob())
+      .then(
+        (blob) =>
+          new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          })
+      );
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
+    const background = await toDataUrl(
+      "https://cdn.evhomes.tech/86c72869-0942-4180-bd97-10f75d4d4d00-IMG-20250416-WA0011.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6Ijg2YzcyODY5LTA5NDItNDE4MC1iZDk3LTEwZjc1ZDRkNGQwMC1JTUctMjAyNTA0MTYtV0EwMDExLmpwZyIsImlhdCI6MTc0NDgwNzk0OX0.LDwQQAhVD2z58KRWyuC4aOOEOhullO0h_pqHiVGflH8"
+    );
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    doc.addImage(background, "JPEG", 0, 0, pageWidth, pageHeight);
+
     let y = 20;
     const lineGap = 8;
-
+    const addBackground = () => {
+      doc.addImage(background, "JPEG", 0, 0, pageWidth, pageHeight);
+    };
     const addSectionTitle = (title: string) => {
       doc.setFillColor(230, 230, 250);
       doc.rect(10, y - 5, 190, 10, "F");
@@ -911,6 +931,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       y += lineGap;
       if (y > 270) {
         doc.addPage();
+         addBackground();
         y = 20;
       }
     };
@@ -1025,8 +1046,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
       borderColor: state.isFocused
         ? "#007bff"
         : theme === "dark"
-        ? "#444444f5"
-        : "#ccc",
+          ? "#444444f5"
+          : "#ccc",
       minHeight: "40px",
       borderWidth: "2px",
       color: theme === "dark" ? "white" : "#201f1f",
@@ -1048,19 +1069,19 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
           ? "#007bff"
           : "#cce5ff"
         : state.isFocused
-        ? theme === "dark"
-          ? "#0056b3"
-          : "#e6f0ff"
-        : theme === "dark"
-        ? "#151414f5"
-        : "white",
+          ? theme === "dark"
+            ? "#0056b3"
+            : "#e6f0ff"
+          : theme === "dark"
+            ? "#151414f5"
+            : "white",
       color: state.isSelected
         ? theme === "dark"
           ? "white"
           : "#201f1f"
         : theme === "dark"
-        ? "white"
-        : "#201f1f",
+          ? "white"
+          : "#201f1f",
       fontSize: "14px",
     }),
     singleValue: (base: any) => ({
@@ -3048,9 +3069,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
             {steps.map((step, index) => (
               <div key={index} className={styles.step}>
                 <div
-                  className={`${styles.circle} ${
-                    index <= currentStep ? styles.active : ""
-                  }`}
+                  className={`${styles.circle} ${index <= currentStep ? styles.active : ""
+                    }`}
                 >
                   {index + 1}
                 </div>
@@ -3101,8 +3121,8 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
               {isLoading
                 ? "Creating..."
                 : currentStep === steps.length - 1
-                ? "Submit"
-                : "Next"}
+                  ? "Submit"
+                  : "Next"}
             </button>
           </div>
         </div>
