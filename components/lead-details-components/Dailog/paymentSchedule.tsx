@@ -122,20 +122,14 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
         phone: leads?.phoneNumber?.toString() || "",
       }));
 
-      if (postSaleLead!.applicants && postSaleLead!.applicants.length > 0) {
-        const applicantNames = postSaleLead!.applicants.map((app) => ({
-          prefix: app.prefix || "",
-          name: `${app.firstName || ""} ${app.lastName || ""}`.trim(),
-        }));
-        setNames(applicantNames);
-      } else {
+ 
         setNames([
           {
             prefix: "",
             name: `${leads.firstName || ""} ${leads.lastName || ""}`.trim(),
           },
         ]);
-      }
+    
     }
 
 
@@ -740,7 +734,7 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
                   <option value="">Prefix</option>
                   {prefixList.map((prefix) => (
                     <option key={prefix} value={prefix}>
-                      {/* {capitalize(prefix)} */}
+                      {(prefix)}
                     </option>
                   ))}
                 </select>
