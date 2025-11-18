@@ -92,10 +92,6 @@ const roundOff = (value: number): number => {
   return parseFloat(value.toFixed(0)); // Round to nearest whole number
 };
 
-
-
-
-
 // interface Lead {
 //   _id: string;
 //   firstName: string;
@@ -281,6 +277,14 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     allInclusiveValue: "",
   });
 
+  useEffect(() => {
+    if (lead) {
+      setCustomerName(`${lead.firstName ?? ""} ${lead.lastName ?? ""}`.trim());
+      setPhoneNumber(lead.phoneNumber?.toString() ?? "");
+      setAddress(lead.address ?? "");
+    }
+  }, [lead]);
+
   const stampDutyOptions = [
     { value: 5, label: "5%" },
     { value: 6, label: "6%" },
@@ -381,9 +385,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const floors = floorOptions;
   const flatsForSelection = unitOptions;
 
-  useEffect(() => {
-
-  }, [
+  useEffect(() => {}, [
     selectedProject,
     selectedBuildingNo,
     selectedFloor,
@@ -981,9 +983,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     type="text"
                     id="customerName"
-                    value={`${lead?.firstName ?? ""} ${
-                      lead?.lastName ?? ""
-                    }`.trim()}
+                    value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Customer Name"
                     className={styles.inputField}
@@ -998,7 +998,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     type="tel"
                     id="phoneNumber"
-                    value={lead?.phoneNumber ?? "NA"}
+                    value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="Phone Number"
                     className={styles.inputField}
@@ -1013,7 +1013,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     type="text"
                     id="address"
-                    value={lead?.address ?? "NA"}
+                    value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Address"
                     className={styles.inputField}
@@ -1350,27 +1350,32 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               // if (result.success) {
               try {
                 console.log("triggered 1");
-      await generatePdf(
-        lead,
-        selectedProject,         // or selectedProject ?? {}
-        selectedFlat,            // ensure no undefined sent
-        {
-          ...calculatedValues,
-          allInclusiveValue: Number(calculatedValues?.allInclusiveValue),
-          AgreementValue: Number(calculatedValues?.AgreementValue),
-          GstAmount: Number(calculatedValues?.GstAmount),
-          StampDutyAmount: Number(calculatedValues?.StampDutyAmount),
-          TotalPayable: Number(calculatedValues?.TotalPayable),
-          BookingAmount: Number(calculatedValues?.BookingAmount)
-        },
-        slabsbyproject,
-        user,
-        currentEstCount ?? 0,
-        fetchEstimatCount!
-      );
-    } catch (err) {
-      console.error("PDF generation failed:", err);
-    }
+                await generatePdf(
+                  lead,
+                  selectedProject, // or selectedProject ?? {}
+                  selectedFlat, // ensure no undefined sent
+                  {
+                    ...calculatedValues,
+                    allInclusiveValue: Number(
+                      calculatedValues?.allInclusiveValue
+                    ),
+                    AgreementValue: Number(calculatedValues?.AgreementValue),
+                    GstAmount: Number(calculatedValues?.GstAmount),
+                    StampDutyAmount: Number(calculatedValues?.StampDutyAmount),
+                    TotalPayable: Number(calculatedValues?.TotalPayable),
+                    BookingAmount: Number(calculatedValues?.BookingAmount),
+                  },
+                  slabsbyproject,
+                  user,
+                  currentEstCount ?? 0,
+                  fetchEstimatCount!,
+                   customerName,
+  phoneNumber,
+  address
+                );
+              } catch (err) {
+                console.error("PDF generation failed:", err);
+              }
               // }
             }}
             className={styles.pdfbutton}
@@ -1393,7 +1398,10 @@ export const generatePdf = async (
   slab: Slab | null,
   user: any,
   currentEstCount: any,
-  fetchEstimatCount: any
+  fetchEstimatCount: any,
+  customerName: string,
+  phoneNumber: string,
+  address: string
 ) => {
   const doc = new jsPDF();
   let y = 20;
@@ -1444,23 +1452,35 @@ export const generatePdf = async (
   doc.text("This is an Estimate", 105, 45, { align: "center" });
 
   doc.setFontSize(11);
-  doc.text(
-    `Date: ${dateFormatWithTime(new Date().toISOString())}`,
-    105,
-    52,
-    { align: "center" }
-  );
+  doc.text(`Date: ${dateFormatWithTime(new Date().toISOString())}`, 105, 52, {
+    align: "center",
+  });
 
   y = 60;
 
+  const estId = getEstId(lead?.teamLeader, (currentEstCount?.count ?? 0) + 1);
+
+  doc.text(`EST ID: ${estId}`, 14, y);
+  y += lineGap + 1;
+
+  // Company From
+  doc.text(`From:\nEv Homes Constructions Pvt. LTD`, 14, y);
+  y += 14;
+
   // -------- Section: Client Information --------
   addSectionTitle("Client Information");
-  addField("Client Name", `${lead?.firstName ?? ""} ${lead?.lastName ?? ""}`);
-  addField("Mobile", lead?.phoneNumber);
-  addField("Address", lead?.address);
+  addField("Client Name", customerName);
+  addField("Mobile", phoneNumber);
+  addField("Address", address);
+
   addField(
     "Team Leader",
     `${lead?.teamLeader?.firstName ?? ""} ${lead?.teamLeader?.lastName ?? ""}`
+  );
+
+   addField(
+    "Attended By",
+    `${user?.firstName ?? ""} ${user?.lastName ?? ""}`
   );
 
   // -------- Section: Unit Details --------
@@ -1549,7 +1569,9 @@ export const generatePdf = async (
   // -------- Footer --------
   doc.setFontSize(10);
   doc.text(
-    `${lead?.firstName ?? ""} ${lead?.lastName ?? ""} — PDF Generated by EV Homes`,
+    `${lead?.firstName ?? ""} ${
+      lead?.lastName ?? ""
+    } — PDF Generated by EV Homes`,
     105,
     285,
     { align: "center" }
@@ -1590,6 +1612,7 @@ function getEstId(
   if (!teamLeader) return `NA/ESt/${getFinancialYear()}/01`;
 
   const firstName = (teamLeader.firstName || "").toLowerCase();
+
   let estId = "ESt";
   if (firstName === "deepak") estId = "DK/EST";
   else if (firstName === "jaspreet") estId = "JA/EST";
@@ -1598,4 +1621,3 @@ function getEstId(
 
   return `${estId}/${getFinancialYear()}/${copyCount}`;
 }
-
