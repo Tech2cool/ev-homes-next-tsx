@@ -18,12 +18,12 @@ interface EstimateListOverallProps {
 
 
 const EstimateListOverall: React.FC<EstimateListOverallProps> = ({ onCardClick, leadId }) => {
-  const { getEstimateGenerated ,estimateAll} = useData();
+  const { getEstimateGenerated ,estimateAll,getClosingManagers,closingManagers} = useData();
   // const [estimates, setEstimates] = useState<EstimateGenerated[]>([]);
   const [loadingEstimatebyId, setLoadingEstimatebyId] = useState<boolean>(false);
 
   useEffect(() => {
-         getEstimateGenerated();
+         getEstimateGenerated("");
 
     // const fetchEstimates = async () => {
     //   if (!lead?._id) {

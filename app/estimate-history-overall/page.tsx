@@ -21,7 +21,7 @@ const EstimateHistoryOverall: React.FC = () => {
   const leadId = searchParams.get('leadId');
     
      useEffect(() => {
-      getEstimateGenerated();
+      getEstimateGenerated("");
     //  getClosingManagers;
    
      }, []);

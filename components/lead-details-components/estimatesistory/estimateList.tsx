@@ -90,7 +90,7 @@ const LeadCard: React.FC<{ estimate: EstimateGenerated; onClick: () => void }> =
       <div className={styles.fistrow}>
         <div className={styles.leadInfo}>
           <div className={styles.clientDetails}>
-            <h4>{estimate.lead?.firstName} {estimate.lead?.lastName}</h4>
+            <h4>{estimate.lead?.firstName??""} {estimate.lead?.lastName}</h4>
             <p className={styles.phone}>
               {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
             </p>
