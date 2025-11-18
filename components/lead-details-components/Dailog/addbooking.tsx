@@ -471,35 +471,41 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
   const validateStep = (stepIndex: number) => {
     const newErrors: any = {};
 
+    const isCommercial = selectedProject?.propertyType === "commercial";
+
     if (stepIndex === 0) {
+      // Always required for BOTH commercial + residential
       if (!formData.bookingDate)
         newErrors.bookingDate = "Booking date is required";
       if (!formData.bookingstatus)
         newErrors.bookingstatus = "Booking status is required";
       if (!formData.project)
         newErrors.project = "Project selection is required";
-      if (hasBuildings && !formData.blg)
-        newErrors.blg = "Building selection is required";
+
+      // Common fields to keep for commercial
       if (!formData.floor) newErrors.floor = "Floor selection is required";
       if (!formData.unit) newErrors.unit = "Unit selection is required";
 
-      if (!formData.Flatno || !formData.Flatno.trim())
-        newErrors.Flatno = "Flat number is required";
+      // If commercial → STOP here (skip building, flat no, cost, carpet, parking)
+      if (!isCommercial) {
+        if (hasBuildings && !formData.blg)
+          newErrors.blg = "Building selection is required";
 
-      if (!formData.carpet || !formData.carpet.trim())
-        newErrors.carpet = "Carpet area is required";
-      if (!formData.Cost || !formData.Cost.trim())
-        newErrors.Cost = "Flat cost is required";
+        if (!formData.Flatno || !formData.Flatno.trim())
+          newErrors.Flatno = "Flat number is required";
+        if (!formData.carpet || !formData.carpet.trim())
+          newErrors.carpet = "Carpet area is required";
+        if (!formData.Cost || !formData.Cost.trim())
+          newErrors.Cost = "Flat cost is required";
 
-      parkingList.forEach((p, index) => {
-        if (!p.prfloor)
-          newErrors[`parkingList-${index}-prfloor`] = "Select Parking Floor";
-        // if (!p.parkingno)
-        //   newErrors[`parkingList-${index}-parkingno`] = "Select Parking Number";
-      });
+        parkingList.forEach((p, index) => {
+          if (!p.prfloor)
+            newErrors[`parkingList-${index}-prfloor`] = "Select Parking Floor";
+        });
+      }
     }
 
-    if (stepIndex === 1) {
+    if (stepIndex === 1 && !isCommercial) {
       if (!formData.addressOne.trim())
         newErrors.addressOne = "Address line 1 is required";
       if (!formData.addressTwo.trim())
@@ -538,35 +544,22 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     }
 
     if (stepIndex === 2) {
-      if (!formData.manager.trim())
+      if (!formData.manager?.trim())
         newErrors.manager = "Closing manager is required";
       if (formData.assignto.length === 0)
         newErrors.assignto = "Select at least one assignee.";
     }
 
-    if (stepIndex === 3) {
+    if (stepIndex === 3 && !isCommercial) {
       if (!formData.frontphoto)
         newErrors.frontphoto = "Front photo is required";
       if (!formData.backphoto) newErrors.backphoto = "Back photo is required";
     }
 
+    // STEP 4 (payments) – this is COMMON for both
     if (stepIndex === 4) {
-      if (payments.length === 0) {
-        newErrors.payments = "Please add at least one payment";
-      } else {
-        payments.forEach((payment, index) => {
-          if (!payment.paymentMode?.trim())
-            newErrors[`payment-${index}-mode`] = "Select payment mode";
-          // if (!payment.date?.toISOString())
-          //   newErrors[`payment-${index}-date`] = "Select payment date";
-          // if (!payment.tds)
-          //   newErrors[`payment-${index}-tds`] = "Enter TDS amount";
-          if (!payment.transactionId)
-            newErrors[`payment-${index}-receipt`] = "Enter receipt number";
-        });
-      }
       if (!confirmChecked)
-        newErrors["confirmChecked"] =
+        newErrors.confirmChecked =
           "Please confirm that all information is correct.";
     }
 
@@ -3091,12 +3084,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
                   // console.log(validateStep);
                   const isValid = validateStep(currentStep);
                   if (isValid) {
-
-                  if (currentStep < steps.length - 1) {
-                    setCurrentStep(currentStep + 1);
-                  } else {
-                    onSubmit();
-                  }
+                    if (currentStep < steps.length - 1) {
+                      setCurrentStep(currentStep + 1);
+                    } else {
+                      onSubmit();
+                    }
                   }
                 } catch (e) {
                   console.log(e);

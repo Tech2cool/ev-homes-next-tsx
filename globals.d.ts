@@ -21,6 +21,7 @@ interface OurProject {
   flatList?: Flat[];
 
   parkingList?: Parking[];
+  propertyType?: string | null;
 }
 
 interface Estimator {
