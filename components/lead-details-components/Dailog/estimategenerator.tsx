@@ -16,7 +16,7 @@ import { PiSealPercentFill } from "react-icons/pi";
 
 // import CustomSelect from "../CustomSelect";
 // import { useRouter } from "next/navigation";
-// import pdfMake from "pdfmake/build/pdfmake";
+
 // import pdfFonts from "pdfmake/build/vfs_fonts";
 // import QRCode from "qrcode";
 // import { useUser } from "@/context/UserContext";
@@ -34,6 +34,7 @@ import { dateFormatWithTime } from "@/hooks/useDateFormat";
 import ReactDOM from "react-dom";
 import { MdCancel } from "react-icons/md";
 import stylerun from "./dailog.module.css";
+import jsPDF from "jspdf";
 
 interface EstimategeneratorProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -87,43 +88,13 @@ interface CalculatedValues {
   CouponDiscount: number;
 }
 
-interface Project {
-  _id: string;
-  name: string;
-  logo?: string;
-  flatList?: Array<{
-    id?: string;
-    flatNo: string;
-    floor: number;
-    number: number;
-    buildingNo?: number;
-    carpetArea?: string;
-    configuration?: string;
-    allInclusiveValue?: string;
-    ssArea?: string;
-    balconyArea?: string;
-    reraArea?: string;
-  }>;
-}
+const roundOff = (value: number): number => {
+  return parseFloat(value.toFixed(0)); // Round to nearest whole number
+};
 
-interface Coupon {
-  _id: string;
-  codeName: string;
-  codeValue: number;
-  disPercentage: number;
-}
 
-interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
-}
 
-interface TeamLeader {
-  _id: string;
-  firstName: string;
-  lastName: string;
-}
+
 
 // interface Lead {
 //   _id: string;
@@ -264,6 +235,8 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     getProjects,
     slabsbyproject,
     getSlabByProject,
+    currentEstCount,
+    fetchEstimatCount,
     // getLeadByPhoneNumber,
     // addBrokerage,
   } = useData();
@@ -276,8 +249,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const [selectedProject, setSelectedProject] = useState<OurProject | null>(
     lead?.bookingRef?.project || null
   );
-  const [selectedslabsbyproject, setSelectedSlabByProject] =
-    useState<Slab | null>(null);
+
   const [selectedBuildingNo, setSelectedBuildingNo] = useState<number | null>(
     lead?.bookingRef?.buildingNo || null
   );
@@ -314,7 +286,15 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     { value: 6, label: "6%" },
   ];
 
-  const { user } = useUser() as { user: User };
+  const {
+    fetchSearchLeads,
+    searchLeadInfo,
+    leads,
+    loadingLeads,
+    fetchingMoreLeads,
+    updateLeadDetails,
+  } = useData();
+  const { user } = useUser();
 
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -402,13 +382,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const flatsForSelection = unitOptions;
 
   useEffect(() => {
-    console.log("Selected Project:", selectedProject);
-    console.log("Selected Building:", selectedBuildingNo);
-    console.log("Selected Floor:", selectedFloor);
-    console.log("Selected Flat:", selectedFlat);
-    console.log("Buildings available:", buildings);
-    console.log("Floors available:", floors);
-    console.log("Flats available:", flats);
+
   }, [
     selectedProject,
     selectedBuildingNo,
@@ -855,7 +829,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
 
   //calculate estimate values
   const [calculatedValues, setCalculatedValues] = useState<CalculatedValues>({
-    allInclusiveValue: flatDetails.allInclusiveValue,
+    allInclusiveValue: 0,
     AgreementValue: 0,
     GstAmount: 0,
     StampDutyAmount: 0,
@@ -873,87 +847,96 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   });
 
   useEffect(() => {
-    let allInc = parseFloat(flatDetails.allInclusiveValue) || 0;
+    const allInc =
+      parseFloat(selectedFlat?.allInclusiveValue?.toString() || "0") || 0;
 
-    console.log(allInc);
-    if (!allInc || !selectedSlab) return;
+    if (!allInc || allInc <= 0 || !selectedSlab) return;
 
-    console.log(selectedSlab.percent);
-    let stamp = selectedStampDuty || 6;
-    let st = stamp;
-    console.log(stamp);
-    let agreementValue = (allInc - 30000) / ((st + gstPercentage) / 100 + 1);
+    const stamp = selectedStampDuty || 6;
 
-    let gstAmount = agreementValue * (gstPercentage / 100);
-
-    let stampDutyAmount = agreementValue * (st / 100);
+    // Calculate agreement value (same as Flutter)
+    const agreementValue =
+      (allInc - 30000) / ((stamp + gstPercentage) / 100 + 1);
+    const gstAmount = agreementValue * (gstPercentage / 100);
+    const stampDutyAmount = agreementValue * (stamp / 100);
 
     let couponDiscount = 0;
-    let totalPaybleDiscount = 0;
+    let discountedAgreementValue = agreementValue;
+    let discountedGstAmount = gstAmount;
+    let discountedStampDutyAmount = stampDutyAmount;
 
+    // Apply coupon discount (same logic as Flutter)
     if (selectedCoupon) {
-      console.log("okay ");
-
       const discountAmount = selectedCoupon.codeValue ?? 0;
       const discountPercentage = selectedCoupon.disPercentage ?? 0;
 
-      console.log(`discountPercentage ${discountPercentage}`);
-      console.log(selectedCoupon.disPercentage);
-
       if (discountAmount > 0) {
+        // Fixed amount discount
         couponDiscount = discountAmount;
+        discountedAgreementValue = agreementValue - discountAmount;
+        discountedGstAmount = discountedAgreementValue * (gstPercentage / 100);
+        discountedStampDutyAmount = discountedAgreementValue * (stamp / 100);
       } else if (discountPercentage > 0) {
-        couponDiscount = agreementValue * (discountPercentage / 100);
+        // Percentage discount
+        const discountFactor = (100 - discountPercentage) / 100;
+        discountedAgreementValue = agreementValue * discountFactor;
+        discountedGstAmount = discountedAgreementValue * (gstPercentage / 100);
+        discountedStampDutyAmount = discountedAgreementValue * (stamp / 100);
+        couponDiscount = agreementValue - discountedAgreementValue;
       }
-
-      const discountedAgreementValue = agreementValue - couponDiscount;
-      const discountedGst = discountedAgreementValue * (gstPercentage / 100);
-      const discountedStampDuty = discountedAgreementValue * (st / 100);
-      totalPaybleDiscount =
-        discountedAgreementValue + discountedGst + discountedStampDuty;
-      setCalculatedValues((v) => ({
-        ...v,
-        discountedAgreementValue,
-        discountedGst,
-        discountedStampDuty,
-        totalPaybleDiscount,
-      }));
-      agreementValue = discountedAgreementValue;
-      gstAmount = discountedGst;
-      stampDutyAmount = discountedStampDuty;
     }
 
+    // Calculate total slab percentage (same as Flutter)
     let totalSlabPercentage = 0;
-    for (const slab of slabOptions) {
-      if (slab.index! < selectedSlab.index!) {
-        console.log(slab.percent);
+    const slabs = slabsbyproject?.slabs ?? [];
+
+    for (const slab of slabs) {
+      if ((slab.index ?? -1) < (selectedSlab.index ?? -1)) {
         totalSlabPercentage += slab.percent ?? 0;
       }
     }
-    console.log(totalSlabPercentage);
     totalSlabPercentage += selectedSlab.percent ?? 0;
 
-    const bookingAmount = agreementValue * (totalSlabPercentage / 100);
-    const gstOnBooking = bookingAmount * (gstPercentage / 100);
-    const stampDutyPlusRegistration = agreementValue * (st / 100) + 30000;
+    // Calculate booking amount and related values (same as Flutter)
+    const bookingAmountValue =
+      discountedAgreementValue * (totalSlabPercentage / 100);
+    const gstOnBooking = bookingAmountValue * (gstPercentage / 100);
+    const stampDutyPlusRegistration = discountedStampDutyAmount + 30000;
     const totalPayable =
-      bookingAmount + gstOnBooking + stampDutyPlusRegistration;
+      bookingAmountValue + gstOnBooking + stampDutyPlusRegistration;
 
-    setCalculatedValues((v) => ({
-      ...v,
+    // Calculate total payable after discount
+    const totalPaybleDiscount =
+      discountedAgreementValue +
+      discountedGstAmount +
+      discountedStampDutyAmount +
+      30000;
+
+    setCalculatedValues({
       allInclusiveValue: allInc,
-      AgreementValue: agreementValue,
-      GstAmount: gstAmount,
-      StampDutyAmount: stampDutyAmount,
+      AgreementValue: roundOff(agreementValue),
+      GstAmount: roundOff(gstAmount),
+      StampDutyAmount: roundOff(stampDutyAmount),
       RegistrationAmount: 30000,
-      BookingAmount: bookingAmount,
-      StampDutyPlusRegistration: stampDutyPlusRegistration,
-      GSTPayble: gstOnBooking,
-      TotalPayable: totalPayable,
-      TotalPreviousPercentage: totalSlabPercentage,
-      CouponDiscount: couponDiscount,
-    }));
-  }, [selectedSlab, selectedStampDuty, slabOptions, selectedCoupon]);
+      BookingAmount: roundOff(bookingAmountValue),
+      StampDutyPlusRegistration: roundOff(stampDutyPlusRegistration),
+      GSTPayble: roundOff(gstOnBooking),
+      TotalPayable: roundOff(totalPayable),
+      TotalPreviousPercentage: roundOff(totalSlabPercentage),
+      discountedAgreementValue: roundOff(discountedAgreementValue),
+      discountedGst: roundOff(discountedGstAmount),
+      discountedStampDuty: roundOff(discountedStampDutyAmount),
+      totalPaybleDiscount: roundOff(totalPaybleDiscount),
+      CouponDiscount: roundOff(couponDiscount),
+    });
+  }, [
+    selectedSlab,
+    selectedStampDuty,
+    selectedCoupon,
+    selectedFlat,
+    gstPercentage,
+    slabsbyproject,
+  ]);
 
   useEffect(() => {
     console.log(calculatedValues);
@@ -1118,8 +1101,8 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               <CustomSelect
                 id="number"
                 label="Select Unit"
-                options={flatsForSelection.map((flat: any) => ({
-                  value: flat._id ?? flat.id ?? flat.number?.toString(),
+                options={flatsForSelection.map((flat: Flat) => ({
+                  value: flat.id ?? flat.id ?? flat.number?.toString(),
                   label: flat.number?.toString() ?? flat.flatNo ?? "Unit",
                   original: flat,
                 }))}
@@ -1192,7 +1175,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     readOnly
                     id="configuration"
-                     value={selectedFlat?.configuration?.toString()}
+                    value={selectedFlat?.configuration?.toString()}
                     placeholder="Configuration"
                     className={styles.inputField}
                   />
@@ -1206,7 +1189,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   <input
                     readOnly
                     id="allInclusiveValue"
-                value={selectedFlat?.allInclusiveValue?.toString()}
+                    value={selectedFlat?.allInclusiveValue?.toString()}
                     placeholder="Value"
                     className={styles.inputField}
                   />
@@ -1219,7 +1202,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                 icon={PiSealPercentFill}
                 options={stampDutyOptions}
                 value={selectedStampDuty}
-                onChange={(ele: OptionType | null) => {
+                onChange={(ele: Flat | null) => {
                   setSelectedStampDuty;
                 }}
                 placeholder="Select Stamp Duty"
@@ -1232,20 +1215,30 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                 <div className={styles.estimatedDetails}>
                   <div className={styles.estimatedRow}>
                     <span>Agreement Value</span>
-                    <span>{calculatedValues.AgreementValue.toFixed(2)}</span>
+                    <span>
+                      ₹{calculatedValues.AgreementValue.toLocaleString("en-IN")}
+                    </span>
                   </div>
                   <div className={styles.estimatedRow}>
                     <span>GST Amount</span>
-                    <span>{calculatedValues.GstAmount.toFixed(2)}</span>
+                    <span>
+                      ₹{calculatedValues.GstAmount.toLocaleString("en-IN")}
+                    </span>
                   </div>
                   <div className={styles.estimatedRow}>
                     <span>Stamp Duty Amount</span>
-                    <span>{calculatedValues.StampDutyAmount.toFixed(2)}</span>
+                    <span>
+                      ₹
+                      {calculatedValues.StampDutyAmount.toLocaleString("en-IN")}
+                    </span>
                   </div>
                   <div className={styles.estimatedRow}>
                     <span>Registration Amount</span>
                     <span>
-                      {calculatedValues.RegistrationAmount.toFixed(2)}
+                      ₹
+                      {calculatedValues.RegistrationAmount.toLocaleString(
+                        "en-IN"
+                      )}
                     </span>
                   </div>
                 </div>
@@ -1260,21 +1253,43 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                 <div className={styles.estimatedDetails}>
                   <div className={styles.estimatedRow}>
                     <span>Booking Amount</span>
-                    <span>{calculatedValues?.BookingAmount.toFixed(2)}</span>
+                    <span>
+                      ₹
+                      {calculatedValues.BookingAmount?.toLocaleString(
+                        "en-IN"
+                      ) || "0.00"}
+                    </span>
                   </div>
                   <div className={styles.estimatedRow}>
                     <span>GST Amount</span>
-                    <span>{calculatedValues?.GSTPayble.toFixed(2)}</span>
+                    <span>
+                      ₹
+                      {calculatedValues.GSTPayble?.toLocaleString("en-IN") ||
+                        "0.00"}
+                    </span>
                   </div>
                   <div className={styles.estimatedRow}>
                     <span>Stamp Duty Amount</span>
                     <span>
-                      {calculatedValues?.StampDutyPlusRegistration.toFixed(2)}
+                      <span>
+                        ₹
+                        {calculatedValues.StampDutyPlusRegistration?.toLocaleString(
+                          "en-IN"
+                        ) || "0.00"}
+                      </span>
                     </span>
                   </div>
                   <div className={styles.estimatedRow}>
                     <span>Total Payable</span>
-                    <span>{calculatedValues?.TotalPayable.toFixed(2)}</span>
+                    <span>
+                      ₹
+                      {calculatedValues.TotalPayable?.toLocaleString("en-IN") ||
+                        "0.00"}
+                    </span>
+                  </div>
+                  <div className={styles.estimatedRow}>
+                    <span>Total Previous Percentage</span>
+                    <span>{calculatedValues.TotalPreviousPercentage}%</span>
                   </div>
                 </div>
               </div>
@@ -1331,20 +1346,32 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               //     payableBookingValue: calculatedValues?.BookingAmount,
               //     generatedBy: user?._id,
               //   };
-              //   const result = await addEstimate(estimateData);
-              //   if (result.success) {
-              //     generatePdf(
-              //       currentLead,
-              //       ourProjects as Project,
-              //       flat,
-              //       selectedCoupon,
-              //       calculatedValues,
-              //       slab as OptionType,
-              //       user,
-              //       currentEstCount,
-              //       fetchEstimatCount
-              //     );
-              //   }
+              // const result = await addEstimate(estimateData);
+              // if (result.success) {
+              try {
+                console.log("triggered 1");
+      await generatePdf(
+        lead,
+        selectedProject,         // or selectedProject ?? {}
+        selectedFlat,            // ensure no undefined sent
+        {
+          ...calculatedValues,
+          allInclusiveValue: Number(calculatedValues?.allInclusiveValue),
+          AgreementValue: Number(calculatedValues?.AgreementValue),
+          GstAmount: Number(calculatedValues?.GstAmount),
+          StampDutyAmount: Number(calculatedValues?.StampDutyAmount),
+          TotalPayable: Number(calculatedValues?.TotalPayable),
+          BookingAmount: Number(calculatedValues?.BookingAmount)
+        },
+        slabsbyproject,
+        user,
+        currentEstCount ?? 0,
+        fetchEstimatCount!
+      );
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    }
+              // }
             }}
             className={styles.pdfbutton}
           >
@@ -1359,25 +1386,42 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
 };
 
 export const generatePdf = async (
-  lead: Lead,
-  project: Project,
-  flat: any,
-  selectedCoupon: OptionType | null,
+  lead: Lead | null | undefined,
+  project: OurProject | null,
+  flat: Flat | null,
   calculatedValues: CalculatedValues,
-  slab: OptionType,
-  user: User,
-  currentEstCount: { count: number },
-  fetchEstimatCount: (
-    teamLeaderId: string
-  ) => Promise<{ success: boolean; data?: { count: number } }>
+  slab: Slab | null,
+  user: any,
+  currentEstCount: any,
+  fetchEstimatCount: any
 ) => {
-  const logo1 = await getBase64ImageFromUrl(
-    "https://cdn.evhomes.tech/6c43b153-2ddf-474c-803d-c6fef9ac319a-estimator.png"
-  );
-  const logo2 = await getBase64ImageFromUrl(project?.logo || logo1);
+  const doc = new jsPDF();
+  let y = 20;
+
+  const lineGap = 8;
+  const addSectionTitle = (title: string) => {
+    doc.setFillColor(230, 230, 250);
+    doc.rect(10, y - 5, 190, 10, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(title, 14, y + 2);
+    y += 12;
+  };
+
+  const addField = (label: string, value: any) => {
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(`${label}: ${value ?? "-"}`, 14, y);
+    y += lineGap;
+
+    if (y > 275) {
+      doc.addPage();
+      y = 20;
+    }
+  };
 
   const formatValue = (val: number | string | undefined): string => {
-    if (val === undefined || val === null) return "0.00";
+    if (!val) return "0.00";
     const num = Number(val);
     return num.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -1385,314 +1429,135 @@ export const generatePdf = async (
     });
   };
 
-  const copyCount = (currentEstCount?.count ?? 0) + 1;
-  const estId = getEstId(lead?.teamLeader, copyCount);
+  const logo1 = await getBase64ImageFromUrl(
+    "https://cdn.evhomes.tech/6c43b153-2ddf-474c-803d-c6fef9ac319a-estimator.png"
+  );
 
-  // Encode like Flutter's Uri.encodeComponent
-  const encodedEstId = encodeURIComponent(estId);
+  const logo2 = await getBase64ImageFromUrl(project?.logo || logo1);
 
-  const qrPayload = {
-    scheme: "evhomes",
-    host: "open",
-    path: `/estimate-details/${encodedEstId}`,
-    url: `https://evhomes.tech/estimate-details/${encodedEstId}`,
-  };
+  // ---------- HEADER ----------
+  doc.addImage(logo1, "PNG", 10, 10, 50, 25);
+  doc.addImage(logo2, "PNG", 150, 5, 50, 35);
 
-  //   const qrDataUrl = await getBase64ImageFromUrl(
-  //     await QRCode.toDataURL(JSON.stringify(qrPayload))
-  //   );
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("This is an Estimate", 105, 45, { align: "center" });
 
-  const docDefinition = {
-    pageSize: "A4" as const,
-    pageMargins: [30, 15, 30, 15],
-    content: [
-      {
-        columns: [
-          { image: logo1, width: 70, height: 30 },
-          { text: "", width: "*" },
-          { image: logo2, width: 50, height: 50 },
-        ],
-      },
-      {
-        text: "This is an Estimate",
-        alignment: "center" as const,
-        bold: true,
-        fontSize: 12,
-        margin: [0, 10, 0, 2],
-      },
-      {
-        text: `Date: ${dateFormatWithTime(new Date().toISOString())}`,
-        alignment: "center" as const,
-        fontSize: 10,
-      },
-      {
-        columns: [
-          {
-            stack: [
-              { text: `EST ID: ${estId}`, bold: true, fontSize: 10 },
-              {
-                text: "From:\nEv Homes Constructions Pvt.LTD",
-                bold: true,
-                fontSize: 10,
-              },
-            ],
-          },
-          { image: null, width: 60 },
-        ],
-        margin: [0, 15, 0, 15],
-      },
-      {
-        columns: [
-          {
-            width: "70%",
-            stack: [
-              { text: "Client Information", bold: true, fontSize: 12 },
-              {
-                text: `Client Name: ${lead?.firstName ?? ""} ${
-                  lead?.lastName ?? ""
-                }`,
-                fontSize: 10,
-              },
-              { text: `Mobile No: ${lead?.phoneNumber ?? ""}`, fontSize: 10 },
-              { text: `Address: ${lead?.address ?? ""}`, fontSize: 10 },
-              {
-                text: `Team: ${lead?.teamLeader?.firstName ?? ""} ${
-                  lead?.teamLeader?.lastName ?? ""
-                }`,
-                fontSize: 10,
-              },
-              {
-                text: `Attended By: ${user?.firstName ?? ""} ${
-                  user?.lastName ?? ""
-                }`,
-                fontSize: 10,
-              },
-            ],
-          },
-          {
-            width: "30%",
-            stack: [
-              { text: "Unit Details", bold: true, fontSize: 12 },
-              { text: `Project: ${project?.name ?? ""}`, fontSize: 10 },
-              {
-                text: `Floor: ${flat?.floor ?? ""}  Unit No: ${
-                  flat?.number ?? ""
-                }`,
-                fontSize: 10,
-              },
-              { text: `Flat No: ${flat?.flatNo ?? ""}`, fontSize: 10 },
-              {
-                text: `Configuration: ${flat?.configuration ?? ""}`,
-                fontSize: 10,
-              },
-              {
-                text: `Carpet Area: ${flat?.carpetArea ?? ""} sq.ft`,
-                fontSize: 10,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        text: "Breakup Price:-",
-        bold: true,
-        fontSize: 12,
-        margin: [0, 15, 0, 5],
-      },
-      {
-        table: {
-          widths: ["*", "*"],
-          body: [
-            [
-              "Agreement Value",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.AgreementValue.toFixed(2)),
-              },
-            ],
-            [
-              "GST Amount (5%)",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.GstAmount.toFixed(2)),
-              },
-            ],
-            [
-              "Stamp Duty Amount",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.StampDutyAmount.toFixed(2)),
-              },
-            ],
-            [
-              "Registration",
-              {
-                alignment: "center" as const,
-                text: formatValue(
-                  calculatedValues?.RegistrationAmount.toFixed(2)
-                ),
-              },
-            ],
-            [
-              "All Inclusive Value",
-              {
-                alignment: "center" as const,
-                text: calculatedValues?.allInclusiveValue,
-                color: "red",
-              },
-            ],
-          ],
-        },
-        fontSize: 10,
-      },
-      {
-        text: "",
-        margin: [0, 15, 0, 5],
-      },
-      {
-        table: {
-          widths: ["*", "*"],
-          body: [
-            [
-              "Maintenance Sinking Fund Value",
-              { alignment: "center" as const, text: "1,00,000" },
-            ],
-            ["Legal Charges", { alignment: "center" as const, text: "45,000" }],
-          ],
-        },
-        fontSize: 10,
-      },
-      ...(selectedCoupon
-        ? [
-            {
-              text: "Special Discount Price:-",
-              bold: true,
-              fontSize: 12,
-              margin: [0, 15, 0, 5],
-            },
-            {
-              table: {
-                widths: ["*", "*"],
-                body: [
-                  [
-                    "Agreement Value",
-                    {
-                      alignment: "center" as const,
-                      text: formatValue(calculatedValues?.AgreementValue),
-                    },
-                  ],
-                  [
-                    "GST Amount",
-                    {
-                      alignment: "center" as const,
-                      text: formatValue(calculatedValues?.GstAmount),
-                    },
-                  ],
-                  [
-                    "Stamp Duty Amount",
-                    {
-                      alignment: "center" as const,
-                      text: formatValue(calculatedValues?.StampDutyAmount),
-                    },
-                  ],
-                  [
-                    "Registration",
-                    {
-                      alignment: "center" as const,
-                      text: formatValue(calculatedValues?.RegistrationAmount),
-                    },
-                  ],
-                  [
-                    "Coupon Discount",
-                    {
-                      alignment: "center" as const,
-                      text: formatValue(calculatedValues?.CouponDiscount),
-                    },
-                  ],
-                  [
-                    "Total Payable After Discount",
-                    {
-                      alignment: "center" as const,
-                      text: formatValue(calculatedValues?.TotalPayable),
-                      color: "red",
-                    },
-                  ],
-                ],
-              },
-              fontSize: 10,
-            },
-          ]
-        : []),
-      {
-        text: `Payable Amount as per Slab ${slab?.label} `,
-        bold: true,
-        fontSize: 12,
-        margin: [0, 15, 0, 5],
-      },
-      {
-        table: {
-          widths: ["*", "*"],
-          body: [
-            [
-              "Booking Amount",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.BookingAmount),
-              },
-            ],
-            [
-              "GST Amount",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.GSTPayble),
-              },
-            ],
-            [
-              "Stamp Duty + Registration",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.StampDutyPlusRegistration),
-              },
-            ],
-            [
-              "Total Payable",
-              {
-                alignment: "center" as const,
-                text: formatValue(calculatedValues?.TotalPayable),
-                color: "red",
-              },
-            ],
-          ],
-        },
-        fontSize: 10,
-      },
-      {
-        text: "NOTE:",
-        bold: true,
-        color: "red",
-        fontSize: 10,
-        margin: [0, 10, 0, 2],
-      },
-      {
-        text: "The Prices mentioned are limited to the day on which Estimate is Generated. This is purely an estimate and final area and pricing shall be at the discretion of the developer.",
-        fontSize: 9,
-        color: "red",
-      },
-      {
-        text: `${user?.firstName ?? ""} ${
-          user?.lastName ?? ""
-        }\n This PDF Generated by `,
-        alignment: "right" as const,
-        fontSize: 9,
-        margin: [0, 20, 0, 0],
-      },
-    ],
-  };
+  doc.setFontSize(11);
+  doc.text(
+    `Date: ${dateFormatWithTime(new Date().toISOString())}`,
+    105,
+    52,
+    { align: "center" }
+  );
 
-  //   pdfMake
-  //     .createPdf(docDefinition as any)
-  //     .download(`estimator_${flat?.flatNo}_${Date.now()}.pdf`);
-  // await fetchEstimatCount(lead?.teamLeader?._id);
+  y = 60;
+
+  // -------- Section: Client Information --------
+  addSectionTitle("Client Information");
+  addField("Client Name", `${lead?.firstName ?? ""} ${lead?.lastName ?? ""}`);
+  addField("Mobile", lead?.phoneNumber);
+  addField("Address", lead?.address);
+  addField(
+    "Team Leader",
+    `${lead?.teamLeader?.firstName ?? ""} ${lead?.teamLeader?.lastName ?? ""}`
+  );
+
+  // -------- Section: Unit Details --------
+  addSectionTitle("Unit Details");
+  addField("Project", project?.name);
+  addField("Floor", flat?.floor);
+  addField("Unit No", flat?.number);
+  addField("Flat No", flat?.flatNo);
+  addField("Configuration", flat?.configuration);
+  addField("Carpet Area (sq.ft)", flat?.carpetArea);
+
+  // -------- Section: Breakup Price --------
+  addSectionTitle("Breakup Price");
+
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "Agreement Value",
+  //   formatValue(calculatedValues.AgreementValue)
+  // );
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "GST Amount (5%)",
+  //   formatValue(calculatedValues.GSTPayble)
+  // );
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "Stamp Duty Amount",
+  //   formatValue(calculatedValues.StampDutyPlusRegistration)
+  // );
+  // y = drawRow(doc, y, "Registration", "-");
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "All Inclusive Value",
+  //   formatValue(calculatedValues.allInclusiveValue)
+  // );
+
+  // // -------- Section: Maintenance & Legal --------
+  addSectionTitle("Additional Charges");
+  // y = drawRow(doc, y, "Maintenance + Sinking Fund", "1,00,000");
+  // y = drawRow(doc, y, "Legal Charges", "45,000");
+
+  // // -------- Section: Payable Amount as per Slab --------
+  // addSectionTitle(`Payable Amount as per Slab ${slab?.percent}`);
+
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "Booking Amount",
+  //   formatValue(calculatedValues.BookingAmount)
+  // );
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "GST Amount",
+  //   formatValue(calculatedValues.GSTPayble)
+  // );
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "Stamp Duty + Registration",
+  //   formatValue(calculatedValues.StampDutyPlusRegistration)
+  // );
+  // y = drawRow(
+  //   doc,
+  //   y,
+  //   "Total Payable",
+  //   formatValue(calculatedValues.TotalPayable)
+  // );
+
+  // -------- Section: NOTE --------
+  addSectionTitle("NOTE");
+  doc.setTextColor(200, 0, 0);
+  doc.setFontSize(10);
+  doc.text(
+    "The Prices mentioned are for the day of Estimate generation and may vary at the final agreement.",
+    14,
+    y
+  );
+  doc.setTextColor(0, 0, 0);
+  y += 12;
+
+  // -------- Footer --------
+  doc.setFontSize(10);
+  doc.text(
+    `${lead?.firstName ?? ""} ${lead?.lastName ?? ""} — PDF Generated by EV Homes`,
+    105,
+    285,
+    { align: "center" }
+  );
+
+  doc.save(`estimator_${flat?.flatNo}_${Date.now()}.pdf`);
+
+  await fetchEstimatCount(lead?.teamLeader?._id);
 };
 
 export default Estimategenerator;
@@ -1733,3 +1598,4 @@ function getEstId(
 
   return `${estId}/${getFinancialYear()}/${copyCount}`;
 }
+

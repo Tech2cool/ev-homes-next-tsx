@@ -24,7 +24,11 @@ interface OurProject {
   propertyType?: string | null;
 }
 
-
+interface Estimator {
+  teamLeader?: Employee | null;
+  count?: number | null;
+  generatedDate?: string | null; 
+}
 
 interface EstimateGenerated {
   id?: string | null;
