@@ -622,6 +622,13 @@ type DataProviderState = {
     teamLeaderId: string
   ) => Promise<{ success: boolean; message?: string }>;
 
+  getEstimateGeneratedById: (
+    id: string
+  ) => Promise<{ success: boolean; message?: string }>;
+
+  getEstimateGenerated: (
+    teamLeader: string
+  ) => Promise<{ success: boolean; message?: string }>;
 
 };
 
@@ -844,6 +851,16 @@ const initialState: DataProviderState = {
     message: "Not initialized",
   }),
   fetchEstimatCount: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  getEstimateGenerated: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+    getEstimateGeneratedById: async () => ({
     success: false,
     message: "Not initialized",
   }),
