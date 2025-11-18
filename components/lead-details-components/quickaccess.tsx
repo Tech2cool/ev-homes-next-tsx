@@ -79,15 +79,8 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     router.push(`/estimate-history?leadId=${lead?._id}`);
   };
 
-  //   const pagenavigate = () => {
-  //   const params = new URLSearchParams();
-  //   if (lead?._id) {
-  //     params.set('leadId', lead._id);
-  //   }
-  //   router.push(`/estimate-history?${params.toString()}`);
-  // };
   const costsheetnavigate = () => {
-    router.push("/generate/costsheetgenerator");
+    router.push(`/generate/costsheetgenerator?leadId=${lead}`);
   };
 
   const actions = [
