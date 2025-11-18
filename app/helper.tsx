@@ -20,3 +20,21 @@ export const formatStatus = (status: string | undefined | null): string => {
     .trim();
 };
 
+
+export const customRound = (value: number): number => {
+  return parseFloat(value.toFixed(2));
+};
+
+export const getNumberWithSuffix = (number: number): string => {
+  if (number % 10 === 1 && number % 100 !== 11) {
+    return `${number}st`;
+  } else if (number % 10 === 2 && number % 100 !== 12) {
+    return `${number}nd`;
+  } else if (number % 10 === 3 && number % 100 !== 13) {
+    return `${number}rd`;
+  } else {
+    return `${number}th`;
+  }
+};
+
+
