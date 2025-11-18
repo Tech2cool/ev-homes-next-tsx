@@ -268,7 +268,7 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
         <PaymentSchedule
           openclick={setPaymentSchedule}
           // Optional: pass a lead if you have one
-          // lead={lead}
+          leads={lead}
         />
       )}
       </div>

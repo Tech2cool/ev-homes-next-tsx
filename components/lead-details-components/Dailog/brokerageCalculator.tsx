@@ -70,7 +70,7 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
     getChannelPartners,
     getProjects,
     // getLeadByPhoneNumber,
-    // addBrokerage,
+    addBrokerage,
   } = useData();
 
   const { user } = useUser();
@@ -319,7 +319,7 @@ const BrokerageCalculator: React.FC<BrokerageCalculatorProps> = ({
 
       console.log("PDF Data:", calculationData);
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      // await addBrokerage(calculationData);
+      await addBrokerage(calculationData);
 
       alert("PDF generated and saved successfully!");
     } catch (error) {
