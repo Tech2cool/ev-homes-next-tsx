@@ -60,7 +60,7 @@ const AssignTask: React.FC<AssignTaskProps> = ({ openclick, task, lead }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Transform reporting employees to options for Select component
-  const employeeOptions: OptionType[] = closingManagers.map((emp) => ({
+  const employeeOptions: OptionType[] = reportingToEmps.map((emp) => ({
     value: emp._id ?? "",
     label: `${emp.firstName} ${emp.lastName || "Employee"}`,
     // status: emp.status || 'Present'
@@ -70,11 +70,8 @@ const AssignTask: React.FC<AssignTaskProps> = ({ openclick, task, lead }) => {
     const fetchEmployees = async () => {
       setLoading(true);
       try {
-        const cn = closingManagers.map((e) => e?._id ?? "");
 
-        // You might need to pass the current user's ID here
-        // For now, using an empty string or get from context
-        const result = await getClosingManagers();
+        const result = await fetchReportingToEmployees(lead?.teamLeader?._id??"", 'sales');
         if (result.success) {
           // Data is already set in the context, but we can also set it locally if needed
           console.log("Employees fetched successfully");

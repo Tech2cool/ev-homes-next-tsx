@@ -189,7 +189,7 @@ export function DashboardSidebar() {
     { title: "Leads", href: "/lead-details", icon: Users },
     { title: "Visits", href: "/visit-details", icon: Home },
     { title: "Tasks", href: "/tasks", icon: ClipboardList },
-    { title: "Estimate History", href: "/estimate-history", icon: History16Filled },
+    { title: "Estimate History", href: "/estimate-history-overall", icon: History16Filled },
     { title: "Inventory", href: "/inventory", icon: Package },
     { title: "My Reminders", href: "/reminders", icon: Calendar },
   ];
