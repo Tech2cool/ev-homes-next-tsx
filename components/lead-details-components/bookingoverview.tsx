@@ -367,7 +367,7 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
                     <div className={styles.applicantList}>
                       {lead?.bookingRef?.applicants?.length ? (
                         lead.bookingRef.applicants.map((app, i) => (
-                          <div className={styles.applicantCard}>
+                          <div key={i} className={styles.applicantCard}>
 
                             <div className={styles.applicantHeader}>
                               <div className={styles.applicantName}>{`${app.firstName || "NA"} ${app.lastName || "NA"}`}</div>
