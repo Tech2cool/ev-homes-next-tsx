@@ -10,7 +10,13 @@ import {
   FaDoorClosed,
   FaStar,
 } from "react-icons/fa";
-import { BiLocationPlus, BiRupee, BiSolidCity, BiSolidLocationPlus, BiSolidLockOpenAlt } from "react-icons/bi";
+import {
+  BiLocationPlus,
+  BiRupee,
+  BiSolidCity,
+  BiSolidLocationPlus,
+  BiSolidLockOpenAlt,
+} from "react-icons/bi";
 import { IoPersonOutline } from "react-icons/io5";
 import { LuBuilding2 } from "react-icons/lu";
 import { FaArrowUpFromGroundWater } from "react-icons/fa6";
@@ -19,7 +25,7 @@ import { AiFillPicture } from "react-icons/ai";
 import { useData } from "@/providers/dataContext";
 import { customRound, getNumberWithSuffix } from "@/app/helper";
 import jsPDF from "jspdf";
-import autoTable from 'jspdf-autotable';
+import autoTable from "jspdf-autotable";
 
 interface FormState {
   project: string;
@@ -55,7 +61,6 @@ interface CalculatedValues {
   stampDutyRounded: number;
 }
 
-
 const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
   const {
     projects,
@@ -65,7 +70,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
   } = useData();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [propertyType, setPropertyType] = useState<string>('Flat'); 
+  const [propertyType, setPropertyType] = useState<string>("Flat");
   // const [selectedProject, setSelectedProject] = useState<OurProject | null>(
   //   lead?.bookingRef?.project || null
   // );
@@ -101,15 +106,13 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     bookingForm: null,
   });
 
-  
-
   const initialCalculatedValues: CalculatedValues = {
-  agreementValue: 0,
-  registrationAmount: 30000,
-  gstAmount: 0,
-  stampDutyAmount: 0,
-  stampDutyRounded: 0,
-};
+    agreementValue: 0,
+    registrationAmount: 30000,
+    gstAmount: 0,
+    stampDutyAmount: 0,
+    stampDutyRounded: 0,
+  };
 
   useEffect(() => {
     if (formData.floor && formData.unit) {
@@ -123,15 +126,15 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     }
   }, [formData.floor, formData.unit, formData.allInclusiveamount]);
 
-   const onChangeField = (
+  const onChangeField = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
     const { name, value } = e.target;
-    
+
     // Handle propertyType separately if needed
-    if (name === 'propertyType') {
+    if (name === "propertyType") {
       setPropertyType(value);
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -294,398 +297,410 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
       </span>
     </label>
   );
-  
+
   const calculateValues = (): CalculatedValues => {
-  const allInclusiveAmount = parseFloat(formData.allInclusiveamount) || 0;
-  const stampRate = parseFloat(formData.stampDuty) || 0;
-  const registrationAmount = 30000;
-  const gstPercentage = 5.0;
-  
-  let agreementValue = 0;
-  let factor = 0;
-  let gstAmount = 0;
-  let initialStampDuty = 0;
+    const allInclusiveAmount = parseFloat(formData.allInclusiveamount) || 0;
+    const stampRate = parseFloat(formData.stampDuty) || 0;
+    const registrationAmount = 30000;
+    const gstPercentage = 5.0;
 
-  if (allInclusiveAmount <= 0 || stampRate <= 0) {
-    return initialCalculatedValues;
-  }
+    let agreementValue = 0;
+    let factor = 0;
+    let gstAmount = 0;
+    let initialStampDuty = 0;
 
-  factor = 1 + (gstPercentage + stampRate) / 100;
-  agreementValue = (allInclusiveAmount - registrationAmount) / factor;
-  gstAmount = (agreementValue * gstPercentage) / 100;
-  initialStampDuty = (agreementValue * stampRate) / 100;
-
-  agreementValue = Math.round(agreementValue);
-  gstAmount = Math.round(gstAmount);
-  initialStampDuty = Math.round(initialStampDuty);
-
-  const calculatedTotal = agreementValue + gstAmount + initialStampDuty + registrationAmount;
-  let difference = allInclusiveAmount - calculatedTotal;
-  difference = parseFloat(difference.toFixed(2));
-
-  const adjustedStampDuty = initialStampDuty + difference;
-  const simpleStampDuty = Math.round(adjustedStampDuty);
-
-  return {
-    agreementValue,
-    registrationAmount,
-    gstAmount,
-    stampDutyAmount: simpleStampDuty,
-    stampDutyRounded: (simpleStampDuty % 10 === 0)
-      ? simpleStampDuty
-      : (Math.ceil(simpleStampDuty / 10) * 10),
-  };
-};
-
-// Format currency for display (like ₹ 80,00,000)
-const formatCurrency = (amount: number): string => {
-  return `₹ ${amount.toLocaleString('en-IN')}`;
-};
-
-// Your component usage with calculated values
-const calculatedValues = calculateValues();
-
-// Updated onSubmit function
-const onSubmit = () => {
-  if (!validateForm()) return;
-  
-  // Prepare data for submission similar to your Flutter code
-  const submissionData = {
-    agreementValue: calculatedValues.agreementValue,
-    stampDutyValue: calculatedValues.stampDutyAmount,
-    gstValue: calculatedValues.gstAmount,
-    roundedStampDutyValue: Math.round(calculatedValues.stampDutyRounded),
-    roundedGstValue: Math.round(calculatedValues.gstAmount),
-    roundedAdjustedStampDuty: calculatedValues.stampDutyRounded - calculatedValues.stampDutyAmount,
-    totalValue: Math.round(parseFloat(formData.allInclusiveamount) || 0),
-  };
-
-  alert("Form submitted successfully:\n" + JSON.stringify(submissionData, null, 2));
-};
-
-const getGreeting = (prefixes: string[]): string => {
-  if (!prefixes || prefixes.length === 0) return "Dear Sir/Madam,";
-
-  const lowerPrefixes = prefixes.map(p => p.toLowerCase());
-
-  const hasMr = lowerPrefixes.includes("mr.");
-  const hasMrs = lowerPrefixes.includes("mrs.");
-  const hasMiss = lowerPrefixes.includes("miss");
-
-  const totalClients = prefixes.length;
-
-  if (totalClients === 1) {
-    return lowerPrefixes[0] === "mr." ? "Dear Sir," : "Dear Madam,";
-  } 
-  
-  if (totalClients === 2) {
-    if (hasMr && (hasMrs || hasMiss)) {
-      return "Dear Sir/Madam,";
-    } else if (hasMr) {
-      return "Dear Sir,";
-    } else {
-      return "Dear Madam,";
+    if (allInclusiveAmount <= 0 || stampRate <= 0) {
+      return initialCalculatedValues;
     }
-  }
 
-  return "Dear Sir/Madam,";
-};
+    factor = 1 + (gstPercentage + stampRate) / 100;
+    agreementValue = (allInclusiveAmount - registrationAmount) / factor;
+    gstAmount = (agreementValue * gstPercentage) / 100;
+    initialStampDuty = (agreementValue * stampRate) / 100;
 
+    agreementValue = Math.round(agreementValue);
+    gstAmount = Math.round(gstAmount);
+    initialStampDuty = Math.round(initialStampDuty);
 
-const getFloorSuffix = (floor: number) => {
-  if (!floor) return "";
-  const lastDigit = floor % 10;
-  const lastTwo = floor % 100;
+    const calculatedTotal =
+      agreementValue + gstAmount + initialStampDuty + registrationAmount;
+    let difference = allInclusiveAmount - calculatedTotal;
+    difference = parseFloat(difference.toFixed(2));
 
-  if (lastTwo >= 11 && lastTwo <= 13) return `${floor}th Floor`; // 11th, 12th, 13th
+    const adjustedStampDuty = initialStampDuty + difference;
+    const simpleStampDuty = Math.round(adjustedStampDuty);
 
-  switch (lastDigit) {
-    case 1: return `${floor}st Floor`;
-    case 2: return `${floor}nd Floor`;
-    case 3: return `${floor}rd Floor`;
-    default: return `${floor}th Floor`;
-  }
-};
+    return {
+      agreementValue,
+      registrationAmount,
+      gstAmount,
+      stampDutyAmount: simpleStampDuty,
+      stampDutyRounded:
+        simpleStampDuty % 10 === 0
+          ? simpleStampDuty
+          : Math.ceil(simpleStampDuty / 10) * 10,
+    };
+  };
 
+  // Format currency for display (like ₹ 80,00,000)
+  const formatCurrency = (amount: number): string => {
+    return `₹ ${amount.toLocaleString("en-IN")}`;
+  };
 
-const generatePdf = (
-  // formData: FormData,
+  // Your component usage with calculated values
+  const calculatedValues = calculateValues();
+
+  // Updated onSubmit function
+  const onSubmit = () => {
+    if (!validateForm()) return;
+
+    // Prepare data for submission similar to your Flutter code
+    const submissionData = {
+      agreementValue: calculatedValues.agreementValue,
+      stampDutyValue: calculatedValues.stampDutyAmount,
+      gstValue: calculatedValues.gstAmount,
+      roundedStampDutyValue: Math.round(calculatedValues.stampDutyRounded),
+      roundedGstValue: Math.round(calculatedValues.gstAmount),
+      roundedAdjustedStampDuty:
+        calculatedValues.stampDutyRounded - calculatedValues.stampDutyAmount,
+      totalValue: Math.round(parseFloat(formData.allInclusiveamount) || 0),
+    };
+
+    alert(
+      "Form submitted successfully:\n" + JSON.stringify(submissionData, null, 2)
+    );
+  };
+
+  const getGreeting = (prefixes: string[]): string => {
+    if (!prefixes || prefixes.length === 0) return "Dear Sir/Madam,";
+
+    const lowerPrefixes = prefixes.map((p) => p.toLowerCase());
+
+    const hasMr = lowerPrefixes.includes("mr.");
+    const hasMrs = lowerPrefixes.includes("mrs.");
+    const hasMiss = lowerPrefixes.includes("miss");
+
+    const totalClients = prefixes.length;
+
+    if (totalClients === 1) {
+      return lowerPrefixes[0] === "mr." ? "Dear Sir," : "Dear Madam,";
+    }
+
+    if (totalClients === 2) {
+      if (hasMr && (hasMrs || hasMiss)) {
+        return "Dear Sir/Madam,";
+      } else if (hasMr) {
+        return "Dear Sir,";
+      } else {
+        return "Dear Madam,";
+      }
+    }
+
+    return "Dear Sir/Madam,";
+  };
+
+  const getFloorSuffix = (floor: number) => {
+    if (!floor) return "";
+    const lastDigit = floor % 10;
+    const lastTwo = floor % 100;
+
+    if (lastTwo >= 11 && lastTwo <= 13) return `${floor}th Floor`; // 11th, 12th, 13th
+
+    switch (lastDigit) {
+      case 1:
+        return `${floor}st Floor`;
+      case 2:
+        return `${floor}nd Floor`;
+      case 3:
+        return `${floor}rd Floor`;
+      default:
+        return `${floor}th Floor`;
+    }
+  };
+
+  const generatePdf = (): // formData: FormData,
   // calculatedValues: CalculatedValues,
   // project?: OurProject,
   // selectedPrefixes?: string[],
   // letterDate?: Date
-): void => {
-  try {
-    if (!selectedProject) {
-      throw new Error("No project selected");
-    }
+  void => {
+    try {
+      if (!selectedProject) {
+        throw new Error("No project selected");
+      }
 
-    // Create new PDF document
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    
-    // Set initial y position
-    let yPosition = 30;
+      // Create new PDF document
+      const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
 
-    // Reference and Date
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", 'bold');
-    
-    const reference = formData.reference || 'N/A';
-   const date = formData.letterdate || new Date().toISOString().split('T')[0];
-    
-    pdf.text(`Ref.: ${reference}`, 20, yPosition);
-    pdf.text(`Date: ${date}`, pageWidth - 60, yPosition);
-    
-    yPosition += 15;
+      // Set initial y position
+      let yPosition = 30;
 
-    // To Address
-    pdf.setFont("helvetica", 'bold');
-    pdf.text('To,', 20, yPosition);
-    yPosition += 7;
+      // Reference and Date
+      pdf.setFontSize(10);
+      pdf.setFont("helvetica", "bold");
 
-    pdf.setFont("helvetica", 'normal');
-    // Names
-      const clientName = formData.firstName || 'Client';
-      const prefix = formData.prefix || '';
-      pdf.text(`${(prefix)} ${clientName}`, 20, yPosition);
-      yPosition += 6;
+      const reference = formData.reference || "N/A";
+      const date =
+        formData.letterdate || new Date().toISOString().split("T")[0];
 
-    // Address lines
-    // if (formData.houseno) {
-    //     pdf.text(formData.houseno, 20, yPosition);
-    //     yPosition += 6;
-    //   }
-    //   if (formData.area) {
-    //     pdf.text(formData.area, 20, yPosition);
-    //     yPosition += 6;
-    //   }
-    //   if (formData.landmark) {
-    //     pdf.text(formData.landmark, 20, yPosition);
-    //     yPosition += 6;
-    //   }
-
-    // const cityPincode = [formData.town, formData.pincode].filter(Boolean).join(' - ');
-    // if (cityPincode) {
-    //   pdf.text(cityPincode, 20, yPosition);
-    //   yPosition += 15;
-    // }
+      pdf.text(`Ref.: ${reference}`, 20, yPosition);
+      pdf.text(`Date: ${date}`, pageWidth - 60, yPosition);
 
       yPosition += 10;
 
+      // To Address
+      pdf.setFont("helvetica", "bold");
+      pdf.text("To,", 20, yPosition);
+      yPosition += 5;
 
-    // Greeting and Subject
-    const prefixes = ["mr.", "mrs."];  
+      pdf.setFont("helvetica", "normal");
+      // Names
+      const clientName = formData.firstName || "Client";
+      const prefix = formData.prefix || "";
+      pdf.text(`${prefix} ${clientName}`, 20, yPosition);
+      yPosition += 6;
 
-    pdf.text(getGreeting(prefixes), 20, yPosition);
-    yPosition += 8;
+      // Address lines
+      // if (formData.houseno) {
+      //     pdf.text(formData.houseno, 20, yPosition);
+      //     yPosition += 6;
+      //   }
+      //   if (formData.area) {
+      //     pdf.text(formData.area, 20, yPosition);
+      //     yPosition += 6;
+      //   }
+      //   if (formData.landmark) {
+      //     pdf.text(formData.landmark, 20, yPosition);
+      //     yPosition += 6;
+      //   }
 
-    const propertyTypeText = (formData.propertyType || 'Flat').toLowerCase();
-    const floorText = formData.floor ? `${getNumberWithSuffix(parseInt(formData.floor.toString()) || 0)} Floor, ` : '';
-    const buildingText = formData.blg ? `Tower ${formData.blg}, ` : '';
+      // const cityPincode = [formData.town, formData.pincode].filter(Boolean).join(' - ');
+      // if (cityPincode) {
+      //   pdf.text(cityPincode, 20, yPosition);
+      //   yPosition += 15;
+      // }
 
-    const floorLabel = getFloorSuffix(Number(formData.floor));
-  const subject = `Subject: Cost Sheet For ${buildingText}${formData.propertyType || 'Flat'} No. ${formData.Flatno}, ${formData.propertyType === 'Flat' ? floorLabel : ''} ${floorLabel}, ${selectedProject?.name}`;
-    
-    pdf.text(subject, 20, yPosition);
-    yPosition += 4;
+      yPosition += 5;
 
-    // Project description
-    const description = `Please find below given cost details for the ${propertyTypeText} booked by you in our project, ${selectedProject.name},
+      // Greeting and Subject
+      const prefixes = ["mr.", "mrs."];
+
+      pdf.text(getGreeting(prefixes), 20, yPosition);
+      yPosition += 8;
+
+      const propertyTypeText = (formData.propertyType || "Flat").toLowerCase();
+      const floorText = formData.floor
+        ? `${getNumberWithSuffix(
+            parseInt(formData.floor.toString()) || 0
+          )} Floor, `
+        : "";
+      const buildingText = formData.blg ? `Tower ${formData.blg}, ` : "";
+
+      const floorLabel = getFloorSuffix(Number(formData.floor));
+      const subject = `Subject: Cost Sheet For ${buildingText}${
+        formData.propertyType || "Flat"
+      } No. ${formData.Flatno}, ${
+        formData.propertyType === "Flat" ? floorLabel : ""
+      } ${floorLabel}, ${selectedProject?.name}`;
+
+      pdf.text(subject, 20, yPosition);
+      yPosition += 4;
+
+      // Project description
+      const description = `Please find below given cost details for the ${propertyTypeText} booked by you in our project, ${selectedProject.name},
 ${selectedProject.address}`;
 
-    yPosition += 6;
+      yPosition += 6;
 
+      pdf.text(description, 20, yPosition);
+      yPosition += 12;
 
-    pdf.text(description, 20, yPosition);
-    yPosition += 12;
+      // Value of property
+      const allInclusiveAmount = parseFloat(formData.allInclusiveamount) || 0;
 
-    // Value of property
-     // Value of property - FIXED: Properly aligned text
-    const allInclusiveAmount = parseFloat(formData.allInclusiveamount) || 0;
-    const formattedAmount = formatCurrency(allInclusiveAmount);
-    
-    const valueText = 'Value of ';
-    const propertyText = `${formData.propertyType || 'Flat'} `;
-    const rsText = 'Rs. ';
-    const inclusiveText = ' inclusive of all.';
-    
-    pdf.text(valueText, 20, yPosition);
-    pdf.text(propertyText, 20 + pdf.getTextWidth(valueText), yPosition);
-    pdf.text(rsText, 20 + pdf.getTextWidth(valueText + propertyText), yPosition);
-    pdf.setFont("helvetica", 'bold');
-    pdf.text(formattedAmount, 20 + pdf.getTextWidth(valueText + propertyText + rsText), yPosition);
-    pdf.setFont("helvetica", 'normal');
-    pdf.text(inclusiveText, 20 + pdf.getTextWidth(valueText + propertyText + rsText + formattedAmount), yPosition);
-    
-    yPosition += 15;
+      const pre = `Value of ${formData.propertyType || "Flat"} Rs. `;
+      const amount = `${allInclusiveAmount}/-`;
+      const suffix = " inclusive of all.";
 
-    // Cost Table
-    const costTableData = [
-      [
-        'Particulars',
-        'Rs',
-        'Amount',
-        'Rounded'
-      ],
-      [
-        'Agreement Value',
-        'Rs',
-        formatCurrency(Math.round(calculatedValues.agreementValue)),
-        ''
-      ],
-      [
-        `Stamp duty @ %`,
-        'Rs',
-        formatCurrency(Math.round(calculatedValues.stampDutyAmount)),
-        formatCurrency(Math.round(calculatedValues.stampDutyRounded))
-      ],
-      [
-        'Registration',
-        'Rs',
-        formatCurrency(Math.round(calculatedValues.registrationAmount)),
-        ''
-      ],
-      [
-        'GST @ 5% inclusive',
-        'Rs',
-        formatCurrency(Math.round(calculatedValues.gstAmount)),
-        ''
-      ],
-      [
-        'Total',
-        'Rs',
-        formatCurrency(Math.round(allInclusiveAmount)),
-        ''
-      ],
-      [
-        'Adjusted for Stampduty',
-        'Rs',
-        '-',
-        formatCurrency(Math.round(calculatedValues.stampDutyRounded - calculatedValues.stampDutyAmount))
-      ]
-    ];
+      // Print prefix
+      pdf.setFont("helvetica", "normal");
+      pdf.text(pre, 20, yPosition);
 
- autoTable(pdf, {
-      startY: yPosition,
-      head: [costTableData[0]],
-      body: costTableData.slice(1),
-      theme: 'grid',
-      styles: { 
-        fontSize: 10, 
-        cellPadding: 3,
-        font: 'helvetica'
-      },
-      headStyles: { 
-        fillColor: [255, 255, 255], 
-        textColor: [0, 0, 0], 
-        fontStyle: 'bold',
-        halign: 'center'
-      },
-      bodyStyles: {
-        halign: 'left'
-      },
-      columnStyles: {
-        0: { cellWidth: 80, halign: 'left' },
-        1: { cellWidth: 50, halign: 'right' },
-        2: { cellWidth: 50, halign: 'right' }
-      },
-      margin: { left: 20, right: 20 },
-      tableWidth: 'wrap'
-    });
+      // Print amount in bold
+      const prefixWidth = pdf.getTextWidth(pre);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(amount, 20 + prefixWidth, yPosition);
 
+      // Print suffix
+      const amountWidth = pdf.getTextWidth(amount);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(suffix, 20 + prefixWidth + amountWidth, yPosition);
 
-    yPosition = (pdf as any).lastAutoTable.finalY + 10;
+      yPosition += 15;
 
-    // Kindly make arrangements text
-    pdf.text('Kindly make arrangements for the payments as agreed by you.', 20, yPosition);
-    yPosition += 10;
+      // Cost Table
+      const costTableData = [
+        ["Particulars", "Rs", "Amount", "Rounded"],
+        [
+          "Agreement Value",
+          "Rs",
+  Math.round(calculatedValues.agreementValue),
+          "",
+        ],
+        [
+          `Stamp duty @ %`,
+          "Rs",
+         Math.round(calculatedValues.stampDutyAmount),
+          Math.round(calculatedValues.stampDutyRounded),
+        ],
+        [
+          "Registration",
+          "Rs",
+          Math.round(calculatedValues.registrationAmount),
+          "",
+        ],
+        [
+          "GST @ 5% inclusive",
+          "Rs",
+         Math.round(calculatedValues.gstAmount),
+          "",
+        ],
+        ["Total", "Rs", Math.round(allInclusiveAmount), ""],
+        [
+          "Adjusted for Stampduty",
+          "Rs",
+          "-",
+         
+            Math.round(
+              calculatedValues.stampDutyRounded -
+                calculatedValues.stampDutyAmount
+            )
+          
+        ],
+      ];
 
-    // Thanking you
-    pdf.text('Thanking you,', 20, yPosition);
-    yPosition += 6;
-    pdf.text('Yours faithfully,', 20, yPosition);
-    yPosition += 10;
+      autoTable(pdf, {
+        startY: yPosition,
+        head: [costTableData[0]],
+        body: costTableData.slice(1),
+        theme: "grid",
+        styles: { fontSize: 10, cellPadding: 2 },
+        headStyles: {
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+          fontStyle: "bold",
+        },
+        columnStyles: {
+          0: { cellWidth: "auto" },
+          1: { cellWidth: 15 },
+          2: { cellWidth: 40, halign: "right" },
+          3: { cellWidth: 40, halign: "right" },
+        },
+        margin: { left: 20, right: 20 },
+      });
 
-    // Company name
-    pdf.setFont("", 'bold');
-    pdf.text('For E V Homes Constructions Pvt. Ltd.', 20, yPosition);
-    yPosition += 20;
+      yPosition = (pdf as any).lastAutoTable.finalY + 10;
 
-    // Authorized signature
-    pdf.text('Authorized Signature', 20, yPosition);
+      // Kindly make arrangements text
+      pdf.text(
+        "Kindly make arrangements for the payments as agreed by you.",
+        20,
+        yPosition
+      );
+      yPosition += 10;
 
-    // Payable Table on second page
-    pdf.addPage();
+      // Thanking you
+      pdf.text("Thanking you,", 20, yPosition);
+      yPosition += 6;
+      pdf.text("Yours faithfully,", 20, yPosition);
+      yPosition += 10;
 
-    const bookingAmount = customRound(Math.round(calculatedValues.agreementValue) * 0.1);
-    const gstAmountPayable = customRound(bookingAmount * 0.05);
-    const tdsAmount = customRound(calculatedValues.agreementValue * 0.01);
+      // Company name
+      pdf.setFont("", "bold");
+      pdf.text("For E V Homes Constructions Pvt. Ltd.", 20, yPosition);
+      yPosition += 20;
 
-    // const payableTableData = [
-    //   [
-    //     'Payable Now',
-    //     'Amount',
-    //     'Account Details'
-    //   ],
-    //   [
-    //     'Booking amount 10%',
-    //     formatCurrency(bookingAmount),
-    //     `${project.businessAccount?.accountNo || 'NA'}\n${project.businessAccount?.ifsc || 'NA'}\n${project.businessAccount?.bankName || 'NA'}`
-    //   ],
-    //   [
-    //     'GST amount (Payable)',
-    //     formatCurrency(gstAmountPayable),
-    //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
-    //   ],
-    //   [
-    //     'Stamp Duty + Registration amount (Full)',
-    //     formatCurrency(calculatedValues.stampDutyRounded + calculatedValues.registrationAmount),
-    //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
-    //   ],
-    //   [
-    //     'TDS @1%',
-    //     formatCurrency(tdsAmount),
-    //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
-    //   ],
-    //   [
-    //     'Total',
-    //     formatCurrency(customRound(
-    //       bookingAmount +
-    //       gstAmountPayable +
-    //       calculatedValues.stampDutyRounded +
-    //       calculatedValues.registrationAmount +
-    //       tdsAmount
-    //     )),
-    //     ''
-    //   ]
-    // ];
+      // Authorized signature
+      pdf.text("Authorized Signature", 20, yPosition);
 
-    // autoTable(pdf, {
-    //   startY: 30,
-    //   head: [payableTableData[0]],
-    //   body: payableTableData.slice(1),
-    //   theme: 'grid',
-    //   styles: { fontSize: 10, cellPadding: 2 },
-    //   headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold' },
-    //   columnStyles: {
-    //     0: { cellWidth: 80 },
-    //     1: { cellWidth: 40, halign: 'right' },
-    //     2: { cellWidth: 60 }
-    //   },
-    //   margin: { left: 20, right: 20 }
-    // });
+      // Payable Table on second page
+      pdf.addPage();
 
-    // Save the PDF
-    const pdfName = `Cost Sheet - ${formData.propertyType || 'Property'} ${formData.Flatno || 'NA'}.pdf`;
-    pdf.save(pdfName);
+      const bookingAmount = customRound(
+        Math.round(calculatedValues.agreementValue) * 0.1
+      );
+      const gstAmountPayable = customRound(bookingAmount * 0.05);
+      const tdsAmount = customRound(calculatedValues.agreementValue * 0.01);
 
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    alert(`Error generating PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-};
+      // const payableTableData = [
+      //   [
+      //     'Payable Now',
+      //     'Amount',
+      //     'Account Details'
+      //   ],
+      //   [
+      //     'Booking amount 10%',
+      //     formatCurrency(bookingAmount),
+      //     `${project.businessAccount?.accountNo || 'NA'}\n${project.businessAccount?.ifsc || 'NA'}\n${project.businessAccount?.bankName || 'NA'}`
+      //   ],
+      //   [
+      //     'GST amount (Payable)',
+      //     formatCurrency(gstAmountPayable),
+      //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
+      //   ],
+      //   [
+      //     'Stamp Duty + Registration amount (Full)',
+      //     formatCurrency(calculatedValues.stampDutyRounded + calculatedValues.registrationAmount),
+      //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
+      //   ],
+      //   [
+      //     'TDS @1%',
+      //     formatCurrency(tdsAmount),
+      //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
+      //   ],
+      //   [
+      //     'Total',
+      //     formatCurrency(customRound(
+      //       bookingAmount +
+      //       gstAmountPayable +
+      //       calculatedValues.stampDutyRounded +
+      //       calculatedValues.registrationAmount +
+      //       tdsAmount
+      //     )),
+      //     ''
+      //   ]
+      // ];
 
+      // autoTable(pdf, {
+      //   startY: 30,
+      //   head: [payableTableData[0]],
+      //   body: payableTableData.slice(1),
+      //   theme: 'grid',
+      //   styles: { fontSize: 10, cellPadding: 2 },
+      //   headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold' },
+      //   columnStyles: {
+      //     0: { cellWidth: 80 },
+      //     1: { cellWidth: 40, halign: 'right' },
+      //     2: { cellWidth: 60 }
+      //   },
+      //   margin: { left: 20, right: 20 }
+      // });
+
+      // Save the PDF
+      const pdfName = `Cost Sheet - ${formData.propertyType || "Property"} ${
+        formData.Flatno || "NA"
+      }.pdf`;
+      pdf.save(pdfName);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert(
+        `Error generating PDF: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -1059,23 +1074,38 @@ ${selectedProject.address}`;
 
             <div className={cardstyles.infoRow}>
               <span className={cardstyles.infoLabel}>Agreement Value</span>
-              <span className={cardstyles.infoValue}>  {formatCurrency(calculatedValues.agreementValue)}</span>
+              <span className={cardstyles.infoValue}>
+                {" "}
+                {formatCurrency(calculatedValues.agreementValue)}
+              </span>
             </div>
             <div className={cardstyles.infoRow}>
               <span className={cardstyles.infoLabel}>Registration Amount</span>
-              <span className={cardstyles.infoValue}>  {formatCurrency(calculatedValues.registrationAmount)}</span>
+              <span className={cardstyles.infoValue}>
+                {" "}
+                {formatCurrency(calculatedValues.registrationAmount)}
+              </span>
             </div>
             <div className={cardstyles.infoRow}>
               <span className={cardstyles.infoLabel}>Gst Amount</span>
-              <span className={cardstyles.infoValue}> {formatCurrency(calculatedValues.gstAmount)}</span>
+              <span className={cardstyles.infoValue}>
+                {" "}
+                {formatCurrency(calculatedValues.gstAmount)}
+              </span>
             </div>
             <div className={cardstyles.infoRow}>
               <span className={cardstyles.infoLabel}>Stamp Duty Amount</span>
-              <span className={cardstyles.infoValue}> {formatCurrency(calculatedValues.stampDutyAmount)}</span>
+              <span className={cardstyles.infoValue}>
+                {" "}
+                {formatCurrency(calculatedValues.stampDutyAmount)}
+              </span>
             </div>
             <div className={cardstyles.infoRow}>
               <span className={cardstyles.infoLabel}>Stamp Duty Rounded</span>
-              <span className={cardstyles.infoValue}>  {formatCurrency(calculatedValues.stampDutyRounded)}</span>
+              <span className={cardstyles.infoValue}>
+                {" "}
+                {formatCurrency(calculatedValues.stampDutyRounded)}
+              </span>
             </div>
           </div>
         </div>
