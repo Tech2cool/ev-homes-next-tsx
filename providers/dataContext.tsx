@@ -413,6 +413,7 @@ type DataProviderState = {
   estimatebyId: EstimateGenerated[];
   estimateAll: EstimateGenerated[];
   postSalesExecutives: Employee[];
+  currentEstCount:Estimator | null;
   getTestimonals: () => Promise<{ success: boolean; message?: string }>;
   getProjects: () => Promise<{ success: boolean; message?: string }>;
    getSlabByProject: (
@@ -615,6 +616,13 @@ type DataProviderState = {
   addPayment:(
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
+
+
+    fetchEstimatCount: (
+    teamLeaderId: string
+  ) => Promise<{ success: boolean; message?: string }>;
+
+
 };
 
 //initial values should define here
@@ -668,6 +676,7 @@ const initialState: DataProviderState = {
   estimatebyId: [],
   estimateAll: [],
   postSalesExecutives: [],
+  currentEstCount:null,
 
   getProjects: async () => ({ success: false, message: "Not initialized" }),
   getSlabByProject: async () => ({ success: false, message: "Not initialized" }),
@@ -834,6 +843,10 @@ const initialState: DataProviderState = {
     success: false,
     message: "Not initialized",
   }),
+  fetchEstimatCount: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
 };
 
 const dataProviderContext =
@@ -941,6 +954,11 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
   const [dataEntryUsers, setDataEntryUsers] = useState<Employee[]>([]);
   const [closingManagers, setClosingManagers] = useState<Employee[]>([]);
   const [postSalesExecutives, setPostSaleExecutives] = useState<Employee[]>([]);
+
+
+
+  const [currentEstCount, setCurrentCount] = useState<Estimator| null>(null);
+
 
   //get all estimates
   const getEstimateGenerated = async (
@@ -3423,6 +3441,36 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     }
   };
 
+const fetchEstimatCount = async (
+  teamLeaderId?: string | null
+): Promise<{ success: boolean; message?: string; data?: Estimator | null }> => {
+
+
+  try {
+    const url = `/api/estimate-tl/${teamLeaderId}`;
+    console.log(url);
+
+    const res = await fetchAdapter(url, {
+      method: "get",
+    });
+
+    const data=res?.data;
+    console.log(data);
+
+    // update state
+    setCurrentCount(data);
+
+    return { success: true, data };
+  } catch (err: any) {
+    console.error("Error fetching estimates:", err);
+
+    const errorMsg = err?.message || "Something went wrong";
+    setError(errorMsg);
+
+    return { success: false, message: errorMsg, data: null };
+  }
+};
+
 
   const value = {
     projects: projects,
@@ -3474,6 +3522,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     estimatebyId: estimatebyId,
     estimateAll: estimateAll,
     postSalesExecutives: postSalesExecutives,
+    currentEstCount:currentEstCount,
     getProjectTargets: getProjectTargets,
     getProjects: getProjects,
     getSlabByProject: getSlabByProject, 
@@ -3526,6 +3575,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     getPostSalesExecutives: getPostSalesExecutives,
     addPostSaleLead:addPostSaleLead,
     addPayment:addPayment,
+    fetchEstimatCount:fetchEstimatCount
   };
 
   return (
