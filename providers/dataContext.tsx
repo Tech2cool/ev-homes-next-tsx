@@ -1418,7 +1418,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       console.log("slab 3");
 
 
-      const data = res?.data;
+      const data = res?.data as SlabInfo;
       console.log("slab 4",data);
 
       if (!data) {
@@ -1426,7 +1426,7 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
       }
       console.log("slab 5");
 
-      const info: SlabInfo  = data;
+      const info = data;
       setSlabsbyproject(info);
 
       return { success: true };
@@ -1474,18 +1474,10 @@ export function DataProvider({ children, ...props }: DataProviderProps) {
     try {
       const url = `/api/team-insight-reporting-to/${id}`;
 
-      // console.log("📡 Making API request to:", url);
+
       const res = await fetchAdapter(url, { method: "GET" });
 
-      // console.log("✅ API Response received:", res);
-      // console.log("📊 Response data:", res?.data);
-      // console.log("🔍 Data type:", typeof res?.data);
-      // console.log("🔍 Is array?", Array.isArray(res?.data));
-
       if (res?.data && Array.isArray(res?.data)) {
-        // console.log("🎯 Number of teams:", res.data.length);
-        // console.log("👥 First team sample:", res.data[0]);
-
         const teams = res.data.map((team: any) => ({
           _id: team._id || null,
           teamName: team.teamName || null,

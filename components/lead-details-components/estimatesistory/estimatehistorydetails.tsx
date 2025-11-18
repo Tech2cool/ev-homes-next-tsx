@@ -38,19 +38,7 @@ interface EstimateHistoryDetailsProps {
   estimate: EstimateGenerated | null;
 }
 
-// Dummy data for financial table
-const dummyFinancialData: FinancialRow[] = [
-  { id: 1, title: "📄 Agreement Value", amount: "₹ 29,99,000" },
-  { id: 2, title: "🏛️ Stamp Duty", amount: "₹ 17,77,259" },
-  { id: 3, title: "💰 GST Amount", amount: "₹ 14,81,049" },
-  { id: 4, title: "💵 All-Inclusive", amount: "₹ 62,57,308" },
-];
 
-// Dummy data for PDF table
-const dummyPDFData: PDFRow[] = [
-  { id: 1, finalPrice: "₹1.5Cr", status: "Pending" },
-  { id: 2, finalPrice: "₹2.0Cr", status: "Approved" },
-];
 
 const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({ estimate }) => {
   const [showDropdown, setShowDropdown] = useState(false);

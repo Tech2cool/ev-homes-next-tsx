@@ -11,19 +11,19 @@ import { useData } from "@/providers/dataContext";
 
 
 
-interface EstimateListProps {
+interface EstimateListOverallProps {
   onCardClick: (estimate: EstimateGenerated) => void;
   leadId?:  string | null;
 }
 
 
-const EstimateList: React.FC<EstimateListProps> = ({ onCardClick, leadId }) => {
-  const { getEstimateGeneratedById ,estimatebyId} = useData();
+const EstimateListOverall: React.FC<EstimateListOverallProps> = ({ onCardClick, leadId }) => {
+  const { getEstimateGenerated ,estimateAll,getClosingManagers,closingManagers} = useData();
   // const [estimates, setEstimates] = useState<EstimateGenerated[]>([]);
   const [loadingEstimatebyId, setLoadingEstimatebyId] = useState<boolean>(false);
 
   useEffect(() => {
-         getEstimateGeneratedById(leadId ?? "");
+         getEstimateGenerated("");
 
     // const fetchEstimates = async () => {
     //   if (!lead?._id) {
@@ -57,7 +57,7 @@ const EstimateList: React.FC<EstimateListProps> = ({ onCardClick, leadId }) => {
   // const { estimatebyId, loadingEstimatebyId } = useData();
 
   // For now, using dummy data or you'll need to get the data from context
-  const displayEstimates = estimatebyId.length > 0 ? estimatebyId : [];
+  const displayEstimates = estimateAll.length > 0 ? estimateAll : [];
 
   if (loadingEstimatebyId) {
     return <div className={styles.leadListContainer}>Loading estimates...</div>;
@@ -90,7 +90,7 @@ const LeadCard: React.FC<{ estimate: EstimateGenerated; onClick: () => void }> =
       <div className={styles.fistrow}>
         <div className={styles.leadInfo}>
           <div className={styles.clientDetails}>
-            <h4>{estimate.lead?.firstName??""} {estimate.lead?.lastName}</h4>
+            <h4>{estimate.lead?.firstName} {estimate.lead?.lastName}</h4>
             <p className={styles.phone}>
               {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
             </p>
@@ -199,4 +199,4 @@ const LeadCard: React.FC<{ estimate: EstimateGenerated; onClick: () => void }> =
   );
 };
 
-export default EstimateList;
+export default EstimateListOverall;

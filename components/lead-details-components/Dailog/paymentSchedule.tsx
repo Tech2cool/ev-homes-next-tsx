@@ -15,6 +15,8 @@ import ReactDOM from "react-dom";
 import { MdCancel } from "react-icons/md";
 import { customRound, getNumberWithSuffix } from "@/app/helper";
 import { useData } from "@/providers/dataContext";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface PaymentScheduleProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,7 +54,7 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
   allInclusive,
   leads,
 }) => {
-  const { getProjects, projects } = useData();
+  const { getProjects, projects, getSlabByProject, slabsbyproject } = useData();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +74,6 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
   });
 
   const [names, setNames] = useState<NameField[]>([{ prefix: "", name: "" }]);
-  const [slabs, setSlabs] = useState<Slab[]>([]);
 
   const prefixList = ["mr.", "mrs.", "miss"];
   const shopNumbers = Array.from({ length: 20 }, (_, i) =>
@@ -81,9 +82,11 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
 
   useEffect(() => {
     getProjects();
+    if (project?._id) {
+      getSlabByProject(project._id);
+    }
 
     if (postSaleLead) {
-      // Pre-fill form with lead data
       setFormData((prev) => ({
         ...prev,
         selectedProject: postSaleLead.project || null,
@@ -96,7 +99,6 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
           "6",
       }));
 
-      // Set names from lead applicants
       if (postSaleLead.applicants && postSaleLead.applicants.length > 0) {
         const applicantNames = postSaleLead.applicants.map((app) => ({
           prefix: app.prefix || "",
@@ -114,30 +116,23 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
         ]);
       }
     } else if (leads) {
-      // Use leads if postSaleLead is not provided
       setFormData((prev) => ({
         ...prev,
-        name: `${leads.firstName || ""} ${leads.lastName || ""}`.trim(),
-
         phone: leads?.phoneNumber?.toString() || "",
       }));
 
- 
-        setNames([
-          {
-            prefix: "",
-            name: `${leads.firstName || ""} ${leads.lastName || ""}`.trim(),
-          },
-        ]);
-    
+      setNames([
+        {
+          prefix: "",
+          name: `${leads.firstName || ""} ${leads.lastName || ""}`.trim(),
+        },
+      ]);
     }
 
-
-    
-
-    if (project) {
-      setFormData((prev) => ({ ...prev, selectedProject: project }));
-    }
+    // if (project) {
+    //   setFormData((prev) => ({ ...prev, selectedProject: project }));
+    //   getSlabByProject(project._id!);
+    // }
 
     if (flatNo) {
       setFormData((prev) => ({ ...prev, flatNo }));
@@ -156,32 +151,17 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
     allInclusive,
     openclick,
     leads,
-    getProjects,
+
+
+
   ]);
 
-  const fetchSlabs = async (projectId: string) => {
-    setIsLoading(true);
-    try {
-      // TODO: Replace with actual API call
-      //   const mockSlabs: Slab[] = [
-      //     { index: 1, name: 'Booking Amount', percent: 10 },
-      //     { index: 2, name: 'Within 30 Days', percent: 15 },
-      //     { index: 3, name: 'On Foundation', percent: 10 },
-      //     { index: 4, name: 'On 1st Floor', percent: 10 },
-      //     { index: 5, name: 'On 2nd Floor', percent: 10 },
-      //     { index: 6, name: 'On 3rd Floor', percent: 10 },
-      //     { index: 7, name: 'On 4th Floor', percent: 10 },
-      //     { index: 8, name: 'On 5th Floor', percent: 10 },
-      //     { index: 9, name: 'On Floor Roof', percent: 10 },
-      //     { index: 10, name: 'On Possession', percent: 5 },
-      //   ];
-      //   setSlabs(mockSlabs);
-    } catch (error) {
-      console.error("Failed to load slabs:", error);
-    } finally {
-      setIsLoading(false);
+  // Fixed: Properly fetch slabs when project changes
+  useEffect(() => {
+    if (formData.selectedProject?._id) {
+      getSlabByProject(formData.selectedProject._id);
     }
-  };
+  }, [ ]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -232,7 +212,7 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
     }));
 
     if (project) {
-      fetchSlabs(project._id!);
+      getSlabByProject(project._id!);
     }
   };
 
@@ -252,112 +232,116 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
     );
   };
 
-  const handleViewSchedule = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!formData.selectedProject) {
-      newErrors.project = "Please select a project";
-    }
-
-    if (!formData.allInclusiveAmount) {
-      newErrors.allInclusiveAmount = "Please enter all inclusive amount";
-    }
-
-    if (names.some((name) => !name.name.trim())) {
-      newErrors.names = "Please fill all name fields";
-    }
-
-    if (names.some((name) => !name.prefix.trim())) {
-      newErrors.prefixes = "Please select prefix for all names";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) return;
-
-    const allInclusiveNum = parseFloat(formData.allInclusiveAmount);
-    const stampDutyPercentage = parseFloat(formData.selectedStampDuty);
-    const gstPercentage = 5.0;
+  // Fixed: Proper calculation function
+  const calculateValues = () => {
+    const allInclusiveNum = parseFloat(formData.allInclusiveAmount) || 0;
+    const stampDutyPercentage = parseFloat(formData.selectedStampDuty) || 5;
+    const gstPercentage = 5;
     const registrationCharges = 30000;
 
+    // Calculate agreement value
     const agreementValue =
       (allInclusiveNum - registrationCharges) /
-      ((stampDutyPercentage + gstPercentage) / 100 + 1);
+      (1 + (stampDutyPercentage + gstPercentage) / 100);
 
     const stampDutyValue = customRound(
       agreementValue * (stampDutyPercentage / 100)
     );
     const gstValue = customRound(agreementValue * (gstPercentage / 100));
+
     const total1 = customRound(stampDutyValue + registrationCharges);
     const total2 = customRound(allInclusiveNum - total1);
 
-    // Show schedule in modal
+    return {
+      allInclusiveNum,
+      agreementValue,
+      stampDutyValue,
+      gstValue,
+      registrationCharges,
+      total1,
+      total2,
+    };
+  };
+
+  const handleViewSchedule = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.selectedProject)
+      newErrors.project = "Please select a project";
+    if (!formData.allInclusiveAmount)
+      newErrors.allInclusiveAmount = "Please enter all inclusive amount";
+    if (names.some((n) => !n.name.trim()))
+      newErrors.names = "Please fill all name fields";
+    if (names.some((n) => !n.prefix.trim()))
+      newErrors.prefixes = "Please select prefix for all names";
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    const { total2, allInclusiveNum } = calculateValues();
     showScheduleModal(total2, allInclusiveNum);
   };
 
+  // Fixed: Proper schedule modal with actual slab data
   const showScheduleModal = (total2: number, allInclusiveNum: number) => {
-    const scheduleContent = slabs.map((slab) => {
+    if (!slabsbyproject || slabsbyproject.slabs.length === 0) {
+      alert("No payment schedule slabs found for this project");
+      return;
+    }
+
+
+console.log(slabsbyproject.slabs);
+
+    const scheduleContent =slabsbyproject.slabs.map((slab) => {
       const slabPercentage = slab.percent || 0;
       const slabAmount = total2 * (slabPercentage / 100);
-      const cumulativeTotal =
-        slabs
-          .slice(0, slab.index ?? 0)
-          .reduce((sum, s) => sum + total2 * ((s.percent || 0) / 100), 0) +
-        slabAmount;
 
       return {
         name: slab.name || "Unknown Stage",
         percentage: slabPercentage,
         amount: slabAmount,
-        cumulative: cumulativeTotal,
       };
     });
 
-    const modalContent = `
-      <div class="${styles.scheduleModal}">
-        <h3>Payment Schedule Preview</h3>
-        <div class="${styles.scheduleList}">
-          ${scheduleContent
-            .map(
-              (item) => `
-            <div class="${styles.scheduleItem}">
-              <div class="${styles.scheduleHeader}">
-                <strong>${item.name}</strong>
-                <span>${item.percentage}%</span>
-              </div>
-              <div class="${styles.scheduleDetails}">
-                <div>Amount: ₹${item.amount.toLocaleString("en-IN", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}</div>
-                <div><strong>Cumulative: ₹${item.cumulative.toLocaleString(
-                  "en-IN",
-                  { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-                )}</strong></div>
-              </div>
-            </div>
-          `
-            )
-            .join("")}
-        </div>
-        <div class="${styles.scheduleTotal}">
-          <strong>Total Payment: ₹${total2.toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}</strong>
-        </div>
-      </div>
-    `;
+
+
 
     const modal = document.createElement("div");
     modal.className = styles.modalOverlay;
     modal.innerHTML = `
       <div class="${styles.modalContent}">
         <div class="${styles.modalHeader}">
-          <h3>Payment Schedule</h3>
+          <h3>Payment Schedule Preview</h3>
           <button onclick="this.closest('.${styles.modalOverlay}').remove()" class="${styles.closeButton}">×</button>
         </div>
-        ${modalContent}
+        <div class="${styles.scheduleModal}">
+          <div class="${styles.scheduleList}">
+            ${scheduleContent
+              .map(
+                (item:any) => `
+              <div class="${styles.scheduleItem}">
+                <div class="${styles.scheduleHeader}">
+                  <strong>${item.name}</strong>
+                  <span>${item.percentage}%</span>
+                </div>
+                <div class="${styles.scheduleDetails}">
+                  <div>Amount: ₹${item.amount.toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}</div>
+                </div>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+          <div class="${styles.scheduleTotal}">
+            <strong>Total Payment: ₹${total2.toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}</strong>
+          </div>
+        </div>
         <div class="${styles.modalFooter}">
           <button onclick="this.closest('.${styles.modalOverlay}').remove()" class="${styles.okButton}">OK</button>
         </div>
@@ -366,45 +350,48 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
     document.body.appendChild(modal);
   };
 
+  // Fixed: PDF generation with proper data
   const handleGeneratePDF = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.selectedProject) {
+    if (!formData.selectedProject)
       newErrors.project = "Please select a project";
-    }
-
-    if (!formData.allInclusiveAmount) {
+    if (!formData.allInclusiveAmount)
       newErrors.allInclusiveAmount = "Please enter all inclusive amount";
-    }
-
-    if (!formData.flatNo) {
-      newErrors.flatNo = "Please enter flat/shop number";
-    }
-
-    if (names.some((name) => !name.name.trim())) {
+    if (!formData.flatNo) newErrors.flatNo = "Please enter flat/shop number";
+    if (names.some((n) => !n.name.trim()))
       newErrors.names = "Please fill all name fields";
-    }
 
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length > 0) return;
 
-    if (!formData.selectedProject) return;
+    if (!slabsbyproject ||slabsbyproject.slabs.length === 0) {
+      alert("No payment schedule data available. Please check project configuration.");
+      return;
+    }
 
-    // TODO: Uncomment and implement generatePDF function
-    // generatePDF({
-    //   project: formData.selectedProject,
-    //   flatNo: formData.flatNo,
-    //   allInclusiveAmount: parseFloat(formData.allInclusiveAmount),
-    //   names,
-    //   selectedStampDuty: formData.selectedStampDuty,
-    //   propertyType: formData.propertyType,
-    //   slabs,
-    //   phone: formData.phone,
-    //   carpetArea: formData.carpetArea
-    // });
+    const values = calculateValues();
 
-    alert("PDF generated successfully!");
+    generatePDF({
+      project: formData.selectedProject,
+      flatNo: formData.flatNo,
+      allInc: values.allInclusiveNum,
+      names: names.map(n => n.name),
+      prefixes: names.map(n => n.prefix),
+      selectedStampDuty: formData.selectedStampDuty,
+      propertyType: formData.propertyType,
+      slabs: slabsbyproject.slabs, // Pass the actual slab data
+      phone: formData.phone,
+      carpetArea: formData.carpetArea,
+      calculations: {
+        agreementValue: values.agreementValue,
+        stampDuty: values.stampDutyValue,
+        gst: values.gstValue,
+        registrationCharges: values.registrationCharges,
+        total1: values.total1,
+        total2: values.total2,
+      },
+    });
   };
 
   // Get filtered data based on selections
@@ -734,7 +721,7 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
                   <option value="">Prefix</option>
                   {prefixList.map((prefix) => (
                     <option key={prefix} value={prefix}>
-                      {(prefix)}
+                      {prefix}
                     </option>
                   ))}
                 </select>
@@ -849,5 +836,165 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
     document.body
   );
 };
+
+// Fixed: Proper PDF generation function
+export const generatePDF = async ({
+  project,
+  flatNo,
+  allInc,
+  names,
+  prefixes,
+  selectedStampDuty,
+  propertyType,
+  slabs,
+  calculations,
+}: any) => {
+  const formatter = new Intl.NumberFormat("en-IN");
+
+  const allInclusiveAmount = parseFloat(allInc);
+  const stampDutyPercentage = parseFloat(selectedStampDuty);
+  const gstPercentage = 5.0;
+  const registrationCharges = 30000;
+
+  // Use provided calculations or calculate fresh
+  const agreementValue = calculations?.agreementValue || 
+    (allInclusiveAmount - registrationCharges) / 
+    (1 + (stampDutyPercentage + gstPercentage) / 100);
+
+  const stampDutyValue = calculations?.stampDuty || 
+    Math.round(agreementValue * (stampDutyPercentage / 100));
+
+  const gstValue = calculations?.gst || 
+    Math.round(agreementValue * (gstPercentage / 100));
+
+  const total1 = calculations?.total1 || 
+    Math.round(stampDutyValue + registrationCharges);
+
+  const total2 = calculations?.total2 || 
+    Math.round(allInclusiveAmount - total1);
+
+  // Generate payment schedule using actual slab data
+  const paymentSchedule = generatePaymentSchedule(
+    total2,
+    allInclusiveAmount,
+    total1,
+    formatter,
+    slabs
+  );
+
+  const doc = new jsPDF();
+
+  // TITLE
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Payment Schedule", 14, 20);
+
+  // Project Name
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Project: ${project?.name || "N/A"}`, 14, 30);
+
+  // Flat/Shop No
+  doc.text(
+    `${propertyType === "Flat" ? "Flat" : "Shop"} No: ${flatNo || "N/A"}`,
+    14,
+    38
+  );
+
+  // Buyer Names
+  let y = 46;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  names.forEach((name: string, i: number) => {
+    const prefix = prefixes?.[i] || "";
+    const fullName = `${prefix} ${name}`.trim();
+    doc.text(`Buyer: ${fullName}`, 14, y);
+    y += 6;
+  });
+
+  // All Inclusive Amount
+  doc.setFont("helvetica", "bold");
+  doc.text(
+    `All Inclusive Amount: ₹${formatter.format(allInclusiveAmount)}`,
+    14,
+    y + 6
+  );
+
+  // TABLE
+  autoTable(doc, {
+    head: [["No.", "Stage", "%", "Amount (₹)"]],
+    body: paymentSchedule,
+    startY: y + 15,
+    styles: { 
+      fontSize: 8,
+      cellPadding: 2,
+    },
+    headStyles: {
+      fillColor: [41, 128, 185],
+      textColor: 255,
+      fontStyle: "bold",
+      halign: "center",
+    },
+    bodyStyles: {
+      halign: "center",
+    },
+    alternateRowStyles: {
+      fillColor: [245, 245, 245],
+    },
+    theme: "grid",
+  });
+
+  // Download
+  doc.save("payment_schedule.pdf");
+};
+
+// Fixed: Proper payment schedule generation
+function generatePaymentSchedule(
+  total2: number,
+  allInclusiveAmount: number,
+  total1: number,
+  formatter: Intl.NumberFormat,
+  slabs: any[]
+) {
+  if (!slabs || slabs.length === 0) {
+    return [["", "No schedule data available", "", ""]];
+  }
+
+  const schedule: string[][] = [];
+  let cumulativeAmount = 0;
+
+  // Sort slabs by index to ensure proper order
+  const sortedSlabs = [...slabs].sort((a, b) => (a.index || 0) - (b.index || 0));
+
+  sortedSlabs.forEach((slab) => {
+    const slabPercentage = slab?.percent || 0;
+    const slabAmount = total2 * (slabPercentage / 100);
+    cumulativeAmount += slabAmount;
+
+    schedule.push([
+      (slab.index || "").toString(),
+      slab.name || "Unknown Stage",
+      `${slabPercentage}%`,
+      formatter.format(Math.round(slabAmount)),
+    ]);
+  });
+
+  // TOTAL OF SLABS
+  const totalPayment = Math.round(total2);
+  schedule.push(["", "TOTAL", "100%", formatter.format(totalPayment)]);
+
+  // Before Registration (Stamp Duty & Registration Charges)
+  schedule.push([
+    "",
+    "Before Registration (Stamp Duty & Registration Charges)",
+    "",
+    formatter.format(Math.round(total1)),
+  ]);
+
+  // GRAND TOTAL
+  schedule.push(["", "GRAND TOTAL", "", formatter.format(allInclusiveAmount)]);
+
+  return schedule;
+}
 
 export default PaymentSchedule;
