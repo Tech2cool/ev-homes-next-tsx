@@ -315,7 +315,7 @@ enclosureLines.forEach((line: string, i: number) => {
   doc.text(line, leftMargin, yPos);
 
   // Only underline the word “Enclosure:” in the FIRST line
-  if (i === 0 && line.includes("Enclosure:")) {``
+  if (i == 0 && line.includes("Enclosure:")) {
     const underlineWidth = doc.getTextWidth("Enclosure:");
     const underlineY = yPos + 1.5; // slight offset below text baseline
     doc.line(leftMargin, underlineY, leftMargin + underlineWidth, underlineY);

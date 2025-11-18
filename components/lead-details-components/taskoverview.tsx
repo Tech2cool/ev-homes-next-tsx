@@ -84,7 +84,7 @@ const TaskOverview: React.FC<TaskOverviewProps> = ({ task }) => {
                   <Calendar size={11} color="#4a84ff" />Assigned
                 </label>
                 <p className={styles.infoValue}>
-                  {formatDateTime(task.assignDate ?? "")}
+                  {formatDateTime(task.assignDate?.toString() ?? "")}
                 </p>
               </div>
 
@@ -112,7 +112,7 @@ const TaskOverview: React.FC<TaskOverviewProps> = ({ task }) => {
                     <CheckCircle size={11} color="#4a84ff" />Completed
                   </label>
                   <p className={styles.infoValue}>
-                    {formatDateTime(task.completedDate)}
+                    {formatDateTime(task.completedDate.toString())}
                   </p>
                 </div>
               )}
@@ -146,7 +146,7 @@ const TaskOverview: React.FC<TaskOverviewProps> = ({ task }) => {
                     <IoIosPerson size={12} color="#4a84ff" />Reminder Date
                   </label>
                   <p className={styles.infoValue}>
-                    {formatDateOnly(task.reminderDate || task.reminderDueDate)}
+                    {formatDateOnly(task.reminderDate?.toString() || task.reminderDueDate?.toString())}
                   </p>
                 </div>
                 

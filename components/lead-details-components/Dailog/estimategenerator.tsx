@@ -35,6 +35,7 @@ import ReactDOM from "react-dom";
 import { MdCancel } from "react-icons/md";
 import stylerun from "./dailog.module.css";
 import jsPDF from "jspdf";
+import { number } from "framer-motion";
 
 interface EstimategeneratorProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,8 +44,8 @@ interface EstimategeneratorProps {
 
 // Types
 interface OptionType {
-  value: string | number;
-  label: string | number;
+  value: number;
+  label: string;
   percent?: number;
   index?: number;
   codeValue?: number;
@@ -252,7 +253,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const [selectedSlab, setSelectedSlab] = useState<Slab | null>();
   const [selectedNumber, setSelectedNumber] = useState<Flat | null>(null);
   const [selectedFlat, setSelectedFlat] = useState<Flat | null>(null);
-  const [selectedStampDuty, setSelectedStampDuty] = useState(6);
+  const [selectedStampDuty, setSelectedStampDuty] = useState<number>(6);
 
   const [projectOptions, setProjectOptions] = useState<OptionType[]>([]);
   const [slabOptions, setSlabOption] = useState<OptionType[]>([]);
@@ -1197,16 +1198,15 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               </div>
 
               <CustomSelect
-                id="stampDuty"
-                label="Select Stamp Duty (%)"
-                icon={PiSealPercentFill}
-                options={stampDutyOptions}
-                value={selectedStampDuty}
-                onChange={(ele: Flat | null) => {
-                  setSelectedStampDuty;
-                }}
-                placeholder="Select Stamp Duty"
-              />
+  id="stampDuty"
+  label="Select Stamp Duty (%)"
+  icon={PiSealPercentFill}
+  options={stampDutyOptions}
+  value={selectedStampDuty}
+  onChange={(val) => setSelectedStampDuty(Number(val))}
+  placeholder="Select Stamp Duty"
+/>
+
             </div>
 
             <div className={`${styles.section} ${styles.sectionStacked}`}>
@@ -1369,9 +1369,9 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   user,
                   currentEstCount ?? 0,
                   fetchEstimatCount!,
-                   customerName,
-  phoneNumber,
-  address
+                  customerName,
+                  phoneNumber,
+                  address
                 );
               } catch (err) {
                 console.error("PDF generation failed:", err);
@@ -1478,10 +1478,7 @@ export const generatePdf = async (
     `${lead?.teamLeader?.firstName ?? ""} ${lead?.teamLeader?.lastName ?? ""}`
   );
 
-   addField(
-    "Attended By",
-    `${user?.firstName ?? ""} ${user?.lastName ?? ""}`
-  );
+  addField("Attended By", `${user?.firstName ?? ""} ${user?.lastName ?? ""}`);
 
   // -------- Section: Unit Details --------
   addSectionTitle("Unit Details");
