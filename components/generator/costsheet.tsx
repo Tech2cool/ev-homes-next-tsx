@@ -343,9 +343,9 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
   };
 
   // Format currency for display (like ₹ 80,00,000)
-  const formatCurrency = (amount: number): string => {
-    return `₹ ${amount.toLocaleString("en-IN")}`;
-  };
+  // const formatCurrency = (amount: number): string => {
+  //   return `₹ ${amount.toLocaleString("en-IN")}`;
+  // };
 
   // Your component usage with calculated values
   const calculatedValues = calculateValues();
@@ -418,6 +418,11 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     }
   };
 
+  const formatCurrency = (value: number | string): string => {
+    const num = Number(value) || 0;
+    return num.toLocaleString("en-IN"); // Indian comma style (1,00,000 etc.)
+  };
+
   const generatePdf = (): // formData: FormData,
   // calculatedValues: CalculatedValues,
   // project?: OurProject,
@@ -462,18 +467,18 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
       yPosition += 6;
 
       // Address lines
-      // if (formData.houseno) {
-      //     pdf.text(formData.houseno, 20, yPosition);
-      //     yPosition += 6;
-      //   }
-      //   if (formData.area) {
-      //     pdf.text(formData.area, 20, yPosition);
-      //     yPosition += 6;
-      //   }
-      //   if (formData.landmark) {
-      //     pdf.text(formData.landmark, 20, yPosition);
-      //     yPosition += 6;
-      //   }
+      if (formData.houseno) {
+          pdf.text(formData.houseno, 20, yPosition);
+          yPosition += 6;
+        }
+        if (formData.area) {+
+          pdf.text(formData.area, 20, yPosition);
+          yPosition += 6;
+        }
+        if (formData.landmark) {
+          pdf.text(formData.landmark, 20, yPosition);
+          yPosition += 6;
+        }
 
       // const cityPincode = [formData.town, formData.pincode].filter(Boolean).join(' - ');
       // if (cityPincode) {
@@ -520,7 +525,7 @@ ${selectedProject.address}`;
       const allInclusiveAmount = parseFloat(formData.allInclusiveamount) || 0;
 
       const pre = `Value of ${formData.propertyType || "Flat"} Rs. `;
-      const amount = `${allInclusiveAmount}/-`;
+      const amount = `${formatCurrency(allInclusiveAmount)}/-`;
       const suffix = " inclusive of all.";
 
       // Print prefix
@@ -545,38 +550,39 @@ ${selectedProject.address}`;
         [
           "Agreement Value",
           "Rs",
-  Math.round(calculatedValues.agreementValue),
+          formatCurrency(Math.round(calculatedValues.agreementValue)),
           "",
         ],
         [
           `Stamp duty @ %`,
           "Rs",
-         Math.round(calculatedValues.stampDutyAmount),
-          Math.round(calculatedValues.stampDutyRounded),
+          formatCurrency(Math.round(calculatedValues.stampDutyAmount)),
+          formatCurrency(Math.round(calculatedValues.stampDutyRounded)),
         ],
         [
           "Registration",
           "Rs",
-          Math.round(calculatedValues.registrationAmount),
+          formatCurrency(Math.round(calculatedValues.registrationAmount)),
           "",
         ],
         [
           "GST @ 5% inclusive",
           "Rs",
-         Math.round(calculatedValues.gstAmount),
+          formatCurrency(Math.round(calculatedValues.gstAmount)),
           "",
         ],
-        ["Total", "Rs", Math.round(allInclusiveAmount), ""],
+        ["Total", "Rs", formatCurrency(Math.round(allInclusiveAmount)), ""],
         [
           "Adjusted for Stampduty",
           "Rs",
           "-",
-         
+
+          formatCurrency(
             Math.round(
               calculatedValues.stampDutyRounded -
                 calculatedValues.stampDutyAmount
             )
-          
+          ),
         ],
       ];
 
