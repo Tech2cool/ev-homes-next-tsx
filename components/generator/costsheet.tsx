@@ -36,6 +36,7 @@ interface FormState {
   prefix: string;
   Flatno: string;
   firstName: string;
+  lastName: string;
   reference: string;
   stampDuty: string;
   allInclusiveamount: string;
@@ -49,8 +50,8 @@ interface FormState {
 }
 
 interface CostsheetProps {
-  lead?: PostSaleLead | null;
-  lead1?: Lead | null;
+  // lead?: PostSaleLead | null;
+  lead?: string | null;
 }
 
 interface CalculatedValues {
@@ -61,13 +62,8 @@ interface CalculatedValues {
   stampDutyRounded: number;
 }
 
-const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
-  const {
-    projects,
-    getProjects,
-    // getLeadByPhoneNumber,
-    // addBrokerage,
-  } = useData();
+const CostSheet: React.FC<CostsheetProps> = ({ lead: leadId }) => {
+  const { projects, getProjects, getLeadById, currentLead } = useData();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [propertyType, setPropertyType] = useState<string>("Flat");
@@ -94,6 +90,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     Flatno: "",
     prefix: "",
     firstName: "",
+    lastName: "",
     reference: "",
     stampDuty: "",
     allInclusiveamount: "",
@@ -105,6 +102,33 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     letterdate: "",
     bookingForm: null,
   });
+
+  useEffect(() => {
+    const fetchLeadData = async () => {
+      if (leadId) {
+        try {
+          await getLeadById(leadId);
+        } catch (error) {
+          console.error("Error fetching lead data:", error);
+        }
+      }
+    };
+
+    fetchLeadData();
+  }, []);
+
+  // Pre-fill form when currentLead is available
+  useEffect(() => {
+    if (currentLead) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: currentLead.firstName || "",
+        lastName: currentLead.lastName || "",
+        prefix: currentLead.prefix || "",
+        // Add other fields as needed based on your Lead type
+      }));
+    }
+  }, [currentLead]);
 
   const initialCalculatedValues: CalculatedValues = {
     agreementValue: 0,
@@ -160,8 +184,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     if (!formData.floor) newErrors.floor = "Floor selection is required";
     if (!formData.unit) newErrors.unit = "Unit selection is required";
     if (!formData.prefix) newErrors.prefix = "Select title";
-    if (!formData.firstName.trim())
-      newErrors.firstName = "Please enter First Name";
+    if (!formData.firstName.trim()) newErrors.firstName = "Please enter Name";
     if (!formData.stampDuty) newErrors.stampper = "Enter Stamp Duty Percentage";
     if (!formData.reference)
       newErrors.reference = "Please enter Reference number";
@@ -185,6 +208,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
       Flatno: "",
       prefix: "",
       firstName: "",
+      lastName: "",
       reference: "",
       stampDuty: "",
       allInclusiveamount: "",
@@ -270,7 +294,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
   useEffect(() => {
     const project = projects.find((p: any) => p._id === formData.project);
 
-    let short = project?.shortCode || "EV-09";
+    const short = project?.shortCode || "EV-09";
 
     if (project) {
       setFormData((prev) => ({
@@ -461,24 +485,27 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
 
       pdf.setFont("helvetica", "normal");
       // Names
-      const clientName = formData.firstName || "Client";
+      const clientName =
+        `${formData.firstName || ""} ${formData.lastName || ""}`.trim() ||
+        "Client";
+
       const prefix = formData.prefix || "";
-      pdf.text(`${prefix} ${clientName}`, 20, yPosition);
+      pdf.text(`${prefix} ${clientName}`, 19, yPosition);
       yPosition += 6;
 
       // Address lines
       if (formData.houseno) {
-          pdf.text(formData.houseno, 20, yPosition);
-          yPosition += 6;
-        }
-        if (formData.area) {+
-          pdf.text(formData.area, 20, yPosition);
-          yPosition += 6;
-        }
-        if (formData.landmark) {
-          pdf.text(formData.landmark, 20, yPosition);
-          yPosition += 6;
-        }
+        pdf.text(formData.houseno, 20, yPosition);
+        yPosition += 6;
+      }
+      if (formData.area) {
+        pdf.text(formData.area, 20, yPosition);
+        yPosition += 6;
+      }
+      if (formData.landmark) {
+        pdf.text(formData.landmark, 20, yPosition);
+        yPosition += 6;
+      }
 
       // const cityPincode = [formData.town, formData.pincode].filter(Boolean).join(' - ');
       // if (cityPincode) {
@@ -492,7 +519,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
       const prefixes = ["mr.", "mrs."];
 
       pdf.text(getGreeting(prefixes), 20, yPosition);
-      yPosition += 8;
+      yPosition += 4;
 
       const propertyTypeText = (formData.propertyType || "Flat").toLowerCase();
       const floorText = formData.floor
@@ -542,7 +569,7 @@ ${selectedProject.address}`;
       pdf.setFont("helvetica", "normal");
       pdf.text(suffix, 20 + prefixWidth + amountWidth, yPosition);
 
-      yPosition += 15;
+      yPosition += 5;
 
       // Cost Table
       const costTableData = [
@@ -596,6 +623,7 @@ ${selectedProject.address}`;
           fillColor: [255, 255, 255],
           textColor: [0, 0, 0],
           fontStyle: "bold",
+          lineWidth: 0.2,
         },
         columnStyles: {
           0: { cellWidth: "auto" },
@@ -604,94 +632,131 @@ ${selectedProject.address}`;
           3: { cellWidth: 40, halign: "right" },
         },
         margin: { left: 20, right: 20 },
+
+        didParseCell: function (data) {
+          const rawRow = data.row.raw as unknown as string[];
+          const rowText = rawRow?.[0] ?? "";
+
+          if (rowText === "Total" || rowText === "Adjusted for Stampduty") {
+            data.cell.styles.fontStyle = "bold";
+            data.cell.styles.textColor = [0, 0, 0]; // pure black
+          }
+        },
       });
 
-      yPosition = (pdf as any).lastAutoTable.finalY + 10;
-
-      // Kindly make arrangements text
-      pdf.text(
-        "Kindly make arrangements for the payments as agreed by you.",
-        20,
-        yPosition
-      );
-      yPosition += 10;
-
-      // Thanking you
-      pdf.text("Thanking you,", 20, yPosition);
-      yPosition += 6;
-      pdf.text("Yours faithfully,", 20, yPosition);
-      yPosition += 10;
-
-      // Company name
-      pdf.setFont("", "bold");
-      pdf.text("For E V Homes Constructions Pvt. Ltd.", 20, yPosition);
-      yPosition += 20;
-
-      // Authorized signature
-      pdf.text("Authorized Signature", 20, yPosition);
+      yPosition = (pdf as any).lastAutoTable.finalY + 2;
 
       // Payable Table on second page
-      pdf.addPage();
+      // Position for second table
+      const yAfterFirstTable = (pdf as any).lastAutoTable.finalY + 5;
 
+      // Calculate payable amounts
       const bookingAmount = customRound(
         Math.round(calculatedValues.agreementValue) * 0.1
       );
       const gstAmountPayable = customRound(bookingAmount * 0.05);
       const tdsAmount = customRound(calculatedValues.agreementValue * 0.01);
 
-      // const payableTableData = [
-      //   [
-      //     'Payable Now',
-      //     'Amount',
-      //     'Account Details'
-      //   ],
-      //   [
-      //     'Booking amount 10%',
-      //     formatCurrency(bookingAmount),
-      //     `${project.businessAccount?.accountNo || 'NA'}\n${project.businessAccount?.ifsc || 'NA'}\n${project.businessAccount?.bankName || 'NA'}`
-      //   ],
-      //   [
-      //     'GST amount (Payable)',
-      //     formatCurrency(gstAmountPayable),
-      //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
-      //   ],
-      //   [
-      //     'Stamp Duty + Registration amount (Full)',
-      //     formatCurrency(calculatedValues.stampDutyRounded + calculatedValues.registrationAmount),
-      //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
-      //   ],
-      //   [
-      //     'TDS @1%',
-      //     formatCurrency(tdsAmount),
-      //     `${project.govAccount?.accountNo || 'NA'}\n${project.govAccount?.ifsc || 'NA'}\n${project.govAccount?.bankName || 'NA'}`
-      //   ],
-      //   [
-      //     'Total',
-      //     formatCurrency(customRound(
-      //       bookingAmount +
-      //       gstAmountPayable +
-      //       calculatedValues.stampDutyRounded +
-      //       calculatedValues.registrationAmount +
-      //       tdsAmount
-      //     )),
-      //     ''
-      //   ]
-      // ];
+      const payableTableData = [
+        ["Payable Now", "Amount", "Account Details"],
+        [
+          "Booking amount 10%",
+          formatCurrency(bookingAmount),
+          `${selectedProject.businessAccount?.accountNo || "NA"}\n${
+            selectedProject.businessAccount?.ifsc || "NA"
+          }\n${selectedProject.businessAccount?.bankName || "NA"}`,
+        ],
+        [
+          "GST amount (Payable)",
+          formatCurrency(gstAmountPayable),
+          `${selectedProject.govAccount?.accountNo || "NA"}\n${
+            selectedProject.govAccount?.ifsc || "NA"
+          }\n${selectedProject.govAccount?.bankName || "NA"}`,
+        ],
+        [
+          "Stamp Duty + Registration amount (Full)",
+          formatCurrency(
+            calculatedValues.stampDutyRounded +
+              calculatedValues.registrationAmount
+          ),
+          `${selectedProject.govAccount?.accountNo || "NA"}\n${
+            selectedProject.govAccount?.ifsc || "NA"
+          }\n${selectedProject.govAccount?.bankName || "NA"}`,
+        ],
+        [
+          "TDS @1%",
+          formatCurrency(tdsAmount),
+          `${selectedProject.govAccount?.accountNo || "NA"}\n${
+            selectedProject.govAccount?.ifsc || "NA"
+          }\n${selectedProject.govAccount?.bankName || "NA"}`,
+        ],
+        [
+          "Total",
+          formatCurrency(
+            customRound(
+              bookingAmount +
+                gstAmountPayable +
+                calculatedValues.stampDutyRounded +
+                calculatedValues.registrationAmount +
+                tdsAmount
+            )
+          ),
+          "",
+        ],
+      ];
 
-      // autoTable(pdf, {
-      //   startY: 30,
-      //   head: [payableTableData[0]],
-      //   body: payableTableData.slice(1),
-      //   theme: 'grid',
-      //   styles: { fontSize: 10, cellPadding: 2 },
-      //   headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold' },
-      //   columnStyles: {
-      //     0: { cellWidth: 80 },
-      //     1: { cellWidth: 40, halign: 'right' },
-      //     2: { cellWidth: 60 }
-      //   },
-      //   margin: { left: 20, right: 20 }
-      // });
+      autoTable(pdf, {
+        startY: yAfterFirstTable,
+        head: [payableTableData[0]],
+        body: payableTableData.slice(1),
+        theme: "grid",
+        styles: { fontSize: 10, cellPadding: 3 },
+        headStyles: {
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+          fontStyle: "bold",
+          lineWidth: 0.2,
+        },
+        columnStyles: {
+          0: { cellWidth: 70 },
+          1: { cellWidth: 40, halign: "right" },
+          2: { cellWidth: 60 },
+        },
+        margin: { left: 20, right: 20 },
+        pageBreak: "auto",
+
+        didParseCell: function (data) {
+          const rawRow = data.row.raw as unknown as string[];
+          const rowText = rawRow?.[0] ?? "";
+
+          if (rowText === "Total") {
+            data.cell.styles.fontStyle = "bold";
+            data.cell.styles.textColor = [0, 0, 0]; // pure black
+          }
+        },
+      }); // Kindly make arrangements text
+      yPosition = (pdf as any).lastAutoTable.finalY + 10;
+
+      pdf.text(
+        "Kindly make arrangements for the payments as agreed by you.",
+        20,
+        yPosition
+      );
+      yPosition += 8;
+
+      // Thanking you
+      pdf.text("Thanking you,", 20, yPosition);
+      yPosition += 5;
+      pdf.text("Yours faithfully,", 20, yPosition);
+      yPosition += 5;
+
+      // Company name
+      pdf.setFont("", "bold");
+      pdf.text("For E V Homes Constructions Pvt. Ltd.", 20, yPosition);
+      yPosition += 8;
+
+      // Authorized signature
+      pdf.text("Authorized Signature", 20, yPosition);
 
       // Save the PDF
       const pdfName = `Cost Sheet - ${formData.propertyType || "Property"} ${
@@ -869,8 +934,8 @@ ${selectedProject.address}`;
               </label>
               <input
                 type="text"
-                value={`${lead1?.firstName ?? ""} ${
-                  lead1?.lastName ?? ""
+                value={`${formData.firstName || ""} ${
+                  formData.lastName || ""
                 }`.trim()}
                 name="firstName"
                 placeholder="first name...."

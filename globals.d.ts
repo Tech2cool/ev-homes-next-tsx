@@ -22,7 +22,19 @@ interface OurProject {
 
   parkingList?: Parking[];
   propertyType?: string | null;
+
+  govAccount?: AccountInfo | null;
+  businessAccount?: AccountInfo | null;
 }
+
+interface AccountInfo {
+  accountNo?: string | null;
+  bankName?: string | null;
+  ifsc?: string | null;
+  micr?: string | null;
+  branch?: string | null;
+}
+
 
 interface Estimator {
   teamLeader?: Employee | null;

@@ -79,9 +79,11 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ lead }) => {
     router.push(`/estimate-history?leadId=${lead?._id}`);
   };
 
-  const costsheetnavigate = () => {
-    router.push(`/generate/costsheetgenerator?leadId=${lead}`);
-  };
+const costsheetnavigate = () => {
+  console.log("Lead Value:", lead);  
+  router.push(`/generate/costsheetgenerator?lead=${lead?._id}`);
+};
+
 
   const actions = [
     { icon: <MdOutlineRateReview />, label: "Add Feedback" },
