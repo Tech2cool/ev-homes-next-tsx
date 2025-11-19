@@ -36,6 +36,7 @@ interface FormState {
   prefix: string;
   Flatno: string;
   firstName: string;
+  lastName: string;
   reference: string;
   stampDuty: string;
   allInclusiveamount: string;
@@ -50,7 +51,7 @@ interface FormState {
 
 interface CostsheetProps {
   // lead?: PostSaleLead | null;
-  lead?: Lead | null;
+  lead?: string | null;
 }
 
 interface CalculatedValues {
@@ -61,13 +62,8 @@ interface CalculatedValues {
   stampDutyRounded: number;
 }
 
-const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
-  const {
-    projects,
-    getProjects,
-    // getLeadByPhoneNumber,
-    // addBrokerage,
-  } = useData();
+const CostSheet: React.FC<CostsheetProps> = ({ lead: leadId }) => {
+  const { projects, getProjects, getLeadById, currentLead } = useData();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [propertyType, setPropertyType] = useState<string>("Flat");
@@ -81,11 +77,6 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
     } as React.ChangeEvent<HTMLInputElement>);
   };
 
-
-    useEffect(() => {
-   lead;
-   console.log(lead);
-  }, []);
   useEffect(() => {
     getProjects();
   }, []);
@@ -98,7 +89,8 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
     unit: 0,
     Flatno: "",
     prefix: "",
-    firstName: lead?.firstName ?? "",
+    firstName: "",
+    lastName: "",
     reference: "",
     stampDuty: "",
     allInclusiveamount: "",
@@ -110,6 +102,33 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
     letterdate: "",
     bookingForm: null,
   });
+
+  useEffect(() => {
+    const fetchLeadData = async () => {
+      if (leadId) {
+        try {
+          await getLeadById(leadId);
+        } catch (error) {
+          console.error("Error fetching lead data:", error);
+        }
+      }
+    };
+
+    fetchLeadData();
+  }, []);
+
+  // Pre-fill form when currentLead is available
+  useEffect(() => {
+    if (currentLead) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: currentLead.firstName || "",
+        lastName: currentLead.lastName || "",
+        prefix: currentLead.prefix || "",
+        // Add other fields as needed based on your Lead type
+      }));
+    }
+  }, [currentLead]);
 
   const initialCalculatedValues: CalculatedValues = {
     agreementValue: 0,
@@ -129,8 +148,6 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
         Flatno: flat.toString(),
       }));
     }
-
-    
   }, [formData.floor, formData.unit, formData.allInclusiveamount]);
 
   const onChangeField = (
@@ -167,8 +184,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
     if (!formData.floor) newErrors.floor = "Floor selection is required";
     if (!formData.unit) newErrors.unit = "Unit selection is required";
     if (!formData.prefix) newErrors.prefix = "Select title";
-    if (!formData.firstName.trim())
-      newErrors.firstName = "Please enter First Name";
+    if (!formData.firstName.trim()) newErrors.firstName = "Please enter Name";
     if (!formData.stampDuty) newErrors.stampper = "Enter Stamp Duty Percentage";
     if (!formData.reference)
       newErrors.reference = "Please enter Reference number";
@@ -192,6 +208,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
       Flatno: "",
       prefix: "",
       firstName: "",
+      lastName: "",
       reference: "",
       stampDuty: "",
       allInclusiveamount: "",
@@ -468,9 +485,12 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
 
       pdf.setFont("helvetica", "normal");
       // Names
-      const clientName = formData.firstName || "Client";
+      const clientName =
+        `${formData.firstName || ""} ${formData.lastName || ""}`.trim() ||
+        "Client";
+
       const prefix = formData.prefix || "";
-      pdf.text(`${prefix} ${clientName}`, 20, yPosition);
+      pdf.text(`${prefix} ${clientName}`, 19, yPosition);
       yPosition += 6;
 
       // Address lines
@@ -598,7 +618,7 @@ ${selectedProject.address}`;
         head: [costTableData[0]],
         body: costTableData.slice(1),
         theme: "grid",
-        styles: { fontSize: 10, cellPadding: 2, },
+        styles: { fontSize: 10, cellPadding: 2 },
         headStyles: {
           fillColor: [255, 255, 255],
           textColor: [0, 0, 0],
@@ -619,7 +639,7 @@ ${selectedProject.address}`;
 
           if (rowText === "Total" || rowText === "Adjusted for Stampduty") {
             data.cell.styles.fontStyle = "bold";
-              data.cell.styles.textColor = [0, 0, 0]; // pure black
+            data.cell.styles.textColor = [0, 0, 0]; // pure black
           }
         },
       });
@@ -711,7 +731,7 @@ ${selectedProject.address}`;
 
           if (rowText === "Total") {
             data.cell.styles.fontStyle = "bold";
-              data.cell.styles.textColor = [0, 0, 0]; // pure black
+            data.cell.styles.textColor = [0, 0, 0]; // pure black
           }
         },
       }); // Kindly make arrangements text
@@ -914,7 +934,9 @@ ${selectedProject.address}`;
               </label>
               <input
                 type="text"
-                value={formData.firstName}
+                value={`${formData.firstName || ""} ${
+                  formData.lastName || ""
+                }`.trim()}
                 name="firstName"
                 placeholder="first name...."
                 onChange={onChangeField}

@@ -1,13 +1,11 @@
 "use client";
 import CostSheet from "@/components/generator/costsheet";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
-interface CostSheetProps {
-  lead?: Lead | null;
-}
-
-const CostSheetGenerator: React.FC<CostSheetProps> = ({lead}) => {
-    console.log(lead);
+const CostSheetGenerator = () => {
+    const searchParams = useSearchParams();
+    const lead = searchParams.get('lead');
 
   return (
     <CostSheet lead={lead}/>
