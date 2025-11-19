@@ -270,7 +270,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
   useEffect(() => {
     const project = projects.find((p: any) => p._id === formData.project);
 
-    let short = project?.shortCode || "EV-09";
+    const short = project?.shortCode || "EV-09";
 
     if (project) {
       setFormData((prev) => ({
@@ -472,7 +472,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
         yPosition += 6;
       }
       if (formData.area) {
-        +pdf.text(formData.area, 20, yPosition);
+        pdf.text(formData.area, 20, yPosition);
         yPosition += 6;
       }
       if (formData.landmark) {
