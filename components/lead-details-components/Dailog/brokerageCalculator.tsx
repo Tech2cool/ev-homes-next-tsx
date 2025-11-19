@@ -790,7 +790,7 @@ useEffect(() => {
                       )
                     }
                   >
-                    <option value="">Select Project</option>
+                    <option value="">Select Project</option> 
                     {projects.map((project) => (
                       <option key={project._id} value={project?._id ?? ""}>
                         {project.name}
