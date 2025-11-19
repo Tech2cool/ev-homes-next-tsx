@@ -66,7 +66,7 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
     phone: "",
     allInclusiveAmount: "",
     carpetArea: "",
-    selectedStampDuty: "5",
+    selectedStampDuty: "6",
     whichBuildingNo: null,
     whichFloor: null,
     selectedFlatNo: null,
@@ -144,24 +144,14 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
         allInclusiveAmount: allInclusive.toString(),
       }));
     }
-  }, [
-    postSaleLead,
-    project,
-    flatNo,
-    allInclusive,
-    openclick,
-    leads,
-
-
-
-  ]);
+  }, [postSaleLead, project, flatNo, allInclusive, openclick, leads]);
 
   // Fixed: Properly fetch slabs when project changes
   useEffect(() => {
     if (formData.selectedProject?._id) {
       getSlabByProject(formData.selectedProject._id);
     }
-  }, [ ]);
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -289,10 +279,9 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
       return;
     }
 
+    console.log(slabsbyproject.slabs);
 
-console.log(slabsbyproject.slabs);
-
-    const scheduleContent =slabsbyproject.slabs.map((slab) => {
+    const scheduleContent = slabsbyproject.slabs.map((slab) => {
       const slabPercentage = slab.percent || 0;
       const slabAmount = total2 * (slabPercentage / 100);
 
@@ -303,22 +292,21 @@ console.log(slabsbyproject.slabs);
       };
     });
 
-
-
-
     const modal = document.createElement("div");
     modal.className = styles.modalOverlay;
     modal.innerHTML = `
       <div class="${styles.modalContent}">
         <div class="${styles.modalHeader}">
           <h3>Payment Schedule Preview</h3>
-          <button onclick="this.closest('.${styles.modalOverlay}').remove()" class="${styles.closeButton}">×</button>
+          <button onclick="this.closest('.${
+            styles.modalOverlay
+          }').remove()" class="${styles.closeButton}">×</button>
         </div>
         <div class="${styles.scheduleModal}">
           <div class="${styles.scheduleList}">
             ${scheduleContent
               .map(
-                (item:any) => `
+                (item: any) => `
               <div class="${styles.scheduleItem}">
                 <div class="${styles.scheduleHeader}">
                   <strong>${item.name}</strong>
@@ -343,7 +331,9 @@ console.log(slabsbyproject.slabs);
           </div>
         </div>
         <div class="${styles.modalFooter}">
-          <button onclick="this.closest('.${styles.modalOverlay}').remove()" class="${styles.okButton}">OK</button>
+          <button onclick="this.closest('.${
+            styles.modalOverlay
+          }').remove()" class="${styles.okButton}">OK</button>
         </div>
       </div>
     `;
@@ -365,8 +355,10 @@ console.log(slabsbyproject.slabs);
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    if (!slabsbyproject ||slabsbyproject.slabs.length === 0) {
-      alert("No payment schedule data available. Please check project configuration.");
+    if (!slabsbyproject || slabsbyproject.slabs.length === 0) {
+      alert(
+        "No payment schedule data available. Please check project configuration."
+      );
       return;
     }
 
@@ -376,8 +368,8 @@ console.log(slabsbyproject.slabs);
       project: formData.selectedProject,
       flatNo: formData.flatNo,
       allInc: values.allInclusiveNum,
-      names: names.map(n => n.name),
-      prefixes: names.map(n => n.prefix),
+      names: names.map((n) => n.name),
+      prefixes: names.map((n) => n.prefix),
       selectedStampDuty: formData.selectedStampDuty,
       propertyType: formData.propertyType,
       slabs: slabsbyproject.slabs, // Pass the actual slab data
@@ -857,21 +849,23 @@ export const generatePDF = async ({
   const registrationCharges = 30000;
 
   // Use provided calculations or calculate fresh
-  const agreementValue = calculations?.agreementValue || 
-    (allInclusiveAmount - registrationCharges) / 
-    (1 + (stampDutyPercentage + gstPercentage) / 100);
+  const agreementValue =
+    calculations?.agreementValue ||
+    (allInclusiveAmount - registrationCharges) /
+      (1 + (stampDutyPercentage + gstPercentage) / 100);
 
-  const stampDutyValue = calculations?.stampDuty || 
+  const stampDutyValue =
+    calculations?.stampDuty ||
     Math.round(agreementValue * (stampDutyPercentage / 100));
 
-  const gstValue = calculations?.gst || 
-    Math.round(agreementValue * (gstPercentage / 100));
+  const gstValue =
+    calculations?.gst || Math.round(agreementValue * (gstPercentage / 100));
 
-  const total1 = calculations?.total1 || 
-    Math.round(stampDutyValue + registrationCharges);
+  const total1 =
+    calculations?.total1 || Math.round(stampDutyValue + registrationCharges);
 
-  const total2 = calculations?.total2 || 
-    Math.round(allInclusiveAmount - total1);
+  const total2 =
+    calculations?.total2 || Math.round(allInclusiveAmount - total1);
 
   // Generate payment schedule using actual slab data
   const paymentSchedule = generatePaymentSchedule(
@@ -908,29 +902,25 @@ export const generatePDF = async ({
   names.forEach((name: string, i: number) => {
     const prefix = prefixes?.[i] || "";
     const fullName = `${prefix} ${name}`.trim();
-    doc.text(`Buyer: ${fullName}`, 14, y);
+    doc.text(`${fullName}`, 14, y);
     y += 6;
   });
 
   // All Inclusive Amount
   doc.setFont("helvetica", "bold");
-  doc.text(
-    `All Inclusive Amount: ₹${formatter.format(allInclusiveAmount)}`,
-    14,
-    y + 6
-  );
+  doc.text(`All Inclusive Amount: ${allInclusiveAmount}`, 14, y + 3);
 
   // TABLE
   autoTable(doc, {
     head: [["No.", "Stage", "%", "Amount (₹)"]],
     body: paymentSchedule,
     startY: y + 15,
-    styles: { 
-      fontSize: 8,
-      cellPadding: 2,
+    styles: {
+      fontSize: 6,
+      cellPadding: 1,
     },
     headStyles: {
-      fillColor: [41, 128, 185],
+      // fillColor: [41, 128, 185],
       textColor: 255,
       fontStyle: "bold",
       halign: "center",
@@ -938,9 +928,7 @@ export const generatePDF = async ({
     bodyStyles: {
       halign: "center",
     },
-    alternateRowStyles: {
-      fillColor: [245, 245, 245],
-    },
+
     theme: "grid",
   });
 
@@ -964,7 +952,9 @@ function generatePaymentSchedule(
   let cumulativeAmount = 0;
 
   // Sort slabs by index to ensure proper order
-  const sortedSlabs = [...slabs].sort((a, b) => (a.index || 0) - (b.index || 0));
+  const sortedSlabs = [...slabs].sort(
+    (a, b) => (a.index || 0) - (b.index || 0)
+  );
 
   sortedSlabs.forEach((slab) => {
     const slabPercentage = slab?.percent || 0;
