@@ -49,8 +49,8 @@ interface FormState {
 }
 
 interface CostsheetProps {
-  lead?: PostSaleLead | null;
-  lead1?: Lead | null;
+  // lead?: PostSaleLead | null;
+  lead?: Lead | null;
 }
 
 interface CalculatedValues {
@@ -61,7 +61,7 @@ interface CalculatedValues {
   stampDutyRounded: number;
 }
 
-const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
+const CostSheet: React.FC<CostsheetProps> = ({ lead }) => {
   const {
     projects,
     getProjects,
@@ -81,6 +81,11 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     } as React.ChangeEvent<HTMLInputElement>);
   };
 
+
+    useEffect(() => {
+   lead;
+   console.log(lead);
+  }, []);
   useEffect(() => {
     getProjects();
   }, []);
@@ -93,7 +98,7 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
     unit: 0,
     Flatno: "",
     prefix: "",
-    firstName: "",
+    firstName: lead?.firstName ?? "",
     reference: "",
     stampDuty: "",
     allInclusiveamount: "",
@@ -124,6 +129,8 @@ const CostSheet: React.FC<CostsheetProps> = ({ lead, lead1 }) => {
         Flatno: flat.toString(),
       }));
     }
+
+    
   }, [formData.floor, formData.unit, formData.allInclusiveamount]);
 
   const onChangeField = (
@@ -907,9 +914,7 @@ ${selectedProject.address}`;
               </label>
               <input
                 type="text"
-                value={`${lead1?.firstName ?? ""} ${
-                  lead1?.lastName ?? ""
-                }`.trim()}
+                value={formData.firstName}
                 name="firstName"
                 placeholder="first name...."
                 onChange={onChangeField}
