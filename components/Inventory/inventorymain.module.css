@@ -2,17 +2,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oleo+Script:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 .background {
-  background-image: url("/images/buildingforDescription.jpg");
+  background-image: url("/images/malibu.jpeg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 90vh;
+  height: 100%;
   width: 100%;
   position: relative;
 }
 
 .overlay {
-  background-color: rgba(0, 0, 0, 0.92);
+  background-color: rgba(0, 0, 0, 0.801);
   position: absolute;
   top: 0;
   left: 0;
@@ -23,7 +23,7 @@
 }
 
 :global(html.light) .overlay {
-  background-color: #42424270;
+  background-color: #54545458;
 }
 
 .topSection {
@@ -49,11 +49,22 @@
   flex-direction: column;
   align-items: center;
   background-color: rgba(2, 2, 2, 0.06);
+  color: black;
+}
+
+.infoName {
+  color: #ffffff;
+}
+
+.infoName {
+  color: #fffbfb;
+  font-weight: 700;
 }
 
 :global(html.light) .infoSection {
-  background-color: rgba(219, 219, 219, 0.358);
-  border: 1px solid rgb(230, 230, 230);
+  background-color: rgba(255, 255, 255, 0.308);
+  border: 1px solid rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
 
 }
 
@@ -79,7 +90,7 @@
 }
 
 :global(html.light) .availableFlats {
-  background-color: #7428ef;
+  background-color: #487038;
   color: rgb(255, 255, 255);
   border: none;
 }
@@ -132,7 +143,7 @@
 
 .content {
   display: flex;
-  color: rgb(213, 207, 207);
+  color: rgb(255, 255, 255);
   font-size: 2rem;
   font-weight: normal;
   /* font-family: "Great Vibes", cursive; */
@@ -141,7 +152,7 @@
 
 :global(html.light) .content {
   font-weight: 500;
-  color: rgb(254, 253, 253);
+  color: rgb(10, 12, 29);
 }
 
 .inventoryBody {
@@ -171,6 +182,7 @@
 .imageSection {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
 
 .towerNameStyles {
@@ -204,9 +216,9 @@
 
 .scrollArea {
   overflow-y: auto;
-  margin-top: 15vh;
+  margin-top: 6vh;
   scrollbar-width: none;
-  max-height: 65vh;
+  max-height: 75vh;
   flex-grow: 1;
   width: fit-content;
   margin-bottom: 10vh;
@@ -216,6 +228,14 @@
   display: flex;
   align-items: center;
   margin: 1vh 0;
+}
+
+.flatInfoTitle {
+  color: #dfdede;
+}
+
+:global(html.light) .flatInfoTitle {
+  color: #ffffff;
 }
 
 .floorLabel {
@@ -254,7 +274,7 @@
 }
 
 :global(html.light) .sold {
-  background-color: #9e232d;
+  background-color: #a52b35;
   border: none;
 }
 
@@ -264,8 +284,9 @@
 }
 
 :global(html.light) .available {
-  background-color: #7428ef;
+  background-color: #487038;
   border: none;
+  color: rgb(255, 255, 255);
 }
 
 .text {
@@ -277,7 +298,7 @@
 }
 
 :global(html.light) .text {
-  color: rgb(250, 250, 250);
+  color: rgb(255, 255, 255);
 }
 
 .inventoryBuildingBody {
@@ -309,8 +330,8 @@
   padding: 1vh 1vw;
   font-size: 0.8rem;
   border-radius: 8px;
-  background-color: rgb(26, 26, 26);
-  color: rgb(200, 200, 200);
+  background-color: #375c58;
+  color: rgb(255, 255, 255);
   outline: none;
   min-width: 220px;
   cursor: pointer;
@@ -318,12 +339,12 @@
 }
 
 :global(html.light) .dropdown {
-  background-color: rgb(242, 242, 242);
-  color: rgb(27, 26, 27);
+  background-color: #030637;
+  color: rgb(255, 254, 255);
 }
 
 .dropdown:hover {
-  border-color: #666;
+  border-color: #232222;
 }
 
 .selectOptionContainer {
@@ -340,17 +361,23 @@
   font-size: 0.8rem;
   border: none;
   border-radius: 8px;
-  background-color: #0857b0;
+  background: linear-gradient(145deg, #2F5755, #5A9690);
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .selectOptionContainer button:hover {
-  background-color: #37516f;
+  background: linear-gradient(145deg, #5A9690, #2F5755);
+}
+
+:global(html.light) .selectOptionContainer button {
+  background: linear-gradient(145deg, #030637, #3C0753);
+  color: white;
 }
 
 .selectOptionContainer button:focus {
+
   outline: 2px solid #0070f3;
   outline-offset: 2px;
 }
@@ -369,16 +396,20 @@
 }
 
 .dialogBox {
-  background-color: black;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  width: 40vw;
+  background-color: rgb(20, 19, 19);
+  border: 1px solid rgba(37, 36, 36, 0.3);
+  width: 45vw;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   border-radius: 8px;
+  padding: 0px 20px 20px 20px;
+  max-height: 90vh;
+  overflow: auto;
+  scrollbar-color: #333 #1a1a1a;
 }
 
 :global(html.light) .dialogBox {
-  background-color: rgb(227, 227, 227);
+  background-color: rgb(241, 241, 241);
 }
 
 .dialogBox2 {
@@ -436,9 +467,11 @@
   color: rgb(153, 153, 153);
   gap: 1vh;
 }
-:global(html.light) .detailsText{
+
+:global(html.light) .detailsText {
   color: rgb(29, 28, 28);
 }
+
 .statusContainer {
   display: flex;
   flex-direction: column;
@@ -466,8 +499,7 @@
 } */
 
 .imgContainer {
-  margin-left: 2vw;
-  margin-top: 1vh;
+  width: 5vw;
 }
 
 .noteContainer {
@@ -479,9 +511,11 @@
   border-radius: 10px;
   color: rgb(99, 99, 99);
 }
-:global(html.light) .noteContainer{
+
+:global(html.light) .noteContainer {
   border-left: 1px solid rgba(36, 36, 36, 0.5);
 }
+
 .noteText {
   color: red;
 }
@@ -499,18 +533,22 @@
   white-space: nowrap;
   padding-right: 2vw;
 }
-:global(html.light) .label{
-   color: #363636;
+
+:global(html.light) .label {
+  color: #363636;
 }
+
 .value {
   color: #d3d3d3;
   font-weight: 400;
   font-size: 0.8rem;
   text-align: left;
 }
-:global(html.light) .value{
-   color: #363636;
+
+:global(html.light) .value {
+  color: #363636;
 }
+
 .dropdownWrapperDetails {
   margin: 1vh 0.5vw;
 }
@@ -525,25 +563,14 @@
   width: 60%;
   cursor: pointer;
 }
-:global(html.light) .dropdownDetails{
-  background-color: #2c64a5;
+
+:global(html.light) .dropdownDetails {
+  background-color: #6498d2;
+  border: 1px solid rgba(227, 221, 221, 0.3);
+
 }
-.okbutton {
-  margin: 2vh 1vw;
-  padding: 1vh 1vw;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: white;
-  border: 1px solid rgb(108, 108, 108);
-  background-color: rgb(30, 30, 30);
-}
-:global(html.light) .okbutton{
-  background-color: rgb(82, 203, 80);
-  border: none;
-}
-.okbutton:hover {
-  background-color: rgb(72, 72, 72);
-}
+
+
 
 .detailIcon {
   position: relative;
@@ -560,12 +587,14 @@
   min-width: 10vw;
   font-size: 0.8rem;
 }
-:global(html.light) .dropdownMenu{
+
+:global(html.light) .dropdownMenu {
   background: rgb(235, 235, 235);
   border: none;
-    box-shadow: 0 4px 20px #01043333;
-color: black;
+  box-shadow: 0 4px 20px #01043333;
+  color: black;
 }
+
 .dropdownItem {
   padding: 8px 12px;
   cursor: pointer;
@@ -580,7 +609,7 @@ color: black;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .leftText {
@@ -620,8 +649,9 @@ color: black;
 .mobileHide {
   display: block;
 }
+
 /* Enhanced Dialog Styles */
-.dialogBox {
+/* .dialogBox {
   max-width: 600px;
   width: 90vw;
   max-height: 90vh;
@@ -630,7 +660,7 @@ color: black;
   background: white;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
+} */
 
 /* Header Section */
 .headerSection {
@@ -639,7 +669,7 @@ color: black;
   align-items: flex-start;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #595d65;
 }
 
 .headerMain {
@@ -649,8 +679,12 @@ color: black;
 .headerTitle {
   font-size: 20px;
   font-weight: bold;
-  color: #1f2937;
+  color: #c1d1e6;
   margin-bottom: 8px;
+}
+
+:global(html.light) .headerTitle {
+  color: #1e293b;
 }
 
 .statusChips {
@@ -681,11 +715,16 @@ color: black;
 
 /* Info Cards */
 .infoCard {
-  background: #f8fafc;
+  background: #1c1d1d;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #303337;
+}
+
+:global(html.light) .infoCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
 }
 
 .cardHeader {
@@ -695,7 +734,11 @@ color: black;
   margin-bottom: 16px;
   font-weight: 600;
   font-size: 16px;
-  color: #374151;
+  color: #d4dded;
+}
+
+:global(html.light) .cardHeader {
+  color: #1e293b;
 }
 
 .cardIcon {
@@ -714,41 +757,64 @@ color: black;
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #3c444d;
 }
-
+:global(html.light) .infoItem {
+  border-bottom: 1px solid #e5e7eb;
+}
 .infoLabel {
   font-weight: 500;
-  color: #6b7280;
+  color: #768093;
   font-size: 14px;
+}
+
+:global(html.light) .infoLabel {
+  color: #4b5563;
 }
 
 .infoValue {
   font-weight: 600;
-  color: #1f2937;
+  color: #c2d5ee;
   font-size: 14px;
+}
+
+:global(html.light) .infoValue {
+  color: #1e293b;
 }
 
 /* Pricing Highlight */
 .pricingHighlight {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  background: linear-gradient(135deg, #434e47, #323e36);
   padding: 20px;
   border-radius: 12px;
   text-align: center;
-  border: 1px solid #bbf7d0;
+  border: 1px solid #7a9684;
+}
+
+:global(html.light) .pricingHighlight {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  border: 1px solid #a5b4fc;
 }
 
 .pricingLabel {
-  color: #166534;
+  color: #9debbb;
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
+:global(html.light) .pricingLabel {
+  color: #3730a3;
+}
+
 .pricingValue {
-  color: #166534;
+  color: #23d668;
   font-size: 24px;
   font-weight: bold;
+}
+
+:global(html.light) .pricingValue {
+  color: #1e40af;
 }
 
 /* Price Breakdown */
@@ -817,15 +883,18 @@ color: black;
   align-items: center;
   gap: 8px;
 }
-
+:global(html.light) .viewLayoutButton {
+  background: #3b4252;
+  color: white;
+}
 .viewLayoutButton:hover {
   background: #2563eb;
 }
 
 /* OK Button */
 .okbutton {
-  width: 100%;
-  background: #3b82f6;
+  width: 250px;
+  background: linear-gradient(145deg, rgb(47, 87, 85), rgb(90, 150, 144));
   color: white;
   border: none;
   padding: 12px;
@@ -836,9 +905,12 @@ color: black;
 }
 
 .okbutton:hover {
-  background: #2563eb;
+  background: linear-gradient(145deg, rgb(90, 150, 144), rgb(47, 87, 85));
 }
-
+:global(html.light) .okbutton {
+  background: linear-gradient(145deg, #033714, #245307);
+  color: white;
+}
 /* Dropdown Styles */
 .dropdownWrapperDetails {
   margin-top: 12px;
@@ -847,9 +919,9 @@ color: black;
 .dropdownDetails {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #44484c;
   border-radius: 8px;
-  background: white;
+  background: rgb(39, 38, 38);
   font-size: 14px;
 }
 
@@ -896,22 +968,34 @@ color: black;
   color: white;
 }
 
+.dialogFooter {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .dialogBox {
-    padding: 16px;
+    padding: 10px;
     margin: 20px;
+    width: 50vw;
   }
-  
+
+  .imgContainer {
+    width: 40px;
+  }
+
   .infoGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .headerSection {
     flex-direction: column;
     gap: 12px;
   }
 }
+
 @media screen and (min-width: 616px) {
 
   .mobileShow,
@@ -934,6 +1018,7 @@ color: black;
   .onlyMobile {
     display: block;
   }
+
 
   .mobileShow {
     display: block !important;
@@ -1023,6 +1108,7 @@ color: black;
     margin-top: 5vh;
     width: 80vw;
     padding-bottom: 20vh;
+    max-height: 65vh;
     overflow-x: auto;
   }
 
@@ -1032,7 +1118,9 @@ color: black;
   }
 
   .dialogBox {
-    width: 90vw;
+    width: 95vw;
+    padding: 0px 5px 15px 5px;
+
   }
 
   .lastDetailsSection {
@@ -1058,5 +1146,13 @@ color: black;
   .lastText {
     gap: 0.8vh;
     padding-right: 0;
+  }
+}
+
+@media screen and (max-width: 375) {
+  .infoCard {
+
+    padding: 10px;
+    padding-bottom: 0px;
   }
 }
