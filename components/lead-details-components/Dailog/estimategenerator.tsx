@@ -122,8 +122,6 @@ const roundOff = (value: number): number => {
 
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-
-
 const CustomOption = (props: any) => (
   <components.Option {...props}>
     <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -140,8 +138,6 @@ const CustomOption = (props: any) => (
   </components.Option>
 );
 
-
-
 const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   lead,
   openclick,
@@ -153,17 +149,19 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     getSlabByProject,
     currentEstCount,
     fetchEstimatCount,
+    uploadFile,
+    addEstimateGenerated,
     // getLeadByPhoneNumber,
     // addBrokerage,
   } = useData();
   const router = useRouter();
   const [gstPercentage] = useState<number>(5);
-const currentTheme = document.documentElement.classList.contains("light")
-  ? "light"
-  : "dark";
-  const [customerName, setCustomerName] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
+  const currentTheme = document.documentElement.classList.contains("light")
+    ? "light"
+    : "dark";
+  const [customerName, setCustomerName] = useState<string>(lead ? `${lead.firstName ?? ""} ${lead.lastName ?? ""}`.trim() : "");
+  const [phoneNumber, setPhoneNumber] = useState<string>(lead?.phoneNumber?.toString() ?? "");
+  const [address, setAddress] = useState<string>(lead?.address ?? "");
   const [selectedProject, setSelectedProject] = useState<OurProject | null>(
     lead?.bookingRef?.project || null
   );
@@ -198,15 +196,15 @@ const currentTheme = document.documentElement.classList.contains("light")
     configuration: "",
     allInclusiveValue: "",
   });
- const customSelectStyles = (theme: "dark" | "light") => ({
+  const customSelectStyles = (theme: "dark" | "light") => ({
     container: (base: any) => ({
-    ...base,
-    width: "100%",
-  }),
+      ...base,
+      width: "100%",
+    }),
     control: (base: any, state: any) => ({
       ...base,
-       width: "100%",  
-        textAlign: "left", 
+      width: "100%",
+      textAlign: "left",
       backgroundColor: theme === "dark" ? "#151414f5" : "white",
       borderColor: state.isFocused
         ? "#007bff"
@@ -224,7 +222,7 @@ const currentTheme = document.documentElement.classList.contains("light")
     }),
     menu: (base: any) => ({
       ...base,
-       textAlign: "left", 
+      textAlign: "left",
       backgroundColor: theme === "dark" ? "#151414f5" : "white",
       fontSize: "14px", // smaller font in dropdown
     }),
@@ -252,7 +250,7 @@ const currentTheme = document.documentElement.classList.contains("light")
     }),
     singleValue: (base: any) => ({
       ...base,
-       textAlign: "left", 
+      textAlign: "left",
       color: theme === "dark" ? "white" : "#201f1f",
       fontSize: "14px",
     }),
@@ -352,12 +350,12 @@ const currentTheme = document.documentElement.classList.contains("light")
 
   const buildingOptions = hasBuildings
     ? Array.from(
-      new Set(
-        flats
-          .map((f) => f.buildingNo)
-          .filter((b): b is number => b !== undefined && b !== null)
-      )
-    ).sort()
+        new Set(
+          flats
+            .map((f) => f.buildingNo)
+            .filter((b): b is number => b !== undefined && b !== null)
+        )
+      ).sort()
     : [];
 
   // ---------------------------
@@ -365,28 +363,28 @@ const currentTheme = document.documentElement.classList.contains("light")
   // ---------------------------
   const floorOptions = hasBuildings
     ? Array.from(
-      new Set(
-        flats
-          .filter((f) => f.buildingNo === selectedBuildingNo)
-          .map((f) => f.floor)
-          .filter((f): f is number => f !== undefined && f !== null)
-      )
-    ).sort((a, b) => a - b)
+        new Set(
+          flats
+            .filter((f) => f.buildingNo === selectedBuildingNo)
+            .map((f) => f.floor)
+            .filter((f): f is number => f !== undefined && f !== null)
+        )
+      ).sort((a, b) => a - b)
     : Array.from(
-      new Set(
-        flats
-          .map((f) => f.floor)
-          .filter((f): f is number => f !== undefined && f !== null)
-      )
-    ).sort((a, b) => a - b);
+        new Set(
+          flats
+            .map((f) => f.floor)
+            .filter((f): f is number => f !== undefined && f !== null)
+        )
+      ).sort((a, b) => a - b);
 
   // ---------------------------
   // Unit/Flat Options - filtered based on selected building and floor
   // ---------------------------
   const unitOptions = hasBuildings
     ? flats.filter(
-      (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
-    )
+        (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
+      )
     : flats.filter((f) => f.floor === selectedFloor);
 
   // Now replace your existing buildings, floors, flats variables with these:
@@ -394,7 +392,7 @@ const currentTheme = document.documentElement.classList.contains("light")
   const floors = floorOptions;
   const flatsForSelection = unitOptions;
 
-  useEffect(() => { }, [
+  useEffect(() => {}, [
     selectedProject,
     selectedBuildingNo,
     selectedFloor,
@@ -465,39 +463,39 @@ const currentTheme = document.documentElement.classList.contains("light")
     placeholder = "Select Slab",
     disabled = false,
   }) => {
-      const slabOptions = slabs.map((slab) => ({
-        value: slab.id || "",
-        label: slab.name || `Slab ${slab.index}`,
-        original: slab,
-      }));
+    const slabOptions = slabs.map((slab) => ({
+      value: slab.id || "",
+      label: slab.name || `Slab ${slab.index}`,
+      original: slab,
+    }));
 
-      const selectedOption =
-        slabOptions.find((opt) => opt.value === value) || null;
+    const selectedOption =
+      slabOptions.find((opt) => opt.value === value) || null;
 
-      return (
-        <div className={styles.formControl} >
-          <label htmlFor={id}>{label}</label>
-          <div className={styles.inputWrapper}>
-            {Icon && <Icon className={styles.inputIcon} />}
-            <Select
-              id={id}
-              options={slabOptions}
-              value={selectedOption}
-              onChange={(selected) => {
-                onChange(selected?.original || null);
-              }}
-              placeholder={placeholder}
-              classNamePrefix="react-select"
-              closeMenuOnSelect
-              isDisabled={disabled}
-              isSearchable
-              styles={customSelectStyles(currentTheme)}
-              components={{ Option: CustomOption }}
-            />
-          </div>
+    return (
+      <div className={styles.formControl}>
+        <label htmlFor={id}>{label}</label>
+        <div className={styles.inputWrapper}>
+          {Icon && <Icon className={styles.inputIcon} />}
+          <Select
+            id={id}
+            options={slabOptions}
+            value={selectedOption}
+            onChange={(selected) => {
+              onChange(selected?.original || null);
+            }}
+            placeholder={placeholder}
+            classNamePrefix="react-select"
+            closeMenuOnSelect
+            isDisabled={disabled}
+            isSearchable
+            styles={customSelectStyles(currentTheme)}
+            components={{ Option: CustomOption }}
+          />
         </div>
-      );
-    };
+      </div>
+    );
+  };
 
   const CustomSelect: React.FC<CustomSelectProps> = ({
     id,
@@ -519,8 +517,8 @@ const currentTheme = document.documentElement.classList.contains("light")
             opt._id !== undefined
               ? opt._id
               : opt.id !== undefined
-                ? opt.id
-                : opt.value;
+              ? opt.id
+              : opt.value;
 
           const labelKey =
             opt.name ||
@@ -528,7 +526,7 @@ const currentTheme = document.documentElement.classList.contains("light")
             (opt.value !== undefined ? String(opt.value) : String(valueKey));
 
           return {
-            value: String(valueKey), // Ensure value is string for consistent comparison
+            value: String(valueKey ?? ""), // Ensure value is string for consistent comparison
             label: labelKey,
             original: opt,
           };
@@ -540,10 +538,12 @@ const currentTheme = document.documentElement.classList.contains("light")
     }, [options]);
 
     // Find the currently selected option - use strict comparison
+    const safeValue = value !== undefined && value !== null ? String(value) : "";
+
+    // Find the currently selected option
     const selectedOption = React.useMemo(() => {
-      const stringValue = String(value);
-      return formattedOptions.find((opt) => opt.value === stringValue) || null;
-    }, [formattedOptions, value]);
+      return formattedOptions.find((opt) => opt.value === safeValue) || null;
+    }, [formattedOptions, safeValue]);
 
     console.log(`CustomSelect ${label}:`, {
       options: formattedOptions,
@@ -559,7 +559,7 @@ const currentTheme = document.documentElement.classList.contains("light")
           {Icon && <Icon className={styles.inputIcon} />}
 
           <Select
-            key={value} // Add key to force re-render when value changes
+            key={safeValue} // Add key to force re-render when value changes
             id={id}
             options={formattedOptions}
             value={selectedOption}
@@ -1034,7 +1034,6 @@ const currentTheme = document.documentElement.classList.contains("light")
           </div>
 
           <div className={styles.remainSection}>
-
             <div className={styles.section}>
               <div className={styles.sectionHeader}>Project Details</div>
 
@@ -1172,7 +1171,7 @@ const currentTheme = document.documentElement.classList.contains("light")
                   <input
                     readOnly
                     id="carpetArea"
-                    value={selectedFlat?.carpetArea?.toString()}
+                    value={selectedFlat?.carpetArea?.toString() || ""}
                     placeholder="Carpet Area"
                     className={styles.inputField}
                   />
@@ -1186,7 +1185,7 @@ const currentTheme = document.documentElement.classList.contains("light")
                   <input
                     readOnly
                     id="configuration"
-                    value={selectedFlat?.configuration?.toString()}
+                    value={selectedFlat?.configuration?.toString() || ""}
                     placeholder="Configuration"
                     className={styles.inputField}
                   />
@@ -1200,7 +1199,7 @@ const currentTheme = document.documentElement.classList.contains("light")
                   <input
                     readOnly
                     id="allInclusiveValue"
-                    value={selectedFlat?.allInclusiveValue?.toString()}
+                    value={selectedFlat?.allInclusiveValue?.toString() || ""}
                     placeholder="Value"
                     className={styles.inputField}
                   />
@@ -1216,7 +1215,6 @@ const currentTheme = document.documentElement.classList.contains("light")
                 onChange={(val) => setSelectedStampDuty(Number(val))}
                 placeholder="Select Stamp Duty"
               />
-
             </div>
 
             <div className={`${styles.section} ${styles.sectionStacked}`}>
@@ -1307,92 +1305,155 @@ const currentTheme = document.documentElement.classList.contains("light")
           </div>
           <button
             onClick={async () => {
-              //   const ourProjects = projects.find(
-              //     (ele) => ele?._id == selectedProjects?.value
-              //   );
-              //   const flat = ourProjects?.flatList?.find(
-              //     (ele) =>
-              //       ele?.floor == selectedFloor?.value &&
-              //       ele?.buildingNo == selectedBuilding?.value &&
-              //       ele?.number == selectedNumber?.value
-              //   );
-              //   const slab = slabOptions.find(
-              //     (ele) => ele.value == selectedSlab?.value
-              //   );
-              //   console.log(slab);
-              //   let currentCount = 0;
-              //   if (currentLead?.teamLeader?._id && fetchEstimatCount) {
-              //     const countResult = await fetchEstimatCount(
-              //       currentLead.teamLeader?._id
-              //     );
-              //     currentCount = countResult?.data?.count ?? 0;
-              //   }
-              //   const estId = getEstId(
-              //     currentLead?.teamLeader,
-              //     (currentCount ?? 0) + 1
-              //   );
-              //   const estimateData = {
-              //     estID: estId,
-              //     lead: currentLead?._id,
-              //     teamLeader: currentLead?.teamLeader?._id,
-              //     project: ourProjects?._id,
-              //     slab: slab?.value,
-              //     flatNo: flat?.flatNo,
-              //     floor: flat?.floor,
-              //     number: flat?.number,
-              //     carpetArea: flat?.carpetArea,
-              //     buildingNo: flat?.buildingNo,
-              //     ssArea: flat?.ssArea,
-              //     balconyArea: flat?.balconyArea,
-              //     reraArea: flat?.reraArea,
-              //     configuration: flat?.configuration,
-              //     couponId: selectedCoupon?.value ?? null,
-              //     allInclusiveValue: calculatedValues?.allInclusiveValue,
-              //     agreementValue: calculatedValues?.AgreementValue,
-              //     gstAmount: calculatedValues?.GstAmount,
-              //     stampDutyAmount: calculatedValues?.StampDutyAmount,
-              //     totalPayableValue: calculatedValues?.TotalPayable,
-              //     payableBookingValue: calculatedValues?.BookingAmount,
-              //     generatedBy: user?._id,
-              //   };
-              // const result = await addEstimate(estimateData);
-              // if (result.success) {
               try {
-                console.log("triggered 1");
-                await generatePdf(
-                  lead,
-                  selectedProject, // or selectedProject ?? {}
-                  selectedFlat, // ensure no undefined sent
-                  {
-                    ...calculatedValues,
-                    allInclusiveValue: Number(
-                      calculatedValues?.allInclusiveValue
-                    ),
-                    AgreementValue: Number(calculatedValues?.AgreementValue),
-                    GstAmount: Number(calculatedValues?.GstAmount),
-                    StampDutyAmount: Number(calculatedValues?.StampDutyAmount),
-                    TotalPayable: Number(calculatedValues?.TotalPayable),
-                    BookingAmount: Number(calculatedValues?.BookingAmount),
-                  },
-                  slabsbyproject,
-                  user,
-                  currentEstCount ?? 0,
-                  fetchEstimatCount!,
-                  customerName,
-                  phoneNumber,
-                  address
-                );
-              } catch (err) {
-                console.error("PDF generation failed:", err);
+                // Validate required fields
+                if (!selectedProject || !selectedSlab || !selectedFlat) {
+                  alert(
+                    "Please select Project, Slab, and Unit before submitting"
+                  );
+                  return;
+                }
+
+                if (!user?._id) {
+                  alert("User not authenticated");
+                  return;
+                }
+
+                // Get current estimate count
+                let currentCount = 0;
+                if (lead?.teamLeader?._id) {
+                  const countResult = await fetchEstimatCount(
+                    lead.teamLeader._id
+                  );
+                  // currentCount = countResult?.data?.count ?? 0;
+                }
+
+                      // const backResponse = await uploadFile(formD);
+
+
+                // Generate EST ID
+                const estId = getEstId(lead?.teamLeader, currentCount + 1);
+
+                // Prepare estimate data
+                const estimateData = {
+                  estID: estId,
+                  estimateDate: new Date().toISOString(),
+                  lead: lead?._id,
+                  project: selectedProject?._id,
+                  slab: selectedSlab?.id,
+                  flatNo: selectedFlat?.flatNo,
+                  floor: selectedFlat?.floor,
+                  number: selectedFlat?.number,
+                  carpetArea: selectedFlat?.carpetArea
+                    ? Math.round(selectedFlat.carpetArea)
+                    : null,
+                  ssArea: selectedFlat?.ssArea
+                    ? Math.round(selectedFlat.ssArea)
+                    : null,
+                  reraArea: selectedFlat?.reraArea
+                    ? Math.round(selectedFlat.reraArea)
+                    : null,
+                  balconyArea: selectedFlat?.balconyArea
+                    ? Math.round(selectedFlat.balconyArea)
+                    : null,
+                  configuration: selectedFlat?.configuration,
+                  agreementValue: Math.round(calculatedValues.AgreementValue),
+                  allInclusiveValue: selectedFlat?.allInclusiveValue
+                    ? Math.round(selectedFlat.allInclusiveValue)
+                    : null,
+                  discountedAgreementValue: Math.round(
+                    calculatedValues.discountedAgreementValue
+                  ),
+                  discountStampDuty: Math.round(
+                    calculatedValues.discountedStampDuty
+                  ),
+                  discountedGstValue: Math.round(
+                    calculatedValues.discountedGst
+                  ),
+                  discountedPayable: Math.round(
+                    calculatedValues.totalPaybleDiscount
+                  ),
+                  payableBookingValue: Math.round(
+                    calculatedValues.BookingAmount
+                  ),
+                  totalPayableValue: Math.round(calculatedValues.TotalPayable),
+                  coupon: selectedCoupon
+                    ? {
+                        id: selectedCoupon.value,
+                        name: selectedCoupon.label,
+                        codeValue: selectedCoupon.codeValue,
+                        disPercentage: selectedCoupon.disPercentage,
+                      }
+                    : null,
+                  generatedBy: user._id,
+                  teamLeader: lead?.teamLeader?._id,
+                  document: "",
+                  buildingNo: selectedBuildingNo,
+                  stampDutyAmount: Math.round(calculatedValues.StampDutyAmount),
+                  gstAmount: Math.round(calculatedValues.GstAmount),
+                  stampDutyPercentage: selectedStampDuty,
+                };
+
+                console.log("Submitting estimate data:", estimateData);
+
+                // Step 1: Add estimate to database
+               
+
+                try {
+                  console.log("triggered 1");
+
+                const mayurpdf =   await generatePdf(
+                    lead,
+                    selectedProject,
+                    selectedFlat,
+                    {
+                      ...calculatedValues,
+                      allInclusiveValue: Number(
+                        calculatedValues?.allInclusiveValue
+                      ),
+                      AgreementValue: Number(calculatedValues?.AgreementValue),
+                      GstAmount: Number(calculatedValues?.GstAmount),
+                      StampDutyAmount: Number(
+                        calculatedValues?.StampDutyAmount
+                      ),
+                      TotalPayable: Number(calculatedValues?.TotalPayable),
+                      BookingAmount: Number(calculatedValues?.BookingAmount),
+                    },
+                    slabsbyproject,
+                    user,
+                    currentEstCount ?? 0,
+                    fetchEstimatCount ?? "",
+                    customerName,
+                    phoneNumber,
+                    address
+                    // uploadFile,
+                  );
+                      const backResponse = await uploadFile(mayurpdf);
+                      console.log("testing 0",backResponse);
+                      estimateData.document = backResponse.file?.downloadUrl ?? "";
+                  // 
+                }
+
+                catch (err) {
+                  console.error("PDF generation failed:", err);
+                }
+
+ const result = await addEstimateGenerated(estimateData);
+
+                if (!result.success) {
+                  throw new Error(result.message || "Failed to save estimate");
+                }
+
+                openclick(false);
+              } catch (error) {
+                console.error("Unexpected error:", error);
               }
-              // }
             }}
             className={styles.pdfbutton}
           >
             <Download className={styles.pdficon} />
-            <p> Generate PDF</p>
+            <p>Generate PDF</p>
           </button>
-
         </div>
       </div>
     </div>,
@@ -1576,7 +1637,8 @@ export const generatePdf = async (
   // -------- Footer --------
   doc.setFontSize(10);
   doc.text(
-    `${lead?.firstName ?? ""} ${lead?.lastName ?? ""
+    `${lead?.firstName ?? ""} ${
+      lead?.lastName ?? ""
     } — PDF Generated by EV Homes`,
     105,
     285,
@@ -1585,7 +1647,14 @@ export const generatePdf = async (
 
   doc.save(`estimator_${flat?.flatNo}_${Date.now()}.pdf`);
 
+
   await fetchEstimatCount(lead?.teamLeader?._id);
+
+
+const blob = doc.output("blob");
+
+const file = new File([blob], "mayurpdf.pdf", { type: "application/pdf" });
+return file;
 };
 
 export default Estimategenerator;
