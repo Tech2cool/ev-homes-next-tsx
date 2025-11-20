@@ -49,6 +49,7 @@ import { TbHexagonNumber1Filled } from "react-icons/tb";
 import { jsPDF } from "jspdf";
 import { useData } from "@/providers/dataContext";
 import { exec } from "apexcharts";
+import { useUser } from "@/providers/userContext";
 
 interface AddBookingProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -141,6 +142,7 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     uploadFile,
     addPayment,
   } = useData();
+  const { user } = useUser();
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
@@ -902,132 +904,458 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     const background = await toDataUrl(
       "https://cdn.evhomes.tech/86c72869-0942-4180-bd97-10f75d4d4d00-IMG-20250416-WA0011.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6Ijg2YzcyODY5LTA5NDItNDE4MC1iZDk3LTEwZjc1ZDRkNGQwMC1JTUctMjAyNTA0MTYtV0EwMDExLmpwZyIsImlhdCI6MTc0NDgwNzk0OX0.LDwQQAhVD2z58KRWyuC4aOOEOhullO0h_pqHiVGflH8"
     );
+    const logo = await toDataUrl(
+      "https://cdn.evhomes.tech/6c43b153-2ddf-474c-803d-c6fef9ac319a-estimator.png?token=..."
+    );
+    const evHomesLogo = await toDataUrl(
+      "https://cdn.evhomes.tech/6c43b153-2ddf-474c-803d-c6fef9ac319a-estimator.png"
+    );
+    let projectLogo: string | null = null;
+    if (selectedProject?.logo) {
+      try {
+        projectLogo = await toDataUrl(selectedProject.logo);
+      } catch (e) {
+        console.log("Error loading project logo", e);
+      }
+    }
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     doc.addImage(background, "JPEG", 0, 0, pageWidth, pageHeight);
+    doc.addImage(logo, "PNG", 10, 10, 30, 15);
 
-    let y = 20;
+    const addPDFHeader = () => {
+      const logoHeight = 20;
+      const logoWidth = 32;
+      const evWidth = 30;
+      const evHeight = 15;
+
+      if (evHomesLogo) {
+        doc.addImage(evHomesLogo, "PNG", 10, 10, evWidth, evHeight);
+      }
+
+      if (projectLogo) {
+        doc.addImage(projectLogo, "PNG", pageWidth - logoWidth - 10, 10, logoWidth, logoHeight);
+      }
+    };
     const lineGap = 8;
     const addBackground = () => {
       doc.addImage(background, "JPEG", 0, 0, pageWidth, pageHeight);
+      addPDFHeader();
+
     };
-    const addSectionTitle = (title: string) => {
-      doc.setFillColor(230, 230, 250);
-      doc.rect(10, y - 5, 190, 10, "F");
+    addBackground();
+    let y = 20;
+    // Load Project Logo (dynamic)
+
+
+
+
+
+    const addBookingHeader = (unit: string | number, flatNo: string | number) => {
+      const headerText = `UNIT: ${flatNo}`;
+      const headerWidth = doc.getTextWidth(headerText) + 10;
+      const x = (pageWidth - headerWidth) / 2;
+      const headerHeight = 10;
+      const borderRadius = 1;
+
+      doc.setDrawColor(37, 48, 61);
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(x, y, headerWidth, headerHeight, borderRadius, borderRadius, "FD")
+
+      // Add text
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(14);
-      doc.text(title, 14, y + 2);
-      y += 10;
+      doc.setFontSize(12);
+      doc.setTextColor(37, 48, 61);
+      doc.text(headerText, pageWidth / 2, y + 7, { align: "center" });
+
+      y += headerHeight + 10;
     };
 
-    const addField = (
-      label: string,
-      value: string | number | undefined | null
-    ) => {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.text(`${label}: ${value ?? "-"}`, 14, y);
-      y += lineGap;
-      if (y > 270) {
-        doc.addPage();
-         addBackground();
-        y = 20;
+
+
+    const checkPageOverflow = (neededHeight: number) => {
+      if (y + neededHeight > pageHeight - 20) {
+        if (y > 250) {
+          doc.addPage();
+          addBackground();
+          y = 40;
+        }
       }
     };
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Add Booking Details", 105, 15, { align: "center" });
-    doc.line(10, 17, 200, 17);
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
+    const drawCard = (
+      title: string,
+      bodyHeight: number,
+      drawBody: (startY: number) => void
+    ) => {
+      const cardX = 10;
+      const cardWidth = 190;
+      const headerHeight = 10;
+      const borderRadius = 2;
 
-    // Booking Overview
-    addSectionTitle("Booking Overview");
-    addField("Booking Date", formData.bookingDate);
-    addField("Booking Status", formData.bookingstatus);
-    addField("Project", formData.project);
-    addField("Building", formData.blg);
-    addField("Floor", formData.floor);
-    addField("Unit", formData.unit);
-    addField("Flat No", formData.Flatno);
-    addField("Carpet Area", formData.carpet);
-    addField("Flat Cost", formData.Cost);
+      doc.setDrawColor(15, 32, 54);
+      const cardHeight = headerHeight + bodyHeight;
+      checkPageOverflow(cardHeight);
+      const cardY = y;
+      // CARD BASE
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(cardX, cardY, cardWidth, cardHeight, borderRadius, borderRadius, "FD");
 
-    // Parking
-    addSectionTitle("Parking Details");
-    parkingList.forEach((p, i) => {
-      addField(
-        `Parking ${i + 1}`,
-        `Floor - ${p.prfloor}, Number - ${p.parkingno}`
-      );
-    });
+      // HEADER WITH TOP-ONLY ROUNDED CORNERS
+      doc.setFillColor(77, 237, 173);
+      doc.roundedRect(cardX, cardY, cardWidth, headerHeight + 1, borderRadius, borderRadius, "F");
 
-    // Applicants
-    addSectionTitle("Applicants");
-    addField("Address Line 1", formData.addressOne);
-    addField("Address Line 2", formData.addressTwo);
-    addField("City", formData.city);
-    addField("Pincode", formData.pincode);
+      // Flatten header bottom
+      doc.rect(cardX, cardY + headerHeight, cardWidth, 1, "F");
 
-    formData.applicants.forEach((a, i) => {
+      // HEADER TEXT
       doc.setFont("helvetica", "bold");
-      doc.text(`Applicant ${i + 1}`, 14, y);
-      y += 6;
-      doc.setFont("helvetica", "normal");
-      addField("Prefix", a.prefix);
-      addField("First Name", a.firstName);
-      addField("Last Name", a.lastName);
-      addField("Email", a.email);
-      addField("Phone Number", a.phoneNumber);
-      addField("Address Line 1", a.addressLine1);
-      addField("Address Line 2", a.addressLine2);
-      addField("City", a.city);
-      addField("Pincode", a.pincode);
-      addField("Aadhaar Uploaded", a.aadhaarUploaded ? "Yes" : "No");
-      addField("PAN Uploaded", a.panUploaded ? "Yes" : "No");
-      addField("Other Document Uploaded", a.otherUploaded ? "Yes" : "No");
-    });
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text(title, cardX + 5, cardY + 8);
 
-    // Team Overview
-    addSectionTitle("Team Overview");
-    addField("Closing Manager", formData.manager);
-    addField(
-      "Assign To",
-      formData.assignto.map((opt) => opt.label).join(", ") || "-"
-    );
+      // BODY START Y POSITION
+      const startY = cardY + headerHeight + 8;
 
-    // Pre-registration
-    addSectionTitle("Pre-registration");
-    addField("Front Photo Uploaded", formData.frontphoto ? "Yes" : "No");
-    addField("Back Photo Uploaded", formData.backphoto ? "Yes" : "No");
+      // Execute the dynamic body function
+      drawBody(startY);
 
-    // Payment
-    addSectionTitle("Payment Details");
-    payments.forEach((p, i) => {
-      doc.setFont("helvetica", "bold");
-      doc.text(`Payment ${i + 1}`, 14, y);
-      y += 6;
-      doc.setFont("helvetica", "normal");
-      addField("Payment Type", p.paymentType);
-      addField("Payment Mode", p.paymentMode);
-      // addField("Date", p.date);
-      // addField("TDS Amount", p.tdsAmount);
-      // addField("Receipt No", p.receiptNo);
-      // addField("Transaction No", p.transactionNo);
-    });
+      // Update global Y
+      y = cardY + cardHeight + 3;
+    };
 
-    // Confirmation
-    addSectionTitle("Confirmation");
-    addField("Confirmed", confirmChecked ? "Yes" : "No");
+    const addPropertyCard = (data: any) => {
 
+      drawCard("PROPERTY DETAILS", 33, (lineY) => {
+        const firstLine = [
+          { label: "Project", value: selectedProject?.name },
+          { label: "Flat Cost", value: data.Cost },
+        ];
+
+        firstLine.forEach((item, i) => {
+          const colX = 10 + 5 + i * 90;
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.text(item.label, colX, lineY);
+          doc.setFont("helvetica", "normal");
+          doc.text(String(item.value ?? "-"), colX, lineY + 5);
+        });
+
+        lineY += 15;
+
+        const secondLine = [
+          { label: "Building No.", value: data.blg ?? "NA" },
+          { label: "Floor", value: data.floor },
+          { label: "Unit", value: data.unit },
+        ];
+
+        secondLine.forEach((item, i) => {
+          const colX = 10 + 5 + i * 60;
+          doc.setFont("helvetica", "bold");
+          doc.text(item.label, colX, lineY);
+          doc.setFont("helvetica", "normal");
+          doc.text(String(item.value ?? "-"), colX, lineY + 5);
+        });
+      });
+    };
+
+
+    const addCustomerCard = (data: any) => {
+      const applicant = data.applicants?.[0];
+
+      const rows = [
+        [
+          { label: "First Name", value: applicant?.firstName ?? "-" },
+          { label: "Last Name", value: applicant?.lastName ?? "-" },
+        ],
+        [
+          { label: "Requirement Type", value: "Na" },
+          { label: "Email", value: applicant?.email ?? "-" },
+        ],
+        [
+          { label: "Contact Number", value: applicant?.phoneNumber ?? "-" },
+          { label: "Address", value: applicant?.addressLine1 ?? "-" },
+        ],
+        [
+          { label: "City", value: applicant?.city ?? "-" },
+          { label: "Pincode", value: applicant?.pincode ?? "-" },
+        ],
+      ];
+
+
+      drawCard("CUSTOMER DETAILS", 40, (lineY) => {
+        const colWidth = (190 - 10) / 2;
+
+        rows.forEach((row) => {
+          row.forEach((item, i) => {
+            const colX = 10 + 5 + i * colWidth;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.text(item.label + " :", colX, lineY);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(String(item.value ?? "-"), colX + 40, lineY);
+          });
+          lineY += 8;
+        });
+      });
+    };
+
+    const addBookingCard = (data: any) => {
+      const rows = [
+        [{ label: "Booking Date", value: data.bookingDate }],
+        [{ label: "Booking Status", value: data.bookingstatus }],
+        [{ label: "Registration Done", value: regDone === "yes" ? "Yes" : "No", }],
+      ];
+
+      drawCard("BOOKING STATUS", 30, (lineY) => {
+        const colWidth = (190 - 10) / 2;
+
+        rows.forEach((row) => {
+          row.forEach((item, i) => {
+            const colX = 10 + 5 + i * colWidth;
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.text(item.label + " :", colX, lineY);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(String(item.value ?? "-"), colX + 40, lineY);
+          });
+          lineY += 8;
+        });
+      });
+    };
+
+    const addteamInfoCard = (data: any) => {
+      const closingTeam = lead?.revisitRef?.closingTeam || [];
+      const teamCount = closingTeam.length;
+
+      const memberNames = closingTeam
+        .slice(0, 3)
+        .map(member => `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim())
+        .filter(name => name)
+        .join(', ');
+      const rows = [
+        [{
+          label: "Closing Manager",
+          value: (() => {
+            const manager = closingManagers.find((e) => e._id === data.manager);
+            return manager
+              ? `${manager.firstName ?? ""} ${manager.lastName ?? ""}`.trim()
+              : "-";
+          })()
+        }],
+        [
+          {
+            label: `Closing Team(${teamCount})`,
+            value: memberNames || "-"
+          }
+        ],
+        [{
+          label: "Assigned to",
+          value: Array.isArray(data.assignto)
+            ? data.assignto.map((item: OptionType) => item.label || item.value).join(", ")
+            : data.assignto ?? "-"
+        }],
+
+      ];
+
+      drawCard("TEAM INFORMATION", 30, (lineY) => {
+        const colWidth = (190 - 10) / 2;
+
+        rows.forEach((row) => {
+          row.forEach((item, i) => {
+            const colX = 10 + 5 + i * colWidth;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.text(item.label + " :", colX, lineY);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(String(item.value ?? "-"), colX + 40, lineY);
+          });
+          lineY += 8;
+        });
+      });
+    };
+
+    const addapplicantInfoCard = (data: any) => {
+      const count = data.applicants?.length || 1;
+      const bodyHeight = count * 8 + 10;
+
+      drawCard("APPLICANTS", bodyHeight, (lineY) => {
+        if (!data.applicants || data.applicants.length === 0) {
+          doc.text("•  No applicants", 17, lineY);
+
+          return;
+        }
+
+        data.applicants.forEach((app: any) => {
+          doc.setFontSize(10);
+          const fullName =
+            `${app.firstName || ""} ${app.lastName || ""}`.trim() || "-";
+          doc.text(`•  ${fullName}`, 17, lineY);
+          lineY += 8;
+        });
+      });
+    };
+    const addPreRejisCard = (data: any) => {
+      // Count number of checklist items to calculate body height
+      const items = [
+        data?.tenPercentRecieved,
+        data?.stampDuty,
+        data?.tds,
+        data?.gst,
+        data?.noc,
+        data?.kyc,
+        data?.legalCharges,
+        data?.agreement?.handOver,
+      ];
+
+      const bodyHeight = (items.length || 1) * 12 + 10;
+
+      drawCard("PRE-REGISTRATION CHECKLIST", bodyHeight, (lineY: number) => {
+        const drawItem = (label: string, status: any, remark?: string, percentage?: any) => {
+          const statusText = status ? String(status) : "";
+          const statusLower = statusText.toLowerCase();
+
+          const statusColor: [number, number, number] =
+            statusLower === "yes" || statusLower === "true"
+              ? [0, 100, 0]    // green
+              : [26, 54, 93];  // blue
+
+          // Label
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(26, 54, 93);
+          doc.text(label, 15, lineY);
+
+          // Percentage
+          if (percentage != null) {
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(9);
+            doc.setTextColor(102, 102, 102);
+            doc.text(`(${percentage}%)`, 75, lineY);
+          }
+
+          // Status
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(...statusColor);
+          doc.text(statusText, 115, lineY);
+
+          // Remark
+          if (remark) {
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(9);
+            doc.setTextColor(102, 102, 102);
+            doc.text(`(${remark})`, 145, lineY);
+          }
+
+          return lineY + 12;
+        };
+
+        // Draw each checklist item
+        lineY = drawItem("10% Received", data.tenPercentRecieved?.recieved ?? "no", data.tenPercentRecieved?.remark ?? "");
+        doc.setDrawColor(238, 238, 238); doc.setLineWidth(0.5);
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("Stamp Duty Received", data.stampDuty?.recieved ?? "no", data.stampDuty?.remark ?? "grgr", data.stampDuty?.percent ?? "0");
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("TDS Received", data.tds?.recieved, data.tds?.remark, data.tds?.percent);
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("GST Received", data.gst?.recieved, data.gst?.remark, data.gst?.percent);
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("NOC Received", data.noc?.recieved, data.noc?.remark);
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("KYC Received", data.kyc?.recieved, data.kyc?.remark);
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("Legal Charges Received", data.legalCharges?.recieved, data.legalCharges?.remark);
+        doc.line(15, lineY - 6, 195, lineY - 6);
+
+        lineY = drawItem("Agreement HandOver", handover);
+        console.log("Selected handover state:", handover);
+      });
+    };
+    const fileToBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+
+      });
+    };
+
+    const addFormInfoCard = async (data: FormState) => {
+      const images: { title: string; src: string }[] = [];
+
+      if (data.frontphoto) {
+        const frontBase64 = await fileToBase64(data.frontphoto);
+        images.push({ title: "FRONT VIEW", src: frontBase64 });
+      }
+
+      if (data.backphoto) {
+        const backBase64 = await fileToBase64(data.backphoto);
+        images.push({ title: "BACK VIEW", src: backBase64 });
+      }
+
+      const bodyHeight = 80;
+
+      drawCard("BOOKING FORM", bodyHeight, (lineY: number) => {
+        const colWidth = 85;
+        let xPos = 15;
+
+        const padding = 15;
+
+        images.forEach((img) => {
+
+          doc.setDrawColor(26, 54, 93);
+          doc.setLineWidth(0.3);
+          doc.roundedRect(xPos, lineY, colWidth, 70, 2, 2, "S");
+          const headerHeight = 10;
+          const radius = 2;
+          doc.setFillColor(230, 238, 248);
+          doc.roundedRect(xPos, lineY, colWidth, headerHeight, radius, radius, "F");
+
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(26, 54, 93);
+          doc.text(img.title, xPos + colWidth / 2, lineY + 7, { align: "center" });
+
+          doc.addImage(img.src, "JPEG", xPos + padding, lineY + 12, colWidth - padding * 2, 55);
+
+          xPos += colWidth + 10;
+        });
+
+      });
+    };
+    addBookingHeader(formData.unit, formData.Flatno);
+
+    addPropertyCard(formData);
+    addCustomerCard(formData);
+    addBookingCard(formData);
+    addteamInfoCard(formData);
+    addapplicantInfoCard(formData);
+    addPreRejisCard(preRegistrationChecklist);
+    await addFormInfoCard(formData);
     // Footer
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text("Generated by Booking Management System", 105, 285, {
-      align: "center",
-    });
+    doc.setTextColor(41, 40, 40);
+
+    const footerText1 = "This PDF is generated by";
+    const footerText2 = `${user?.firstName || ''} ${user?.lastName || ''} `;
+
+    doc.text(footerText1, pageWidth - 10, pageHeight - 40, { align: "right" });
+    doc.text(footerText2, pageWidth - 10, pageHeight - 35, { align: "right" });
+
 
     doc.save("booking_details.pdf");
   };
