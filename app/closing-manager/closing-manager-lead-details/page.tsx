@@ -443,9 +443,7 @@ const Closingdetaispage = () => {
   if (!isMobile) {
     return (
       <div className={styles.desktopContainer}>
-        {sidebarOpen && (
-          <DashboardSidebar />
-        )}
+        {sidebarOpen && <DashboardSidebar />}
 
         <div className={styles.leftSidebar}>
           <div className={styles.sidebarHeader}>
@@ -479,8 +477,9 @@ const Closingdetaispage = () => {
             {leads?.map((visit, index) => (
               <div
                 key={`${visit._id}-${index}-${visit.phoneNumber}`} // Add index and phone as fallback
-                className={`${styles.visitCard} ${SelectedLead?._id === visit._id ? styles.selectedCard : ""
-                  }`}
+                className={`${styles.visitCard} ${
+                  SelectedLead?._id === visit._id ? styles.selectedCard : ""
+                }`}
                 onClick={() => {
                   setSelectedLead(visit);
 
@@ -551,8 +550,9 @@ const Closingdetaispage = () => {
                     </div>
 
                     <span className={styles.taskName}>
-                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                        }`}
+                      {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                        visit.taskRef?.assignTo?.lastName ?? ""
+                      }`}
                       <span className={styles.status}>
                         <span
                           className={styles.statusText}
@@ -587,21 +587,20 @@ const Closingdetaispage = () => {
                         {visit?.clientInterestedStatus}
                       </div>
                     ) : null}
- {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
-                          (visit.leadType !== "cp" && visit.leadType) ? (
-                          <div
-                            style={{
-                              backgroundColor: "#387478",
-                            }}
-                            className={styles.clientStatus}
-                          >
-                           {visit.leadType === "cp"
-                        ? visit.channelPartner?.firmName ?? "-"
-                        : visit.leadType ?? "-"}
-                          </div>)
-                          : null}
-
-                    
+                    {(visit.leadType === "cp" &&
+                      visit.channelPartner?.firmName) ||
+                    (visit.leadType !== "cp" && visit.leadType) ? (
+                      <div
+                        style={{
+                          backgroundColor: "#387478",
+                        }}
+                        className={styles.clientStatus}
+                      >
+                        {visit.leadType === "cp"
+                          ? visit.channelPartner?.firmName ?? "-"
+                          : visit.leadType ?? "-"}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -703,7 +702,7 @@ const Closingdetaispage = () => {
                     />
                   )}
 
-                  {activeTab === "access" && <QuickAccess />}
+                  {activeTab === "access" && <QuickAccess lead={SelectedLead}/>}
 
                   {activeTab === "taskDetails" && (
                     <TaskOverview task={SelectedLead?.taskRef} />
@@ -720,7 +719,7 @@ const Closingdetaispage = () => {
                   )}
                   {activeTab === "booking" && (
                     <div className={styles.tabContent}>
-                      <BookingOverview />
+                      <BookingOverview lead={SelectedLead} />
                     </div>
                   )}
                   {similarVisits.length > 0 && (
@@ -745,40 +744,45 @@ const Closingdetaispage = () => {
                 <div className={styles.detailstab}>
                   <div className={styles.navbar}>
                     <button
-                      className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "overview" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("overview")}
                     >
                       <FaUser className={styles.icon} /> Client Overview
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "access" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("access")}
                     >
                       <FaBolt className={styles.icon} /> Quick Access
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "taskDetails" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("taskDetails")}
                     >
                       <FaTasks className={styles.icon} /> Task Details
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "followup" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("followup")}
                     >
                       <FaHistory className={styles.icon} /> Follow-up History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "siteVisit" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("siteVisit")}
                     >
                       <FaMapMarkedAlt className={styles.icon} /> Site Visit
@@ -786,16 +790,18 @@ const Closingdetaispage = () => {
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "transfer" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("transfer")}
                     >
                       <FaExchangeAlt className={styles.icon} /> Transfer History
                     </button>
 
                     <button
-                      className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                        }`}
+                      className={`${styles.navItem} ${
+                        activeTab === "booking" ? styles.active : ""
+                      }`}
                       onClick={() => setActiveTab("booking")}
                     >
                       <FaFileContract className={styles.icon} /> Booking
@@ -834,7 +840,6 @@ const Closingdetaispage = () => {
               const response = await updateLeadDetails(
                 SelectedLead?._id ?? "",
                 payload
-
               );
 
               console.log(response);
@@ -896,7 +901,6 @@ const Closingdetaispage = () => {
           >
             <SlidersHorizontal className={styles.filterIcon} />
           </button>
-
         </div>
         <div className={styles.visitsList} onScroll={debouncedHandleScroll}>
           {leads?.map((visit, index) => (
@@ -970,8 +974,9 @@ const Closingdetaispage = () => {
                   </div>
 
                   <span className={styles.taskName}>
-                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${visit.taskRef?.assignTo?.lastName ?? ""
-                      }`}
+                    {`${visit.taskRef?.assignTo?.firstName ?? ""} ${
+                      visit.taskRef?.assignTo?.lastName ?? ""
+                    }`}
                     <span className={styles.status}>
                       <span
                         className={styles.statusText}
@@ -1008,21 +1013,20 @@ const Closingdetaispage = () => {
                   ) : (
                     <span>Not available</span>
                   )}
-                  {(visit.leadType === "cp" && visit.channelPartner?.firmName) ||
-                          (visit.leadType !== "cp" && visit.leadType) ? (
-                          <div
-                            style={{
-                              backgroundColor: "#387478",
-                            }}
-                            className={styles.clientStatus}
-                          >
-                               {visit.leadType === "cp"
-                      ? visit.channelPartner?.firmName ?? "-"
-                      : visit.leadType ?? "-"}
-                          </div>)
-                          : null}
-
-                
+                  {(visit.leadType === "cp" &&
+                    visit.channelPartner?.firmName) ||
+                  (visit.leadType !== "cp" && visit.leadType) ? (
+                    <div
+                      style={{
+                        backgroundColor: "#387478",
+                      }}
+                      className={styles.clientStatus}
+                    >
+                      {visit.leadType === "cp"
+                        ? visit.channelPartner?.firmName ?? "-"
+                        : visit.leadType ?? "-"}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -1144,40 +1148,45 @@ const Closingdetaispage = () => {
                     ✕
                   </button>
                   <button
-                    className={`${styles.navItem} ${activeTab === "overview" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "overview" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("overview")}
                   >
                     <FaUser className={styles.icon} /> Client Overview
                   </button>
 
                   <button
-                    className={`${styles.navItem} ${activeTab === "access" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "access" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("access")}
                   >
                     <FaBolt className={styles.icon} /> Quick Access
                   </button>
 
                   <button
-                    className={`${styles.navItem} ${activeTab === "taskDetails" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "taskDetails" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("taskDetails")}
                   >
                     <FaTasks className={styles.icon} /> Task Details
                   </button>
 
                   <button
-                    className={`${styles.navItem} ${activeTab === "followup" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "followup" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("followup")}
                   >
                     <FaHistory className={styles.icon} /> Follow-up History
                   </button>
 
                   <button
-                    className={`${styles.navItem} ${activeTab === "siteVisit" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "siteVisit" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("siteVisit")}
                   >
                     <FaMapMarkedAlt className={styles.icon} /> Site Visit
@@ -1185,16 +1194,18 @@ const Closingdetaispage = () => {
                   </button>
 
                   <button
-                    className={`${styles.navItem} ${activeTab === "transfer" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "transfer" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("transfer")}
                   >
                     <FaExchangeAlt className={styles.icon} /> Transfer History
                   </button>
 
                   <button
-                    className={`${styles.navItem} ${activeTab === "booking" ? styles.active : ""
-                      }`}
+                    className={`${styles.navItem} ${
+                      activeTab === "booking" ? styles.active : ""
+                    }`}
                     onClick={() => setActiveTab("booking")}
                   >
                     <FaFileContract className={styles.icon} /> Booking Overview
@@ -1223,7 +1234,7 @@ const Closingdetaispage = () => {
                 />
               )}
 
-              {activeTab === "access" && <QuickAccess />}
+              {activeTab === "access" && <QuickAccess lead={SelectedLead}/>}
 
               {activeTab === "taskDetails" && (
                 <TaskOverview task={SelectedLead?.taskRef} />
@@ -1331,7 +1342,7 @@ const VisitDetailsContent = ({
   visit: Lead;
   onCall: (lead: any) => void;
   user: any;
-  socket: any,
+  socket: any;
 }) => {
   const formatDate = (date: any) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -1363,7 +1374,9 @@ const VisitDetailsContent = ({
           style={{ border: "1px solid red" }}
         >
           <div className={styles.statusIcon}>⏰</div>
-          <span className={styles.statusLabel}>Visit Deadline</span>
+          <span className={styles.statusLabel}>
+            {visit?.stage ?? "NA"} Deadline
+          </span>
           <span className={styles.statusValue}>
             {dateFormatOnly(visit?.cycle?.validTill)}
           </span>
@@ -1518,6 +1531,37 @@ const VisitDetailsContent = ({
                   </p>
                 </div>
               </div>
+
+              {visit.siteVisitInterested !== null &&
+                visit.siteVisitInterested !== undefined && (
+                  <>
+                    {/* Main field */}
+                    <div className={styles.infoItem}>
+                      <label className={styles.infoLabel}>
+                        <MdEmail size={11} color="#4a84ff" />
+                        Site Visit Interested
+                      </label>
+                      <p className={styles.infoValue}>
+                        {visit.siteVisitInterested ? "Yes" : "No"}
+                      </p>
+                    </div>
+
+                    {/* Extra field shown only when true */}
+                    {visit.siteVisitInterested === true && (
+                      <div className={styles.infoItem}>
+                        <label className={styles.infoLabel}>
+                          <MdEmail size={11} color="#4a84ff" />
+                          Visit Date
+                        </label>
+                        <p className={styles.infoValue}>
+                          {formatDate(
+                            new Date(visit.siteVisitInterestedDate ?? "NA")
+                          )}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
             </div>
           </div>
         </div>
