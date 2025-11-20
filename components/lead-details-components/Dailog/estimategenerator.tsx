@@ -122,9 +122,7 @@ const roundOff = (value: number): number => {
 
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const currentTheme = document.documentElement.classList.contains("light")
-  ? "light"
-  : "dark";
+
 
 const CustomOption = (props: any) => (
   <components.Option {...props}>
@@ -142,86 +140,7 @@ const CustomOption = (props: any) => (
   </components.Option>
 );
 
-const customSelectStyles = (theme: "dark" | "light") => ({
-  control: (base: any, state: any) => ({
-    ...base,
-    backgroundColor: theme === "dark" ? "#151414f5" : "white",
-    borderColor: state.isFocused
-      ? "#007bff"
-      : theme === "dark"
-      ? "#444444f5"
-      : "#ccc",
-    minHeight: "40px",
-    borderWidth: "2px",
-    color: theme === "dark" ? "white" : "#201f1f",
-    fontSize: "14px", // ✅ smaller font
-    boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
-    "&:hover": {
-      borderColor: "#007bff",
-    },
-  }),
-  menu: (base: any) => ({
-    ...base,
-    backgroundColor: theme === "dark" ? "#151414f5" : "white",
-    fontSize: "14px", // smaller font in dropdown
-  }),
-  option: (base: any, state: any) => ({
-    ...base,
-    backgroundColor: state.isSelected
-      ? theme === "dark"
-        ? "#007bff"
-        : "#cce5ff"
-      : state.isFocused
-      ? theme === "dark"
-        ? "#0056b3"
-        : "#e6f0ff"
-      : theme === "dark"
-      ? "#151414f5"
-      : "white",
-    color: state.isSelected
-      ? theme === "dark"
-        ? "white"
-        : "#201f1f"
-      : theme === "dark"
-      ? "white"
-      : "#201f1f",
-    fontSize: "14px", // smaller font
-  }),
-  singleValue: (base: any) => ({
-    ...base,
-    color: theme === "dark" ? "white" : "#201f1f",
-    fontSize: "14px",
-  }),
-  multiValue: (base: any) => ({
-    ...base,
-    backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
-    fontSize: "14px",
-  }),
-  multiValueLabel: (base: any) => ({
-    ...base,
-    color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
-    fontSize: "14px",
-  }),
-  multiValueRemove: (base: any) => ({
-    ...base,
-    color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
-    fontSize: "14px",
-    ":hover": {
-      backgroundColor: "red",
-      color: "#e4e4e4ff",
-    },
-  }),
-  input: (base: any) => ({
-    ...base,
-    color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
-    fontSize: "14px",
-  }),
-  placeholder: (base: any) => ({
-    ...base,
-    color: theme === "dark" ? "#aaa" : "#999",
-    fontSize: "14px",
-  }),
-});
+
 
 const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   lead,
@@ -239,7 +158,9 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   } = useData();
   const router = useRouter();
   const [gstPercentage] = useState<number>(5);
-
+const currentTheme = document.documentElement.classList.contains("light")
+  ? "light"
+  : "dark";
   const [customerName, setCustomerName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [address, setAddress] = useState<string>("");
@@ -277,7 +198,94 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     configuration: "",
     allInclusiveValue: "",
   });
-
+ const customSelectStyles = (theme: "dark" | "light") => ({
+    container: (base: any) => ({
+    ...base,
+    width: "100%",
+  }),
+    control: (base: any, state: any) => ({
+      ...base,
+       width: "100%",  
+        textAlign: "left", 
+      backgroundColor: theme === "dark" ? "#151414f5" : "white",
+      borderColor: state.isFocused
+        ? "#007bff"
+        : theme === "dark"
+        ? "#444444f5"
+        : "#ccc",
+      minHeight: "40px",
+      borderWidth: "2px",
+      color: theme === "dark" ? "white" : "#201f1f",
+      fontSize: "14px", // ✅ smaller font
+      boxShadow: state.isFocused ? "0 0 0 1px #007bff" : "none",
+      "&:hover": {
+        borderColor: "#007bff",
+      },
+    }),
+    menu: (base: any) => ({
+      ...base,
+       textAlign: "left", 
+      backgroundColor: theme === "dark" ? "#151414f5" : "white",
+      fontSize: "14px", // smaller font in dropdown
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? theme === "dark"
+          ? "#007bff"
+          : "#cce5ff"
+        : state.isFocused
+        ? theme === "dark"
+          ? "#0056b3"
+          : "#e6f0ff"
+        : theme === "dark"
+        ? "#151414f5"
+        : "white",
+      color: state.isSelected
+        ? theme === "dark"
+          ? "white"
+          : "#201f1f"
+        : theme === "dark"
+        ? "white"
+        : "#201f1f",
+      fontSize: "14px", // smaller font
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+       textAlign: "left", 
+      color: theme === "dark" ? "white" : "#201f1f",
+      fontSize: "14px",
+    }),
+    multiValue: (base: any) => ({
+      ...base,
+      backgroundColor: theme === "dark" ? "#007bff" : "#cce5ff",
+      fontSize: "14px",
+    }),
+    multiValueLabel: (base: any) => ({
+      ...base,
+      color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+      fontSize: "14px",
+    }),
+    multiValueRemove: (base: any) => ({
+      ...base,
+      color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+      fontSize: "14px",
+      ":hover": {
+        backgroundColor: "red",
+        color: "#e4e4e4ff",
+      },
+    }),
+    input: (base: any) => ({
+      ...base,
+      color: theme === "dark" ? "#e4e4e4ff" : "#201f1f",
+      fontSize: "14px",
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      color: theme === "dark" ? "#aaa" : "#424040ff",
+      fontSize: "14px",
+    }),
+  });
   useEffect(() => {
     if (lead) {
       setCustomerName(`${lead.firstName ?? ""} ${lead.lastName ?? ""}`.trim());
@@ -344,12 +352,12 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
 
   const buildingOptions = hasBuildings
     ? Array.from(
-        new Set(
-          flats
-            .map((f) => f.buildingNo)
-            .filter((b): b is number => b !== undefined && b !== null)
-        )
-      ).sort()
+      new Set(
+        flats
+          .map((f) => f.buildingNo)
+          .filter((b): b is number => b !== undefined && b !== null)
+      )
+    ).sort()
     : [];
 
   // ---------------------------
@@ -357,28 +365,28 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   // ---------------------------
   const floorOptions = hasBuildings
     ? Array.from(
-        new Set(
-          flats
-            .filter((f) => f.buildingNo === selectedBuildingNo)
-            .map((f) => f.floor)
-            .filter((f): f is number => f !== undefined && f !== null)
-        )
-      ).sort((a, b) => a - b)
+      new Set(
+        flats
+          .filter((f) => f.buildingNo === selectedBuildingNo)
+          .map((f) => f.floor)
+          .filter((f): f is number => f !== undefined && f !== null)
+      )
+    ).sort((a, b) => a - b)
     : Array.from(
-        new Set(
-          flats
-            .map((f) => f.floor)
-            .filter((f): f is number => f !== undefined && f !== null)
-        )
-      ).sort((a, b) => a - b);
+      new Set(
+        flats
+          .map((f) => f.floor)
+          .filter((f): f is number => f !== undefined && f !== null)
+      )
+    ).sort((a, b) => a - b);
 
   // ---------------------------
   // Unit/Flat Options - filtered based on selected building and floor
   // ---------------------------
   const unitOptions = hasBuildings
     ? flats.filter(
-        (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
-      )
+      (f) => f.buildingNo === selectedBuildingNo && f.floor === selectedFloor
+    )
     : flats.filter((f) => f.floor === selectedFloor);
 
   // Now replace your existing buildings, floors, flats variables with these:
@@ -386,7 +394,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const floors = floorOptions;
   const flatsForSelection = unitOptions;
 
-  useEffect(() => {}, [
+  useEffect(() => { }, [
     selectedProject,
     selectedBuildingNo,
     selectedFloor,
@@ -457,39 +465,39 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     placeholder = "Select Slab",
     disabled = false,
   }) => {
-    const slabOptions = slabs.map((slab) => ({
-      value: slab.id || "",
-      label: slab.name || `Slab ${slab.index}`,
-      original: slab,
-    }));
+      const slabOptions = slabs.map((slab) => ({
+        value: slab.id || "",
+        label: slab.name || `Slab ${slab.index}`,
+        original: slab,
+      }));
 
-    const selectedOption =
-      slabOptions.find((opt) => opt.value === value) || null;
+      const selectedOption =
+        slabOptions.find((opt) => opt.value === value) || null;
 
-    return (
-      <div className={styles.formControl}>
-        <label htmlFor={id}>{label}</label>
-        <div className={styles.inputWrapper}>
-          {Icon && <Icon className={styles.inputIcon} />}
-          <Select
-            id={id}
-            options={slabOptions}
-            value={selectedOption}
-            onChange={(selected) => {
-              onChange(selected?.original || null);
-            }}
-            placeholder={placeholder}
-            classNamePrefix="react-select"
-            closeMenuOnSelect
-            isDisabled={disabled}
-            isSearchable
-            styles={customSelectStyles(currentTheme)}
-            components={{ Option: CustomOption }}
-          />
+      return (
+        <div className={styles.formControl} >
+          <label htmlFor={id}>{label}</label>
+          <div className={styles.inputWrapper}>
+            {Icon && <Icon className={styles.inputIcon} />}
+            <Select
+              id={id}
+              options={slabOptions}
+              value={selectedOption}
+              onChange={(selected) => {
+                onChange(selected?.original || null);
+              }}
+              placeholder={placeholder}
+              classNamePrefix="react-select"
+              closeMenuOnSelect
+              isDisabled={disabled}
+              isSearchable
+              styles={customSelectStyles(currentTheme)}
+              components={{ Option: CustomOption }}
+            />
+          </div>
         </div>
-      </div>
-    );
-  };
+      );
+    };
 
   const CustomSelect: React.FC<CustomSelectProps> = ({
     id,
@@ -511,8 +519,8 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
             opt._id !== undefined
               ? opt._id
               : opt.id !== undefined
-              ? opt.id
-              : opt.value;
+                ? opt.id
+                : opt.value;
 
           const labelKey =
             opt.name ||
@@ -976,6 +984,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
         <div className={styles.container}>
           <div className={styles.sectionClient}>
             <div className={styles.sectionHeader}>Client Details</div>
+
             <div className={styles.detailsInfo}>
               <div className={styles.formControl}>
                 <label htmlFor="customerName">Customer Name </label>
@@ -1025,6 +1034,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
           </div>
 
           <div className={styles.remainSection}>
+
             <div className={styles.section}>
               <div className={styles.sectionHeader}>Project Details</div>
 
@@ -1198,14 +1208,14 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               </div>
 
               <CustomSelect
-  id="stampDuty"
-  label="Select Stamp Duty (%)"
-  icon={PiSealPercentFill}
-  options={stampDutyOptions}
-  value={selectedStampDuty}
-  onChange={(val) => setSelectedStampDuty(Number(val))}
-  placeholder="Select Stamp Duty"
-/>
+                id="stampDuty"
+                label="Select Stamp Duty (%)"
+                icon={PiSealPercentFill}
+                options={stampDutyOptions}
+                value={selectedStampDuty}
+                onChange={(val) => setSelectedStampDuty(Number(val))}
+                placeholder="Select Stamp Duty"
+              />
 
             </div>
 
@@ -1295,7 +1305,6 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
               </div>
             </div>
           </div>
-
           <button
             onClick={async () => {
               //   const ourProjects = projects.find(
@@ -1383,6 +1392,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
             <Download className={styles.pdficon} />
             <p> Generate PDF</p>
           </button>
+
         </div>
       </div>
     </div>,
@@ -1566,8 +1576,7 @@ export const generatePdf = async (
   // -------- Footer --------
   doc.setFontSize(10);
   doc.text(
-    `${lead?.firstName ?? ""} ${
-      lead?.lastName ?? ""
+    `${lead?.firstName ?? ""} ${lead?.lastName ?? ""
     } — PDF Generated by EV Homes`,
     105,
     285,

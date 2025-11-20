@@ -82,7 +82,7 @@
 :global(html.light) .circleicon {
   background: linear-gradient(145deg, rgb(72, 85, 91), rgb(112, 137, 147));
   border: 1px solid #3E5F44;
-  color: #ffffff; 
+  color: #ffffff;
   box-shadow: 0 3px 6px #bbc9eb22;
 }
 
@@ -164,7 +164,7 @@
 }
 
 :global(html.light) .quickAccessContainer {
-  background: linear-gradient(145deg, #f9faff );
+  background: linear-gradient(145deg, #f9faff);
 }
 
 :global(html.light) .title {
@@ -599,23 +599,27 @@
   align-items: center;
   color: #f2d563;
 }
-:global(html.light)  .editcnt {
+
+:global(html.light) .editcnt {
   background-color: #ffffff;
-    border: 1px solid #ffffff;
-    box-shadow: 0 2 10px rgba(10, 20, 10, 0.277);
+  border: 1px solid #ffffff;
+  box-shadow: 0 2 10px rgba(10, 20, 10, 0.277);
 
 }
-@media  (max-width: 1024){
+
+@media (max-width: 1024) {
   .editcnt {
-  top: 130px;
-}
+    top: 130px;
+  }
 
 }
-@media  (max-width: 769){
+
+@media (max-width: 769) {
   .editcnt {
-  top: 65px;
+    top: 65px;
+  }
 }
-}
+
 @media (max-width: 1130px) {
 
   .teamplat {
@@ -680,13 +684,15 @@
   .teamplat {
     padding: 0rem;
   }
-  .editcnt {
-  top: 15px;
-  right: 120px;
-  position: absolute;
-  z-index: 99;
 
-}
+  .editcnt {
+    top: 15px;
+    right: 120px;
+    position: absolute;
+    z-index: 99;
+
+  }
+
   .cont {
     gap: 10px;
   }
@@ -697,7 +703,7 @@
   }
 
   .maincot {
-    padding: 0.6rem 0.8rem;
+    padding: 1.3rem 0.5rem 0.3rem 0.5rem;
   }
 
   .lable {
@@ -706,7 +712,7 @@
 
   .call,
   .callgreen {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
 
   .date {
@@ -746,14 +752,9 @@
 }
 
 @media (max-width: 410px) {
-  .maincot {
-    padding: 1.3rem 0.5rem 0.3rem 0.5rem;
-  }
 
-  .call,
-  .callgreen {
-    font-size: 0.6rem;
-  }
+
+
 
   .lable {
     font-size: 0.8rem;
@@ -1049,7 +1050,7 @@
 }
 
 .notFullPaid:hover {
-  background-color:  #1e29d6;
+  background-color: #1e29d6;
   transform: scale(1.05);
 }
 
@@ -1072,6 +1073,7 @@
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
