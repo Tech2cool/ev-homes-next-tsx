@@ -55,7 +55,7 @@ const EstimateHistory: React.FC = () => {
                   onClick={handleBack}
                 />
               </div>
-          <EstimateHistoryDetails estimate={selectedEstimate } />
+          <EstimateHistoryDetails estimate={selectedEstimate} />
             </>
           ) : (
             <EstimateList onCardClick={handleCardClick} leadId={leadId} />

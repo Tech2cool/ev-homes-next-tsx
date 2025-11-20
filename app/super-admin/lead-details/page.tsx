@@ -1609,6 +1609,37 @@ const VisitDetailsContent = ({
                   </p>
                 </div>
               </div>
+
+               {visit.siteVisitInterested !== null &&
+                visit.siteVisitInterested !== undefined && (
+                  <>
+                    {/* Main field */}
+                    <div className={styles.infoItem}>
+                      <label className={styles.infoLabel}>
+                        <MdEmail size={11} color="#4a84ff" />
+                        Site Visit Interested
+                      </label>
+                      <p className={styles.infoValue}>
+                        {visit.siteVisitInterested ? "Yes" : "No"}
+                      </p>
+                    </div>
+
+                    {/* Extra field shown only when true */}
+                    {visit.siteVisitInterested === true && (
+                      <div className={styles.infoItem}>
+                        <label className={styles.infoLabel}>
+                          <MdEmail size={11} color="#4a84ff" />
+                          Visit Date
+                        </label>
+                        <p className={styles.infoValue}>
+                          {formatDate(
+                            new Date(visit.siteVisitInterestedDate ?? "NA")
+                          )}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
             </div>
           </div>
         </div>

@@ -145,7 +145,7 @@ const LeadCard: React.FC<{ estimate: EstimateGenerated; onClick: () => void }> =
                   <BsPerson color="#549eedff" size={12} /> Team Leader:
                 </p>
                 <p className={styles.value}>
-                  {estimate.teamLeader?.firstName} {estimate.teamLeader?.lastName}
+                  {estimate.generatedBy?.reportingTo?.firstName} {estimate.generatedBy?.reportingTo?.lastName}
                 </p>
               </div>
 
@@ -154,9 +154,9 @@ const LeadCard: React.FC<{ estimate: EstimateGenerated; onClick: () => void }> =
                   className={styles.lable}
                   style={{ display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  <MdDetails color="#549eedff" size={12} /> Unit No:
+                  <MdDetails color="#549eedff" size={12} /> Unit Details:
                 </p>
-                <p className={styles.value}>{estimate.flatNo}</p>
+                <p className={styles.value}>{estimate.flatNo}/{estimate.carpetArea}sqft/{estimate.configuration}</p>
               </div>
             </div>
 
