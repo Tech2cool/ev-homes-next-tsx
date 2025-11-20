@@ -174,10 +174,12 @@ const InventoryMain: React.FC = () => {
           </button>
         </div>
       )}
-
-      <button className={styles.okbutton} onClick={closeDialog}>
+<div className={styles.dialogFooter}>
+ <button className={styles.okbutton} onClick={closeDialog}>
         OK
       </button>
+</div>
+     
     </>
   );
 
@@ -369,8 +371,8 @@ const InventoryMain: React.FC = () => {
                       height={100}
                     />
                     <div className={styles.towerNameStyles}>
-                      {selectedProject?.name}{" "}
-                      {tower2Flats.length > 0 ? "- Tower 1" : ""}
+                     
+                      {tower2Flats.length > 0 ? "Tower 1" : ""}
                     </div>
                   </div>
 
@@ -488,10 +490,10 @@ const InventoryMain: React.FC = () => {
           </div>
 
           <div className={styles.infoSection}>
-            <div>{selectedProject?.name ?? "Select a Project"}</div>
+            <div className={styles.infoName}>{selectedProject?.name ?? "Select a Project"}</div>
 
             <div className={styles.flatInfo}>
-              <div>
+              <div className={styles.flatInfoTitle}>
                 Flat Info :
                 <div
                   className={styles.clearFilter}
@@ -528,12 +530,7 @@ const InventoryMain: React.FC = () => {
           <div
             className={styles.dialogBox}
             onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: "600px",
-              width: "90vw",
-              maxHeight: "90vh",
-              overflow: "auto",
-            }}
+          
           >
             <div className={styles.detailsContainer}>
               {/* TOP HEADER BASED ON OCCUPIED */}
