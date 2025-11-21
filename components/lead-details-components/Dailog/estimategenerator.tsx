@@ -36,10 +36,12 @@ import { MdCancel } from "react-icons/md";
 import stylerun from "./dailog.module.css";
 import jsPDF from "jspdf";
 import { number } from "framer-motion";
+import autoTable from "jspdf-autotable";
 
 interface EstimategeneratorProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
   lead?: Lead | null;
+  teamLeader?: EstimateGenerated | null;
 }
 
 // Types
@@ -140,6 +142,7 @@ const CustomOption = (props: any) => (
 
 const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   lead,
+  teamLeader,
   openclick,
 }) => {
   const {
@@ -159,8 +162,12 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
   const currentTheme = document.documentElement.classList.contains("light")
     ? "light"
     : "dark";
-  const [customerName, setCustomerName] = useState<string>(lead ? `${lead.firstName ?? ""} ${lead.lastName ?? ""}`.trim() : "");
-  const [phoneNumber, setPhoneNumber] = useState<string>(lead?.phoneNumber?.toString() ?? "");
+  const [customerName, setCustomerName] = useState<string>(
+    lead ? `${lead.firstName ?? ""} ${lead.lastName ?? ""}`.trim() : ""
+  );
+  const [phoneNumber, setPhoneNumber] = useState<string>(
+    lead?.phoneNumber?.toString() ?? ""
+  );
   const [address, setAddress] = useState<string>(lead?.address ?? "");
   const [selectedProject, setSelectedProject] = useState<OurProject | null>(
     lead?.bookingRef?.project || null
@@ -538,7 +545,8 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
     }, [options]);
 
     // Find the currently selected option - use strict comparison
-    const safeValue = value !== undefined && value !== null ? String(value) : "";
+    const safeValue =
+      value !== undefined && value !== null ? String(value) : "";
 
     // Find the currently selected option
     const selectedOption = React.useMemo(() => {
@@ -1328,8 +1336,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                   // currentCount = countResult?.data?.count ?? 0;
                 }
 
-                      // const backResponse = await uploadFile(formD);
-
+                // const backResponse = await uploadFile(formD);
 
                 // Generate EST ID
                 const estId = getEstId(lead?.teamLeader, currentCount + 1);
@@ -1397,13 +1404,13 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                 console.log("Submitting estimate data:", estimateData);
 
                 // Step 1: Add estimate to database
-               
 
                 try {
                   console.log("triggered 1");
 
-                const mayurpdf =   await generatePdf(
+                  const mayurpdf = await generatePdf(
                     lead,
+                    teamLeader,
                     selectedProject,
                     selectedFlat,
                     {
@@ -1419,7 +1426,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                       TotalPayable: Number(calculatedValues?.TotalPayable),
                       BookingAmount: Number(calculatedValues?.BookingAmount),
                     },
-                    slabsbyproject,
+                    selectedSlab,
                     user,
                     currentEstCount ?? 0,
                     fetchEstimatCount ?? "",
@@ -1428,23 +1435,20 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
                     address
                     // uploadFile,
                   );
-                      const backResponse = await uploadFile(mayurpdf);
-                      console.log("testing 0",backResponse);
-                      estimateData.document = backResponse.file?.downloadUrl ?? "";
-                  // 
-                }
-
-                catch (err) {
+                  // const backResponse = await uploadFile(mayurpdf);
+                  // // console.log("testing 0", backResponse);
+                  // estimateData.document = backResponse.file?.downloadUrl ?? "";
+                } catch (err) {
                   console.error("PDF generation failed:", err);
                 }
 
- const result = await addEstimateGenerated(estimateData);
+                // const result = await addEstimateGenerated(estimateData);
 
-                if (!result.success) {
-                  throw new Error(result.message || "Failed to save estimate");
-                }
+                // if (!result.success) {
+                //   throw new Error(result.message || "Failed to save estimate");
+                // }
 
-                openclick(false);
+                // openclick(false);
               } catch (error) {
                 console.error("Unexpected error:", error);
               }
@@ -1463,6 +1467,7 @@ const Estimategenerator: React.FC<EstimategeneratorProps> = ({
 
 export const generatePdf = async (
   lead: Lead | null | undefined,
+  teamLeader: EstimateGenerated | null | undefined,
   project: OurProject | null,
   flat: Flat | null,
   calculatedValues: CalculatedValues,
@@ -1477,21 +1482,21 @@ export const generatePdf = async (
   const doc = new jsPDF();
   let y = 20;
 
-  const lineGap = 8;
+  const lineGap = 5;
   const addSectionTitle = (title: string) => {
-    doc.setFillColor(230, 230, 250);
-    doc.rect(10, y - 5, 190, 10, "F");
+    // doc.setFillColor(230, 230, 250);
+    // doc.rect(10, y - 5, 190, 10, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    doc.text(title, 14, y + 2);
-    y += 12;
+    doc.text(title, 14, y);
+    y += 5;
   };
 
   const addField = (label: string, value: any) => {
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(`${label}: ${value ?? "-"}`, 14, y);
-    y += lineGap;
+    y += lineGap + 1;
 
     if (y > 275) {
       doc.addPage();
@@ -1508,153 +1513,293 @@ export const generatePdf = async (
     });
   };
 
+  let yPosition = 130;
+
   const logo1 = await getBase64ImageFromUrl(
     "https://cdn.evhomes.tech/6c43b153-2ddf-474c-803d-c6fef9ac319a-estimator.png"
   );
 
   const logo2 = await getBase64ImageFromUrl(project?.logo || logo1);
 
-  // ---------- HEADER ----------
-  doc.addImage(logo1, "PNG", 10, 10, 50, 25);
-  doc.addImage(logo2, "PNG", 150, 5, 50, 35);
+  doc.addImage(logo1, "PNG", 10, 10, 25, 12);
+  doc.addImage(logo2, "PNG", 150, 5, 30, 20);
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("This is an Estimate", 105, 45, { align: "center" });
+  doc.setFontSize(11);
+  doc.text("This is an Estimate", 105, 35, { align: "center" });
 
   doc.setFontSize(11);
-  doc.text(`Date: ${dateFormatWithTime(new Date().toISOString())}`, 105, 52, {
+  doc.text(`Date: ${dateFormatWithTime(new Date().toISOString())}`, 105, 40, {
     align: "center",
   });
 
-  y = 60;
+  y = 50;
 
   const estId = getEstId(lead?.teamLeader, (currentEstCount?.count ?? 0) + 1);
 
+  doc.setFontSize(10);
   doc.text(`EST ID: ${estId}`, 14, y);
-  y += lineGap + 1;
+  y += lineGap;
 
   // Company From
+  doc.setFontSize(10);
   doc.text(`From:\nEv Homes Constructions Pvt. LTD`, 14, y);
   y += 14;
 
   // -------- Section: Client Information --------
-  addSectionTitle("Client Information");
-  addField("Client Name", customerName);
-  addField("Mobile", phoneNumber);
-  addField("Address", address);
+  let yLeft = y;
+  let yRight = y;
+  const xLeft = 14;
+  const xRight = 110;
 
-  addField(
+  // Section titles
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+
+  doc.text("Client Information", xLeft, yLeft);
+  doc.text("Unit Details", xRight, yRight);
+
+  yLeft += 8;
+  yRight += 8;
+
+  // ---- Left Column Fields ----
+  const addLeftField = (label: string, value: any) => {
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`${label}: ${value ?? "-"}`, xLeft, yLeft);
+    yLeft += 5;
+  };
+
+  addLeftField("Client Name", customerName);
+  addLeftField("Mobile", phoneNumber);
+  addLeftField("Address", address ?? "NA");
+  addLeftField(
     "Team Leader",
-    `${lead?.teamLeader?.firstName ?? ""} ${lead?.teamLeader?.lastName ?? ""}`
+    `${teamLeader?.generatedBy?.reportingTo?.firstName ?? ""} ${
+      teamLeader?.generatedBy?.reportingTo?.lastName ?? ""
+    }`
+  );
+  addLeftField(
+    "Attended By",
+    `${user?.firstName ?? ""} ${user?.lastName ?? ""}`
   );
 
-  addField("Attended By", `${user?.firstName ?? ""} ${user?.lastName ?? ""}`);
+  // ---- Right Column Fields ----
+  const addRightField = (label: string, value: any) => {
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`${label}: ${value ?? "-"}`, xRight, yRight);
+    yRight += 5;
+  };
 
-  // -------- Section: Unit Details --------
-  addSectionTitle("Unit Details");
-  addField("Project", project?.name);
-  addField("Floor", flat?.floor);
-  addField("Unit No", flat?.number);
-  addField("Flat No", flat?.flatNo);
-  addField("Configuration", flat?.configuration);
-  addField("Carpet Area (sq.ft)", flat?.carpetArea);
+  addRightField("Project", project?.name);
+  addRightField("Floor", flat?.floor);
+  addRightField("Unit No", flat?.number);
+  addRightField("Flat No", flat?.flatNo);
+  addRightField("Configuration", flat?.configuration);
+
+  if (flat?.reraArea && flat.reraArea > 0)
+    addRightField("Rera Area", `${flat.reraArea} sq.ft`);
+
+  if (flat?.balconyArea && flat.balconyArea > 0)
+    addRightField("Balcony Area", `${flat.balconyArea} sq.ft`);
+
+  if (
+    project?._id !== "project-ev23-malibu-west-koparkhairne-2024" &&
+    flat?.ssArea &&
+    flat.ssArea > 0
+  )
+    addRightField("SS Area", `${flat.ssArea} sq.ft`);
+
+  addRightField("Usable Carpet Area", `${flat?.carpetArea} sq.ft`);
+
+  // Update overall Y to the largest one
+  y = Math.max(yLeft, yRight) + 10;
 
   // -------- Section: Breakup Price --------
-  addSectionTitle("Breakup Price");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Breakup Price:", 14, yPosition);
+  yPosition += 8;
 
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "Agreement Value",
-  //   formatValue(calculatedValues.AgreementValue)
-  // );
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "GST Amount (5%)",
-  //   formatValue(calculatedValues.GSTPayble)
-  // );
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "Stamp Duty Amount",
-  //   formatValue(calculatedValues.StampDutyPlusRegistration)
-  // );
-  // y = drawRow(doc, y, "Registration", "-");
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "All Inclusive Value",
-  //   formatValue(calculatedValues.allInclusiveValue)
-  // );
+  const breakupTableData = [
+    ["Agreement Value", formatValue(calculatedValues.AgreementValue)],
+    ["GST Amount (5%)", formatValue(calculatedValues.GSTPayble)],
+    [
+      "Stamp Duty Amount",
+      formatValue(calculatedValues.StampDutyPlusRegistration),
+    ],
+    ["Registration", "30,000"],
+    ["All Inclusive Value", formatValue(calculatedValues.allInclusiveValue)],
+  ];
 
-  // // -------- Section: Maintenance & Legal --------
-  addSectionTitle("Additional Charges");
-  // y = drawRow(doc, y, "Maintenance + Sinking Fund", "1,00,000");
-  // y = drawRow(doc, y, "Legal Charges", "45,000");
+  autoTable(doc, {
+    startY: yPosition,
+    head: [],
+    body: breakupTableData,
+    theme: "grid",
+    styles: {
+      fontSize: 10,
+      cellPadding: 0.5,
+      lineWidth: 0.2,
+      textColor: [0, 0, 0],
+      lineColor: [0, 0, 0],
+    },
+    headStyles: {
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+      lineWidth: 0.2,
+    },
+    columnStyles: {
+      0: { cellWidth: 90, halign: "left", fontStyle: "bold" },
+      1: { cellWidth: 90, halign: "center" },
+    },
+    margin: { left: 14, right: 14 },
+    didParseCell: function (data) {
+      const rawRow = data.row.raw as unknown as string[];
+      const rowText = rawRow?.[0] ?? "";
 
-  // // -------- Section: Payable Amount as per Slab --------
-  // addSectionTitle(`Payable Amount as per Slab ${slab?.percent}`);
+      if (rowText === "All Inclusive Value" && data.column.index === 1) {
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.textColor = [244, 67, 54];
+      }
+    },
+  });
 
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "Booking Amount",
-  //   formatValue(calculatedValues.BookingAmount)
-  // );
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "GST Amount",
-  //   formatValue(calculatedValues.GSTPayble)
-  // );
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "Stamp Duty + Registration",
-  //   formatValue(calculatedValues.StampDutyPlusRegistration)
-  // );
-  // y = drawRow(
-  //   doc,
-  //   y,
-  //   "Total Payable",
-  //   formatValue(calculatedValues.TotalPayable)
-  // );
+  yPosition = (doc as any).lastAutoTable.finalY + 4;
 
-  // -------- Section: NOTE --------
-  addSectionTitle("NOTE");
-  doc.setTextColor(200, 0, 0);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  yPosition += 8;
+
+  const additionalChargesData = [
+    ["Maintenance + Sinking Fund", "1,00,000.00"],
+    ["Legal Charges", "45,000.00"],
+  ];
+
+  autoTable(doc, {
+    startY: yPosition,
+    head: [],
+    body: additionalChargesData,
+    theme: "grid",
+    styles: {
+      fontSize: 10,
+      cellPadding: 0.5,
+      lineWidth: 0.2,
+      textColor: [0, 0, 0],
+      lineColor: [0, 0, 0],
+    },
+    headStyles: {
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+      lineWidth: 0.2,
+    },
+    columnStyles: {
+      0: { cellWidth: 90, halign: "left", fontStyle: "bold" },
+      1: { cellWidth: 90, halign: "center" },
+    },
+
+    margin: { left: 14, right: 14 },
+  });
+
+  yPosition = (doc as any).lastAutoTable.finalY + 10;
+
+  // Payable Amount as per Slab Table
+  const slabTitle = `Payable Amount as per ${slab?.name || ""} (${
+    calculatedValues.TotalPreviousPercentage
+  }%)`;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text(slabTitle, 14, yPosition);
+  yPosition += 8;
+
+  const payableTableData = [
+    ["Booking Amount", formatValue(calculatedValues.BookingAmount)],
+    ["GST Amount", formatValue(calculatedValues.GSTPayble)],
+    [
+      "Stamp Duty + Registration",
+      formatValue(calculatedValues.StampDutyPlusRegistration),
+    ],
+    ["Total Payable", formatValue(calculatedValues.TotalPayable)],
+  ];
+
+  autoTable(doc, {
+    startY: yPosition,
+    head: [],
+    body: payableTableData,
+    theme: "grid",
+    styles: {
+      fontSize: 10,
+      cellPadding: 0.5,
+      lineWidth: 0.2,
+      textColor: [0, 0, 0],
+      lineColor: [0, 0, 0],
+    },
+    headStyles: {
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+      lineWidth: 0.2,
+    },
+    columnStyles: {
+      0: { cellWidth: 90, halign: "left", fontStyle: "bold" },
+      1: { cellWidth: 90, halign: "center" },
+    },
+
+    margin: { left: 14, right: 14 },
+
+    didParseCell: function (data) {
+      const rawRow = data.row.raw as unknown as string[];
+      const rowText = rawRow?.[0] ?? "";
+
+      if (rowText === "Total Payable" && data.column.index === 1) {
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.textColor = [244, 67, 54];
+      }
+    },
+  });
+
+  yPosition = (doc as any).lastAutoTable.finalY + 15;
+
+  // Move NOTE below the last table
+  y = (doc as any).lastAutoTable.finalY + 10;
+
+  // NOTE Title
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text(
-    "The Prices mentioned are for the day of Estimate generation and may vary at the final agreement.",
-    14,
-    y
-  );
+  doc.setTextColor(244, 67, 54);
+  doc.text("NOTE:", 14, y);
+  y += 5;
+
+  // NOTE Body
+  const noteText =
+    "The prices mentioned are limited to the day on which estimate is generated. This is purely an estimate and " +
+    "final area and pricing shall be at the discretion of the Developer.";
+
+  const splitNote = doc.splitTextToSize(noteText, 180);
+  doc.text(splitNote, 14, y);
+  y += splitNote.length * 5 + 5;
+
+  // reset text color
   doc.setTextColor(0, 0, 0);
-  y += 12;
 
-  // -------- Footer --------
-  doc.setFontSize(10);
+  // Align fully right using page width
+  const pageWidth = doc.internal.pageSize.getWidth();
+
   doc.text(
-    `${lead?.firstName ?? ""} ${
-      lead?.lastName ?? ""
-    } — PDF Generated by EV Homes`,
-    105,
+    `This PDF generated by \n ${user?.firstName ?? ""} ${user?.lastName ?? ""}`,
+    pageWidth - 30,
     285,
     { align: "center" }
   );
 
   doc.save(`estimator_${flat?.flatNo}_${Date.now()}.pdf`);
 
-
   await fetchEstimatCount(lead?.teamLeader?._id);
 
+  const blob = doc.output("blob");
 
-const blob = doc.output("blob");
-
-const file = new File([blob], "mayurpdf.pdf", { type: "application/pdf" });
-return file;
+  const file = new File([blob], "mayurpdf.pdf", { type: "application/pdf" });
+  return file;
 };
 
 export default Estimategenerator;
@@ -1677,7 +1822,13 @@ function getFinancialYear(): string {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
-  return month >= 4 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+
+  const startYear = month >= 4 ? year : year - 1;
+  const endYear = startYear + 1;
+
+  const short = (y: number) => y.toString().slice(-2);
+
+  return `${short(startYear)}-${short(endYear)}`;
 }
 
 function getEstId(
