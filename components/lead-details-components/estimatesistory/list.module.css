@@ -158,6 +158,11 @@
   border-radius: 3px;
 
 }
+.est p:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 :global(html.light) .est {
   background-color: #d0d4f4;
@@ -206,6 +211,9 @@
   color: rgb(255, 255, 255);
   font-size: 2vh;
   margin-left: 15px;
+   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .clientStatus {
@@ -234,6 +242,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 5px;
 }
 
 .nocont {
@@ -277,9 +286,6 @@
     font-size: 0.9rem;
   }
 
-  .leadMeta p {
-    font-size: 0.9rem;
-  }
 
   .leadCard {
     padding: 8px;
