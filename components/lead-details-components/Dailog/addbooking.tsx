@@ -1028,9 +1028,11 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     const addPropertyCard = (data: any) => {
 
       drawCard("PROPERTY DETAILS", 33, (lineY) => {
+          const formattedAmount = Number(data.Cost).toLocaleString("en-IN");
+
         const firstLine = [
           { label: "Project", value: selectedProject?.name },
-          { label: "Flat Cost", value: data.Cost },
+          { label: "Flat Cost", value: formattedAmount },
         ];
 
         firstLine.forEach((item, i) => {

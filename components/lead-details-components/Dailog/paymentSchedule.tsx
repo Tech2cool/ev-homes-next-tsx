@@ -109,9 +109,8 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
         setNames([
           {
             prefix: "",
-            name: `${postSaleLead.firstName || ""} ${
-              postSaleLead.lastName || ""
-            }`.trim(),
+            name: `${postSaleLead.firstName || ""} ${postSaleLead.lastName || ""
+              }`.trim(),
           },
         ]);
       }
@@ -298,15 +297,14 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
       <div class="${styles.modalContent}">
         <div class="${styles.modalHeader}">
           <h3>Payment Schedule Preview</h3>
-          <button onclick="this.closest('.${
-            styles.modalOverlay
-          }').remove()" class="${styles.closeButton}">×</button>
+          <button onclick="this.closest('.${styles.modalOverlay
+      }').remove()" class="${styles.closeButton}">×</button>
         </div>
         <div class="${styles.scheduleModal}">
           <div class="${styles.scheduleList}">
             ${scheduleContent
-              .map(
-                (item: any) => `
+        .map(
+          (item: any) => `
               <div class="${styles.scheduleItem}">
                 <div class="${styles.scheduleHeader}">
                   <strong>${item.name}</strong>
@@ -314,26 +312,25 @@ const PaymentSchedule: React.FC<PaymentScheduleProps> = ({
                 </div>
                 <div class="${styles.scheduleDetails}">
                   <div>Amount: ₹${item.amount.toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}</div>
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}</div>
                 </div>
               </div>
             `
-              )
-              .join("")}
+        )
+        .join("")}
           </div>
           <div class="${styles.scheduleTotal}">
             <strong>Total Payment: ₹${total2.toLocaleString("en-IN", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}</strong>
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}</strong>
           </div>
         </div>
         <div class="${styles.modalFooter}">
-          <button onclick="this.closest('.${
-            styles.modalOverlay
-          }').remove()" class="${styles.okButton}">OK</button>
+          <button onclick="this.closest('.${styles.modalOverlay
+      }').remove()" class="${styles.okButton}">OK</button>
         </div>
       </div>
     `;
@@ -852,7 +849,7 @@ export const generatePDF = async ({
   const agreementValue =
     calculations?.agreementValue ||
     (allInclusiveAmount - registrationCharges) /
-      (1 + (stampDutyPercentage + gstPercentage) / 100);
+    (1 + (stampDutyPercentage + gstPercentage) / 100);
 
   const stampDutyValue =
     calculations?.stampDuty ||
@@ -879,54 +876,74 @@ export const generatePDF = async ({
   const doc = new jsPDF();
 
   // TITLE
-  doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("Payment Schedule", 14, 20);
+  doc.setFontSize(10);
+  doc.setLineWidth(0.7);
+  doc.text("Payment Schedule", 22, 12);
 
-  // Project Name
-  doc.setFontSize(12);
+
+  doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
-  doc.text(`Project: ${project?.name || "N/A"}`, 14, 30);
+  doc.text(`${project?.name || "N/A"}`, 22, 16);
 
-  // Flat/Shop No
-  doc.text(
-    `${propertyType === "Flat" ? "Flat" : "Shop"} No: ${flatNo || "N/A"}`,
-    14,
-    38
-  );
 
-  // Buyer Names
-  let y = 46;
+  const label = propertyType === "Flat" ? "Flat No: " : "Shop No: ";
+  const value = flatNo || "N/A";
+
+  doc.setFont("helvetica", "bold");
+  doc.text(label, 22, 20);
+
+  doc.setFont("helvetica", "normal");
+  doc.text(value, 22 + doc.getTextWidth(label), 20);
+
+
+  let y = 24;
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   names.forEach((name: string, i: number) => {
     const prefix = prefixes?.[i] || "";
     const fullName = `${prefix} ${name}`.trim();
-    doc.text(`${fullName}`, 14, y);
-    y += 6;
+    doc.text(`${fullName}`, 22, y);
+    y += 4;
   });
-
   // All Inclusive Amount
+  const formattedAmount = Number(allInclusiveAmount).toLocaleString("en-IN");
+
   doc.setFont("helvetica", "bold");
-  doc.text(`All Inclusive Amount: ${allInclusiveAmount}`, 14, y + 3);
+  doc.text(`All Inclusive Amount: ${formattedAmount}`, 22, y + 0);
+
 
   // TABLE
   autoTable(doc, {
-    head: [["No.", "Stage", "%", "Amount (₹)"]],
+    head: [["No.", "Stage", "%", "Amount"]],
     body: paymentSchedule,
-    startY: y + 15,
+    startY: y + 2,
+     margin: { left: 22 },
+    columnStyles: {
+      0: { cellWidth: 15 }, // No.
+      1: { cellWidth: 90 }, // Stage
+      2: { cellWidth: 20 }, // %
+      3: { cellWidth: 40 }, // Amount
+    },
     styles: {
       fontSize: 6,
       cellPadding: 1,
+      lineColor: [54, 52, 52],
+      
     },
+
     headStyles: {
-      // fillColor: [41, 128, 185],
-      textColor: 255,
+      fillColor: [255, 255, 255],
+      textColor: 0,
+      lineColor: [54, 52, 52],
+      lineWidth: 0.1,
       fontStyle: "bold",
-      halign: "center",
+      halign: "left",
     },
     bodyStyles: {
-      halign: "center",
+      halign: "left",
+      textColor: 0,
     },
 
     theme: "grid",
