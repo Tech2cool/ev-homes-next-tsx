@@ -3,7 +3,7 @@ import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styles from "./dailog.module.css";
 import { IoLocation, IoPersonOutline } from "react-icons/io5";
 import { BsBuildingFill, BsLinkedin } from "react-icons/bs";
-import Select, { MultiValue } from "react-select";
+import Select, { components } from "react-select";
 import { FaStar } from "react-icons/fa6";
 import { PiBagFill } from "react-icons/pi";
 import { AiFillPicture } from "react-icons/ai";
@@ -348,6 +348,20 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
         }
         return "";
     };
+const ClearIndicator = (props: any) => {
+    return (
+      <components.ClearIndicator
+        {...props}
+        innerProps={{
+          ...props.innerProps,
+          onMouseDown: (e: any) => {
+            e.stopPropagation();
+            props.clearValue();
+          },
+        }}
+      />
+    );
+  };
 
   return ReactDOM.createPortal(
     <div className={styles.dialogOverlay}>
@@ -427,6 +441,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
                     project: [...selected],
                   }));
                 }}
+                  components={{ ClearIndicator }}
                 styles={customSelectStyles(currentTheme)}
               />
               {errors.project && (
@@ -444,6 +459,7 @@ const AddFeedBaack: React.FC<AddFeedBaackProps> =  ({
                 isMulti
                 options={requirementOptions}
                 styles={customSelectStyles(currentTheme)}
+                  components={{ ClearIndicator }}
                 value={formData.requirement}
                 onChange={(selected) => {
                   setformData((prev) => ({

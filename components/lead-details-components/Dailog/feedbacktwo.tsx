@@ -12,6 +12,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { MdCancel, MdFeedback } from "react-icons/md";
 import { useData } from "@/providers/dataContext";
 import { toast } from "react-toastify";
+import DateTimePicker from "@/components/dateTimePicker";
 
 interface FeedbackTwoProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -374,13 +375,20 @@ const onSubmit = async () => {
                       text="Reminder Date & Time"
                     />
                   </label>
-                  <input
+                  {/* <input
                     type="datetime-local"
                     name="reminderDateTime"
                     value={formData.reminderDateTime}
                     onChange={onChangeField}
                     disabled={isSubmitting}
+                  /> */}
+                  <DateTimePicker
+                   name="reminderDateTime"
+                    value={formData.reminderDateTime}
+                    onChange={onChangeField}
+                    disabled={isSubmitting}
                   />
+                  
                   {errors.reminderDateTime && (
                     <p className={styles.errorMsg}>{errors.reminderDateTime}</p>
                   )}

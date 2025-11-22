@@ -8,12 +8,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
+  padding: 11px 15px;
+  border: 2px solid #927fbff5;
+  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   color: #444;
   transition: 0.3s;
 }
@@ -23,8 +23,8 @@
 }
 
 :global(html.light) .icon {
-  font-size: 20px;
-  color: #387478;
+  font-size: 18px;
+  color: #4f6ae6;
 }
 
 :global(html.light) .popup {
@@ -83,12 +83,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 15px;
+  padding: 11px 15px;
   border: 1px solid #555;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #1f1f1f;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   color: #eee;
   transition: 0.3s;
 }
@@ -98,8 +98,8 @@
 }
 
 :global(html.dark) .icon {
-  font-size: 20px;
-  color: #4aa3d3;
+  font-size: 18px;
+  color: #74838e;
 }
 
 :global(html.dark) .popup {

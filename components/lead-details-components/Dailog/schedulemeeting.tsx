@@ -9,6 +9,7 @@ import ReactDOM from "react-dom";
 import { IoMdTime } from "react-icons/io";
 import { FaLocationDot } from "react-icons/fa6";
 import { MdCancel } from "react-icons/md";
+import DateTimePicker from "@/components/dateTimePicker";
 
 interface ScheduleMeetingProps {
     openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -142,12 +143,17 @@ const ScheduleMeeting: React.FC<ScheduleMeetingProps> = ({ openclick }) => {
                                 <RequiredLabel icon={<IoMdTime className={styles.iconcolor} />} text="Appointment Date" />
                             </label>
 
-                            <input
+                            {/* <input
                                 type="datetime-local"
                                 name="dateTime"
                                 value={formData.dateTime}
                                 onChange={onChangeField}
                                 placeholder="Select Date and Time"
+                            /> */}
+                            <DateTimePicker
+                                name="dateTime"
+                                value={formData.dateTime}
+                                onChange={onChangeField}
                             />
                             {errors.dateTime && (
                                 <p className={styles.errorMsg}>{errors.dateTime}</p>
