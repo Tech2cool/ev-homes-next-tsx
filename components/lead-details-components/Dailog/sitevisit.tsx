@@ -21,6 +21,7 @@ import { SiOpensourcehardware } from "react-icons/si";
 import { CgNotes } from "react-icons/cg";
 import { useData } from "@/providers/dataContext";
 import { FcApproval } from "react-icons/fc";
+import DateTimePicker from "@/components/dateTimePicker";
 
 interface SiteVisitProps {
   openclick: React.Dispatch<React.SetStateAction<boolean>>;
@@ -119,13 +120,12 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     teammember:
       visit?.taskRef?.assignTo?._id && visit?.taskRef?.assignTo?.firstName
         ? [
-            {
-              value: visit.taskRef.assignTo._id,
-              label: `${visit.taskRef.assignTo.firstName} ${
-                visit.taskRef.assignTo.lastName ?? ""
+          {
+            value: visit.taskRef.assignTo._id,
+            label: `${visit.taskRef.assignTo.firstName} ${visit.taskRef.assignTo.lastName ?? ""
               }`,
-            },
-          ]
+          },
+        ]
         : [],
 
     feedback: "",
@@ -274,8 +274,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
           formData.prefix?.toLowerCase() === "mr"
             ? "male"
             : formData.prefix
-            ? "female"
-            : null,
+              ? "female"
+              : null,
         location: formData.location,
         lead: visit, // optional
         propertyType: formData.propertyType || null,
@@ -433,8 +433,8 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
       borderColor: state.isFocused
         ? "#007bff"
         : theme === "dark"
-        ? "#444444f5"
-        : "#ccc",
+          ? "#444444f5"
+          : "#ccc",
       minHeight: "40px",
       borderWidth: "2px",
       color: theme === "dark" ? "white" : "#201f1f",
@@ -456,19 +456,19 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
           ? "#007bff"
           : "#cce5ff"
         : state.isFocused
-        ? theme === "dark"
-          ? "#0056b3"
-          : "#e6f0ff"
-        : theme === "dark"
-        ? "#151414f5"
-        : "white",
+          ? theme === "dark"
+            ? "#0056b3"
+            : "#e6f0ff"
+          : theme === "dark"
+            ? "#151414f5"
+            : "white",
       color: state.isSelected
         ? theme === "dark"
           ? "white"
           : "#201f1f"
         : theme === "dark"
-        ? "white"
-        : "#201f1f",
+          ? "white"
+          : "#201f1f",
       fontSize: "14px", // smaller font
     }),
     singleValue: (base: any) => ({
@@ -525,6 +525,20 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
     const masked = "*".repeat(phone.length - 4) + last4;
     return masked;
   }
+  const ClearIndicator = (props: any) => {
+    return (
+      <components.ClearIndicator
+        {...props}
+        innerProps={{
+          ...props.innerProps,
+          onMouseDown: (e: any) => {
+            e.stopPropagation();
+            props.clearValue();
+          },
+        }}
+      />
+    );
+  };
 
   return ReactDOM.createPortal(
     <>
@@ -653,8 +667,13 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                     />
                   </label>
 
-                  <input
+                  {/* <input
                     type="datetime-local"
+                    name="dateTime"
+                    value={formData.dateTime}
+                    onChange={onChangeField}
+                  /> */}
+                  <DateTimePicker
                     name="dateTime"
                     value={formData.dateTime}
                     onChange={onChangeField}
@@ -854,6 +873,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                         project: selected as OptionType[],
                       }))
                     }
+                    components={{ ClearIndicator }}
                     styles={customSelectStyles(currentTheme)}
                   />
                   {errors.project && (
@@ -879,6 +899,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                         requirement: selected as OptionType[],
                       }))
                     }
+                    components={{ ClearIndicator }}
                     styles={customSelectStyles(currentTheme)}
                   />
                   {errors.requirement && (
@@ -979,25 +1000,22 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                     value={
                       formData.cp
                         ? {
-                            value: formData.cp,
-                            label: channelPartners.find(
+                          value: formData.cp,
+                          label: channelPartners.find(
+                            (c) => c._id === formData.cp
+                          )
+                            ? `${channelPartners.find(
                               (c) => c._id === formData.cp
-                            )
-                              ? `${
-                                  channelPartners.find(
-                                    (c) => c._id === formData.cp
-                                  )?.firstName
-                                } ${
-                                  channelPartners.find(
-                                    (c) => c._id === formData.cp
-                                  )?.lastName
-                                } (${
-                                  channelPartners.find(
-                                    (c) => c._id === formData.cp
-                                  )?.firmName
-                                })`
-                              : "",
-                          }
+                            )?.firstName
+                            } ${channelPartners.find(
+                              (c) => c._id === formData.cp
+                            )?.lastName
+                            } (${channelPartners.find(
+                              (c) => c._id === formData.cp
+                            )?.firmName
+                            })`
+                            : "",
+                        }
                         : null
                     }
                     onChange={(selected) => {
@@ -1033,8 +1051,9 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
                       teammember: selected as OptionType[],
                     }))
                   }
+                  
                   styles={customSelectStyles(currentTheme)}
-                  components={{ Option: CustomOption }}
+                  components={{ Option: CustomOption, ClearIndicator }}
                 />
 
                 {errors.teammember && (

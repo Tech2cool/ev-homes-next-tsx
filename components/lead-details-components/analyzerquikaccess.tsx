@@ -61,9 +61,7 @@ const AnalyzerQuickaccess = () => {
                 ))}
             </div>
 
-            <button className={styles.aiButton}>
-                <FaRobot className={styles.aiIcon} />
-            </button>
+           
 
             {addchannelpatner && (
                 <AddChannelPartner openclick={setaddchannelpatner} />
