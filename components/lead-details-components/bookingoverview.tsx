@@ -5,10 +5,11 @@ import BookingOverviewDialogue from "./BookingOverviewDialog";
 import { Building, Calendar, User } from "lucide-react";
 import { IoPersonSharp } from "react-icons/io5";
 import { FaPhoneAlt } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdPhoneInTalk } from "react-icons/md";
 import { IoIosPerson } from "react-icons/io";
 import { BsFillBuildingFill } from "react-icons/bs";
 import { PiBuildingApartmentBold } from "react-icons/pi";
+import { FaLocationDot } from "react-icons/fa6";
 
 interface BookingOverviewProps {
   lead?: Lead | null;
@@ -242,203 +243,179 @@ const BookingOverview: React.FC<BookingOverviewProps> = ({ lead }) => {
           //       </div>
           //     </div>
           //  </div>
-          <div className={styles.bookingPage}>
-            <div className={styles.bookingContainer}>
+          <div className={styles.mainWrapper}>
+            <div className={styles.header}>
+              <div className={styles.titleArea}>
+                <Building className={styles.icon} />
+                <div className={styles.title}>Booking Overview</div>
+              </div>
 
-              {/* Header */}
-              <header className={styles.bookingHeader}>
-                <div className={styles.logo}>
-                  <Building /> Booking Overview
-                </div>
+              <div className={styles.actions}>
+                <button onClick={handlePdfDownload} className={styles.actionBtnPrimary}>
+                  <i className="fas fa-file-pdf"></i>Booking PDF
+                </button>
 
-                <div className={styles.headerActions}>
-                  <button className={`${styles.btn} ${styles.btnPdf}`} onClick={handlePdfDownload}>
-                    <i className="fas fa-file-pdf"></i> Booking PDF
+                {lead?.bookingRef?.costSheetUrl && (
+                  <button
+                    className={styles.actionBtnSecondary}
+                  // onClick={() => window.open(lead.bookingRef.costSheetUrl, "_blank")}
+                  >
+                    <i className="fas fa-file-invoice"></i> Cost Sheet
                   </button>
-                  {lead?.bookingRef?.costSheetUrl ? (
-                    <button
-                      className={`${styles.btn} ${styles.btnCost}`}
-                    
-                    >
-                      <i className="fas fa-file-invoice-dollar"></i> Cost Sheet
-                    </button>
-                  ) : null}
+                )}
+              </div>
+            </div>
 
+            {/* Two Column Layout */}
+            <div className={styles.grid}>
 
-                </div>
-              </header>
+              {/* LEFT */}
+              <div>
+                <div className={styles.card}>
+                  <h3 className={styles.cardHeader}>Project Details</h3>
 
-              {/* Content */}
-              <div className={styles.content}>
-
-                {/* LEFT COLUMN */}
-                <div className={styles.leftColumn}>
-
-                  <div className={styles.card}>
-                    <h2 className={styles.cardTitle}>
-                      <i className="fas fa-home"></i> Project & Unit Details
-                    </h2>
-
-                    <div className={styles.infoGrid}>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Project Name</div>
-                        <div className={styles.infoValue}>{booking?.project?.name ?? "NA"}</div>
+                  <div className={styles.detailGrid}>
+                    {[
+                      ["Project Name", booking?.project?.name],
+                      ["Building", booking?.buildingNo],
+                      ["Floor", booking?.floor],
+                      ["Unit Number", booking?.unitNo],
+                      ["Carpet Area", lead?.bookingRef?.carpetArea],
+                    ].map(([label, value], i) => (
+                      <div key={i} className={styles.detailItem}>
+                        <p className={styles.label}>{label}</p>
+                        <p className={styles.value}>{value || "NA"}</p>
                       </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Floor</div>
-                        <div className={styles.infoValue}>{booking?.floor ?? "NA"}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Building</div>
-                        <div className={styles.infoValue}>{booking?.buildingNo ?? "NA"}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Unit Number</div>
-                        <div className={styles.infoValue}>{booking?.unitNo ?? "NA"}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Configuration</div>
-                        <div className={styles.infoValue}>{lead?.propertyType ?? "NA"}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Apartment Choices</div>
-                        <div className={styles.choicesList}>
-                          {lead?.requirement?.map((choice, i) => (
-                            <span key={i} className={styles.choiceBadge}>{choice}</span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Closing Manager</div>
-                        <div className={styles.infoValue}>{`${lead?.teamLeader?.firstName ?? ""} ${lead?.teamLeader?.lastName ?? ""}`}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Date</div>
-                        <div className={styles.infoValue}>{lead?.bookingRef?.date
-                          ? new Date(lead.bookingRef.date).toLocaleDateString("en-IN")
-                          : "NA"}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Parking</div>
-                        <div className={styles.infoValue}>
-                          {Array.isArray(lead?.bookingRef?.parking)
-                            ? lead.bookingRef.parking.map(p => p).join(", ")
-                            : lead?.bookingRef?.parking || "NA"}
-                        </div>
+                    ))}
+                    <div className={styles.detailItemFull}>
+                      <p className={styles.label}>Apartment Choices</p>
+                      <div className={styles.badgesRow}>
+                        <span className={styles.badge}>{booking?.requirement ?? "NA"}</span>
 
                       </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Carpet Area</div>
-                        <div className={styles.infoValue}>{lead?.bookingRef?.carpetArea ?? ""}</div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>Assigned To</div>
-                        <div className={styles.infoValue}>
-                          {Array.isArray(lead?.bookingRef?.postSaleAssignTo)
-                            ? lead.bookingRef.postSaleAssignTo.map(emp => emp.firstName).join(", ")
-                            : lead?.bookingRef?.postSaleAssignTo || "NA"}
-                        </div>
-
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.rightColumn}>
-
-                  {/* Applicant Details */}
-                  <div className={styles.card}>
-                    <h2 className={styles.cardTitle}>
-                      <i className="fas fa-users"></i> Applicant Details
-                    </h2>
-
-                    <div className={styles.applicantList}>
-                      {lead?.bookingRef?.applicants?.length ? (
-                        lead.bookingRef.applicants.map((app, i) => (
-                          <div key={i} className={styles.applicantCard}>
-
-                            <div className={styles.applicantHeader}>
-                              <div className={styles.applicantName}>{`${app.firstName || "NA"} ${app.lastName || "NA"}`}</div>
-
-                            </div>
-
-                            <div className={styles.applicantContact}>
-                              <div className={styles.contactItem}>📞 {app.phoneNumber || "NA"}</div>
-                              <div className={styles.contactItem}>✉️ {app.email || "NA"}</div>
-                            </div>
-
-                            <div className={styles.infoItem} style={{ marginTop: "15px" }}>
-                              <div className={styles.infoLabel}>Address</div>
-                              <div className={styles.infoValue}>{app.address || "NA"}</div>
-                            </div>
-
-                          </div>
-                        ))
-                      ) : (
-                        <div className={styles.noData}>No applicants found</div>
-                      )}
-                    </div>
-
-
-                  </div>
-
-
-
-                  <div className={styles.card}>
-                    <h2 className={styles.cardTitle}>
-                      <Calendar /> Work Information
-                    </h2>
-
-                    <div className={styles.infoGrid}>
-                      <div className={styles.infoItem}>
-                        <label className={styles.infoLabel}>Occupation</label>
-                        <p className={styles.infoValue}>{lead?.occupation || "NA"}</p>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <label className={styles.infoLabel}>Remark</label>
-                        <p className={styles.infoValue}>{lead?.additionLinRemark ?? "NA"}</p>
-                      </div>
-
-                      {lead?.linkedIn && (
-                        <div className={styles.infoItem}>
-                          <button
-                            className={`${styles.infoButton}`}
-                            onClick={() => window.open(lead.linkedIn, "_blank")}
-                          >
-                            🔗 LinkedIn Profile
-                          </button>
-
-                          {lead?.uploadedLinkedIn && (
-                            <button
-                              className={`${styles.infoButton}`}
-                              onClick={() => window.open(lead.uploadedLinkedIn, "_blank")}
-                            >
-                              📄 View Document
-                            </button>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </div>
 
+
+
+                </div>
+              </div>
+              <div>
+                <div className={styles.card}>
+                  <h3 className={styles.cardHeader}>Booking Details</h3>
+
+                  <div className={styles.detailGrid}>
+                    {[
+                      ["Booking Date", booking?.date?.toString().split("T")[0]],
+                      ["Configuration", lead?.propertyType],
+                      ["Parking",
+                        Array.isArray(booking?.parking)
+                          ? booking.parking
+                            .map(p => {
+                              if (typeof p === "string" || typeof p === "number") return p;
+                              const floor = p.floor ?? "";
+                              const num = p.number ?? "";
+                              return [floor, num].filter(Boolean).join(" ");
+                            })
+                            .join(", ")
+                          : booking?.parking ?? "NA"
+                      ],
+
+
+                      ["Closing Manager", booking?.closingManager?.firstName + " " + booking?.closingManager?.lastName],
+
+
+
+                    ].map(([label, value], i) => (
+                      <div key={i} className={styles.detailItem}>
+                        <p className={styles.label}>{label}</p>
+                        <p className={styles.value}>{value || "NA"}</p>
+                      </div>
+                    ))}
+
+                  </div>
+                  <div className={styles.assignto}>
+                    <p className={styles.label}>Asign To</p>
+                    <div className={styles.badgesRow}>
+                      {Array.isArray(booking?.postSaleAssignTo)
+                        ? booking.postSaleAssignTo
+                          .map(emp => `${emp.firstName ?? ""} ${emp.lastName ?? ""}`.trim())
+                          .join(", ")
+                        : booking?.postSaleAssignTo ?? "NA"}
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+
+            </div>
+            {/* RIGHT */}
+            <div>
+              <div className={styles.card}>
+                <h3 className={styles.cardHeader}>Applicants</h3>
+
+                <div className={styles.applicantsGrid}>
+                  {lead?.bookingRef?.applicants?.map((app, i) => (
+                    <div className={styles.appCard} key={i}>
+                      <p className={styles.appName}>{app.firstName} {app.lastName}</p>
+
+                      <div className={styles.appDetails}>
+                        <div className={styles.phonedesign}><MdPhoneInTalk className={styles.Aapplianticon} /> {app.phoneNumber}</div>
+                        {app.email && (
+                          <div className={styles.phonedesign}><MdEmail className={styles.Aapplianticon} /> {app.email}</div>
+                        )}
+
+                        {app.address && (
+                          <p className={styles.phonedesign}>
+                            <FaLocationDot className={styles.Aapplianticon} />
+                            {app.address}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+
+
+            </div>
+            <div className={styles.card}>
+              <h3 className={styles.cardHeader}>Work Information</h3>
+
+              <div className={styles.detailGrid}>
+                <div className={styles.detailItem}>
+                  <p className={styles.label}>Occupation</p>
+                  <p className={styles.value}>{lead?.occupation || "NA"}</p>
                 </div>
 
+                <div className={styles.detailItem}>
+                  <p className={styles.label}>Remark</p>
+                  <p className={styles.value}>{lead?.additionLinRemark || "NA"}</p>
+                </div>
+
+                {lead?.linkedIn && (
+                  <button
+                    className={styles.linkBtn}
+                    onClick={() => window.open(lead.linkedIn, "_blank")}
+                  >
+                    🔗 View LinkedIn
+                  </button>
+                )}
+
+                {lead?.uploadedLinkedIn && (
+                  <button
+                    className={styles.linkBtn}
+                    onClick={() => window.open(lead.uploadedLinkedIn, "_blank")}
+                  >
+                    📄 Document
+                  </button>
+                )}
               </div>
             </div>
           </div>
+
 
 
 

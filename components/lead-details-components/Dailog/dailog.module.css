@@ -281,10 +281,11 @@
 
 }
 
+
 .formControl input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px #000000f5 inset !important;
   -webkit-text-fill-color: #fff !important;
-  font-size: 1vw !important;
+  /* font-size: 1vw !important; */
   border: 2px solid #19191af5 !important;
   border-radius: 8px !important;
 }
