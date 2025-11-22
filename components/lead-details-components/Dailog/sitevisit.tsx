@@ -426,6 +426,7 @@ const SiteVisit: React.FC<SiteVisitProps> = ({ openclick, visit }) => {
   const handleCancelConfirm = () => {
     setShowConfirm(false);
   };
+  
   const customSelectStyles = (theme: "dark" | "light") => ({
     control: (base: any, state: any) => ({
       ...base,

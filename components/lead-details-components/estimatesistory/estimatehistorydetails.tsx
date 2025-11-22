@@ -1,8 +1,11 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./estimatedetsils.module.css";
+import dailogstyles from "../Dailog/dailog.module.css";
+
 import { BarChart2 } from "lucide-react";
 import { BsFillChatSquareTextFill } from "react-icons/bs";
+import { useData } from "@/providers/dataContext";
 
 // Types for Lead & Estimate Details
 interface Person {
@@ -42,7 +45,18 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({
   estimate,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [smallDialog, setsmallDialog] = useState(false);
+  const [revokeDialog, setRevokeDialog] = useState(false);
+  const [handoverDialog, setHandoverDialog] = useState(false);
+  const [reason, setReason] = useState("");
+  const [agreeChecked, setAgreeChecked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const smallDialogRef = useRef<HTMLDivElement | null>(null);
+
+  const { updateHandoverRevoke } = useData();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -86,314 +100,358 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({
   const shouldShowFirstRow =
     estimate?.physicalPrice != null && estimate?.finalEstDoc != null;
 
+  // Dialog handlers
+  const handleCancelConfirm = () => {
+    setShowStatusDialog(false);
+  };
+
+  // Revoke handlers
+  const handleRevokeClick = () => {
+    setsmallDialog(false);
+    setRevokeDialog(true);
+  };
+
+  const handleRevokeSubmit = async () => {
+    if (!estimate?.id) {
+      console.error("No estimate ID found");
+      return;
+    }
+
+    try {
+      const data = {
+        status: "revoke", 
+        reason: reason,
+      };
+
+      const result = await updateHandoverRevoke(estimate.id, data);
+
+      if (result.success) {
+        console.log("Revoke successful:", result);
+        // You might want to update local state or trigger a refresh here
+      } else {
+        console.error("Revoke failed:", result.message);
+        // Handle error (show toast, etc.)
+      }
+    } catch (error) {
+      console.error("Error during revoke:", error);
+    } finally {
+      setRevokeDialog(false);
+      setReason("");
+      setAgreeChecked(false);
+    }
+  };
+
+  const handleRevokeCancel = () => {
+    setRevokeDialog(false);
+    setReason("");
+    setAgreeChecked(false);
+  };
+
+  // Handover handlers
+  const handleHandoverClick = () => {
+    setsmallDialog(false);
+    setHandoverDialog(true);
+  };
+
+  const handleHandoverSubmit = async () => {
+    if (!estimate?.id) {
+      console.error("No estimate ID found");
+      return;
+    }
+
+    try {
+      const data = {
+        status: "handedOver", // matching your Flutter code
+        reason: reason,
+      };
+
+      const result = await updateHandoverRevoke(estimate.id, data);
+
+      if (result.success) {
+        console.log("Handover successful:", result);
+        // You might want to update local state or trigger a refresh here
+      } else {
+        console.error("Handover failed:", result.message);
+        // Handle error (show toast, etc.)
+      }
+    } catch (error) {
+      console.error("Error during handover:", error);
+    } finally {
+      setHandoverDialog(false);
+      setReason("");
+      setAgreeChecked(false);
+    }
+  };
+
+  const handleHandoverCancel = () => {
+    setHandoverDialog(false);
+    setReason("");
+    setAgreeChecked(false);
+  };
+
+  // Close small dialog when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (!smallDialog) return;
+
+      if (
+        smallDialogRef.current &&
+        !smallDialogRef.current.contains(e.target as Node)
+      ) {
+        setsmallDialog(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [smallDialog]);
+
+  // Close dialogs when clicking on overlay
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      setsmallDialog(false);
+      setRevokeDialog(false);
+      setHandoverDialog(false);
+    }
+  };
+
   if (!estimate) {
     return <div className={styles.nocont}>Select a lead to view details</div>;
   }
 
   return (
-    <div
-      className={styles.sectionContainer}
-      style={{ justifyContent: "center" }}
-    >
-      <div className={`${styles.leadHistoryContainer} ${styles.anotherClass}`}>
-        <div className={styles.detailsContainer}>
-          {/* Left Section */}
-          <div
-            className={styles.leftSection}
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            <div className={styles.avatar}>
-              {estimate.lead?.firstName?.charAt(0) ?? ""}
-            </div>
-            <div className={styles.name}>
-              {estimate.lead?.firstName} {estimate.lead?.lastName}
-            </div>
-            <div className={styles.phone}>
-              {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
-            </div>
-
+    <>
+      <div
+        className={styles.sectionContainer}
+        style={{ justifyContent: "center" }}
+      >
+        <div
+          className={`${styles.leadHistoryContainer} ${styles.anotherClass}`}
+        >
+          <div className={styles.detailsContainer}>
+            {/* Left Section */}
             <div
-              className={styles.optionsContainer}
-              style={{
-                flexDirection: "column",
-                gap: "2px",
-                paddingTop: "15px",
-              }}
+              className={styles.leftSection}
+              style={{ display: "flex", flexDirection: "column" }}
             >
-              <div className={styles.optionsWrapper} ref={dropdownRef}>
-                <div
-                  className={styles.options}
-                  style={{
-                    border: "none",
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                  }}
-                  onClick={() => setShowDropdown(!showDropdown)}
-                >
-                  <BarChart2 color="#7482ff" />
-                </div>
-                {showDropdown && (
-                  <div className={styles.dropdown}>
-                    <div className={styles.dropdownItem}>
-                      Give Final Estimate
-                    </div>
+              <div className={styles.avatar}>
+                {estimate.lead?.firstName?.charAt(0) ?? ""}
+              </div>
+              <div className={styles.name}>
+                {estimate.lead?.firstName} {estimate.lead?.lastName}
+              </div>
+              <div className={styles.phone}>
+                {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
+              </div>
+
+              <div
+                className={styles.optionsContainer}
+                style={{
+                  flexDirection: "column",
+                  gap: "2px",
+                  paddingTop: "15px",
+                }}
+              >
+                <div className={styles.optionsWrapper} ref={dropdownRef}>
+                  <div
+                    className={styles.options}
+                    style={{
+                      border: "none",
+                      backgroundColor: "rgba(255,255,255,0.05)",
+                    }}
+                    onClick={() => setShowDropdown(!showDropdown)}
+                  >
+                    <BarChart2 color="#7482ff" />
                   </div>
-                )}
+                  {showDropdown && (
+                    <div className={styles.dropdown}>
+                      <div className={styles.dropdownItem}>
+                        Give Final Estimate
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Middle Section */}
-          <div className={styles.middleSection}>
-            <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>
-              Client Details :
-            </p>
-            <p>
-              <span className={styles.label}>Estimate ID:</span>{" "}
-              <span className={styles.value}>{estimate.estID}</span>
-            </p>
-            <p>
-              <span className={styles.label}>Generated By:</span>{" "}
-              <span className={styles.value}>
-                {estimate.generatedBy?.firstName}{" "}
-                {estimate.generatedBy?.lastName}
-              </span>
-            </p>
-            <p>
-              <span className={styles.label}>Mobile No:</span>{" "}
-              <span className={styles.value}>
-                {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
-              </span>
-            </p>
-            <p>
-              <span className={styles.label}>Team Leader:</span>{" "}
-              <span className={styles.value}>
-                {estimate.generatedBy?.reportingTo?.firstName}{" "}
-                {estimate.generatedBy?.reportingTo?.lastName}
-              </span>
-            </p>
-            <p>
-              <span className={styles.label}>Address:</span>{" "}
-              <span className={styles.value}>
-                {estimate.lead?.address ?? "NA"}
-              </span>
-            </p>
-          </div>
-
-          {/* Right Section */}
-          <div className={styles.rightSection} style={{ gap: "0.3vh" }}>
-            <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>
-              Unit Details :
-            </p>
-            <p>
-              <span className={styles.label}>Project:</span>{" "}
-              <span className={styles.value}>
-                {estimate.lead?.project.map((e) => e.name).join(", ")}
-              </span>
-            </p>
-            <p>
-              <span className={styles.label}>Configuration:</span>{" "}
-              <span className={styles.value}>{estimate.configuration}</span>
-            </p>
-            <p>
-              <span className={styles.label}>Flat no:</span>{" "}
-              <span className={styles.value}>{estimate.flatNo}</span>
-            </p>
-            <p>
-              <span className={styles.label}>SS area:</span>{" "}
-              <span className={styles.value}>{estimate.ssArea}</span>
-            </p>
-            <p>
-              <span className={styles.label}>Balcony area:</span>{" "}
-              <span className={styles.value}>{estimate.balconyArea}</span>
-            </p>
-            <p>
-              <span className={styles.label}>Rera area:</span>{" "}
-              <span className={styles.value}>{estimate.reraArea}</span>
-            </p>
-            <p>
-              <span className={styles.label}>Carpet area:</span>{" "}
-              <span className={styles.value}>{estimate.carpetArea} sq.ft</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Financial Price Section */}
-        <div
-          style={{
-            color: "white",
-            fontSize: "20px",
-            fontWeight: 600,
-            padding: "1vw",
-          }}
-          className={styles.sectiontwo}
-        >
-          <p className={styles.heading}>Financial Overview</p>
-          <button className={`${styles.finalbutton} ${styles.optionsbutton}`}>
-            <div
-              className={styles.options}
-              style={{
-                border: "none",
-                backgroundColor: "rgba(255, 255, 255, 0.46)",
-              }}
-            >
-              <BsFillChatSquareTextFill color="#eaecffff" />
+            {/* Middle Section */}
+            <div className={styles.middleSection}>
+              <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>
+                Client Details :
+              </p>
+              <p>
+                <span className={styles.label}>Estimate ID:</span>{" "}
+                <span className={styles.value}>{estimate.estID}</span>
+              </p>
+              <p>
+                <span className={styles.label}>Generated By:</span>{" "}
+                <span className={styles.value}>
+                  {estimate.generatedBy?.firstName}{" "}
+                  {estimate.generatedBy?.lastName}
+                </span>
+              </p>
+              <p>
+                <span className={styles.label}>Mobile No:</span>{" "}
+                <span className={styles.value}>
+                  {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
+                </span>
+              </p>
+              <p>
+                <span className={styles.label}>Team Leader:</span>{" "}
+                <span className={styles.value}>
+                  {estimate.generatedBy?.reportingTo?.firstName}{" "}
+                  {estimate.generatedBy?.reportingTo?.lastName}
+                </span>
+              </p>
+              <p>
+                <span className={styles.label}>Address:</span>{" "}
+                <span className={styles.value}>
+                  {estimate.lead?.address ?? "NA"}
+                </span>
+              </p>
             </div>
-            Get Final Estimate
-          </button>
-        </div>
-        <div className={styles.finalprice}>
-          <div className={styles.priceContainer}>
-            <h2>Quoting Price</h2>
-            <div className={styles.priceGrid}>
-              <p className={styles.priceTitle}>📄 Agreement Value</p>
-              <p className={styles.priceAmount}>
-                ₹ {formatNumber(estimate.agreementValue ?? "")}
-              </p>
 
-              <p className={styles.priceTitle}>🏛️ Stamp Duty</p>
-              <p className={styles.priceAmount}>
-                ₹ {formatNumber(estimate.stampDutyAmount ?? "")}
+            {/* Right Section */}
+            <div className={styles.rightSection} style={{ gap: "0.3vh" }}>
+              <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>
+                Unit Details :
               </p>
-
-              <p className={styles.priceTitle}>💰 GST Amount</p>
-              <p className={styles.priceAmount}>
-                ₹ {formatNumber(estimate.gstAmount ?? "")}
+              <p>
+                <span className={styles.label}>Project:</span>{" "}
+                <span className={styles.value}>
+                  {estimate.lead?.project.map((e) => e.name).join(", ")}
+                </span>
               </p>
-
-              <p className={styles.priceTitle}>💵 All-Inclusive</p>
-              <p className={styles.priceAmount}>
-                ₹ {formatNumber(estimate.allInclusiveValue ?? "")}
+              <p>
+                <span className={styles.label}>Configuration:</span>{" "}
+                <span className={styles.value}>{estimate.configuration}</span>
+              </p>
+              <p>
+                <span className={styles.label}>Flat no:</span>{" "}
+                <span className={styles.value}>{estimate.flatNo}</span>
+              </p>
+              <p>
+                <span className={styles.label}>SS area:</span>{" "}
+                <span className={styles.value}>{estimate.ssArea}</span>
+              </p>
+              <p>
+                <span className={styles.label}>Balcony area:</span>{" "}
+                <span className={styles.value}>{estimate.balconyArea}</span>
+              </p>
+              <p>
+                <span className={styles.label}>Rera area:</span>{" "}
+                <span className={styles.value}>{estimate.reraArea}</span>
+              </p>
+              <p>
+                <span className={styles.label}>Carpet area:</span>{" "}
+                <span className={styles.value}>
+                  {estimate.carpetArea} sq.ft
+                </span>
               </p>
             </div>
           </div>
 
-          {/* PDF Table */}
-          <div className={`${styles.priceContainer} ${styles.pdfcontainer}`}>
-            <h2
-              style={{
-                textAlign: "center",
-                color: "rgb(116,130,255)",
-                marginBottom: "15px",
-                fontSize: "1rem",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Estimate PDF
-            </h2>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                textAlign: "center",
-              }}
-            >
-              <thead>
-                <tr style={{ borderBottom: "1px solid #555" }}>
-                  <th style={{ padding: "8px" }}>Sr No.</th>
-                  <th style={{ padding: "8px" }}>Final Price</th>
-                  <th style={{ padding: "8px" }}>PDF</th>
-                  <th style={{ padding: "8px" }}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* First Row - Similar to Flutter's first TableRow */}
+          {/* Financial Price Section */}
+          <div
+            style={{
+              color: "white",
+              fontSize: "20px",
+              fontWeight: 600,
+              padding: "1vw",
+            }}
+            className={styles.sectiontwo}
+          >
+            <p className={styles.heading}>Financial Overview</p>
+            <button className={`${styles.finalbutton} ${styles.optionsbutton}`}>
+              <div
+                className={styles.options}
+                style={{
+                  border: "none",
+                  backgroundColor: "rgba(255, 255, 255, 0.46)",
+                }}
+              >
+                <BsFillChatSquareTextFill color="#eaecffff" />
+              </div>
+              Get Final Estimate
+            </button>
+          </div>
+          <div className={styles.finalprice}>
+            <div className={styles.priceContainer}>
+              <h2>Quoting Price</h2>
+              <div className={styles.priceGrid}>
+                <p className={styles.priceTitle}>📄 Agreement Value</p>
+                <p className={styles.priceAmount}>
+                  ₹ {formatNumber(estimate.agreementValue ?? "")}
+                </p>
 
-                {estimate?.document != null && (
+                <p className={styles.priceTitle}>🏛️ Stamp Duty</p>
+                <p className={styles.priceAmount}>
+                  ₹ {formatNumber(estimate.stampDutyAmount ?? "")}
+                </p>
+
+                <p className={styles.priceTitle}>💰 GST Amount</p>
+                <p className={styles.priceAmount}>
+                  ₹ {formatNumber(estimate.gstAmount ?? "")}
+                </p>
+
+                <p className={styles.priceTitle}>💵 All-Inclusive</p>
+                <p className={styles.priceAmount}>
+                  ₹ {formatNumber(estimate.allInclusiveValue ?? "")}
+                </p>
+              </div>
+            </div>
+
+            {/* PDF Table */}
+            <div className={`${styles.priceContainer} ${styles.pdfcontainer}`}>
+              <h2
+                style={{
+                  textAlign: "center",
+                  color: "rgb(116,130,255)",
+                  marginBottom: "15px",
+                  fontSize: "1rem",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Estimate PDF
+              </h2>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  textAlign: "center",
+                }}
+              >
+                <thead>
                   <tr style={{ borderBottom: "1px solid #555" }}>
-                    <td style={{ padding: "8px" }}>1</td>
-
-                    {/* Final Price */}
-                    <td style={{ padding: "8px" }}>
-                      {" "}
-                      {estimate
-                        ? formatNumber(
-                            estimate.discountedPayable ??
-                              estimate.allInclusiveValue ??
-                              "NA"
-                          )
-                        : "NA"}
-                    </td>
-
-                    {/* PDF View Button */}
-                    <td style={{ padding: "8px" }}>
-                      <a
-                        href={estimate.document}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <button
-                          style={{
-                            backgroundColor: "rgb(116,130,255)",
-                            color: "white",
-                            border: "none",
-                            padding: "5px 10px",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Now
-                        </button>
-                      </a>
-                    </td>
-
-                    {/* Status */}
-                    <td style={{ padding: "8px" }}>
-                      <button
-                        style={{
-                          backgroundColor: "#0072ff",
-                          color: "white",
-                          border: "none",
-                          padding: "5px 10px",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                        }}
-                      >
-                        {estimate?.status === "handedOver" ? (
-                          <>
-                            ✓ <span>HO</span>
-                          </>
-                        ) : estimate?.status === "revoke" ? (
-                          <>
-                            ✗ <span>RV</span>
-                          </>
-                        ) : (
-                          estimate?.status ?? "Pending"
-                        )}
-                      </button>
-                    </td>
+                    <th style={{ padding: "8px" }}>Sr No.</th>
+                    <th style={{ padding: "8px" }}>Final Price</th>
+                    <th style={{ padding: "8px" }}>PDF</th>
+                    <th style={{ padding: "8px" }}>Status</th>
                   </tr>
-                )}
+                </thead>
+                <tbody>
+                  {/* First Row - Similar to Flutter's first TableRow */}
 
-                {shouldShowFirstRow && (
-                  <tr style={{ borderBottom: "1px solid #555" }}>
-                    <td style={{ padding: "8px" }}>2</td>
+                  {estimate?.document != null && (
+                    <tr style={{ borderBottom: "1px solid #555" }}>
+                      <td style={{ padding: "8px" }}>1</td>
 
-                    {/* Final Price with underline and clickable like Flutter */}
-                    <td style={{ padding: "8px" }}>
-                      <span
-                        // style={{
-                        //   color: "black",
-                        //   textDecoration: "underline",
-                        //   fontWeight: "bold",
-                        //   cursor: "pointer",
-                        // }}
-                        onClick={() => {
-                          // Add your _showGeneralPriceBreakdown equivalent here
-                          console.log("Show general price breakdown");
-                        }}
-                      >
-                        {getPhysicalPrice()}
-                      </span>
-                    </td>
+                      {/* Final Price */}
+                      <td style={{ padding: "8px" }}>
+                        {" "}
+                        {estimate
+                          ? formatNumber(
+                              estimate.discountedPayable ??
+                                estimate.allInclusiveValue ??
+                                "NA"
+                            )
+                          : "NA"}
+                      </td>
 
-                    {/* PDF View Button */}
-                    <td style={{ padding: "8px" }}>
-                      {estimate.finalEstDoc ? (
+                      {/* PDF View Button */}
+                      <td style={{ padding: "8px" }}>
                         <a
-                          href={estimate.finalEstDoc}
+                          href={estimate.document}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -407,98 +465,63 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({
                               cursor: "pointer",
                             }}
                           >
-                            Final PDF
+                            View Now
                           </button>
                         </a>
-                      ) : (
-                        <span style={{ color: "#999" }}>No PDF</span>
-                      )}
-                    </td>
+                      </td>
 
-                    {/* Status with conditional rendering like Flutter */}
-                    <td style={{ padding: "8px" }}>
-                      <button
-                        style={{
-                          backgroundColor:
-                            estimate?.status === "revoke"
-                              ? "#ff4444"
-                              : estimate?.status === "handedOver"
-                              ? "#00c851"
-                              : "#0072ff",
-                          color: "white",
-                          border: "none",
-                          padding: "5px 10px",
-                          borderRadius: "8px",
-                          cursor:
-                            estimate?.status === "revoke"
-                              ? "not-allowed"
-                              : "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          opacity: estimate?.status === "revoke" ? 0.6 : 1,
-                        }}
-                        disabled={estimate?.status === "revoke"}
-                        onClick={() => {
-                          if (estimate?.status !== "revoke") {
-                            // Add your showDialog equivalent here
-                            console.log("Show status dialog");
-                          }
-                        }}
-                      >
-                        {estimate?.status === "handedOver" ? (
-                          <>
-                            ✓ <span>HO</span>
-                          </>
-                        ) : estimate?.status === "revoke" ? (
-                          <>
-                            ✗ <span>RV</span>
-                          </>
-                        ) : (
-                          estimate?.status ?? "Status"
-                        )}
-                      </button>
-                    </td>
-                  </tr>
-                )}
-
-                {/* Additional rows from finalDocumentCreated array */}
-                {estimate?.finalDocumentCreated?.map((doc, index) => {
-                  const rowNumber = (doc.index ?? index) + 1;
-
-                  return (
-                    <tr key={index} style={{ borderBottom: "1px solid #555" }}>
-                      <td style={{ padding: "8px" }}>{rowNumber}</td>
-
-                      {/* Final Price */}
+                      {/* Status */}
                       <td style={{ padding: "8px" }}>
-                        {doc.physicalAmount != null ? (
-                          <span
-                            // style={{
-                            //   color: "black",
-                            //   fontWeight: "bold",
-                            //   cursor: "pointer",
-                            // }}
-                            onClick={() => {
-                              // Add your _showPriceBreakdown equivalent here
-                              console.log(
-                                "Show price breakdown for doc",
-                                index
-                              );
-                            }}
-                          >
-                            {formatNumber(doc.physicalAmount)}
-                          </span>
-                        ) : (
-                          "NA"
-                        )}
+                        <button
+                          style={{
+                            backgroundColor: "#0072ff",
+                            color: "white",
+                            border: "none",
+                            padding: "5px 10px",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                          }}
+                          onClick={() => setsmallDialog(true)}
+                        >
+                          {estimate?.status === "handedOver" ? (
+                            <>
+                              ✓ <span>HO</span>
+                            </>
+                          ) : estimate?.status === "revoke" ? (
+                            <>
+                              ✗ <span>RV</span>
+                            </>
+                          ) : (
+                            estimate?.status ?? "Status"
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+
+                  {shouldShowFirstRow && (
+                    <tr style={{ borderBottom: "1px solid #555" }}>
+                      <td style={{ padding: "8px" }}>2</td>
+
+                      {/* Final Price with underline and clickable like Flutter */}
+                      <td style={{ padding: "8px" }}>
+                        <span
+                          onClick={() => {
+                            console.log("Show general price breakdown");
+                          }}
+                        >
+                          {getPhysicalPrice()}
+                        </span>
                       </td>
 
                       {/* PDF View Button */}
                       <td style={{ padding: "8px" }}>
-                        {doc.documentUrl ? (
+                        {estimate.finalEstDoc ? (
                           <a
-                            href={doc.documentUrl}
+                            href={estimate.finalEstDoc}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -520,14 +543,14 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({
                         )}
                       </td>
 
-                      {/* Status */}
+                      {/* Status with conditional rendering like Flutter */}
                       <td style={{ padding: "8px" }}>
                         <button
                           style={{
                             backgroundColor:
-                              doc.status === "revoke"
+                              estimate?.status === "revoke"
                                 ? "#ff4444"
-                                : doc.status === "handedOver"
+                                : estimate?.status === "handedOver"
                                 ? "#00c851"
                                 : "#0072ff",
                             color: "white",
@@ -535,47 +558,252 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({
                             padding: "5px 10px",
                             borderRadius: "8px",
                             cursor:
-                              doc.status === "revoke"
+                              estimate?.status === "revoke"
                                 ? "not-allowed"
                                 : "pointer",
                             display: "flex",
                             alignItems: "center",
                             gap: "5px",
-                            opacity: doc.status === "revoke" ? 0.6 : 1,
+                            opacity: estimate?.status === "revoke" ? 0.6 : 1,
                           }}
-                          disabled={doc.status === "revoke"}
+                          disabled={estimate?.status === "revoke"}
                           onClick={() => {
-                            if (doc.status !== "revoke") {
-                              // Add your showDialog equivalent here
-                              console.log(
-                                "Show status dialog for doc",
-                                doc.index
-                              );
+                            if (estimate?.status !== "revoke") {
+                              setsmallDialog(true);
                             }
                           }}
                         >
-                          {doc.status === "handedOver" ? (
+                          {estimate?.status === "handedOver" ? (
                             <>
                               ✓ <span>HO</span>
                             </>
-                          ) : doc.status === "revoke" ? (
+                          ) : estimate?.status === "revoke" ? (
                             <>
                               ✗ <span>RV</span>
                             </>
                           ) : (
-                            doc.status ?? "Status"
+                            estimate?.status ?? "Status"
                           )}
                         </button>
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  )}
+
+                  {/* Additional rows from finalDocumentCreated array */}
+                  {estimate?.finalDocumentCreated?.map((doc, index) => {
+                    const rowNumber = (doc.index ?? index) + 1;
+
+                    return (
+                      <tr
+                        key={index}
+                        style={{ borderBottom: "1px solid #555" }}
+                      >
+                        <td style={{ padding: "8px" }}>{rowNumber}</td>
+
+                        {/* Final Price */}
+                        <td style={{ padding: "8px" }}>
+                          {doc.physicalAmount != null ? (
+                            <span
+                              onClick={() => {
+                                console.log(
+                                  "Show price breakdown for doc",
+                                  index
+                                );
+                              }}
+                            >
+                              {formatNumber(doc.physicalAmount)}
+                            </span>
+                          ) : (
+                            "NA"
+                          )}
+                        </td>
+
+                        {/* PDF View Button */}
+                        <td style={{ padding: "8px" }}>
+                          {doc.documentUrl ? (
+                            <a
+                              href={doc.documentUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <button
+                                style={{
+                                  backgroundColor: "rgb(116,130,255)",
+                                  color: "white",
+                                  border: "none",
+                                  padding: "5px 10px",
+                                  borderRadius: "8px",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Final PDF
+                              </button>
+                            </a>
+                          ) : (
+                            <span style={{ color: "#999" }}>No PDF</span>
+                          )}
+                        </td>
+
+                        {/* Status */}
+                        <td style={{ padding: "8px" }}>
+                          <button
+                            style={{
+                              backgroundColor:
+                                doc.status === "revoke"
+                                  ? "#ff4444"
+                                  : doc.status === "handedOver"
+                                  ? "#00c851"
+                                  : "#0072ff",
+                              color: "white",
+                              border: "none",
+                              padding: "5px 10px",
+                              borderRadius: "8px",
+                              cursor:
+                                doc.status === "revoke"
+                                  ? "not-allowed"
+                                  : "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "5px",
+                              opacity: doc.status === "revoke" ? 0.6 : 1,
+                            }}
+                            disabled={doc.status === "revoke"}
+                            onClick={() => {
+                              if (doc.status !== "revoke") {
+                                setsmallDialog(true);
+                              }
+                            }}
+                          >
+                            {doc.status === "handedOver" ? (
+                              <>
+                                ✓ <span>HO</span>
+                              </>
+                            ) : doc.status === "revoke" ? (
+                              <>
+                                ✗ <span>RV</span>
+                              </>
+                            ) : (
+                              doc.status ?? "Status"
+                            )}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Small Dialog */}
+      {smallDialog && (
+        <div
+          className={dailogstyles.dialogOverlay}
+          onClick={handleOverlayClick}
+        >
+          <div className={dailogstyles.alertbox} ref={smallDialogRef}>
+            <div className={dailogstyles.alertdailog}>
+              <button
+                className={dailogstyles.cancelBtn}
+                onClick={handleRevokeClick}
+              >
+                Revoke
+              </button>
+              <button
+                className={dailogstyles.submitBtn}
+                onClick={handleHandoverClick}
+              >
+                Handover
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Revoke Dialog */}
+      {revokeDialog && (
+        <div
+          className={dailogstyles.dialogOverlay}
+          onClick={handleOverlayClick}
+        >
+          <div className={dailogstyles.alertbox}>
+            <div className={dailogstyles.alertdailog}>
+              <div className={dailogstyles.reasonSection}>
+                <h3 className={styles.dialogTitle}>Revoke</h3>
+
+                {/* <label className={dailogstyles.reasonLabel}>Reason</label> */}
+                <textarea
+                  className={dailogstyles.reasonTextarea}
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="Reason"
+                  rows={4}
+                />
+              </div>
+
+              <div className={dailogstyles.dialogActions}>
+                <button
+                  className={dailogstyles.cancelBtn}
+                  onClick={handleRevokeCancel}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={dailogstyles.submitBtn}
+                  onClick={handleRevokeSubmit}
+                  disabled={!reason.trim() || !agreeChecked || isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Handover Dialog */}
+      {handoverDialog && (
+        <div
+          className={dailogstyles.dialogOverlay}
+          onClick={handleOverlayClick}
+        >
+          <div className={dailogstyles.alertbox}>
+            <div className={dailogstyles.alertdailog}>
+              <div className={dailogstyles.reasonSection}>
+                <h3 className={styles.dialogTitle}>Handover</h3>
+
+                {/* <label className={dailogstyles.reasonLabel}>Reason</label> */}
+                <textarea
+                  className={dailogstyles.reasonTextarea}
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="Reason"
+                  rows={4}
+                />
+              </div>
+
+              <div className={dailogstyles.dialogActions}>
+                <button
+                  className={dailogstyles.cancelBtn}
+                  onClick={handleHandoverCancel}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={dailogstyles.submitBtn}
+                  onClick={handleHandoverSubmit}
+                  disabled={!reason.trim() || !agreeChecked || isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

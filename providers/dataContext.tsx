@@ -634,6 +634,11 @@ type DataProviderState = {
     data: Record<string, any>
   ) => Promise<{ success: boolean; message?: string }>;
 
+  updateHandoverRevoke: (
+    id: string,
+    data: Record<string, any>
+  ) => Promise<{ success: boolean; message?: string }>;
+
 };
 
 //initial values should define here
@@ -870,6 +875,11 @@ const initialState: DataProviderState = {
   }),
 
   addEstimateGenerated: async () => ({
+    success: false,
+    message: "Not initialized",
+  }),
+
+  updateHandoverRevoke: async () => ({
     success: false,
     message: "Not initialized",
   }),
@@ -3529,6 +3539,47 @@ const addEstimateGenerated = async (
     }
   };
 
+  const updateHandoverRevoke = async (
+    id: string,
+    data: Record<string, any>
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    data?: EstimateGenerated | null;
+  }> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const url = `/api/estimate-update-status/${id}`;
+      const res = await fetchAdapter(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(res);
+      const resp = res?.data;
+
+      console.log("resp", resp);
+      // setCurrentTask(task);
+
+      return { success: true, data: resp };
+    } catch (error: any) {
+      console.error(error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch estimate";
+
+      setError(message);
+
+      return { success: false, message, data: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const value = {
     projects: projects,
@@ -3635,6 +3686,7 @@ const addEstimateGenerated = async (
     addPayment:addPayment,
     fetchEstimatCount:fetchEstimatCount,
     addEstimateGenerated: addEstimateGenerated,
+    updateHandoverRevoke: updateHandoverRevoke,
   };
 
   return (

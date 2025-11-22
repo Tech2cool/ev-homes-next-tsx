@@ -11,6 +11,13 @@
   flex-wrap: wrap;
 }
 
+.dialogTitle {
+  text-align: left;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #ece4fe;
+}
+
 .leftSection {
   width: 25%;
   height: fit-content;
