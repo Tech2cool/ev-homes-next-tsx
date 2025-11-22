@@ -605,11 +605,14 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
       // Upload PDF if generated
       // You'll need to generate the PDF as a file first
-      // const pdfBlob = generatePDFAsBlob();
-      // const pdfFile = new File([pdfBlob], 'booking_details.pdf', { type: 'application/pdf' });
-      // const pdfResponse = await uploadFile(pdfFile);
-      // uploadedBookingPdf = pdfResponse?.file?.downloadUrl;
+      const blob = await generatePDF();
+      console.log("okay");
+      console.log(blob);
+      const pdfResponse = await uploadFile(blob);
+      uploadedBookingPdf = pdfResponse?.file?.downloadUrl;
 
+
+      console.log(uploadedBookingPdf);
       // Upload applicant documents and create applicants array
       const applicantsWithKyc = await Promise.all(
         formData.applicants.map(async (applicant, index) => {
@@ -718,7 +721,6 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
         bookingPdf: uploadedBookingPdf,
         status: formData.bookingstatus,
         bookingStatus: { type: formData.bookingstatus },
-
         // Pre-registration checklist
         preRegistrationCheckList: {
           tenPercentRecieved: {
@@ -755,15 +757,15 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
             document: {},
             prepared: preRegistrationChecklist.agreement.prepared,
           },
+    
         },
-
         // Other fields
         // pricingRemark: formData.remarkLast,
       };
 
       // Add the lead
       const response = await addPostSaleLead(leadData);
-      console.log("Lead created successfully:", response);
+      // console.log("Lead created successfully:", leadData);
 
       // Add payments separately
       if (payments.length > 0) {
@@ -1359,7 +1361,12 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
     doc.text(footerText2, pageWidth - 10, pageHeight - 35, { align: "right" });
 
 
-    doc.save("booking_details.pdf");
+    doc.save(`booking_details_${Date.now()}.pdf`);
+
+
+  const blob = doc.output("blob");
+  const file = new File([blob], "booking_details.pdf", { type: "application/pdf" });
+  return file;
   };
 
   const steps = [
@@ -3433,13 +3440,13 @@ const AddBooking: React.FC<AddBookingProps> = ({ openclick, lead }) => {
 
                   // console.log(validateStep);
                   const isValid = validateStep(currentStep);
-                  if (isValid) {
+                  // if (isValid) {
                     if (currentStep < steps.length - 1) {
                       setCurrentStep(currentStep + 1);
                     } else {
                       onSubmit();
                     }
-                  }
+                  // }
                 } catch (e) {
                   console.log(e);
                   console.log(
