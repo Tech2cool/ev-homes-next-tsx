@@ -85,6 +85,21 @@ interface EstimateGenerated {
   statusChangedDate?: Date | string | null;
   reason?: string | null;
   company?: string | null;
+
+  finalDocumentCreated: FinalDocumentCreated[];
+}
+
+interface FinalDocumentCreated {
+  index?: number | null;
+  status?: string | null;
+  statusChangedDate?: string | null;
+  reason?: string | null;
+  documentAgreementValue?: number | null;
+  gstAmount?: number | null;
+  physicalAmount?: number | null;
+  stampDuty?: number | null;
+  documentCreatedDate?: string | null;
+  documentUrl?: string | null;
 }
 
 interface Amenity {

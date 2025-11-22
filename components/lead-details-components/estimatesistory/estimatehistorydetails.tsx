@@ -38,15 +38,18 @@ interface EstimateHistoryDetailsProps {
   estimate: EstimateGenerated | null;
 }
 
-
-
-const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({ estimate }) => {
+const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({
+  estimate,
+}) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
       }
     };
@@ -54,36 +57,85 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({ estimat
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Format number with commas (similar to NumberFormat('#,###') in Flutter)
+  const formatNumber = (value: string | number | undefined): string => {
+    if (value === undefined || value === null) return "NA";
+
+    const numValue =
+      typeof value === "string"
+        ? parseFloat(value.replace(/,/g, ""))
+        : Number(value);
+
+    if (isNaN(numValue)) return "NA";
+
+    return new Intl.NumberFormat("en-IN").format(numValue);
+  };
+
+  // Parse physical price similar to Flutter logic
+  const getPhysicalPrice = (): string => {
+    const physicalPrice = estimate?.physicalPrice;
+
+    if (physicalPrice === undefined || physicalPrice === null) {
+      return "NA";
+    }
+
+    return formatNumber(physicalPrice);
+  };
+
+  // Check if we should show the first table row (similar to Flutter condition)
+  const shouldShowFirstRow =
+    estimate?.physicalPrice != null && estimate?.finalEstDoc != null;
+
   if (!estimate) {
-    return (
-      <div className={styles.nocont}>
-        Select a lead to view details
-      </div>
-    );
+    return <div className={styles.nocont}>Select a lead to view details</div>;
   }
 
   return (
-    <div className={styles.sectionContainer} style={{ justifyContent: "center" }}>
+    <div
+      className={styles.sectionContainer}
+      style={{ justifyContent: "center" }}
+    >
       <div className={`${styles.leadHistoryContainer} ${styles.anotherClass}`}>
         <div className={styles.detailsContainer}>
           {/* Left Section */}
-          <div className={styles.leftSection} style={{ display: "flex", flexDirection: "column" }}>
-            <div className={styles.avatar}>{estimate.lead?.firstName?.charAt(0) ?? ""}</div>
-            <div className={styles.name}>{estimate.lead?.firstName} {estimate.lead?.lastName}</div>
-            <div className={styles.phone}>{estimate.lead?.countryCode} {estimate.lead?.phoneNumber}</div>
+          <div
+            className={styles.leftSection}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <div className={styles.avatar}>
+              {estimate.lead?.firstName?.charAt(0) ?? ""}
+            </div>
+            <div className={styles.name}>
+              {estimate.lead?.firstName} {estimate.lead?.lastName}
+            </div>
+            <div className={styles.phone}>
+              {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
+            </div>
 
-            <div className={styles.optionsContainer} style={{ flexDirection: "column", gap: "2px", paddingTop: "15px" }}>
+            <div
+              className={styles.optionsContainer}
+              style={{
+                flexDirection: "column",
+                gap: "2px",
+                paddingTop: "15px",
+              }}
+            >
               <div className={styles.optionsWrapper} ref={dropdownRef}>
                 <div
                   className={styles.options}
-                  style={{ border: "none", backgroundColor: "rgba(255,255,255,0.05)" }}
+                  style={{
+                    border: "none",
+                    backgroundColor: "rgba(255,255,255,0.05)",
+                  }}
                   onClick={() => setShowDropdown(!showDropdown)}
                 >
                   <BarChart2 color="#7482ff" />
                 </div>
                 {showDropdown && (
                   <div className={styles.dropdown}>
-                    <div className={styles.dropdownItem}>Give Final Estimate</div>
+                    <div className={styles.dropdownItem}>
+                      Give Final Estimate
+                    </div>
                   </div>
                 )}
               </div>
@@ -92,132 +144,436 @@ const EstimateHistoryDetails: React.FC<EstimateHistoryDetailsProps> = ({ estimat
 
           {/* Middle Section */}
           <div className={styles.middleSection}>
-            <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>Client Details :</p>
-            <p><span className={styles.label}>Estimate ID:</span> <span className={styles.value}>{estimate.estID}</span></p>
-            <p><span className={styles.label}>Generated By:</span> <span className={styles.value}>{estimate.generatedBy?.firstName} {estimate.generatedBy?.lastName}</span></p>
-            <p><span className={styles.label}>Mobile No:</span> <span className={styles.value}>{estimate.lead?.countryCode} {estimate.lead?.phoneNumber}</span></p>
-            <p><span className={styles.label}>Team Leader:</span> <span className={styles.value}>{estimate.generatedBy?.reportingTo?.firstName} {estimate.generatedBy?.reportingTo?.lastName}</span></p>
-            <p><span className={styles.label}>Address:</span> <span className={styles.value}>{estimate.lead?.address ?? "NA"}</span></p>
+            <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>
+              Client Details :
+            </p>
+            <p>
+              <span className={styles.label}>Estimate ID:</span>{" "}
+              <span className={styles.value}>{estimate.estID}</span>
+            </p>
+            <p>
+              <span className={styles.label}>Generated By:</span>{" "}
+              <span className={styles.value}>
+                {estimate.generatedBy?.firstName}{" "}
+                {estimate.generatedBy?.lastName}
+              </span>
+            </p>
+            <p>
+              <span className={styles.label}>Mobile No:</span>{" "}
+              <span className={styles.value}>
+                {estimate.lead?.countryCode} {estimate.lead?.phoneNumber}
+              </span>
+            </p>
+            <p>
+              <span className={styles.label}>Team Leader:</span>{" "}
+              <span className={styles.value}>
+                {estimate.generatedBy?.reportingTo?.firstName}{" "}
+                {estimate.generatedBy?.reportingTo?.lastName}
+              </span>
+            </p>
+            <p>
+              <span className={styles.label}>Address:</span>{" "}
+              <span className={styles.value}>
+                {estimate.lead?.address ?? "NA"}
+              </span>
+            </p>
           </div>
 
           {/* Right Section */}
           <div className={styles.rightSection} style={{ gap: "0.3vh" }}>
-            <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>Unit Details :</p>
-            <p><span className={styles.label}>Project:</span> <span className={styles.value}>{estimate.lead?.project.map((e)=>e.name)}</span></p>
-            <p><span className={styles.label}>Configuration:</span> <span className={styles.value}>{estimate.configuration}</span></p>
-            <p><span className={styles.label}>Flat no:</span> <span className={styles.value}>{estimate.flatNo}</span></p>
-            <p><span className={styles.label}>SS area:</span> <span className={styles.value}>{estimate.ssArea}</span></p>
-            <p><span className={styles.label}>Balcony area:</span> <span className={styles.value}>{estimate.balconyArea}</span></p>
-            <p><span className={styles.label}>Rera area:</span> <span className={styles.value}>{estimate.reraArea}</span></p>
-            <p><span className={styles.label}>Carpet area:</span> <span className={styles.value}>{estimate.carpetArea}</span></p>
+            <p style={{ fontSize: 14, color: "#7482ff", fontWeight: 600 }}>
+              Unit Details :
+            </p>
+            <p>
+              <span className={styles.label}>Project:</span>{" "}
+              <span className={styles.value}>
+                {estimate.lead?.project.map((e) => e.name).join(", ")}
+              </span>
+            </p>
+            <p>
+              <span className={styles.label}>Configuration:</span>{" "}
+              <span className={styles.value}>{estimate.configuration}</span>
+            </p>
+            <p>
+              <span className={styles.label}>Flat no:</span>{" "}
+              <span className={styles.value}>{estimate.flatNo}</span>
+            </p>
+            <p>
+              <span className={styles.label}>SS area:</span>{" "}
+              <span className={styles.value}>{estimate.ssArea}</span>
+            </p>
+            <p>
+              <span className={styles.label}>Balcony area:</span>{" "}
+              <span className={styles.value}>{estimate.balconyArea}</span>
+            </p>
+            <p>
+              <span className={styles.label}>Rera area:</span>{" "}
+              <span className={styles.value}>{estimate.reraArea}</span>
+            </p>
+            <p>
+              <span className={styles.label}>Carpet area:</span>{" "}
+              <span className={styles.value}>{estimate.carpetArea} sq.ft</span>
+            </p>
           </div>
         </div>
 
         {/* Financial Price Section */}
-        <div style={{ color: "white", fontSize: "20px", fontWeight: 600, padding: "1vw" }} className={styles.sectiontwo}>
-          <p className={styles.heading}>Financial Price</p>
+        <div
+          style={{
+            color: "white",
+            fontSize: "20px",
+            fontWeight: 600,
+            padding: "1vw",
+          }}
+          className={styles.sectiontwo}
+        >
+          <p className={styles.heading}>Financial Overview</p>
           <button className={`${styles.finalbutton} ${styles.optionsbutton}`}>
-            <div className={styles.options} style={{ border: "none", backgroundColor: "rgba(255, 255, 255, 0.46)" }}>
+            <div
+              className={styles.options}
+              style={{
+                border: "none",
+                backgroundColor: "rgba(255, 255, 255, 0.46)",
+              }}
+            >
               <BsFillChatSquareTextFill color="#eaecffff" />
             </div>
             Get Final Estimate
           </button>
-           </div>
-          <div className={styles.finalprice}>
-            <div className={styles.priceContainer}>
-              <h2>Quoting Price</h2>
-              <div className={styles.priceGrid}>
-    <p className={styles.priceTitle}>📄 Agreement Value</p>
-    <p className={styles.priceAmount}>₹ {estimate.agreementValue ?? "NA"}</p>
+        </div>
+        <div className={styles.finalprice}>
+          <div className={styles.priceContainer}>
+            <h2>Quoting Price</h2>
+            <div className={styles.priceGrid}>
+              <p className={styles.priceTitle}>📄 Agreement Value</p>
+              <p className={styles.priceAmount}>
+                ₹ {formatNumber(estimate.agreementValue ?? "")}
+              </p>
 
-    <p className={styles.priceTitle}>🏛️ Stamp Duty</p>
-    <p className={styles.priceAmount}>₹ {estimate.stampDutyAmount ?? "NA"}</p>
+              <p className={styles.priceTitle}>🏛️ Stamp Duty</p>
+              <p className={styles.priceAmount}>
+                ₹ {formatNumber(estimate.stampDutyAmount ?? "")}
+              </p>
 
-    <p className={styles.priceTitle}>💰 GST Amount</p>
-    <p className={styles.priceAmount}>₹ {estimate.gstAmount ?? "NA"}</p>
+              <p className={styles.priceTitle}>💰 GST Amount</p>
+              <p className={styles.priceAmount}>
+                ₹ {formatNumber(estimate.gstAmount ?? "")}
+              </p>
 
-    <p className={styles.priceTitle}>💵 All-Inclusive</p>
-    <p className={styles.priceAmount}>₹ {estimate.allInclusiveValue ?? "NA"}</p>
-</div>
-
+              <p className={styles.priceTitle}>💵 All-Inclusive</p>
+              <p className={styles.priceAmount}>
+                ₹ {formatNumber(estimate.allInclusiveValue ?? "")}
+              </p>
             </div>
+          </div>
 
-            {/* PDF Table */}
-            <div
-           
-              className={`${styles.priceContainer} ${styles.pdfcontainer}`}
+          {/* PDF Table */}
+          <div className={`${styles.priceContainer} ${styles.pdfcontainer}`}>
+            <h2
+              style={{
+                textAlign: "center",
+                color: "rgb(116,130,255)",
+                marginBottom: "15px",
+                fontSize: "1rem",
+                letterSpacing: "0.5px",
+              }}
             >
-              <h2 style={{ textAlign: "center", color: "rgb(116,130,255)", marginBottom: "15px", fontSize: "1rem", letterSpacing: "0.5px" }}>
-                Estimate PDF
-              </h2>
-              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #555" }}>
-                    <th style={{ padding: "8px" }}>Sr No.</th>
-                    <th style={{ padding: "8px" }}>Final Price</th>
-                    <th style={{ padding: "8px" }}>PDF</th>
-                    <th style={{ padding: "8px" }}>Status</th>
-                  </tr>
-                </thead>
+              Estimate PDF
+            </h2>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "center",
+              }}
+            >
+              <thead>
+                <tr style={{ borderBottom: "1px solid #555" }}>
+                  <th style={{ padding: "8px" }}>Sr No.</th>
+                  <th style={{ padding: "8px" }}>Final Price</th>
+                  <th style={{ padding: "8px" }}>PDF</th>
+                  <th style={{ padding: "8px" }}>Status</th>
+                </tr>
+              </thead>
               <tbody>
-    <tr style={{ borderBottom: "1px solid #555" }}>
-        <td style={{ padding: "8px" }}>1</td>
-        
-        {/* Final Price */}
-        <td style={{ padding: "8px" }}>
-            ₹ {estimate.finalAgreementValue ?? estimate.agreementValue ?? "NA"}
-        </td>
+                {/* First Row - Similar to Flutter's first TableRow */}
 
-        {/* PDF View Button */}
-        <td style={{ padding: "8px" }}>
-            {estimate.finalEstDoc ? (
-                <a
-                    href={estimate.finalEstDoc}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <button
-                        style={{
+                {estimate?.document != null && (
+                  <tr style={{ borderBottom: "1px solid #555" }}>
+                    <td style={{ padding: "8px" }}>1</td>
+
+                    {/* Final Price */}
+                    <td style={{ padding: "8px" }}>
+                      {" "}
+                      {estimate
+                        ? formatNumber(
+                            estimate.discountedPayable ??
+                              estimate.allInclusiveValue ??
+                              "NA"
+                          )
+                        : "NA"}
+                    </td>
+
+                    {/* PDF View Button */}
+                    <td style={{ padding: "8px" }}>
+                      <a
+                        href={estimate.document}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <button
+                          style={{
                             backgroundColor: "rgb(116,130,255)",
                             color: "white",
                             border: "none",
                             padding: "5px 10px",
                             borderRadius: "8px",
                             cursor: "pointer",
+                          }}
+                        >
+                          View Now
+                        </button>
+                      </a>
+                    </td>
+
+                    {/* Status */}
+                    <td style={{ padding: "8px" }}>
+                      <button
+                        style={{
+                          backgroundColor: "#0072ff",
+                          color: "white",
+                          border: "none",
+                          padding: "5px 10px",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
                         }}
-                    >
-                        View
-                    </button>
-                </a>
-            ) : (
-                <span style={{ color: "#999" }}>No PDF</span>
-            )}
-        </td>
+                      >
+                        {estimate?.status === "handedOver" ? (
+                          <>
+                            ✓ <span>HO</span>
+                          </>
+                        ) : estimate?.status === "revoke" ? (
+                          <>
+                            ✗ <span>RV</span>
+                          </>
+                        ) : (
+                          estimate?.status ?? "Pending"
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                )}
 
-        {/* Status */}
-        <td style={{ padding: "8px" }}>
-            <button
-                style={{
-                    backgroundColor: "#0072ff",
-                    color: "white",
-                    border: "none",
-                    padding: "5px 10px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                }}
-            >
-                {estimate.status ?? "Pending"}
-            </button>
-        </td>
-    </tr>
-</tbody>
+                {shouldShowFirstRow && (
+                  <tr style={{ borderBottom: "1px solid #555" }}>
+                    <td style={{ padding: "8px" }}>2</td>
 
-              </table>
-           
+                    {/* Final Price with underline and clickable like Flutter */}
+                    <td style={{ padding: "8px" }}>
+                      <span
+                        // style={{
+                        //   color: "black",
+                        //   textDecoration: "underline",
+                        //   fontWeight: "bold",
+                        //   cursor: "pointer",
+                        // }}
+                        onClick={() => {
+                          // Add your _showGeneralPriceBreakdown equivalent here
+                          console.log("Show general price breakdown");
+                        }}
+                      >
+                        {getPhysicalPrice()}
+                      </span>
+                    </td>
+
+                    {/* PDF View Button */}
+                    <td style={{ padding: "8px" }}>
+                      {estimate.finalEstDoc ? (
+                        <a
+                          href={estimate.finalEstDoc}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <button
+                            style={{
+                              backgroundColor: "rgb(116,130,255)",
+                              color: "white",
+                              border: "none",
+                              padding: "5px 10px",
+                              borderRadius: "8px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Final PDF
+                          </button>
+                        </a>
+                      ) : (
+                        <span style={{ color: "#999" }}>No PDF</span>
+                      )}
+                    </td>
+
+                    {/* Status with conditional rendering like Flutter */}
+                    <td style={{ padding: "8px" }}>
+                      <button
+                        style={{
+                          backgroundColor:
+                            estimate?.status === "revoke"
+                              ? "#ff4444"
+                              : estimate?.status === "handedOver"
+                              ? "#00c851"
+                              : "#0072ff",
+                          color: "white",
+                          border: "none",
+                          padding: "5px 10px",
+                          borderRadius: "8px",
+                          cursor:
+                            estimate?.status === "revoke"
+                              ? "not-allowed"
+                              : "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          opacity: estimate?.status === "revoke" ? 0.6 : 1,
+                        }}
+                        disabled={estimate?.status === "revoke"}
+                        onClick={() => {
+                          if (estimate?.status !== "revoke") {
+                            // Add your showDialog equivalent here
+                            console.log("Show status dialog");
+                          }
+                        }}
+                      >
+                        {estimate?.status === "handedOver" ? (
+                          <>
+                            ✓ <span>HO</span>
+                          </>
+                        ) : estimate?.status === "revoke" ? (
+                          <>
+                            ✗ <span>RV</span>
+                          </>
+                        ) : (
+                          estimate?.status ?? "Status"
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                )}
+
+                {/* Additional rows from finalDocumentCreated array */}
+                {estimate?.finalDocumentCreated?.map((doc, index) => {
+                  const rowNumber = (doc.index ?? index) + 1;
+
+                  return (
+                    <tr key={index} style={{ borderBottom: "1px solid #555" }}>
+                      <td style={{ padding: "8px" }}>{rowNumber}</td>
+
+                      {/* Final Price */}
+                      <td style={{ padding: "8px" }}>
+                        {doc.physicalAmount != null ? (
+                          <span
+                            // style={{
+                            //   color: "black",
+                            //   fontWeight: "bold",
+                            //   cursor: "pointer",
+                            // }}
+                            onClick={() => {
+                              // Add your _showPriceBreakdown equivalent here
+                              console.log(
+                                "Show price breakdown for doc",
+                                index
+                              );
+                            }}
+                          >
+                            {formatNumber(doc.physicalAmount)}
+                          </span>
+                        ) : (
+                          "NA"
+                        )}
+                      </td>
+
+                      {/* PDF View Button */}
+                      <td style={{ padding: "8px" }}>
+                        {doc.documentUrl ? (
+                          <a
+                            href={doc.documentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <button
+                              style={{
+                                backgroundColor: "rgb(116,130,255)",
+                                color: "white",
+                                border: "none",
+                                padding: "5px 10px",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Final PDF
+                            </button>
+                          </a>
+                        ) : (
+                          <span style={{ color: "#999" }}>No PDF</span>
+                        )}
+                      </td>
+
+                      {/* Status */}
+                      <td style={{ padding: "8px" }}>
+                        <button
+                          style={{
+                            backgroundColor:
+                              doc.status === "revoke"
+                                ? "#ff4444"
+                                : doc.status === "handedOver"
+                                ? "#00c851"
+                                : "#0072ff",
+                            color: "white",
+                            border: "none",
+                            padding: "5px 10px",
+                            borderRadius: "8px",
+                            cursor:
+                              doc.status === "revoke"
+                                ? "not-allowed"
+                                : "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                            opacity: doc.status === "revoke" ? 0.6 : 1,
+                          }}
+                          disabled={doc.status === "revoke"}
+                          onClick={() => {
+                            if (doc.status !== "revoke") {
+                              // Add your showDialog equivalent here
+                              console.log(
+                                "Show status dialog for doc",
+                                doc.index
+                              );
+                            }
+                          }}
+                        >
+                          {doc.status === "handedOver" ? (
+                            <>
+                              ✓ <span>HO</span>
+                            </>
+                          ) : doc.status === "revoke" ? (
+                            <>
+                              ✗ <span>RV</span>
+                            </>
+                          ) : (
+                            doc.status ?? "Status"
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-
         </div>
-
       </div>
     </div>
   );

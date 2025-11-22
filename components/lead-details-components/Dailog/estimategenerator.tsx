@@ -1574,7 +1574,7 @@ export const generatePdf = async (
   addLeftField("Mobile", phoneNumber);
   addLeftField("Address", address ?? "NA");
   addLeftField(
-    "Team Leader",
+    "Team",
     `${teamLeader?.generatedBy?.reportingTo?.firstName ?? ""} ${
       teamLeader?.generatedBy?.reportingTo?.lastName ?? ""
     }`
